@@ -1,27 +1,45 @@
 ---
 title: "Workspace Engineering Research Pack"
-version: "0.3.4"
+version: "1.0.0"
 type: "reference/research-pack"
 status: "in-review"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 artifact_id: "RES-0001"
 ---
 # Workspace Engineering Research Pack
 
-## Overview
+## 문서 개요
+
+### 목적과 독자
+
+이 연구 묶음은 Workspace Engineering Research Pack의 조사 보고서를 찾고 출처 경계를 확인하는 조사자와 검토자를 위한 색인이다. 질문은 [Overview](#overview)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 이 묶음의 현재 범위를 유지한다. 포함 대상과 해석 한계는 [Scope](#scope), 보고서의 관계는 [Pack Contract](#pack-contract)에 기록한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Overview
 
 이 단일 pack은 workspace engineering의 외부 공식 문서·표준·원저자 자료와
 upstream 구현을 비교하고, 후속 workspace 조사에 필요한 질문과 증거 계약을
 정리한다. 독자는 개발자, 운영자와 문서 작성자다. 현재 외부 지식을
 먼저 읽고 과거 로컬 관찰은 관찰 당시의 증거로 구분하여 읽는다.
 
-## Scope
+#### Scope
 
 이 pack은 아래 연구 계약과 보고서 색인에 명시한 주제와 출처를 포함한다.
 실행 승인, 현재 정책, hosted·provider·live 결과는 증거 범위에서 제외한다.
 
-## Pack Contract
+#### Pack Contract
 
 제품 동작은 해당 provider·제품 surface의 공식 문서와 구현, 표준·방법론은
 표준기관과 원저자 자료로 확인한다. 구현 사례는 가능한 경우 revision과 license를
@@ -32,7 +50,7 @@ upstream 구현을 비교하고, 후속 workspace 조사에 필요한 질문과 
 함께 외부 조사 비적용으로 기록한다. 읽지 못한 출처는 비적용이 아니라 미완료
 원인으로 남긴다.
 
-### External Finding Vocabulary
+##### External Finding Vocabulary
 
 | 값 | 이 연구에서의 범위 |
 | --- | --- |
@@ -46,7 +64,7 @@ upstream 구현을 비교하고, 후속 workspace 조사에 필요한 질문과 
 확인일만으로 갱신하지 않는다. 미완료 외부 조사를 `DEFER`로 표시한 것만으로
 전체 연구가 완료되는 것은 아니다.
 
-### Separate Evidence Axes
+##### Separate Evidence Axes
 
 | 축 | 기록 방법 |
 | --- | --- |
@@ -59,12 +77,12 @@ upstream 구현을 비교하고, 후속 workspace 조사에 필요한 질문과 
 남긴다. 문서에 없다는 이유만으로 미지원이라고 단정하지 않는다. 조건부 적용
 제안은 외부 사실 및 과거 로컬 관찰과 구분한다.
 
-## Structure
+#### Structure
 
 직접 멤버와 그 연구 책임은 아래 보고서 색인에서 찾는다. 각 멤버의 날짜와
 판정은 멤버 본문이 소유하며 이 anchor는 별도 실행 상태를 기록하지 않는다.
 
-## Pack Index
+#### Pack Index
 
 | 보고서 | 연구 책임 |
 | --- | --- |
@@ -95,12 +113,12 @@ upstream 구현을 비교하고, 후속 workspace 조사에 필요한 질문과 
 | [Scope application index](m0013-scope-application-index.md) | 외부 근거를 scope별 후속 조사 질문·selector·합격 기준·승인 경계에 연결 |
 | [Current-state addendum 2026-11-05](m0014-current-state-addendum-2026-11-05.md) | 게시된 m0001~m0012의 당시 저장소 관측 차이와 내부 상충·중복, 현행 QA·양식·제품 발행 소유자 안내 |
 
-## Usage
+#### Usage
 
 먼저 연구 계약과 증거 경계를 확인한 뒤 보고서 색인에서 필요한 멤버를 읽는다.
 갱신은 아래 승계 절차를 따르며 연구 근거를 현재 실행 승인으로 사용하지 않는다.
 
-## Refresh and Succession
+#### Refresh and Succession
 
 주제 보고서의 담당자가 해당 출처의 release·version·설정 schema·표준 revision·
 URL 이동·내용 충돌·재검토 trigger를 확인하여 본문을 갱신한다. 현재 지식을 앞에
@@ -113,7 +131,7 @@ URL 이동·내용 충돌·재검토 trigger를 확인하여 본문을 갱신한
 새 발견은 기존 주장을 보완하는지 대체하는지 명시하며, 원 요청의 반복 항목도
 대응을 보존한다. 후속 scope 조사 설계는 실태 조사 실행과 별도로 인계한다.
 
-## Evidence Boundary
+#### Evidence Boundary
 
 이번 작업은 외부 연구와 후속 조사 설계다. workspace 기능·설정·운영 실태,
 provider discovery·model resolution·hook 실행, hosted CI와 live cluster 효과를
@@ -126,7 +144,7 @@ provider discovery·model resolution·hook 실행, hosted CI와 live cluster 효
 과거 로컬 경로·Spec·scope 문서는 각 관측일의 증거다. 종료된 Spec
 패키지의 보존 근거는 해당 요구 문서의 Archived Lineage에서 확인한다.
 
-## Related Documents
+#### Related Documents
 
 - [Research collection](../README.md)
 - [Agent Governance Hub](../../../../.agents/README.md)
@@ -135,3 +153,23 @@ provider discovery·model resolution·hook 실행, hosted CI와 live cluster 효
 - [Specs](../../../03.specs/README.md)
 - [Operations](../../../05.operations/README.md)
 - [Research template and profile owner](../../../99.templates/README.md)
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

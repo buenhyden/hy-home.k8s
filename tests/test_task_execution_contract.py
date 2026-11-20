@@ -17,7 +17,7 @@ import tempfile
 import unittest
 from pathlib import Path, PurePosixPath
 
-from tests.form_headings import form_body
+from tests.form_headings import common_shell, form_body
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
@@ -140,42 +140,44 @@ def task_text(status: str, rows: list[str]) -> str:
     return "\n".join(
         [
             *front,
-            *form_body(
-                "task",
-                {
-                    "Objective and Parent": ["Example."],
-                    "Inputs and Authority": [
-                        "[Spec](../spec.md) and [Plan](../plan.md)."
-                    ],
-                    "Work Performed": [
-                        "The rows below record the work.",
-                        "",
-                        *work_table,
-                    ],
-                    "Blockers and Decisions": [
-                        "No blocker is recorded.",
-                        "### Lifecycle Traceability",
-                        CORE_TRACE_HEADER,
-                        separator(CORE_TRACE_HEADER),
-                        *trace,
-                    ],
-                    "Results": [
-                        CORE_CHECK_HEADER,
-                        separator(CORE_CHECK_HEADER),
-                        *checks,
-                    ],
-                    "Resolution Links": [
-                        "The Resolves column names the row each PASS row closes."
-                    ],
-                    "Criterion Decisions": [
-                        CORE_DECISION_HEADER,
-                        separator(CORE_DECISION_HEADER),
-                        *decisions,
-                    ],
-                    "Remaining Conditions": ["No condition remains."],
-                    "Promotion Receipt": ["No durable contract is promoted."],
-                    "Next Owner": ["Example."],
-                },
+            *common_shell(
+                form_body(
+                    "task",
+                    {
+                        "Objective and Parent": ["Example."],
+                        "Inputs and Authority": [
+                            "[Spec](../spec.md) and [Plan](../plan.md)."
+                        ],
+                        "Work Performed": [
+                            "The rows below record the work.",
+                            "",
+                            *work_table,
+                        ],
+                        "Blockers and Decisions": [
+                            "No blocker is recorded.",
+                            "### Lifecycle Traceability",
+                            CORE_TRACE_HEADER,
+                            separator(CORE_TRACE_HEADER),
+                            *trace,
+                        ],
+                        "Results": [
+                            CORE_CHECK_HEADER,
+                            separator(CORE_CHECK_HEADER),
+                            *checks,
+                        ],
+                        "Resolution Links": [
+                            "The Resolves column names the row each PASS row closes."
+                        ],
+                        "Criterion Decisions": [
+                            CORE_DECISION_HEADER,
+                            separator(CORE_DECISION_HEADER),
+                            *decisions,
+                        ],
+                        "Remaining Conditions": ["No condition remains."],
+                        "Promotion Receipt": ["No durable contract is promoted."],
+                        "Next Owner": ["Example."],
+                    },
+                )
             ),
             "",
         ]
@@ -218,30 +220,32 @@ def form_spec_text() -> str:
         [
             *_frontmatter("spec", "SPEC-0106"),
             "# Spec",
-            *form_body(
-                "spec",
-                {
-                    "Criteria": [
-                        "| Criterion ID | Expected Result |",
-                        "| --- | --- |",
-                        "| VAL-P02-001 | Focused test PASS |",
-                    ],
-                    "Verification Strategy": [
-                        "Concrete fixture text.",
-                        "",
-                        # SPEC-0222: the always core checks table, header-only.
-                        "| Check ID | Guarantee | Input | Trust Boundary "
-                        "| Required When | Evidence |",
-                        "| --- | --- | --- | --- | --- | --- |",
-                        "### Lifecycle Traceability",
-                        "| Requirement ID | Spec criterion | Architecture "
-                        "| Verification method |",
-                        "| --- | --- | --- | --- |",
-                        "| N/A — approved direct package | VAL-P02-001 "
-                        "| None apply: fixture | Focused test |",
-                        "",
-                    ],
-                },
+            *common_shell(
+                form_body(
+                    "spec",
+                    {
+                        "Criteria": [
+                            "| Criterion ID | Expected Result |",
+                            "| --- | --- |",
+                            "| VAL-P02-001 | Focused test PASS |",
+                        ],
+                        "Verification Strategy": [
+                            "Concrete fixture text.",
+                            "",
+                            # SPEC-0222: the always core checks table, header-only.
+                            "| Check ID | Guarantee | Input | Trust Boundary "
+                            "| Required When | Evidence |",
+                            "| --- | --- | --- | --- | --- | --- |",
+                            "### Lifecycle Traceability",
+                            "| Requirement ID | Spec criterion | Architecture "
+                            "| Verification method |",
+                            "| --- | --- | --- | --- |",
+                            "| N/A — approved direct package | VAL-P02-001 "
+                            "| None apply: fixture | Focused test |",
+                            "",
+                        ],
+                    },
+                )
             ),
         ]
     )
@@ -254,41 +258,43 @@ def form_plan_text() -> str:
         [
             *_frontmatter("plan", "SPEC-0106-PLAN-0001", 'parent_ids: ["SPEC-0106"]'),
             "# Plan",
-            *form_body(
-                "plan",
-                {
-                    "Outcome": ["Concrete fixture goal."],
-                    "Constraints": [
-                        "Concrete fixture text.",
-                        "#### Global Constraints",
-                        "Keep the approved [Spec](spec.md#scope) parent contract.",
-                    ],
-                    "Work Units": [
-                        "| Work Unit | Criteria | Work | Dependencies | Task "
-                        "| Verification |",
-                        "| --- | --- | --- | --- | --- | --- |",
-                        "| WORK-001 | [VAL-P02-001](spec.md#criteria) | Verify | none | "
-                        "[SPEC-0106-TSK-0001](01.tasks/tsk-0001-example.md) | Focused test |",
-                        "",
-                        # SPEC-0222: the always core work units table, header-only.
-                        "| Work Unit | Outcome | Depends On | Owner | Write Scope "
-                        "| Acceptance | Checks |",
-                        "| --- | --- | --- | --- | --- | --- | --- |",
-                    ],
-                    "Selected Checks": [
-                        "Concrete fixture text.",
-                        "",
-                        # SPEC-0222: the always core checks table, header-only.
-                        "| Check ID | Guarantee | Input | Trust Boundary "
-                        "| Required When | Evidence |",
-                        "| --- | --- | --- | --- | --- | --- |",
-                    ],
-                    "Durable Owners": [
-                        "| Promotion ID | Target Owner | Acceptance | Evidence |",
-                        "| --- | --- | --- | --- |",
-                        "| none | none | none | No durable contract was introduced |",
-                    ],
-                },
+            *common_shell(
+                form_body(
+                    "plan",
+                    {
+                        "Outcome": ["Concrete fixture goal."],
+                        "Constraints": [
+                            "Concrete fixture text.",
+                            "#### Global Constraints",
+                            "Keep the approved [Spec](spec.md#scope) parent contract.",
+                        ],
+                        "Work Units": [
+                            "| Work Unit | Criteria | Work | Dependencies | Task "
+                            "| Verification |",
+                            "| --- | --- | --- | --- | --- | --- |",
+                            "| WORK-001 | [VAL-P02-001](spec.md#criteria) | Verify | none | "
+                            "[SPEC-0106-TSK-0001](01.tasks/tsk-0001-example.md) | Focused test |",
+                            "",
+                            # SPEC-0222: the always core work units table, header-only.
+                            "| Work Unit | Outcome | Depends On | Owner | Write Scope "
+                            "| Acceptance | Checks |",
+                            "| --- | --- | --- | --- | --- | --- | --- |",
+                        ],
+                        "Selected Checks": [
+                            "Concrete fixture text.",
+                            "",
+                            # SPEC-0222: the always core checks table, header-only.
+                            "| Check ID | Guarantee | Input | Trust Boundary "
+                            "| Required When | Evidence |",
+                            "| --- | --- | --- | --- | --- | --- |",
+                        ],
+                        "Durable Owners": [
+                            "| Promotion ID | Target Owner | Acceptance | Evidence |",
+                            "| --- | --- | --- | --- |",
+                            "| none | none | none | No durable contract was introduced |",
+                        ],
+                    },
+                )
             ),
             "",
         ]
@@ -566,39 +572,41 @@ def core_task_text(
     return "\n".join(
         [
             *front,
-            *form_body(
-                "task",
-                {
-                    "Objective and Parent": ["Example."],
-                    "Inputs and Authority": [
-                        "[Spec](../spec.md) and [Plan](../plan.md)."
-                    ],
-                    "Work Performed": [
-                        "The rows below record the work.",
-                        "",
-                        *work,
-                        "",
-                    ],
-                    "Blockers and Decisions": [
-                        "No blocker is recorded.",
-                        "### Lifecycle Traceability",
-                        CORE_TRACE_HEADER,
-                        separator(CORE_TRACE_HEADER),
-                        *trace,
-                    ],
-                    "Results": evidence,
-                    "Resolution Links": [
-                        "The Resolves column names the row each PASS row closes."
-                    ],
-                    "Criterion Decisions": [
-                        CORE_DECISION_HEADER,
-                        separator(CORE_DECISION_HEADER),
-                        decision,
-                    ],
-                    "Remaining Conditions": ["No condition remains."],
-                    "Promotion Receipt": ["No durable contract is promoted."],
-                    "Next Owner": ["Example."],
-                },
+            *common_shell(
+                form_body(
+                    "task",
+                    {
+                        "Objective and Parent": ["Example."],
+                        "Inputs and Authority": [
+                            "[Spec](../spec.md) and [Plan](../plan.md)."
+                        ],
+                        "Work Performed": [
+                            "The rows below record the work.",
+                            "",
+                            *work,
+                            "",
+                        ],
+                        "Blockers and Decisions": [
+                            "No blocker is recorded.",
+                            "### Lifecycle Traceability",
+                            CORE_TRACE_HEADER,
+                            separator(CORE_TRACE_HEADER),
+                            *trace,
+                        ],
+                        "Results": evidence,
+                        "Resolution Links": [
+                            "The Resolves column names the row each PASS row closes."
+                        ],
+                        "Criterion Decisions": [
+                            CORE_DECISION_HEADER,
+                            separator(CORE_DECISION_HEADER),
+                            decision,
+                        ],
+                        "Remaining Conditions": ["No condition remains."],
+                        "Promotion Receipt": ["No durable contract is promoted."],
+                        "Next Owner": ["Example."],
+                    },
+                )
             ),
             "",
         ]
@@ -2180,13 +2188,17 @@ class SpecArchitectureColumnTests(unittest.TestCase):
         text = ROOT.joinpath(
             "docs/99.templates/02.templates/03.specs/spec.template.md"
         ).read_text(encoding="utf-8")
-        body = text.split("### Lifecycle Traceability", 1)[0]
+        body, original_tail = text.split("##### Lifecycle Traceability", 1)
+        outer_tail = "## 적용과 확인" + original_tail.split("## 적용과 확인", 1)[1]
         body = body.replace("{{TITLE}}", "Example").replace("{{OWNER}}", "platform")
         body = body.replace("{{UPDATED}}", "2026-11-06").replace(
             "{{ARTIFACT_ID}}", "SPEC-0147"
         )
         separator = "| " + " | ".join("---" for _ in header.split("|")[1:-1]) + " |"
-        text = f"{body}### Lifecycle Traceability\n\n{header}\n{separator}\n{row}\n"
+        text = (
+            f"{body}##### Lifecycle Traceability\n\n{header}\n{separator}\n{row}\n"
+            f"{outer_tail}"
+        )
         return [
             item.rule_id
             for item in MARKDOWN.validate_document_text(
@@ -2253,8 +2265,8 @@ class TaskTableRowWidthTests(unittest.TestCase):
             "Local run | yes | none |"
         )
         bad = good.replace(
-            "\n## Verification Evidence",
-            "\n" + misplaced + "\n## Verification Evidence",
+            "\n#### Verification Evidence",
+            "\n" + misplaced + "\n#### Verification Evidence",
             1,
         )
 
@@ -2269,8 +2281,8 @@ class TaskTableRowWidthTests(unittest.TestCase):
         self.assertNotIn("BODY-CONTRACT-ROW-WIDTH", rules(good))
         self.assertIn("BODY-CONTRACT-ROW-WIDTH", rules(bad))
         narrow = good.replace(
-            "\n## Verification Evidence",
-            f"\n| WORK-003 | {UPSTREAM} | x |\n## Verification Evidence",
+            "\n#### Verification Evidence",
+            f"\n| WORK-003 | {UPSTREAM} | x |\n#### Verification Evidence",
             1,
         )
         self.assertIn("BODY-CONTRACT-ROW-WIDTH", rules(narrow))

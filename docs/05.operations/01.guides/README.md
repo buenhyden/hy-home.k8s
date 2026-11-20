@@ -1,23 +1,41 @@
 ---
 title: "05.operations/guides"
-version: "0.4.0"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 # 05.operations/guides
 
-## Responsibility
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 README는 docs/05.operations/01.guides에서 현재 소유 문서를 찾는 작성자와 검토자를 안내한다. 이 컬렉션의 목적은 [Purpose](#purpose)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 docs/05.operations/01.guides의 탐색 경로를 유지한다. 소유 파일은 [Paths](#paths), 진입 방법은 [Usage](#usage)에 연결하며 개별 문서의 계약은 해당 정본이 소유한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Responsibility
+
+##### Purpose
 
 > 운영자와 개발자가 k3d/GitOps 작업을 이해하고 재현할 수 있도록 how-to 중심 가이드를 관리한다.
 
 이 경로는 안정 상태의 사용법, 온보딩 흐름, 배경 설명을 제공한다.
 정책 통제 기준은 [policies](../02.policies/README.md), 즉시 실행할 복구 절차는 [runbooks](../03.runbooks/README.md), 실제 사고 기록은 [incidents](../04.incidents/README.md)에서 관리한다.
 
-#### Collection Readers
+###### Collection Readers
 
 이 README의 주요 독자:
 
@@ -25,35 +43,39 @@ updated: "2026-11-17"
 - Operators
 - Documentation Writers
 
-#### Inputs and Outputs
+###### Inputs and Outputs
 
-##### In Scope
+<a id="in-scope"></a>
+
+**In Scope**
 
 - 온보딩/이해 중심 가이드
 - 선행 조건과 점검 명령
 - 공통 실패 패턴 및 회피 방법
 - Spec/Operations/Runbook 교차 링크
 
-##### Out of Scope
+<a id="out-of-scope"></a>
+
+**Out of Scope**
 
 - 정책 통제 기준 정의
 - 실시간 장애 대응 절차
 - 사후 사고 분석 보고서
 
-### Excluded Responsibilities
+##### Excluded Responsibilities
 
 이 collection은 정책 통제 기준 정의, 실시간 장애 대응 절차, 사후 사고 분석 보고서를 소유하지 않는다. 정책 통제 기준은 policies, 즉시 실행할 복구 절차는 runbooks, 실제 사고 기록은 incidents에서 관리한다.
 
-## Current Contents
+#### Current Contents
 
-### Paths
+##### Paths
 
-#### 문서 인덱스
+###### 문서 인덱스
 
 | Path | Purpose |
 | --- | --- |
 
-### Owners
+##### Owners
 
 | 필요 상황                                        | 문서 유형        |
 | ------------------------------------------------ | ---------------- |
@@ -62,9 +84,9 @@ updated: "2026-11-17"
 | 실패 상황에서 바로 따라 할 체크리스트가 필요함   | Runbook으로 이동 |
 | 허용/금지/예외 기준을 확인해야 함                | Policy로 이동    |
 
-## Usage
+#### Usage
 
-### Entry Points
+##### Entry Points
 
 1. 현재 플랫폼 구조는 [AD-0007](../../02.architecture/01.descriptions/0007-current-local-gitops-platform.md), 운영 통제와 절차는 관련 Policy/Runbook에서 확인한다.
 2. 새 가이드 추가/수정 시 [guide.template.md](../../99.templates/02.templates/05.operations/guide.template.md)를 기반으로 작성한다.
@@ -73,7 +95,7 @@ updated: "2026-11-17"
 5. 명령 순서, 롤백, 복구가 핵심이면 가이드에 복제하지 말고 [runbooks](../03.runbooks/README.md)에 둔다.
 6. 허용/금지/예외 승인 기준은 가이드가 아니라 [policies](../02.policies/README.md)에 둔다.
 
-#### Documentation Standards
+###### Documentation Standards
 
 이 영역의 가이드는 안정 상태의 사용법과 이해를 돕는 문서로 유지한다.
 
@@ -81,7 +103,7 @@ updated: "2026-11-17"
 - 기존 Spec, Policy, Runbook이 소유하는 계약을 중복 정의하지 않고 상대 링크로 연결한다.
 - 실행 예시는 재현 가능한 형태로 작성하고, 고위험 명령 경계는 [Operations Mutation Boundary](../README.md#operations-mutation-boundary)를 따른다.
 
-#### Traceability Rules
+###### Traceability Rules
 
 Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 
@@ -89,7 +111,7 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 - sibling 운영 문서: 관련 Policy, Runbook, Incident 경로
 - 하위 실행 증적: Task 또는 validation guide
 
-#### Relative Link Rules
+###### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/05.operations/01.guides/`다.
 
@@ -97,7 +119,7 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 - sibling operations folder는 `../policies/`, `../runbooks/`, `../incidents/`로 연결한다.
 - upstream docs stage는 `../../01.requirements/`, `../../02.architecture/`, `../../03.specs/`로 연결한다.
 
-#### Upstream and Downstream
+###### Upstream and Downstream
 
 - [Agent Governance Hub](../../../.agents/README.md)
 - [03.specs](../../03.specs/README.md)
@@ -107,11 +129,31 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 - [Requirement](../../01.requirements/0004-current-local-gitops-platform.md)
 - [AD](../../02.architecture/01.descriptions/0007-current-local-gitops-platform.md)
 
-#### Policy and Templates
+###### Policy and Templates
 
 - [Guide Template](../../99.templates/02.templates/05.operations/guide.template.md)
 - [Collection Index README Form](../../99.templates/02.templates/93.common/readme-collection-index.template.md)
 
-### Checks
+##### Checks
 
 이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

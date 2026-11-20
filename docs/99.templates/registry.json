@@ -1,7 +1,7 @@
 {
   "$schema": "./contracts/document-profile.schema.json",
   "$id": "https://hy-home.k8s/docs/99.templates/registry.json",
-  "schema_version": "21.0.0",
+  "schema_version": "22.0.0",
   "profiles": [
     {
       "id": "sdlc/requirement",
@@ -3201,7 +3201,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "STAGE99-LOCAL-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a Workspace README: a router that states what a repository-local staging area holds, what it forbids, its structure, how its output is promoted or cleaned up, and how Git tracks it.",
         "responsibility": "A Workspace README owns the short human-facing boundary of one staging folder under _workspace/ and links the owners of anything durable; it holds no secret, no durable policy and no agent-only instruction.",
         "non_goals": [
@@ -7138,23 +7138,27 @@
       "frontmatter": {
         "mode": "required",
         "required": [
-          "name",
-          "description"
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
         ],
-        "optional": [
-          "model",
-          "effort",
-          "tools"
-        ],
+        "optional": [],
         "forbidden": [],
         "order": [
-          "name",
-          "description",
-          "model",
-          "effort",
-          "tools"
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
         ],
-        "constants": {}
+        "constants": {
+          "type": "common/template-exception-provider-native-metadata",
+          "status": "draft"
+        }
       },
       "lifecycle": null,
       "relationships": {
@@ -7166,7 +7170,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "STAGE99-LOCAL-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one native form for a Claude agent projection: a provider-native file whose body has no headings.",
         "responsibility": "The projection consumes the native values the provider bindings own and restates no shared policy.",
         "non_goals": [
@@ -7241,19 +7245,27 @@
       "frontmatter": {
         "mode": "required",
         "required": [
-          "description"
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
         ],
-        "optional": [
-          "argument-hint",
-          "allowed-tools"
-        ],
+        "optional": [],
         "forbidden": [],
         "order": [
-          "description",
-          "argument-hint",
-          "allowed-tools"
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
         ],
-        "constants": {}
+        "constants": {
+          "type": "common/template-exception-provider-native-command",
+          "status": "draft"
+        }
       },
       "lifecycle": null,
       "relationships": {
@@ -7265,7 +7277,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "STAGE99-LOCAL-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one native form for a Claude command projection: a provider-native file whose body has no headings.",
         "responsibility": "The projection consumes the native values the provider bindings own and restates no shared policy.",
         "non_goals": [
@@ -7355,7 +7367,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "STAGE99-LOCAL-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one native form for a Codex agent binding: a TOML file with no frontmatter and no headings.",
         "responsibility": "The projection consumes the native values the provider bindings own and restates no shared policy.",
         "non_goals": [
@@ -7470,7 +7482,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "STAGE99-LOCAL-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a knowledge map: a pointer index that routes readers to canonical owners.",
         "responsibility": "A knowledge map routes and never decides; the owner it points to holds the rule.",
         "non_goals": [
@@ -7574,7 +7586,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "STAGE99-LOCAL-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for the repository vocabulary: shared term meanings, each with its policy owner and contract version.",
         "responsibility": "The vocabulary owns the meaning of shared terms; each policy keeps its operating rules and the vocabulary restates none.",
         "non_goals": [
@@ -7733,7 +7745,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "STAGE99-LOCAL-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a prompt contract: its inputs, output, validation and refusal conditions.",
         "responsibility": "A prompt contract owns one request's inputs, output and refusals and grants no authority beyond its governing policy.",
         "non_goals": [
@@ -7837,7 +7849,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "STAGE99-LOCAL-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a provider note: its overview, authority boundary, governance context, current contract and validation.",
         "responsibility": "The provider document owns a provider note and routes readers to its canonical owners; it restates no rule another owner holds.",
         "non_goals": [
@@ -7940,7 +7952,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "STAGE99-LOCAL-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a role responsibility: its overview, authority boundary, governance context, current contract and validation.",
         "responsibility": "The role document owns a role responsibility and routes readers to its canonical owners; it restates no rule another owner holds.",
         "non_goals": [
@@ -8334,21 +8346,26 @@
       "frontmatter": {
         "mode": "required",
         "required": [
-          "name",
-          "description",
-          "metadata",
-          "disable-model-invocation"
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
         ],
         "optional": [],
         "forbidden": [],
         "order": [
-          "name",
-          "description",
-          "metadata",
-          "disable-model-invocation"
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
         ],
         "constants": {
-          "disable-model-invocation": true
+          "type": "common/template-native-skill",
+          "status": "draft"
         }
       },
       "lifecycle": null,
@@ -8471,12 +8488,29 @@
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/02.templates/93.common/agents.template.md",
       "frontmatter": {
-        "mode": "absent",
-        "required": [],
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
         "optional": [],
         "forbidden": [],
-        "order": [],
-        "constants": {}
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "constants": {
+          "type": "common/template-agents-guide",
+          "status": "draft"
+        }
       },
       "lifecycle": null,
       "relationships": {
@@ -8780,7 +8814,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "STAGE99-LOCAL-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for an evaluation task declaration.",
         "responsibility": "The task document owns the declared trials and the criteria it fixes before either condition is collected; it does not prove that a provider session ran or that a score is true.",
         "non_goals": [
@@ -8975,7 +9009,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "STAGE99-LOCAL-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a score for one paired trial.",
         "responsibility": "The score document owns the observed hashes, signals and scores of one paired trial; it does not prove that a provider session ran or that a score is true.",
         "non_goals": [
@@ -9182,7 +9216,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "STAGE99-LOCAL-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for the evaluation aggregate.",
         "responsibility": "The results document owns pair coverage and aggregates for the observed cycles; it does not prove that a provider session ran or that a score is true.",
         "non_goals": [
@@ -9786,19 +9820,13 @@
   "shared_contract": {
     "contract_id": "WGOV-CORE",
     "version": "3.0.0",
-    "stage": "adopted",
+    "stage": "candidate",
     "owner": "buenhyden",
     "source": "Project-Template/.agents/governance/standards.md",
     "source_revision": "bc5b70556c57198768119f94c287f93c87964482",
     "content_digest": "sha256:aa2523943e35908ba24e4e415793f7aa8099de247aa3628ec1678cd6c91725ee",
     "approval_ref": "call_415633a444f34091860dcb4b8700431d/0",
     "local_adapter": "docs/99.templates/registry.json",
-    "approved_by": "unverified",
-    "approved_at": "unverified",
-    "effective_from": "unverified",
-    "scope": "unverified",
-    "migration": "unverified",
-    "rollback": "unverified",
     "consumer_version": "3.0.0",
     "extensions": [
       {
@@ -9866,6 +9894,71 @@
         "removal": "When a shared WGOV-CORE edition of the Policy form defines rule retirement, when the user ends no-reuse retirement for rule IDs, or at a user-approved new baseline under the Q-07 contract."
       }
     ]
+  },
+  "common_document_contract": {
+    "contract_id": "WORKSPACE-DOCUMENT-CORE",
+    "version": "1.0.0",
+    "stage": "candidate",
+    "source": "docs/99.templates/01.contracts/common-document-contract.json",
+    "content_digest": "sha256:6352ebbc61550cd31b26abb4713b5606f58b3cc090f78dde6e7f6bb6da193584",
+    "workspace_subject": "hy-home.k8s",
+    "workspace_scope_artifact_ids": [
+      "REQ-0003",
+      "SPEC-0226",
+      "AD-0006",
+      "GDE-0011"
+    ],
+    "profile_kinds": {
+      "sdlc/requirement": "requirement",
+      "sdlc/architecture-description": "architecture-description",
+      "sdlc/architecture-decision": "architecture-decision",
+      "sdlc/spec": "spec",
+      "sdlc/plan": "plan",
+      "sdlc/task": "task",
+      "operation/guide": "guide",
+      "operation/policy": "policy",
+      "operation/runbook": "runbook",
+      "operation/incident": "incident",
+      "operation/postmortem": "postmortem",
+      "reference/audit": "audit",
+      "reference/research": "research",
+      "reference/data": "data-reference",
+      "governance/knowledge": "knowledge-index",
+      "governance/vocabulary": "glossary",
+      "governance/prompt": "prompt",
+      "governance/provider": "provider",
+      "governance/role": "role",
+      "governance/rule": "rule",
+      "governance/skill": "skill",
+      "common/readme-repository": "readme",
+      "common/readme-stage-index": "readme",
+      "common/readme-collection-index": "readme",
+      "common/readme-implementation": "readme",
+      "reference/audit-pack": "reference-pack",
+      "reference/data-pack": "reference-pack",
+      "reference/research-pack": "reference-pack",
+      "common/readme-workspace-staging": "readme",
+      "common/readme-runtime-governance": "readme",
+      "common/root-provider-shim": "native-asset",
+      "common/folder-agents-guide": "agent-guide",
+      "common/folder-claude-import": "native-asset",
+      "common/native-skill-package": "native-asset",
+      "common/native-skill-reference": "native-asset",
+      "common/native-skill-asset": "native-asset",
+      "common/repository-runtime-baseline": "native-asset",
+      "common/provider-native-metadata": "native-asset",
+      "common/provider-native-command": "native-asset",
+      "common/codex-agent-binding": "native-asset",
+      "common/github-native-control": "native-asset",
+      "common/native-changelog": "native-asset",
+      "evaluation/task": "evaluation",
+      "evaluation/score": "evaluation",
+      "evaluation/results": "evaluation",
+      "evaluation/raw-output": "evaluation"
+    },
+    "excluded_profiles": ["common/program-non-target"],
+    "unused_kinds": ["data-model", "contract", "control", "knowledge", "prompt-index", "provider-index"],
+    "relation_kinds": ["requires", "designs", "implements", "verifies", "operates", "defines", "cites"]
   },
   "common_forms": {
     "contract_id": "COMMON-DOC-FORM-1",

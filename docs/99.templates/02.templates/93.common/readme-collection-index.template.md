@@ -8,50 +8,81 @@ updated: "{{UPDATED}}"
 ---
 # {{COLLECTION_NAME}}
 
-## Responsibility
+## 문서 개요
 
-### Purpose
+### 목적과 독자
 
-<!-- Author prompt: 이 컬렉션을 읽는 사람이 무엇을 하러 오는지와 컬렉션의 목적을 사실·가정과 구분해 설명하고 실제 참조로 연결한다. -->
+<!-- 작성 규칙: Give authors one form for a collection README: a human index that states the stage responsibility, lists its current items, and routes readers to the create, review and transition rules and to its upstream, downstream, policy and template documents. -->
 
-#### Inputs and Outputs
+### 책임과 적용 범위
 
-<!-- Author prompt: 포함하는 산출물, 제외 대상, 이 컬렉션을 관할하는 owner를 정하고 유입·유출 조건을 밝힌다. -->
+<!-- 작성 규칙: A collection README owns the human-facing index of a document collection and routes readers to canonical owners; it restates no detailed policy and holds no agent-only instruction. -->
 
-### Excluded Responsibilities
+## 내용 계약
 
-<!-- Author prompt: 이 단계가 소유하지 않는 책임과 그 소유처를 이 문서의 사실만으로 밝힌다. -->
+### 입력과 전제
 
-## Current Contents
+<!-- 작성 규칙: 이 문서를 작성할 때 필요한 실제 입력, 권한과 전제를 밝힌다. -->
 
-### Paths
+### 본문과 규칙
 
-<!-- Author prompt: 직접 멤버를 아래 Index 표에 한 번씩, 대상을 기준으로 한 상대 링크로 적는다. 멤버 폴더는 폴더로 링크하고 그 안의 파일은 링크하지 않는다. 상태, 날짜, 개수는 각 문서가 직접 가지므로 옮겨 적지 않는다. 경로 매트릭스는 그 멤버를 나열하는 폴더의 README에 둔다. -->
+<!-- 작성 규칙: 아래 역할별 절의 내용과 표를 해당 문서의 실제 사실로 채운다. -->
 
-<!-- Author prompt: 아래 Index 표는 항상 두며 Path와 Purpose 두 열만 쓴다. 멤버가 아직 없으면 머리글만 둔다. -->
+#### Responsibility
+##### Purpose
+<!-- 작성 규칙: 이 컬렉션을 읽는 사람이 무엇을 하러 오는지와 컬렉션의 목적을 사실·가정과 구분해 설명하고 실제 참조로 연결한다. -->
+
+###### Inputs and Outputs
+<!-- 작성 규칙: 포함하는 산출물, 제외 대상, 이 컬렉션을 관할하는 owner를 정하고 유입·유출 조건을 밝힌다. -->
+
+##### Excluded Responsibilities
+<!-- 작성 규칙: 이 단계가 소유하지 않는 책임과 그 소유처를 이 문서의 사실만으로 밝힌다. -->
+
+#### Current Contents
+##### Paths
+<!-- 작성 규칙: 직접 멤버를 아래 Index 표에 한 번씩, 대상을 기준으로 한 상대 링크로 적는다. 멤버 폴더는 폴더로 링크하고 그 안의 파일은 링크하지 않는다. 상태, 날짜, 개수는 각 문서가 직접 가지므로 옮겨 적지 않는다. 경로 매트릭스는 그 멤버를 나열하는 폴더의 README에 둔다. -->
+
+<!-- 작성 규칙: 아래 Index 표는 항상 두며 Path와 Purpose 두 열만 쓴다. 멤버가 아직 없으면 머리글만 둔다. -->
 
 | Path | Purpose |
 | --- | --- |
 | [{{CHILD_NAME}}]({{CHILD_RELATIVE_PATH}}) | {{PURPOSE}} |
 
-### Owners
+##### Owners
+<!-- 작성 규칙: 하위 유형, 정본, 비권위 기록의 경계를 밝히고 실제 참조로 연결한다. 해당하는 분류가 없으면 없다는 사실과 이유를 적는다. -->
 
-<!-- Author prompt: 하위 유형, 정본, 비권위 기록의 경계를 밝히고 실제 참조로 연결한다. 해당하는 분류가 없으면 없다는 사실과 이유를 적는다. -->
+#### Usage
+##### Entry Points
+<!-- 작성 규칙: 새 항목 하나를 추가할 때의 이름 규칙, 위치, 찾는 방법을 안내하고, 템플릿과 검토·승인 경로를 링크한다. -->
 
-## Usage
+###### Upstream and Downstream
+<!-- 작성 규칙: 상위 폴더와 다음 단계 진입점, 요구, 설계, 작업, 운영 연결을 링크한다. -->
 
-### Entry Points
+###### Policy and Templates
+<!-- 작성 규칙: 선택 기준을 정하는 문서, 현재 규범, 공통 템플릿을 링크한다. -->
 
-<!-- Author prompt: 새 항목 하나를 추가할 때의 이름 규칙, 위치, 찾는 방법을 안내하고, 템플릿과 검토·승인 경로를 링크한다. -->
+##### Checks
+<!-- 작성 규칙: 상태 전이, 승격, 처분 규칙과 그 규칙을 소비하는 owner를 링크한다. 해당하는 규칙이 없으면 없다는 사실과 이유를 적는다. -->
 
-#### Upstream and Downstream
+## 적용과 확인
 
-<!-- Author prompt: 상위 폴더와 다음 단계 진입점, 요구, 설계, 작업, 운영 연결을 링크한다. -->
+### 적용 방법
 
-#### Policy and Templates
+<!-- 작성 규칙: 실제 사용 방법과 적용 대상을 설명한다. -->
 
-<!-- Author prompt: 선택 기준을 정하는 문서, 현재 규범, 공통 템플릿을 링크한다. -->
+### 확인 기준
 
-### Checks
+<!-- 작성 규칙: 이 문서 유형에 해당하는 확인 방법과 한계를 적는다. -->
 
-<!-- Author prompt: 상태 전이, 승격, 처분 규칙과 그 규칙을 소비하는 owner를 링크한다. 해당하는 규칙이 없으면 없다는 사실과 이유를 적는다. -->
+## 관계와 출처
+
+### 관련 문서
+
+<!-- 작성 규칙: 현재 정본의 관계와 탐색 링크만 연결한다. 실제 의미 관계가 있으면 Relation에 requires/designs/implements/verifies/operates/defines/cites 중 하나를, Target에 현재 문서의 상대 Markdown 링크 하나를 적는다. 단순 탐색 링크는 표 밖에 둔다. -->
+
+| Relation | Target |
+| --- | --- |
+
+### 외부 근거
+
+<!-- 작성 규칙: 외부 근거가 있으면 출처와 채택 범위를 적고, 없으면 그 이유를 명시한다. -->

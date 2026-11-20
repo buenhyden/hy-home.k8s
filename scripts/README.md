@@ -1,6 +1,6 @@
 ---
 title: "scripts"
-version: "0.17.1"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -8,9 +8,28 @@ updated: "2026-11-20"
 ---
 # scripts
 
-## Service
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 README는 scripts의 사용·연결·검사 위치를 찾는 운영자와 기여자를 안내한다. 현재 역할은 [Service](#service)와 [Usage](#usage)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 scripts의 진입 경로를 유지한다. 이 경로의 파일과 경계는 [Purpose](#purpose), 사용 조건은 [Usage](#usage), 검사는 [Checks](#checks)가 설명한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+
+#### Service
+
+##### Purpose
 
 `scripts/`는 저장소의 문서, Agent governance, GitOps, CI, 보안 경계를
 repository-static 방식으로 검증하는 실행 코드의 소유 경로다. 사람에게 보이는
@@ -30,13 +49,13 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 과거 결정과 완료 기록은 Git history 탐색을 통해 확인하는 배경 증거이며,
 현재 실행 절차의 선행 조건이 아니다.
 
-#### Audience
+###### Audience
 
 - Platform maintainers
 - Quality engineers
 - Documentation maintainers
 
-#### Routing and orchestration
+###### Routing and orchestration
 
 | Path | Purpose |
 | --- | --- |
@@ -52,7 +71,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `qa.py` | 지원되는 QA 진입점. profile의 gate ID를 registry에서 해석해, 격리된 작업 트리나 정확한 index 스냅샷에서 실행한다. 한 실행에서 캡처한 스냅샷 트리를 gate 입력 identity에도 재사용한다. validator argv나 규칙 구현은 담지 않는다. |
 | `validation/` 규칙 module | 전용 validator가 아직 소유하지 않은 저장소 전체 규칙(repository/quality.py)과, 현재 실행 대상과 Git 우선 역사 복구의 구분(current_executable_references.py) |
 
-#### Document owners
+###### Document owners
 
 | 경로 묶음 | 책임 |
 | --- | --- |
@@ -73,7 +92,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 `docs/98.archive/`는 검증 대상이 아니다. 문서 검사는 그 경로를 inventory에서
 제외하고, 변경 시에는 secret 검사만 실행한다. 이 경로를 가리키는 링크도 검사하지 않는다.
 
-#### Agent governance owners
+###### Agent governance owners
 
 | 경로 | 책임 |
 | --- | --- |
@@ -87,7 +106,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `work_parallel.py` | 계획의 work unit을 입력·출력·의존성·공유 자원과 함께 받아, 겹치지 않는 unit만 각자의 clone에서 동시에 실행하고 통합 clone에서 통합 검사를 다시 실행하는 dispatcher. 잠금마다 fencing generation을 두어 만료·취소된 시도의 결과를 거부하고, 소유 경로 밖 변경을 거부하며, 동시 서비스 합집합을 `test_cluster.py` 한도로 묶는다. 결과는 `candidate.patch`이며 원본 checkout은 쓰지 않는다. `sweep`은 죽은 dispatcher가 남긴 worker와 clone을 정리한다. clone은 파일 분리일 뿐 sandbox가 아니다. |
 | `review_delta.py` | 검토한 commit 이후의 commit이 Task 기록(`tsk-NNNN-*.md`)과 잔여 원장을 늘리기만 했는지(`EVIDENCE_ONLY`, 검토 유지), 다른 경로를 바꿨는지(`REREVIEW`)를 판정한다. Task에서 front matter의 `version`·`updated` 외 줄 삭제, 원장 항목 변경·제거, 삭제·mode 변경·symlink·gitlink·이력 재작성은 증거가 아니다. 경로만 분류하며, 전이 영향이나 경계 전체로 넓힐지는 검토자가 판단한다(QUAL-R054). |
 
-#### Platform and supply-chain owners
+###### Platform and supply-chain owners
 
 | 경로 | 책임 |
 | --- | --- |
@@ -101,19 +120,19 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `release.py` | main changelog PR을 준비하고 SemVer GitHub Release 하나를 명시적으로 게시한다. 기본은 로컬 읽기 전용 미리보기이며 `publish --execute`는 운영자, 또는 version과 asset을 명시한 운영자의 현재 요청에 따른 agent가 실행하는 operator-approved 작업이다. |
 | `semver_grammar.py` | 문서·계약에는 ASCII 숫자 세 요소 판본 문법과 숫자 비교를 제공한다. `release.py`는 별도의 제품 SemVer 문법과 우선순위 비교로 태그 패턴과 순서를 정한다. |
 
-### Interfaces
+##### Interfaces
 
 - [Agent execution policy](../.agents/governance/agent-execution.md)
 - [Quality policy](../docs/00.workspace/04.quality/quality.md)
 - [Document authoring policy](../docs/00.workspace/03.process/document-authoring.md)
 
-#### Security Boundary
+###### Security Boundary
 
 이 문서는 secret, credential, 권한 경계만을 다루는 내용을 따로 두지 않는다. 그런 내용을 두게 되면 여기에 적는다.
 
-## Usage
+#### Usage
 
-### Prerequisites
+##### Prerequisites
 
 - 문서 route·profile 값은 [Stage 99 계약](../docs/99.templates/README.md)에서만 온다.
 - Agent role, 권한, skill, handoff, projection은
@@ -134,9 +153,10 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 일반 파일이 아닌 경계를 닫힌 쪽으로 실패시킨다. 진단 메시지에는 secret 값을
 담지 않는다.
 
-#### Scope
+###### Scope
 
-##### In Scope
+<a id="in-scope"></a>
+**In Scope**
 
 - 문서 profile, lifecycle, link, owner 검증
 - Agent registry, provider projection, loop, CI 계약 검증
@@ -144,16 +164,17 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 - GitOps, Kubernetes, Vault/ESO, GitHub Actions, CI Python 검사
 - 아직 더 좁은 전용 owner가 없는 저장소 전체 계약
 
-##### Out of Scope
+<a id="out-of-scope"></a>
+**Out of Scope**
 
 - hosted CI, branch protection, provider runtime, credential, 배포, live cluster 증거
 - test fixture, 합성 mutation, 고정된 negative case inventory
 - branch tip, 현재 문서, 현재 스크립트, 줄 번호, corpus 개수를 고정하는 pin
 - Stage 00, SDLC stage, Operations에서 옮겨 온 정책 문장
 
-### Selected Start
+##### Selected Start
 
-#### Working Procedure
+###### Working Procedure
 
 1. `validation/registry.json`에서 규칙과 그 전용 의미 owner를 찾는다.
 2. 동작을 바꾸기 전에 독립적인 top-level 테스트를 추가하거나 고친다.
@@ -172,11 +193,11 @@ inventory, 내장 mutation suite를 만들지 않는다. 호스팅 check 이름�
 branch protection의 활성 상태는 실제 원격에서 확인해야 하며, 저장소 파일만으로
 required-check 성공이나 설정을 주장하지 않는다.
 
-## Checks
+#### Checks
 
-### Readiness
+##### Readiness
 
-#### 요청 브리핑 사전 확인
+###### 요청 브리핑 사전 확인
 
 요청을 받은 호출자는 원본 상호작용에서 현재 요청을 다시 확인하고,
 Task의 Inputs and Authority에 요청 참조·판본·범위를 기록한다.
@@ -242,7 +263,7 @@ index에는 `qa.py staged`를 쓴다. 하위 runner는 진단용 인터페이스
 제한되고 NUL로 구분되어야 한다. 문서 reader의 `--change-scope`는 이 선택
 입력이 있을 때만 쓰며, 명시적 전체 감사에서는 사용하지 않는다.
 
-#### Reproducing the local dependency identity
+###### Reproducing the local dependency identity
 
 검토된 hash lock으로 checkout 밖의 환경을 준비하고 실제 interpreter·도구
 identity를 확인하는 방법은 [local validation environment guide](../docs/00.workspace/05.environment/0011-local-validation-environment.md)가
@@ -297,7 +318,7 @@ python3 scripts/run-validation-lane.py \
 저장소 정적 PASS는 검사한 저장소 상태만 증명한다. hosted 실행, provider native
 강제, credential, 원격 상태, 배포, live cluster 동작은 증명하지 않는다.
 
-### Failure Handling
+##### Failure Handling
 
 이 문서에는 운영 관측과 복구만을 다루는 별도 내용이 없으며, 기본 복구 출처는 Git history다.
 
@@ -312,6 +333,26 @@ python3 scripts/run-validation-lane.py \
 `erase`로 지운 기억은 백업을 갱신한 뒤에는 백업에도 없다. `MEMORY_ERASE_BACKUP_STALE`이 보고된 이전 백업으로 되돌리면 지운 기억이 다시 나타나므로, 그 백업은 복원에 쓰지 않는다. 다른 schema 판본의
 저장소는 열리지 않으며, 변환은 운영자가 명시적으로 수행한다.
 
-#### Runbook Links
+###### Runbook Links
 
 이 문서는 runbook이나 운영 가이드 링크를 따로 두지 않는다. 연결할 운영 문서가 생기면 여기에 연결한다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

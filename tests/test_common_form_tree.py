@@ -18,6 +18,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import document_authority as AUTHORITY  # noqa: E402
 import document_contracts as CONTRACTS  # noqa: E402
+from common_document_contract import has_common_envelope, payload_markdown  # noqa: E402
 from json_schema_validation import schema_errors  # noqa: E402
 
 
@@ -2959,7 +2960,8 @@ class HeadingTreeTests(unittest.TestCase):
                 Path(root), GUIDE_PATH, self.profile, "strict"
             )
         self.assertEqual(
-            [i.rule_id for i in clean if i.rule_id.startswith("BODY-")], []
+            [i.rule_id for i in clean if i.rule_id.startswith("BODY-")],
+            ["BODY-COMMON-ENVELOPE"],
         )
         self.assertIn("BODY-H3-UNSUPPORTED", [i.rule_id for i in broken])
 
@@ -4261,7 +4263,7 @@ class AgentsFormTests(RoleFormBody):
         twin = profile_of(load_raw(), self.PROFILES[1])
         self.assertEqual(twin["template_definition"]["tables"], [])
         template = (ROOT / twin["template_source"]).read_text(encoding="utf-8")
-        self.assertNotIn("|", template)
+        self.assertNotIn("|", payload_markdown(template, profile_id=self.PROFILES[1]))
 
     def test_the_loaded_heading_lists_equal_the_form_h2_titles(self) -> None:
         # The AGENTS profiles stay native: they carry no H2 lists, so an empty
@@ -4289,7 +4291,11 @@ class AgentsFormTests(RoleFormBody):
             "docs/99.templates/02.templates/93.common/agents.template.md",
         )
         self.assertEqual(twin["mode"], "template")
-        self.assertEqual(twin["frontmatter"]["mode"], "absent")
+        self.assertEqual(twin["frontmatter"]["mode"], "required")
+        self.assertEqual(
+            set(twin["frontmatter"]["required"]),
+            {"title", "version", "type", "status", "owner", "updated"},
+        )
         self.assertEqual(twin["placeholder_policy"], "template-only")
         self.assertEqual(
             twin["relationships"]["source_profile_ids"], [self.PROFILES[0]]
@@ -4630,10 +4636,18 @@ class NativeSkillFormTests(SkillFormBody):
         )
         self.assertEqual(twin["mode"], "template")
         self.assertEqual(twin["placeholder_policy"], "template-only")
-        self.assertEqual(twin["frontmatter"], package["frontmatter"])
+        self.assertEqual(twin["frontmatter"]["mode"], "required")
         self.assertEqual(
-            twin["frontmatter"]["constants"], {"disable-model-invocation": True}
+            set(twin["frontmatter"]["required"]),
+            {"title", "version", "type", "status", "owner", "updated"},
         )
+        self.assertEqual(
+            package["frontmatter"]["constants"], {"disable-model-invocation": True}
+        )
+        template = (ROOT / twin["template_source"]).read_text(encoding="utf-8")
+        native = payload_markdown(template, profile_id=self.PROFILES[1])
+        self.assertIn('name: "{{SKILL_NAME}}"', native)
+        self.assertNotIn("## 문서 개요", native)
         self.assertEqual(
             twin["relationships"]["source_profile_ids"], [self.PROFILES[0]]
         )
@@ -5538,11 +5552,12 @@ class GovernanceRoleFormTests(unittest.TestCase):
         text = (
             ROOT / "docs/99.templates/02.templates/91.agent-governance/role.template.md"
         ).read_text(encoding="utf-8")
+        text = payload_markdown(text, profile_id="common/template-governance-role")
         section = text.split("## Current Contract\n", 1)[1].split("\n## ", 1)[0]
         headings = [x[4:] for x in section.splitlines() if x.startswith("### ")]
         self.assertEqual(tuple(headings), GOVERNANCE_ROLE_H3)
         for part in section.split("\n### ")[1:]:
-            self.assertIn("<!-- Author prompt:", part)
+            self.assertIn("<!-- 작성 규칙:", part)
         self.assertEqual(
             self.tree_rules("governance-role", self.body(GOVERNANCE_ROLE_TREE)),
             [],
@@ -6264,11 +6279,10 @@ class RequirementFormTests(unittest.TestCase):
         self.assertNotIn("Archived Lineage", text)
         self.assertNotIn("Verification intent", text)
         self.assertNotIn("| Requirement | Priority |", text)
+        text = payload_markdown(text, profile_id=REQUIREMENT[1])
         for h3 in (h for _, children in REQUIREMENT_TREE for h in children):
             with self.subTest(h3=h3):
-                self.assertRegex(
-                    text, rf"(?m)^### {re.escape(h3)}\n\n<!-- Author prompt:"
-                )
+                self.assertRegex(text, rf"(?m)^### {re.escape(h3)}\n\s*<!-- 작성 규칙:")
 
 
 ARCHITECTURE_PATH = PurePosixPath(
@@ -6511,11 +6525,10 @@ class ArchitectureFormTests(unittest.TestCase):
         self.assertNotIn("Archived Lineage", text)
         for h2 in ("Boundaries & Non-goals", "System Overview & Context"):
             self.assertNotIn(f"## {h2}", text)
+        text = payload_markdown(text, profile_id=ARCHITECTURE[1])
         for h3 in (h for _, children in ARCHITECTURE_TREE for h in children):
             with self.subTest(h3=h3):
-                self.assertRegex(
-                    text, rf"(?m)^### {re.escape(h3)}\n\n<!-- Author prompt:"
-                )
+                self.assertRegex(text, rf"(?m)^### {re.escape(h3)}\n\s*<!-- 작성 규칙:")
 
 
 class TemplateTwinTableTests(unittest.TestCase):
@@ -6755,12 +6768,15 @@ class RetainedFormTests(unittest.TestCase):
         self.assertEqual(
             body_rules("proposed", "0050", self.LEGACY),
             [
+                "BODY-COMMON-ENVELOPE",
                 "BODY-H3-REQUIRED",
                 "BODY-HEADING-UNSUPPORTED",
                 "BODY-HEADING-UNSUPPORTED",
             ],
         )
-        self.assertEqual(body_rules("proposed", "0050", self.TREE), [])
+        self.assertEqual(
+            body_rules("proposed", "0050", self.TREE), ["BODY-COMMON-ENVELOPE"]
+        )
 
 
 class IdentityBoundTests(unittest.TestCase):
@@ -7059,19 +7075,20 @@ class AdrFormTests(unittest.TestCase):
 
     def test_the_template_places_an_author_prompt_under_every_h3(self) -> None:
         text = (ROOT / self.profiles[ADR[1]].template).read_text(encoding="utf-8")
+        text = payload_markdown(text, profile_id=ADR[1])
         for h2, children in ADR_TREE:
             self.assertRegex(text, rf"(?m)^## {re.escape(h2)}$")
             for h3 in children:
                 with self.subTest(h3=h3):
                     self.assertRegex(
-                        text, rf"(?m)^### {re.escape(h3)}\n\n<!-- Author prompt:"
+                        text, rf"(?m)^### {re.escape(h3)}\n\s*<!-- 작성 규칙:"
                     )
         # SPEC-0222: the former Traceability H3 stay as H4 under Authority and
         # Effect, and the local Lifecycle Traceability H3 closes Decision.
         self.assertRegex(
             text,
-            r"(?s)### Authority and Effect\n.*\n#### Sources\n\n<!-- Author prompt:"
-            r".*\n#### Supersession\n\n<!-- Author prompt:"
+            r"(?s)### Authority and Effect\n.*\n#### Sources\n\s*<!-- 작성 규칙:"
+            r".*\n#### Supersession\n\s*<!-- 작성 규칙:"
             r".*\n### Lifecycle Traceability\n.*\n## Consequences\n",
         )
         for gone in (
@@ -7279,7 +7296,7 @@ class TemplateRecordTests(unittest.TestCase):
                 if role in COMMON_RECORD_ROLES
                 else (
                     "STAGE99-LOCAL-FORM-1",
-                    "2.0.0" if role == "reference-pack-readme" else "1.0.0",
+                    "2.0.0",
                 )
             )
             definition = profile["template_definition"]
@@ -8198,7 +8215,7 @@ class HeadingListRemovalTests(unittest.TestCase):
         )
         required = CONTRACTS.heading_contract(policy).required[0]
         missing = re.sub(
-            rf"(?m)^## {re.escape(required)}\s*$", "## Elsewhere", text, count=1
+            rf"(?m)^#### {re.escape(required)}\s*$", "#### Elsewhere", text, count=1
         )
         self.assertNotEqual(missing, text)
         for broken in (missing, text + "\n## Not In The Form\n"):
@@ -8864,7 +8881,8 @@ class OperationsCoreBindingTests(unittest.TestCase):
             text = path.read_text(encoding="utf-8")
             relative = PurePosixPath(path.relative_to(ROOT).as_posix())
             with self.subTest(path=path.name):
-                section = MARKDOWN._exact_heading_section(text, "## Procedure")
+                projected = payload_markdown(text, profile_id=RUNBOOK[0])
+                section = MARKDOWN._exact_heading_section(projected, "## Procedure")
                 headers = [
                     tuple(header)
                     for header, _ in MARKDOWN._visible_tables(section)
@@ -9267,7 +9285,8 @@ class SdlcCoreBindingTests(unittest.TestCase):
             text = path.read_text(encoding="utf-8")
             relative = PurePosixPath(path.relative_to(ROOT).as_posix())
             with self.subTest(path=path.name):
-                section = MARKDOWN._exact_heading_section(text, "## Requirements")
+                projected = payload_markdown(text, profile_id=REQUIREMENT[0])
+                section = MARKDOWN._exact_heading_section(projected, "## Requirements")
                 self.assertIsNotNone(section)
                 self.assertIn("### Quality Requirements", section)
                 tables = [
@@ -9304,7 +9323,10 @@ class SdlcCoreBindingTests(unittest.TestCase):
             folder = located[name]
             text = (folder / name).read_text(encoding="utf-8")
             with self.subTest(path=name):
-                section = MARKDOWN._exact_heading_section(text, "### Interfaces") or ""
+                projected = payload_markdown(text, profile_id=ARCHITECTURE[0])
+                section = (
+                    MARKDOWN._exact_heading_section(projected, "### Interfaces") or ""
+                )
                 found = [
                     len(data)
                     for header, data in MARKDOWN._visible_tables(section)
@@ -9340,11 +9362,17 @@ class SdlcCoreBindingTests(unittest.TestCase):
                 status = _frontmatter_value(text, "status")
                 relative = PurePosixPath(path.relative_to(ROOT).as_posix())
                 with self.subTest(path=str(relative)):
+                    # Approved, completed packages retain their historical form.
+                    projected = (
+                        payload_markdown(text, profile_id=profile_id)
+                        if has_common_envelope(text)
+                        else text
+                    )
                     core = {CORE_CHECK_COLUMNS, CORE_WORK_UNIT_COLUMNS}
                     for heading, expected in headings.items():
                         found = [
                             header
-                            for header in self.visible_headers(text, heading)
+                            for header in self.visible_headers(projected, heading)
                             if header in core
                         ]
                         self.assertEqual(found, expected)

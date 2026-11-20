@@ -1,18 +1,37 @@
 ---
 title: "workloads"
-version: "0.3.2"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 # workloads
 
+## 문서 개요
+
+### 목적과 독자
+
+이 README는 gitops/workloads의 사용·연결·검사 위치를 찾는 운영자와 기여자를 안내한다. 현재 역할은 [Service](#service)와 [Usage](#usage)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 gitops/workloads의 진입 경로를 유지한다. 이 경로의 파일과 경계는 [Purpose](#purpose), 사용 조건은 [Usage](#usage), 검사는 [Checks](#checks)가 설명한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+
 > ArgoCD ApplicationSet이 스캔하는 애플리케이션 워크로드 매니페스트를 관리한다.
 
-## Service
+#### Service
 
-### Purpose
+##### Purpose
 
 이 경로의 각 하위 디렉터리는 독립적인 앱 단위다. 일반적으로 Kustomize 기반 Kubernetes manifest, Argo Rollout, Service, Ingress, AnalysisTemplate을 함께 두며, secret-backed config가 필요한 앱만 ExternalSecret을 포함한다.
 
@@ -26,7 +45,7 @@ workloads/
 
 - [GitOps README](../README.md)
 
-#### Audience
+###### Audience
 
 이 README의 주요 독자:
 
@@ -34,7 +53,7 @@ workloads/
 - Operators
 - Documentation Writers
 
-#### Workload Coverage Matrix
+###### Workload Coverage Matrix
 
 이 표는 ApplicationSet이 스캔하는 실제 workload 디렉터리와 검증 명령을
 연결한다. `repository-quality` 게이트는 이 표가 `workloads/*`
@@ -45,48 +64,50 @@ handling 검증 명령을 명시하는지 확인한다.
 | --- | --- | --- | --- | --- |
 | `adminer` | Reference admin workload owned by platform maintainers and app operators. | Managed by the local apps ApplicationSet from `gitops/workloads/adminer/kustomization.yaml`; includes Rollout, services, ingress, Istio routing, PeerAuthentication, and AnalysisTemplate. | Depends on `apps` namespace, Argo Rollouts, ingress, Istio, and the PostgreSQL external service route. | Validate with `bash scripts/validate-gitops-structure.sh`, `bash scripts/validate-k8s-manifests.sh .`, and `bash scripts/check-secret-handling.sh .`; live rollout and ingress checks require intentional cluster validation. |
 
-### Interfaces
+##### Interfaces
 
 - App Onboarding Policy (`docs/05.operations/02.policies/README.md`)
 
-#### Security Boundary
+###### Security Boundary
 
 secret과 credential을 저장소에 커밋하지 않는 경계는 아래 Usage > Prerequisites의 Scope 문단에 함께 적혀 있다.
 
-## Usage
+#### Usage
 
-### Prerequisites
+##### Prerequisites
 
 각 하위 디렉터리는 저장소의 branch, 리뷰, ArgoCD reconciliation 흐름을 거쳐야만
 활성 desired state가 된다. 평문 secret과 credential은 manifest에 넣지 않고 상위
 GitOps 계약에 문서화된 승인된 ExternalSecret과 외부 저장소 경계를 사용한다.
 
-#### Scope
+###### Scope
 
-##### In Scope
+<a id="in-scope"></a>
+**In Scope**
 
 - 앱별 Kubernetes manifest와 Kustomize 진입점
 - Argo Rollouts 기반 progressive delivery 리소스
 - External Secrets Operator와 연결되는 Secret 참조
 - 앱별 ingress/service/network 관련 선언
 
-##### Out of Scope
+<a id="out-of-scope"></a>
+**Out of Scope**
 
 - 플랫폼 공통 controller 설치
 - 외부 데이터베이스/캐시/Vault 런타임 생성
 - cloud target 전용 Terraform/Bicep 코드
 - live cluster에 직접 적용하는 운영 절차
 
-### Selected Start
+##### Selected Start
 
-#### Working Procedure
+###### Working Procedure
 
 1. [examples/sample-app](../../examples/sample-app/README.md)의 파일 구성을 먼저 확인한다.
 2. 앱 이름, 이미지 태그, 포트, Vault 경로, ingress host를 실제 값으로 치환한다.
 3. `kustomization.yaml`에 모든 리소스가 포함되었는지 확인한다.
 4. 변경 후 `bash scripts/validate-gitops-structure.sh`, `bash scripts/validate-k8s-manifests.sh .`, `bash scripts/check-secret-handling.sh .`를 실행한다.
 
-#### Link Basis
+###### Link Basis
 
 이 README의 링크 기준 위치는 `gitops/workloads/`다.
 
@@ -94,19 +115,39 @@ GitOps 계약에 문서화된 승인된 ExternalSecret과 외부 저장소 경�
 - 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
 - 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
 
-## Checks
+#### Checks
 
-### Readiness
+##### Readiness
 
 workload coverage 매트릭스와 상위
 [GitOps validation section](../README.md#checks)에 적힌 정적 명령을 그대로
 실행한다. 저장소 정적 검사가 성공해도 live rollout, route, 데이터베이스, Vault,
 ESO의 준비 상태는 증명되지 않는다.
 
-### Failure Handling
+##### Failure Handling
 
 이 README는 별도의 관측·복구 절차를 두지 않으며, live rollout, route, 데이터베이스, Vault, ESO의 준비 상태는 Checks에 적힌 대로 저장소 정적 검사로 증명되지 않는다.
 
-#### Runbook Links
+###### Runbook Links
 
 - App Onboarding Runbook (`docs/05.operations/03.runbooks/README.md`)
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

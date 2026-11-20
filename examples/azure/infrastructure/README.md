@@ -1,16 +1,35 @@
 ---
 title: "Azure Infrastructure (Bicep)"
-version: "0.4.1"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 # Azure Infrastructure (Bicep)
 
-## Service
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 README는 examples/azure/infrastructure의 사용·연결·검사 위치를 찾는 운영자와 기여자를 안내한다. 현재 역할은 [Service](#service)와 [Usage](#usage)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 examples/azure/infrastructure의 진입 경로를 유지한다. 이 경로의 파일과 경계는 [Purpose](#purpose), 사용 조건은 [Usage](#usage), 검사는 [Checks](#checks)가 설명한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+
+#### Service
+
+##### Purpose
 
 > 이 경로는 Bicep을 이용한 Azure 리소스 프로비저닝 코드를 관리한다.
 
@@ -29,47 +48,49 @@ infrastructure/
 
 - [Azure executable example entrypoint](../README.md)
 
-#### Audience
+###### Audience
 
 이 README의 주요 독자:
 
 - DevOps Engineers
 - Cloud Platform Team
 
-### Interfaces
+##### Interfaces
 
 이 문서는 참조 자산의 경계만 다루며 별도의 외부 입출력 계약을 정의하지 않는다.
 
-#### Security Boundary
+###### Security Boundary
 
 보안 경계는 Usage > Prerequisites에 적혀 있다.
 
-## Usage
+#### Usage
 
-### Prerequisites
+##### Prerequisites
 
 provider 상태, credential, secret 값을 하드코딩하지 말고 배포 매개변수로
 주입한다. 이 Bicep 예시는 작성 시점이 고정된 저장소 정적 참조 자료다. 배포나
 what-if 증거를 얻으려면 승인된 Azure 구독과 운영자가 소유한 runtime이 필요하다.
 
-#### Scope
+###### Scope
 
-##### In Scope
+<a id="in-scope"></a>
+**In Scope**
 
 - Bicep 기반 인프라 정의 파일 (main, agc 등)
 - 리전, 노드 수, 티어 등 인프라 파라미터 관리
 - 시스템 할당 및 사용자 할당 관리 ID 설정
 - 가상 네트워크(VNet) 및 서브넷(Delegation 포함) 정의
 
-##### Out of Scope
+<a id="out-of-scope"></a>
+**Out of Scope**
 
 - Kubernetes 내부 매니페스트 (kubernetes/ 참조)
 - GitOps 설정 (gitops/ 참조)
 - 애플리케이션 소스 코드
 
-### Selected Start
+##### Selected Start
 
-#### Working Procedure
+###### Working Procedure
 
 1. [main.bicep](main.bicep)을 통해 전체 리소스 관계를 파악한다.
 2. 배포 전 `az bicep lint` 명령어로 코드 무결성을 검증한다.
@@ -80,7 +101,7 @@ what-if 증거를 얻으려면 승인된 Azure 구독과 운영자가 소유한 
    az deployment group what-if --resource-group <rg-name> --template-file main.bicep
    ```
 
-#### Link Basis
+###### Link Basis
 
 이 README의 링크 기준 위치는 `examples/azure/infrastructure/`다.
 
@@ -88,25 +109,45 @@ what-if 증거를 얻으려면 승인된 Azure 구독과 운영자가 소유한 
 - 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
 - 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
 
-#### Reference Links
+###### Reference Links
 
 - **Example boundary**: [Azure reference implementation](../README.md)
 - **Repository architecture**: Current local GitOps platform (`docs/02.architecture/01.descriptions/README.md`)
 - **GitOps**: [../gitops/README.md](../gitops/README.md)
 
-## Checks
+#### Checks
 
-### Readiness
+##### Readiness
 
 `az bicep lint`와 문서에 적힌
 `az deployment group what-if --resource-group <rg-name> --template-file main.bicep`는
 승인된 provider 환경에서만 실행한다. 정적 문서 검증은 Azure 배포 준비 상태를
 증명하지 않는다.
 
-### Failure Handling
+##### Failure Handling
 
 이 문서는 참조 전용 예시를 다루며 live 환경을 변경하지 않으므로 관측과 복구 절차가 없다.
 
-#### Runbook Links
+###### Runbook Links
 
 이 문서는 참조 전용 예시를 다루므로 runbook 링크가 없다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

@@ -41,6 +41,8 @@ SUITES = {
         "common_agents_document_routes",
         "document_terminal_contract",
         "common_form_tree",
+        "common_document_contract",
+        "document_envelope",
         "frontmatter_key_contract",
         "frontmatter_yaml",
         "document_language",

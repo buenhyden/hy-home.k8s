@@ -10,6 +10,7 @@ import unittest
 from pathlib import Path
 
 from tests.git_fixture import GitFixture
+from tests.form_headings import common_shell
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
@@ -34,7 +35,12 @@ MOVED_POLICY = ".agents/governance/git-moved.md"
 HISTORY_RULES = {"POLICY-RULE-DELETE", "POLICY-RULE-REISSUE", "POLICY-CODE-CHANGE"}
 
 
-def policy(rows: list[tuple[int, str]] | None, *, code: str = "GIT") -> str:
+def policy(
+    rows: list[tuple[int, str]] | None,
+    *,
+    code: str = "GIT",
+    common_envelope: bool = False,
+) -> str:
     """One policy body whose Requirements section holds the given rule rows."""
 
     head = "# Policy\n\n## Rules\n\n### Requirements\n\n"
@@ -55,7 +61,10 @@ def policy(rows: list[tuple[int, str]] | None, *, code: str = "GIT") -> str:
     levels += [
         f"| {code}-R{number:03d} | required | {status} |" for number, status in rows
     ]
-    return head + "\n".join(core) + "\n\n" + "\n".join(levels) + "\n"
+    text = head + "\n".join(core) + "\n\n" + "\n".join(levels) + "\n"
+    if not common_envelope:
+        return text
+    return "# Policy\n" + "\n".join(common_shell(text.splitlines()[2:])) + "\n"
 
 
 def registry_blob(
@@ -82,6 +91,31 @@ def registry_blob(
 
 
 class PolicyHistoryTest(unittest.TestCase):
+    def test_common_shell_keeps_policy_rows_and_still_refuses_deletion(self):
+        registry = registry_blob({GIT_POLICY: "GIT"})
+        reader = VALIDATOR._load_canonical_markdown_module().policy_rule_rows
+        self.assertEqual(
+            reader(policy([(1, "active")], common_envelope=True)),
+            (("GIT-R001", "active"),),
+        )
+        base = self.snapshot(
+            {
+                REGISTRY: registry,
+                GIT_POLICY: policy([(1, "active")], common_envelope=True),
+            }
+        )
+        same = self.snapshot(
+            {
+                REGISTRY: registry,
+                GIT_POLICY: policy([(1, "active")], common_envelope=True) + "\n",
+            }
+        )
+        self.assertNotIn("POLICY-RULE-DELETE", self.history(base, same))
+        deleted = self.snapshot(
+            {REGISTRY: registry, GIT_POLICY: policy([], common_envelope=True)}
+        )
+        self.assertIn("POLICY-RULE-DELETE", self.history(base, deleted))
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.registry = load_registry(ROOT)

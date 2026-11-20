@@ -16,6 +16,10 @@ from validation.repository.bounded_io import (  # noqa: E402
     BoundedOutputError,
     run as run_bounded_process,
 )
+from common_document_contract import (  # noqa: E402
+    CommonDocumentError,
+    payload_markdown,
+)
 
 
 PROMPT_ROOT = ".agents/prompts"
@@ -100,7 +104,11 @@ def read_contract(path: Path) -> str:
 
 
 def body(text: str) -> str:
-    return FRONTMATTER.sub("", text, count=1)
+    try:
+        role_text = payload_markdown(text, profile_id="governance/prompt")
+    except CommonDocumentError as exc:
+        raise PromptInputError("PROMPT-CONTRACT-ENVELOPE", str(exc)) from exc
+    return FRONTMATTER.sub("", role_text, count=1)
 
 
 def section(text: str, heading: str) -> list[str]:

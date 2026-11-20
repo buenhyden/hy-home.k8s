@@ -1,16 +1,35 @@
 ---
 title: "03.specs"
-version: "0.26.1"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-19"
+updated: "2026-11-20"
 ---
+
 # 03.specs
 
-## Responsibility
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 경로의 현행 Spec·Plan·Task를 찾는 사람과 작성자가 Stage 03의 변경 계약과 실행 증거를 구분하도록 안내한다.
+
+### 책임과 적용 범위
+
+Stage 03은 열린 변경 package의 문서와 잔여 포인터를 소유한다. 형식은 Stage 99, 지속 요구와 운영은 각각 해당 단계가 소유한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+문서 작성자는 현재 Requirement·Architecture·사용자 요청과 선택된 Stage 99 profile을 먼저 확인한다.
+
+### 본문과 규칙
+
+#### Responsibility
+
+##### Purpose
 
 > Requirement Package와 Architecture를 구현 가능한 기술 계약과 검증 기준으로 구체화하는 Spec stage다.
 
@@ -25,7 +44,7 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 실행 준비 상태이지 승인이나 실제 착수의 증거가 아니다. package는 변경이
 열려 있는 동안만 이 stage에 있다.
 
-#### Stage Readers
+###### Stage Readers
 
 이 README의 주요 독자:
 
@@ -33,16 +52,20 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 - Application Developers
 - Documentation Writers
 
-#### Inputs and Outputs
+###### Inputs and Outputs
 
-##### In Scope
+<a id="in-scope"></a>
+
+**In Scope**
 
 - 기능/서비스 기술 설계와 인터페이스 계약
 - 데이터 모델, API 계약, 비기능 요구, 검증 기준
 - Agent 역할, 도구, 정책, 평가, 실패 모드 설계
 - Requirement Package/AD/ADR과 Plan/Task/Runbook을 잇는 traceability
 
-##### Out of Scope
+<a id="out-of-scope"></a>
+
+**Out of Scope**
 
 - 제품 우선순위와 사용자 가치 중심 설명
 - 전사 운영 정책
@@ -53,13 +76,13 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 `05.operations/runbooks/`, 그리고 각 Stage 03 work-unit의
 `01.tasks/tsk-####-<slug>.md` records로 분리한다.
 
-### Excluded Responsibilities
+##### Excluded Responsibilities
 
 이 stage는 제품 우선순위와 사용자 가치 중심 설명, 전사 운영 정책, 실시간 장애 대응 절차, work-unit 밖의 실행 추적 정본을 소유하지 않는다. 이는 각각 `01.requirements/`, `05.operations/policies/`, `05.operations/runbooks/`, 그리고 각 Stage 03 work-unit의 `01.tasks/tsk-####-<slug>.md` records로 분리한다. 새 Spec·Plan의 `approved`는 구현 완료나 기준 수용의 표지가 아니며, `ready` Task도 승인이나 실제 착수의 증거가 아니다.
 
-## Current Contents
+#### Current Contents
 
-### Paths
+##### Paths
 
 각 package 폴더는 자신의 탐색을 스스로 소유한다. `spec.md`는 변경 계약을,
 `plan.md`는 구현 순서와 위험을, `01.tasks/`는 package-local Task 기록을
@@ -73,19 +96,21 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ├── 0223-work-residue-handoff/
 ├── 0224-workspace-path-cutover/
 ├── 0225-q07-history-bound-checks/
+├── 0226-common-document-contract/
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── README.md
 └── work-residue-ledger.json
 ```
 
-현재 열린 package는 세 개다.
+현재 열린 package는 네 개다.
 
 | Path | Purpose |
 | --- | --- |
 | [SPEC-0223 Work Residue Handoff](./0223-work-residue-handoff/) | SPEC-0161, SPEC-0221, SPEC-0222의 열린 잔여를 넘겨받아 live residue 표를 두고, 세 package를 종료시키는 변경 package다. |
 | [SPEC-0224 Workspace Path Cutover](./0224-workspace-path-cutover/) | W 계층 문서를 `docs/00.workspace/`로 옮기고 SAFE·GIT 규칙을 W/A로 나누며 `docs/` 분류 폴더를 번호화하는 변경 package다. |
 | [SPEC-0225 Q07 History-Bound Check Conversion](./0225-q07-history-bound-checks/) | Q07-H01이 지목한 이력·번호 의존 검사를 바꾸거나 없애고, 전환 시점에 처리할 데이터를 잔여에 기록하는 변경 package다. |
+| [SPEC-0226 Common Document Contract](./0226-common-document-contract/) | P04 공통 외피·유형별 내용·metadata·관계 의미를 Stage 99와 실제 생산자·검증기에 연결하는 변경 package다. |
 | [work-residue-ledger.json](./work-residue-ledger.json) | 열린 인계·충돌·채택·조사 잔여 항목을 포인터로만 담는 work residue ledger다. 실행 상태, 증거, 수용은 담지 않고 Task가 소유한다. 종결된 항목은 그 Task가 속한 package의 종료 commit까지 삭제한다. |
 | [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시다. |
 | [CLAUDE.md](./CLAUDE.md) | Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다. |
@@ -95,20 +120,20 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 [REQ-0003의 Archived Lineage](../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage)에 있다.
 SPEC-0141의 요약은 [REQ-0002](../01.requirements/0002-argo-notifications-slack.md#archived-lineage)에 있다.
 
-### Owners
+##### Owners
 
 분류: 해당 없음 — 이 stage README는 하위 유형을 따로 나누지 않는다.
 
-## Usage
+#### Usage
 
-### Entry Points
+##### Entry Points
 
 1. 관련 Requirement Package, AD, ADR 링크를 확인하고 Spec의 입력으로 고정한다.
 2. 새 Spec은 `../99.templates/02.templates/03.specs/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<####-slug>/spec.md`다.
 3. 변경 한정 설계와 수용 기준은 `spec.md`, 실행 순서·위험·예정 검증·rollback은 `plan.md`, 실제 실행·검사 사실·기준별 수용 판정은 package-local Task record가 소유한다. 범위나 근거가 승인 계약을 바꾸면 영향을 받는 Spec·Plan을 재검토한다.
 4. 장기 구조는 Stage 02 Architecture Description으로, 중요한 장기 결정은 ADR로 승격한다. 폐기된 Stage 04 경로는 새 문서에서 사용하지 않는다.
 
-#### Relative Link Rules
+###### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/03.specs/`다.
 
@@ -116,7 +141,7 @@ SPEC-0141의 요약은 [REQ-0002](../01.requirements/0002-argo-notifications-sla
 - 같은 stage의 package는 `./<####-numbering>-<feature-id>/` 폴더로 연결한다.
 - 실행 문서는 같은 work-unit의 `plan.md`와 `01.tasks/tsk-####-<slug>.md`, 운영 문서는 `../05.operations/`로 연결한다.
 
-#### Spec Authoring Rules
+###### Spec Authoring Rules
 
 1. 모든 활성 Spec은 관련 Requirement Package와 Architecture 입력을 링크하거나 부재를 명시한다.
 2. Verification은 필수다.
@@ -126,7 +151,7 @@ SPEC-0141의 요약은 [REQ-0002](../01.requirements/0002-argo-notifications-sla
 6. Feature-local Task records가 해당 work-unit의 실행과 evidence를 소유한다. Validator의 독립 실행 테스트와 fixture는 top-level `tests/`와 `tests/fixtures/` 아래에 두고, production module은 이를 import하거나 runtime data로 읽지 않는다. `validation/tests/` 또는 Spec-package-local test control plane은 만들지 않는다.
 7. Spec의 `Lifecycle Traceability` 표(Acceptance Criteria 아래)는 Requirement ID를 기준에 잇고, Plan의 `Work Breakdown` 표(Work Breakdown > Work Units 아래)는 각 work unit을 Task에 잇는다. Spec의 core `spec.checks` 표는 Verification Strategy 아래에, Plan의 core `plan.work_units` 표는 `Work Breakdown` 표 뒤에, core `plan.checks` 표는 Selected Checks 아래에 둔다(SPEC-0222).
 
-#### Helper Templates
+###### Helper Templates
 
 아래 템플릿은 `docs/03.specs/<####-slug>/` package의 Spec, Plan, Task에 사용한다.
 
@@ -134,7 +159,7 @@ SPEC-0141의 요약은 [REQ-0002](../01.requirements/0002-argo-notifications-sla
 - `../99.templates/02.templates/03.specs/plan.template.md`
 - `../99.templates/02.templates/03.specs/task.template.md`
 
-#### Upstream and Downstream
+###### Upstream and Downstream
 
 - [Docs README](../README.md)
 - [01.requirements](../01.requirements/README.md)
@@ -143,10 +168,30 @@ SPEC-0141의 요약은 [REQ-0002](../01.requirements/0002-argo-notifications-sla
 - [05.operations/runbooks](../05.operations/03.runbooks/README.md)
 - [Archive Index](../98.archive/README.md)
 
-#### Policy and Templates
+###### Policy and Templates
 
 정책과 template: 해당 없음 — 이 stage README는 정책과 template 링크를 관련 문서로 따로 나열하지 않는다.
 
-### Checks
+##### Checks
 
 1. 끝난 package는 지속 계약을 현재 소유 문서로 승격하고 Requirement의 `Archived Lineage`에 요약한다. 대체되거나 철회된 단독 문서도 소유 문서에 요약한다. 삭제 전에는 [문서 수명주기 정책](../00.workspace/03.process/document-lifecycle.md)의 처분 조건을 확인하며, 원본은 확인된 Git 이력에서 복구한다([ADR-0053](../00.workspace/02.architecture/02.decisions/0053-unvalidated-archive.md)). 개별 단순 처분마다 새 Spec을 만들지 않는다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 package 색인에서 해당 Spec을 열고 Plan의 의존성을 확인한 뒤 Task의 실제 결과를 읽는다.
+
+### 확인 기준
+
+링크와 문서 profile 검사는 현재 트리를 확인한다. 인수와 live 동작은 각 Task의 실제 근거를 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+[요구사항](../01.requirements/README.md), [Architecture](../02.architecture/README.md), [Stage 99](../99.templates/README.md)가 이 색인의 입력과 형식 소유자다.
+
+### 외부 근거
+
+이 색인은 외부 규범을 직접 채택하지 않는다. 출처와 채택 판단은 연결된 Spec과 정식 소유 문서에서 확인한다.

@@ -1,6 +1,6 @@
 ---
 title: "Git Policy"
-version: "2.13.1"
+version: "3.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -9,27 +9,45 @@ updated: "2026-11-20"
 
 # Git Policy
 
-## Purpose and Scope
+## 문서 개요
 
-### Objective
+### 목적과 독자
+
+Workers and reviewers use Git Policy for the rules in its stated scope.
+
+### 책임과 적용 범위
+
+The policy's coverage is defined in [Purpose and Scope](#purpose-and-scope) and [Applies To](#applies-to).
+
+## 내용 계약
+
+### 입력과 전제
+
+Read the current request, owner and rule conditions before applying this policy.
+
+### 본문과 규칙
+
+#### Purpose and Scope
+
+##### Objective
 
 Keep local changes small, reviewable, and traceable to the active Spec and
 Task. `main` is the default integration base unless repository evidence or the
 approved Plan specifies another base.
 
-### Applies To
+##### Applies To
 
 Inspect whether work is in a checkout, linked worktree, or detached HEAD.
 Preserve user changes and host-managed workspaces. Use the active provider's
 branch convention; Codex-created branches normally use `codex/`.
 
-#### Exclusions
+###### Exclusions
 
 This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
-## Rules
+#### Rules
 
-### Requirements
+##### Requirements
 
 | Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
@@ -63,11 +81,11 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | GIT-R015 | required | active |
 | GIT-R016 | required | active |
 
-#### Branch and integration routing
+###### Branch and integration routing
 
 `GIT-R009`
 
-#### Release ownership
+###### Release ownership
 
 `GIT-R010`
 
@@ -81,13 +99,13 @@ direct `gh release create`, `gh release edit` or `gh release upload`, or a
 hand-made `v` tag, is not a second producer: it stays forbidden although the
 Claude settings no longer prompt for it.
 
-#### Agent delivery commands
+###### Agent delivery commands
 
 The agent delivery boundary (GIT-R011 to GIT-R013) is owned once by the
 [agent delivery policy](../../../.agents/governance/git.md#agent-delivery-commands);
 this policy keeps the common Git rules every agent and person follows.
 
-#### Commit-message validation
+###### Commit-message validation
 
 `GIT-R015`
 
@@ -188,7 +206,7 @@ the source repository. Never change hooksPath, disable a hook, or set a skip
 variable in order to make a failing check pass or to leave a check unrun;
 widening the set of hooks that run is the only supported change.
 
-#### Git-point binding
+###### Git-point binding
 
 `GIT-R016`
 
@@ -199,28 +217,28 @@ widening the set of hooks that run is the only supported change.
 | Pull request (cumulative `base..candidate`) | Local QA on the bounded final branch snapshot; lane: local | Hosted `ci-summary` (branch metadata, PR title and `base..head` messages) and `style-pr` (selected style and purpose checks from one cumulative base-to-merge plan, including affected implementation/document regressions and static manifest/render/schema/policy checks) of `ci.yml` on `pull_request`; lane: hosted, per PR SHA | none |
 | Merge (final candidate) | Required `ci-summary` and `style-pr`, `strict` latest head, from the main-protection record; lane: remote read-back | GitHub merge commit under the same protection | `ci.yml` runs only `ci-summary` on `push` to `main`; it reports `NOT_APPLICABLE` for the ref and adds no regression check, so no post-merge regression lane is adopted. Strict protection requires the PR checks on the latest head and `style-pr` checks the exact merge with both parents, so a replay on the merged tree would repeat a proven leaf (QUAL-R001). The merged `main` is compared with what was checked (GIT-R009), and the run is the observed push record |
 
-### Exceptions
+##### Exceptions
 
 Exception and escalation conditions are stated under Requirements.
 
-#### Approval and Review
+###### Approval and Review
 
 Approval and review conditions are stated under Requirements.
 
-## Enforcement
+#### Enforcement
 
-### Mechanisms
+##### Mechanisms
 
 Inspect both staged and unstaged diffs after formatters. Rerun the affected
 checks against final bytes. Do not claim a remote check ran from a local workflow-syntax result.
 
-### Limits
+##### Limits
 
 A local workflow-syntax result does not show that a remote check ran, and a static workflow file cannot establish hosted execution or remote branch protection. Commit-message validation is explicit message evidence, not proof of hook installation or delivery in the source repository.
 
-## Ownership
+#### Ownership
 
-### Owner
+##### Owner
 
 The user owns push, publication, merge, discard, and history recovery decisions.
 Remote branch protection owns any required hosted metadata checks and cannot
@@ -233,10 +251,30 @@ governs protected actions and exceptions.
 - [Approval and Safety](../04.quality/approval-and-safety.md)
 - [Work Lifecycle](../../../.agents/workflows/work-lifecycle.md)
 
-#### Responsibilities
+###### Responsibilities
 
 Responsibilities are stated under Owner and Requirements.
 
-### Review Triggers
+##### Review Triggers
 
 This policy changes as a governed-document change under the work lifecycle and the document lifecycle policy, with no adoption step of its own; if it needs one, state it here.
+
+## 적용과 확인
+
+### 적용 방법
+
+Apply the rule, enforcement and exception clauses in the payload together.
+
+### 확인 기준
+
+Check named enforcement on actual input and report its evidence level accurately.
+
+## 관계와 출처
+
+### 관련 문서
+
+The ownership and related documents in the payload link adjacent owners.
+
+### 외부 근거
+
+Repository decisions and cited sources support these rules; external sources alone grant no authority.

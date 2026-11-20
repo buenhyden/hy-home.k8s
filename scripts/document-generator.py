@@ -39,6 +39,10 @@ from document_lifecycle import (  # noqa: E402
     lineage_retired_identities,
 )
 from frontmatter_yaml import FrontmatterError, load_frontmatter  # noqa: E402
+from common_document_contract import (  # noqa: E402
+    CommonDocumentError,
+    payload_markdown,
+)
 
 SHARED = ("TITLE", "OWNER", "UPDATED", "ARTIFACT_ID", "PARENT_ID")
 SHARED_MARKER = re.compile(r"\{\{(" + "|".join(SHARED) + r")\}\}")
@@ -96,7 +100,7 @@ def _frontmatter(text: str) -> dict:
 def _template(root: Path, profile: DocumentProfile) -> str:
     """Return the template of a generable profile or refuse the profile."""
 
-    if profile.mode == "template" or profile.template is None:
+    if profile.mode not in {"authored", "router"} or profile.template is None:
         raise Refusal(
             "GENERATOR-PROFILE", f"{profile.profile_id} has no authored Markdown form"
         )
@@ -120,6 +124,46 @@ def _template(root: Path, profile: DocumentProfile) -> str:
             + ", ".join(sorted(foreign)),
         )
     return text
+
+
+def native_template_payload(
+    root: Path,
+    profile_id: str,
+    *,
+    registry: Registry | None = None,
+) -> str:
+    """Return the exact native Markdown from one common TemplateDefinition.
+
+    Native provider bindings still own their placeholder values. This API
+    exposes only the output payload; it never emits the definition wrapper.
+    """
+
+    root = root.absolute()
+    try:
+        registry = registry or load_registry(root)
+    except DocumentContractError as error:
+        raise Refusal(
+            "GENERATOR-PROFILE", f"the registry cannot be loaded: {error}"
+        ) from error
+    profile = next(
+        (item for item in registry.profiles if item.profile_id == profile_id), None
+    )
+    if profile is None or profile.mode != "native" or profile.template is None:
+        raise Refusal("GENERATOR-PROFILE", f"{profile_id} has no native Markdown form")
+    if profile.template.suffix != ".md":
+        raise Refusal("GENERATOR-PROFILE", f"{profile_id} does not use native Markdown")
+    try:
+        wrapper = read_repository_text(root, profile.template)
+        template_profile = classify_path(registry, profile.template)
+        if template_profile.source_profile_ids != (profile_id,):
+            raise Refusal(
+                "GENERATOR-PROFILE", f"{profile_id} has no matching definition"
+            )
+        return payload_markdown(wrapper, profile_id=profile_id)
+    except (DocumentContractError, CommonDocumentError, ValueError) as error:
+        raise Refusal(
+            "GENERATOR-PROFILE", f"native form is invalid: {error}"
+        ) from error
 
 
 def _check_input(label: str, value: str) -> None:

@@ -1,25 +1,43 @@
 ---
 title: "Main Release Preparation"
-version: "1.4.4"
+version: "2.0.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 artifact_id: "RUN-0012"
 ---
 
 # Main Release Preparation Runbook
 
-## Trigger and Scope
+## 문서 개요
 
-### Trigger
+### 목적과 독자
+
+이 런북은 Main Release Preparation 작업이나 장애를 수행·복구할 운영자와 검토자에게 실제 절차를 제공한다. 시작 조건은 [Trigger](#trigger)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 이 절차의 운영 범위를 유지한다. 대상은 [Targets](#targets), 사전 조건과 권한은 [Preflight](#preflight), 실행·복구는 [Procedure](#procedure)에서 확인한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Trigger and Scope
+
+##### Trigger
 
 이 Runbook은 main의 검토된 변경을 정규 `CHANGELOG.md`에 기록하고 한
 생산자로 SemVer tag와 GitHub Release를 준비하는 순서를 제공한다.
 
 main에 통합된 공개 계약 변경을 릴리스하려는 경우 사용한다.
 
-### Targets
+##### Targets
 
 릴리스는
 저장소의 공개 계약 이력이다. k3d·ArgoCD·OpenBao의 배포 완료나 live 검증을
@@ -28,9 +46,9 @@ main에 통합된 공개 계약 변경을 릴리스하려는 경우 사용한다
 
 관련 문서: [`CHANGELOG.md`](../../../CHANGELOG.md), [`scripts/release.py`](../../../scripts/release.py)
 
-## Preflight
+#### Preflight
 
-### Authority
+##### Authority
 
 - **Type**: Repository release preparation and publication
 - **Executor**: 검토된 main revision과 원격 Release 권한을 확인한 운영자,
@@ -48,16 +66,16 @@ Python과 구현의 trusted resolver가 받아들이는 `git`, `git-cliff`, `gh`
 
 관련 문서: [`.github/workflows/ci.yml`](../../../.github/workflows/ci.yml), [Main protection ruleset](../../../.github/rulesets/main-protection.md), [ADR-0048](../02.architecture/02.decisions/0048-local-qa-and-semver-release-ownership.md), [ADR-0052](../02.architecture/02.decisions/0052-single-main-trunk-branch-strategy.md)
 
-### Environment
+##### Environment
 
 먼저
 [Git Policy](git.md)와
 [Quality Policy](../04.quality/quality.md)를 읽고,
 실제 main commit·기존 tag/Release·release 설정을 확인한다.
 
-## Procedure
+#### Procedure
 
-### Steps
+##### Steps
 
 | Step | Action | Expected Result | On Failure |
 | --- | --- | --- | --- |
@@ -68,14 +86,14 @@ Python과 구현의 trusted resolver가 받아들이는 `git`, `git-cliff`, `gh`
 | 5 | release tool의 `publish` preview를 읽고, 원격 대상·승인·자산을 대조한 운영자, 또는 version과 asset을 명시한 운영자의 현재 요청에 따라 같은 대조를 마친 agent가 operator-approved 단계로 `--execute`를 사용한다. 구현은 정확한 main commit에서 추출한 `CHANGELOG.md`의 릴리스 노트와 모든 자산을 한 draft의 tag·target·prerelease 상태에 묶어 검증한 뒤 게시한다. 게시 후에도 같은 필드·본문과 자산을 재조회한다. immutable Release 설정이 실제 활성이라면 자산 확인 후에만 게시한다. | 하나의 SemVer tag와 Release가 검토된 main commit에 연결된다. | 승인 범위, main blob, 노트 본문, 자산, draft/게시 상태 또는 원격 설정이 다르다. |
 | 6 | tag 대상, Release 상태, `CHANGELOG.md`가 반영된 main SHA를 다시 읽고 Task에 관측 사실을 기록한다. | publish 결과 또는 `DEFER` 원인이 한 owner에 남는다. | 원격 결과가 없으면 로컬 파일로 성공을 추정한다. |
 
-### Stop Conditions
+##### Stop Conditions
 
 변경의 필수 로컬 검사가 실패했거나 미실행이고, operator 승인이나 원격 대상이
 불확실하면 게시 단계에서 멈춘다.
 
-## Verification
+#### Verification
 
-### Expected Results
+##### Expected Results
 
 준비 PR의 문서·링크·상태와 실제 index는 해당 Task의 local QA 증거로
 검증한다. 아래는 구현된 `scripts/release.py`의 CLI이며, 현재 소스와
@@ -129,7 +147,7 @@ python3 scripts/release.py --root . publish --version vX.Y.Z --asset relative/pa
 원격 조회가 없으면 그 단계는 `DEFER`다. CLI 옵션과 동작이 실제 구현에서
 달라지면 이 절차를 먼저 수정한다.
 
-### Unverified Conditions
+##### Unverified Conditions
 
 - 현재 main commit과 release-preparation PR의 reviewed diff
 - 실제 로컬 check receipt와 semantic review 결과가 붙은 Task
@@ -139,29 +157,49 @@ python3 scripts/release.py --root . publish --version vX.Y.Z --asset relative/pa
 GitHub의 표시와 정적 workflow 설정은 서로 다른 입력이다. 실제 게시 여부는
 해당 원격 ref와 Release 관측으로만 판정한다.
 
-### Lifecycle Traceability
+##### Lifecycle Traceability
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
 | N/A — SPEC-0107 (left the tree; Git history recovers it) | Reviewed main release-preparation PR, one SemVer producer and external publication boundary | Release Task, Git history and observed GitHub Release/tag |
 
-## Escalation
+#### Escalation
 
-### Next Owner
+##### Next Owner
 
 에스컬레이션: 해당 없음 — 이 런북은 Escalation에 에스컬레이션 담당을 따로 정하지 않는다.
 
-### Recovery or Forward Repair
+##### Recovery or Forward Repair
 
 게시 전에는 준비 PR에서 승인 범위에 해당하는 `CHANGELOG.md` 변경을 원래 main
 내용과 대조해 되돌리고 preview를 다시 실행한다. 이미 main에 통합한 준비 변경은
 Recovery Procedures의 후속 정정 커밋을 사용한다. 게시 이후의 정정은 다음 승인된
 버전에 반영하고 기존 태그와 Release 이력을 보존한다.
 
-### Recovery Procedures
+##### Recovery Procedures
 
 준비 PR의 내용 오류는 forward corrective commit으로 고친다. 이미 게시된
 SemVer tag를 이동하거나 덮어쓰지 않는다. 게시 후 정정이 필요한 경우
 operator가 새 버전의 범위와 승인·회복 경로를 결정하고, 원래 Task와
 Release 이력을 보존한다. 원격 결과가 불명확하면 재시도 전에 동일 대상
 존재 여부부터 조회한다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

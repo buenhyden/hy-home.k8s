@@ -141,7 +141,17 @@ def layered(fields: dict[str, str]) -> dict[str, str]:
 
 def doc(fields: dict[str, str]) -> str:
     return (
-        "---\n" + "".join(f"{k}: {v}\n" for k, v in fields.items()) + "---\n\nBody.\n"
+        "---\n"
+        + "".join(f"{k}: {v}\n" for k, v in fields.items())
+        + "---\n\n# Example\n\n"
+        "## 문서 개요\n\n### 목적과 독자\n\nExample reader.\n\n"
+        "### 책임과 적용 범위\n\nExample scope.\n\n"
+        "## 내용 계약\n\n### 입력과 전제\n\nExample input.\n\n"
+        "### 본문과 규칙\n\n#### Example Role\n\nExample rule.\n\n"
+        "## 적용과 확인\n\n### 적용 방법\n\nExample use.\n\n"
+        "### 확인 기준\n\nExample check.\n\n"
+        "## 관계와 출처\n\n### 관련 문서\n\nExample relation.\n\n"
+        "### 외부 근거\n\nExample source.\n"
     )
 
 

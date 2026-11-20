@@ -1,18 +1,36 @@
 ---
 title: "Argo Notifications Slack Requirement Package"
-version: "3.0.3"
+version: "4.0.0"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-20"
 artifact_id: "REQ-0002"
 ---
 
 # Argo Notifications Slack Requirement Package
 
-## Overview
+## 문서 개요
 
-### Problem and Outcome
+### 목적과 독자
+
+This requirement package lets maintainers, architects, implementers, and reviewers decide which Argo Notifications Slack behaviors and acceptance conditions are required. The source problem and stakeholders are under [Overview](#overview).
+
+### 책임과 적용 범위
+
+platform maintains the requirement authority. Included and excluded behavior is bounded by [In Scope](#in-scope) and [Constraints and Exclusions](#constraints-and-exclusions); implementation detail belongs to downstream owners.
+
+## 내용 계약
+
+### 입력과 전제
+
+Inputs and assumptions remain in the cited upstream requirements, boundaries, and payload sections.
+
+### 본문과 규칙
+
+#### Overview
+
+##### Problem and Outcome
 
 This document defines the product requirements for enabling the ArgoCD Notifications controller and using a Slack channel, reached with a Slack app token, as the notification destination, so GitOps events (sync failure, health degradation, deployment completion) and Rollouts events (completion, abort) reach operators automatically.
 
@@ -20,7 +38,7 @@ Platform events (ArgoCD sync failure, service health degradation, Rollouts compl
 
 The repository has notification settings, but their presence alone does not guarantee that events are delivered and actually received. Acceptance criteria for the common failure signals and the optional deployment notifications must be kept so operators do not depend on checking the UI by hand.
 
-#### Current requirement status
+###### Current requirement status
 
 This package is backfilled against the current contract; the operator approved it on 2026-11-05 as current requirement authority.
 The ArgoCD Notifications values, ConfigMap, ExternalSecret, and operations documents already exist in the repository; SPEC-0005 completed the trace chain on 2026-05-18, and its package later left the tree under SPEC-0140 (see Archived Lineage).
@@ -28,15 +46,15 @@ The credential comes from the OpenBao runtime secret backend (ADR-0041) through 
 The Rollouts chart configures completion and abort notifications in its own controller because the ArgoCD Notifications controller evaluates Applications only (SPEC-0141 in [Archived Lineage](#archived-lineage), ADR-0054). The operator observed a Rollouts completion message on 2026-11-06. Acceptance criterion 05 still requires the operator to observe an abort notification.
 This document owns the user value and security boundary of notifications; the linked downstream documents and operations runbooks own the Secret creation procedure and the manifest contract.
 
-### Stakeholders
+##### Stakeholders
 
 - **Platform Engineer**: wants to receive ArgoCD and Rollouts events in a Slack channel in real time.
 - **DevOps Engineer**: wants an immediate notification on sync failure or health degradation to respond quickly.
 - **Application Team**: wants deployment completion (on-deployed) events, delivered on the default channel, and optionally on an additional channel of its own.
 
-## Scope
+#### Scope
 
-### In Scope
+##### In Scope
 
 - **STORY-01**: When an ArgoCD app fails to sync, a notification goes to the operators' Slack channel immediately.
 - **STORY-02**: When an app's health degrades (Degraded), a notification goes to the operators' Slack channel immediately.
@@ -49,7 +67,7 @@ This document owns the user value and security boundary of notifications; the li
   - Notification template and trigger requirements
   - Default subscriptions on one shared channel (health degradation, sync failure, and deployment completion)
 
-### Constraints and Exclusions
+##### Constraints and Exclusions
 
 - **Out of Scope**:
   - Email/PagerDuty notification channels
@@ -63,7 +81,7 @@ This document owns the user value and security boundary of notifications; the li
 - Assumes ESO and the OpenBao backend are operating normally (depends on the current baseline Requirement and ADR-0041).
 - rollout-\* events need Argo Rollouts (REQ-0001); the Rollouts notification engine reads the same OpenBao credential through its own ExternalSecret in `argo-rollouts`.
 
-#### Agent execution and approval requirements
+###### Agent execution and approval requirements
 
 - **Allowed Actions**: Update the Requirement Package and documentation, run non-destructive static validation, and collect read-only status evidence.
 - **Disallowed Actions**: Store Slack credentials in plaintext, modify secret backend paths without approval, or change manifests outside the implementation scope authorized under the [document lifecycle policy](../00.workspace/03.process/document-lifecycle.md#requirements).
@@ -73,39 +91,39 @@ This document owns the user value and security boundary of notifications; the li
 The linked AD/Spec/operations owners own the concrete manifests, hostnames, annotations, resource state, and validation commands.
 This update adds no runtime observation.
 
-## Requirements
+#### Requirements
 
-### Functional Requirements
+##### Functional Requirements
 
 | Requirement ID | Statement | Rationale | Acceptance | Priority |
 | --- | --- | --- | --- | --- |
 | REQ-0002-FR-0001 | The platform must deliver GitOps events to the operators' Slack channel. The downstream Spec owns the controller and the concrete settings. | Serves the ownership boundary of the Notifications controller inside the ArgoCD release (AD-0005 Lifecycle Traceability). | Acceptance criteria 01, 03 and 04. | must |
 | REQ-0002-FR-0002 | Slack credential material must be consumed only through an approved external secret source and a bounded sync boundary, and must not appear in plaintext in the Requirement Package, manifests, or logs. | Serves the one-way OpenBao → ESO → Kubernetes Secret credential boundary (AD-0005 Lifecycle Traceability). | Acceptance criterion 02, and secret scanning finds no token in Git. | must |
 | REQ-0002-FR-0003 | Notification templates and triggers must express deployment completion, health degradation, sync failure, Rollouts completion, and Rollouts abort events. | Serves the separation between ArgoCD application notifications and the Rollouts controller's notification engine (AD-0005 Lifecycle Traceability). | Both event owners declare their respective templates and triggers. Acceptance criterion 05 requires an observed abort notification. | must |
-| REQ-0002-IF-0001 | An application team must be able to subscribe per app to an additional Slack channel for deployment completion notifications. The AD/Spec owns the native annotation syntax. | Serves the optional annotation-based per-app opt-in boundary (the implemented default is the shared `subscriptions` block) (AD-0005 Lifecycle Traceability). | A per-app subscription can be declared without changing the platform default. | must |
-| REQ-0002-IF-0002 | Notification credential bootstrap must be performed only as a human-approved external task. | Serves the approval boundary that separates Slack/OpenBao bootstrap from repository changes (AD-0005 Lifecycle Traceability). | No repository change or agent action writes the credential to the secret backend. | must |
+| REQ-0002-IF-0001 | An application team must be able to subscribe per app to an additional Slack channel for deployment completion notifications. The AD/Spec owns the native annotation syntax. | Serves the optional annotation-based per-app opt-in boundary (the implemented default is the shared `subscriptions` block) (AD-0005 Lifecycle Traceability).; interface_refs: REQ-0002-FR-0001, REQ-0002-NFR-0001 | A per-app subscription can be declared without changing the platform default. | must |
+| REQ-0002-IF-0002 | Notification credential bootstrap must be performed only as a human-approved external task. | Serves the approval boundary that separates Slack/OpenBao bootstrap from repository changes (AD-0005 Lifecycle Traceability).; interface_refs: REQ-0002-FR-0002 | No repository change or agent action writes the credential to the secret backend. | must |
 
-### Quality Requirements
+##### Quality Requirements
 
 | Requirement ID | Statement | Rationale | Acceptance | Priority |
 | --- | --- | --- | --- | --- |
 | REQ-0002-NFR-0001 | The common default notification policy must apply health degradation and sync failure to every app. Deployment completion may be part of the same default. The presence of the current settings does not prove an all-app subscription or actual receipt. | Serves the shared-channel default subscription boundary for common health/sync failures and deployments (AD-0005 Lifecycle Traceability). | The default subscription names both triggers; receipt is proven by acceptance criteria 03 and 04. | must |
 
-## Traceability
+#### Traceability
 
-### Sources
+##### Sources
 
 - **Requirement**: [`./0001-argo-rollouts-progressive-delivery.md`](./0001-argo-rollouts-progressive-delivery.md) — Rollouts event source
 - **Requirement**: [`./0004-current-local-gitops-platform.md`](./0004-current-local-gitops-platform.md) — ESO/OpenBao dependency
 
-### Verification Links
+##### Verification Links
 
 - **AD**: [`../02.architecture/01.descriptions/0005-argo-notifications-slack.md`](../02.architecture/01.descriptions/0005-argo-notifications-slack.md)
 - **Spec**: N/A — SPEC-0141 and SPEC-0005 left the tree; Git history recovers them ([REQ-0002 Archived Lineage](./0002-argo-notifications-slack.md#archived-lineage))
 - **ADR**: [`../02.architecture/02.decisions/0012-argo-notifications-slack.md`](../02.architecture/02.decisions/0012-argo-notifications-slack.md)
 - **ADR**: [`../02.architecture/02.decisions/0041-openbao-secret-backend.md`](../02.architecture/02.decisions/0041-openbao-secret-backend.md)
 
-#### Acceptance Conditions
+###### Acceptance Conditions
 
 - **Acceptance criterion 01**: An operator can check the Notifications controller state. Evidence: `argocd-notifications-controller` Pod `Running`.
 - **Acceptance criterion 02**: An operator can check the sync state of the notification credential held in the runtime secret backend. Evidence: `argocd-notifications-secret` ExternalSecret `Ready=True`, synced from the OpenBao backend.
@@ -113,11 +131,11 @@ This update adds no runtime observation.
 - **Acceptance criterion 04**: An operator can notice health degradation in Slack. Evidence: receipt of a health degraded event in Slack is confirmed.
 - **Acceptance criterion 05**: An operator can notice a Rollouts abort in Slack. Evidence: receipt of an abort notification is confirmed. The Rollouts chart declares the route to the shared channel. Live receipt of an abort notification remains unobserved.
 
-#### Verification Method
+###### Verification Method
 
 No separate verification method is stated: each requirement is verified by the evidence named in its `Acceptance` cell, and the acceptance-criterion column of `Lifecycle Traceability` states the acceptance condition of every member.
 
-### Lifecycle Traceability
+##### Lifecycle Traceability
 
 | Requirement ID | Acceptance criterion |
 | --- | --- |
@@ -133,7 +151,7 @@ No separate verification method is stated: each requirement is verified by the e
 | N/A — Acceptance criterion 04 remains acceptance-only | A health degraded event arrives in the approved Slack channel. |
 | N/A — Acceptance criterion 05 remains acceptance-only | A Rollouts abort event arrives in the approved Slack channel. |
 
-### Archived Lineage
+##### Archived Lineage
 
 The SPEC-0005 documents were deleted from `docs/98.archive/` under SPEC-0140 and are recovered with `git show 69445fca:<path>`; SPEC-0141 names its own recovery commit. Paths below are the archive paths at that commit; a completed Spec path is its package directory (`spec.md`, `plan.md`, `tasks/`).
 
@@ -141,3 +159,23 @@ The SPEC-0005 documents were deleted from `docs/98.archive/` under SPEC-0140 and
 | --- | --- | --- | --- |
 | SPEC-0005 | completed spec | Defined the repo-backed contract for Slack notifications through ArgoCD Notifications: Helm values, Notifications ConfigMap, Vault-backed ExternalSecret, default subscriptions and per-application opt-in annotations. Completed against the static contract; Slack token bootstrap, Vault writes and live sends stayed human-approved runtime validation. | `docs/98.archive/completed/03.specs/0005-argo-notifications-slack/` |
 | SPEC-0141 | completed spec | Delivered Argo Rollouts completion and abort events to `#hy-home-alerts` through the Rollouts controller's own notification engine: chart-defined Slack service, triggers, templates and subscription, a dedicated `argo-rollouts-notification-secret` ExternalSecret from OpenBao `platform/notifications`, and validator assertions. All four criteria accepted on 2026-11-06 after the operator observed a completion message; no durable contract beyond ADR-0054 clause 2. Recover with `git show fb8b978b:<path>`. | `docs/03.specs/0141-rollouts-notification-delivery/` |
+
+## 적용과 확인
+
+### 적용 방법
+
+Apply the decisions and procedures in the role payload under its stated conditions.
+
+### 확인 기준
+
+Check the role payload acceptance or verification conditions and report observed limits.
+
+## 관계와 출처
+
+### 관련 문서
+
+Follow the current upstream and downstream links in the role payload.
+
+### 외부 근거
+
+External evidence, when used, remains attributed and bounded in the role payload.

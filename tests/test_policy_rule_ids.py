@@ -17,6 +17,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import document_authority as AUTHORITY  # noqa: E402
 import document_contracts as CONTRACTS  # noqa: E402
+from common_document_contract import payload_markdown  # noqa: E402
 
 REGISTRY_FILE = ROOT / "docs/99.templates/registry.json"
 SCHEMA_FILE = ROOT / "docs/99.templates/01.contracts/document-profile.schema.json"
@@ -944,7 +945,11 @@ class RealPolicyTests(unittest.TestCase):
 
     def test_the_control_registers_are_not_rule_units(self) -> None:
         counts = [
-            MARKDOWN.policy_rule_units((ROOT / name).read_text("utf-8")).control_rows
+            MARKDOWN.policy_rule_units(
+                payload_markdown(
+                    (ROOT / name).read_text("utf-8"), profile_id="operation/policy"
+                )
+            ).control_rows
             for name in (
                 "docs/05.operations/02.policies/0001-k8s-gitops-operations-policy.md",
                 "docs/05.operations/02.policies/0005-observability-platform-operations-policy.md",

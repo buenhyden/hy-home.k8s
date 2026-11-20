@@ -1,16 +1,34 @@
 ---
 title: "99.templates"
-version: "0.41.1"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-19"
+updated: "2026-11-20"
 ---
 # 99.templates
 
-## Responsibility
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 README는 문서 양식을 고르는 작성자와 profile·validator를 유지하는 담당자에게 Stage 99의 정본 경로와 소비 순서를 안내한다. 양식 단계의 목적은 [Purpose](#purpose)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 Stage 99 양식 안내를 유지한다. Registry, schema, form의 소유 경계는 [Paths](#paths)와 [Owners](#owners), 작성·검증 소비 경로는 [Usage](#usage)와 [Checks](#checks)에 연결한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Responsibility
+
+##### Purpose
 
 > repo-authored 문서와 README가 시작해야 하는 canonical template stage다.
 
@@ -20,8 +38,11 @@ relationship, template 연결은
 README는 해당 machine contract를 복제하지 않고 사람이 올바른 소유자를 찾도록
 안내한다.
 
-Registry의 `shared_contract`는 buenhyden이 정확한 원본에 대해 승인한
-`WGOV-CORE / 3.0.0`과 이 저장소의 지역 adapter를 식별한다. 공동
+Registry의 `shared_contract`는 `WGOV-CORE / 3.0.0` 후보와 이 저장소의
+지역 adapter를 식별한다. Registry의 현재 `stage`는 `candidate`이며,
+기존 `approval_ref`와 고정된 revision·digest는 당시 검토 대상을 추적하는
+근거다. 이것만으로 현행 공동 판본의 최종 승인, 이 저장소의 지역 채택이나
+다른 workspace의 적용을 주장하지 않는다. 공동
 정본의 입구는 Project-Template의 기존 `.agents/governance/standards.md`다.
 그 소스 묶음은 Project-Template 원본의 Stage 00·99, QA·Git·harness·모델·환경
 정책, handoff prompt와 Skill을 포함한 67개 저장소 상대 경로다. 이 저장소에는
@@ -29,8 +50,9 @@ Stage 00이 없으며 그 지역 소유자는 `.agents/`다. digest는 중복 �
 순서로 정렬하고 각 경로 bytes·NUL·해당 Git blob 원문 bytes를 SHA-256에
 차례로 넣어 계산한다. blob 뒤에는 별도 NUL을 넣지 않는다.
 
-공동 승인 `approval_ref`는 Registry `shared_contract`가 소유하며, 이전 검증 근거는
-Git history에서 복구한다.
+기존 `approval_ref`는 Registry `shared_contract`가 소유하며, 이전 검증 근거는
+Git history에서 복구한다. 현행 후보의 최종 결정과 지역 적용 증거는 해당 Task에서
+별도로 확인한다.
 
 현행 지역 언어 확장에서는 `.agents/governance/` 정책을 영어로 작성한다.
 그 밖의 `.agents/` governed Markdown에는 새 설명을 한국어로 작성하며 기존
@@ -44,17 +66,17 @@ JSON·YAML 등 비 Markdown 파일과 `.codex/`·`.claude/`의 native 문서는
 확장과 아래의 Task 최초 기록·Spec/Plan 직접 전이·조건부 최초 승인 확장은 각각 하나만으로 승인된
 WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
 
-#### Inputs and Outputs
+###### Inputs and Outputs
 
 입력과 출력: 해당 없음 — 이 stage README는 입력과 출력의 범위를 따로 나열하지 않는다.
 
-### Excluded Responsibilities
+##### Excluded Responsibilities
 
 이 stage는 실제 PRD, AD, ADR, Spec, Plan, Task, 운영 기록이나 기능별 구현 계약을 소유하지 않으며, Form에는 재사용 가능한 구조만 둔다. 공통 규칙은 이 README 또는 `.agents/governance`의 공통 정책으로 돌려보내고, 정확한 경로, profile, frontmatter, 상태, heading, lifecycle, relationship, template 연결은 Document Profile Registry가 단독으로 소유하므로 README는 이 machine contract를 복제하지 않는다.
 
-## Current Contents
+#### Current Contents
 
-### Paths
+##### Paths
 
 | Path | Purpose |
 | --- | --- |
@@ -67,9 +89,9 @@ WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
 이 README는 stage router다. 어떤 form이 어디에 있고 새 form을 어떻게 등록하는지는
 [form catalog](./02.templates/README.md)가 소유한다.
 
-### Owners
+##### Owners
 
-#### Responsibility Boundary
+###### Responsibility Boundary
 
 | Surface | Role | Canonical owner |
 | --- | --- | --- |
@@ -82,7 +104,7 @@ WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
 계약을 소유하지 않는다. Form에는 재사용 가능한 구조만 두고, 공통 규칙은 이 README
 또는 `.agents/governance`의 공통 정책으로 돌려보낸다.
 
-#### Physical Form Inventory
+###### Physical Form Inventory
 
 Form directory는 사람이 form을 찾도록 physical responsibility surface별로 묶는다.
 파일 이름은 form이 만드는 문서 kind를 나타내지만, directory 이름은 Registry
@@ -133,9 +155,11 @@ form 경로의 대응은 Registry만 소유한다.
   정확한 출력 경로에서만 제외하고 비밀·크기·파일 안전 검사는 유지한다.
   W03-D20과 W03-D26에 따라 `knowledge-map`, `vocabulary`, `prompt`,
   `evaluation-task`, `evaluation-score`, `evaluation-results` 여섯 역할은
-  각자의 Stage 99 지역 form을 쓰고(H2만 두며 H3는 없다), W03-D34에 따라
-  `governance-role`(`.agents/roles/*.md`, Current Contract 아래 여덟 H3)과
-  `governance-document`(provider 노트 두 개, H2만)도 각자의 지역 form을 쓴다.
+  각자의 Stage 99 지역 form을 쓴다. W03-D34에 따라
+  `governance-role`(`.agents/roles/*.md`, Current Contract 아래 여덟 역할 절)과
+  `governance-document`(provider 노트 두 개)도 각자의 지역 form을 쓴다.
+  현행 작성 문서는 공통 외피의 네 H2와 여덟 H3를 물리적으로 사용하고,
+  이전 역할별 제목과 표는 `본문과 규칙` 아래의 하위 절에 둔다.
   `provider-native`를 뺀 모든 Stage 99 지역 역할은 각자의 지역 form을 쓰며,
   SPEC-0222에 따라 Stage 90 보고서는 core 역할의 form을 쓴다. 연구 보고서는
   `research`(`Question and Scope`·`Sources`·`Analysis`·`Application and Limits`,
@@ -154,7 +178,7 @@ form 경로의 대응은 Registry만 소유한다.
   [작성 정책](../00.workspace/03.process/document-authoring.md#frontmatter-order-and-versions)의
   소비자 호환성 기준을 따른다.
   `provider-native`의 빈 heading은 조건·소유자·검증·검토·제거 기준을 갖는
-  조건부 확장(`headings_extension`)으로 기록한다. profile의 heading은 role의
+  조건부 확장(`headings_extension`)으로 기록한다. profile의 역할별 payload는
   form에서 오며 어떤 profile도 H2 목록(`sections`)을 두지 않는다. schema와 엄격
   Registry 검사가 `sections` key를 거부하고, mode가 `authored`, `router`,
   `template`인 profile은 `provider-native` role을 뺀 모든 경우에 form을 가져야
@@ -287,7 +311,7 @@ form 경로의 대응은 Registry만 소유한다.
 현재 physical form의 전체 목록과 각각의 소유 profile은 README나 support prose가
 아니라 registry와 repository quality gate에서 계산한다.
 
-#### Deliberately Empty Profiles
+###### Deliberately Empty Profiles
 
 현재 record가 없는 것은 곧 사용하지 않는 capacity를 뜻하지 않는다.
 `operation/incident`와 `operation/postmortem`은 사건 발생 전에도 운영 증거를
@@ -297,9 +321,9 @@ form 경로의 대응은 Registry만 소유한다.
 현재 감사 pack을 안내한다. Data는 자료가 생길 때 사용할 pack과 member
 profile을 유지한다.
 
-## Usage
+#### Usage
 
-### Entry Points
+##### Entry Points
 
 1. **Classify**: repository-relative target path를 registry로 분류하고 정확히 하나의
    profile이 선택되는지 확인한다.
@@ -366,7 +390,7 @@ PASS로 미해소 필수 결과를 숨기지 않는다. 완료 인계는 필수 
 쓸 수 있지만 사유와 다음 owner를 남긴다.
 resolved Incident에는 시간대를 포함한 실제 resolved_at과 해결 증거가 필요하다.
 
-#### Shared Frontmatter Grammar
+###### Shared Frontmatter Grammar
 
 모든 governed Markdown은 "title", "version", "type", "status", "owner",
 "updated" 순서로 시작한다. 이후 "artifact_id", relationship,
@@ -384,14 +408,20 @@ supersession, provenance key는 선택된 profile의 order에만 따라 나타�
 | "artifact_id" | stable identity profile만 | "artifact_id_pattern" | "&#123;&#123;ARTIFACT_ID&#125;&#125;" |
 
 값의 scalar/array 문법은
-[frontmatter schema](./01.contracts/frontmatter.schema.json)가, profile별
+[Stage 99 contracts](./01.contracts/)의 frontmatter schema가, profile별
 required, optional, forbidden, order, constant, lifecycle, identity pattern은
 [Registry](./registry.json)가 소유한다. 각 key의 의미·작성 주체·소비 경로·테스트는
 Registry의 `frontmatter_keys`가, YAML과 JSON Schema dialect는 `frontmatter_dialect`가
 소유한다. 각 문서 relation의 종류·방향·cardinality·소유자·소비 경로와 link 유형 네 가지의
 의미는 Registry의 `relationship_contract`가 소유한다. Markdown placeholder는
 "&#123;&#123;UPPER_SNAKE_CASE&#125;&#125;", native placeholder는 `__UPPER_SNAKE_CASE__`,
-author guidance는 "<!-- Author prompt: ... -->"만 사용한다.
+작성 안내는 `<!-- 작성 규칙: ... -->` 주석을 사용한다. 이 주석은 빈 form의
+작성 단계에서만 사용하며 완료된 작성 문서에는 남기지 않는다. 공통 외피와
+역할별 본문·표의 규칙은 [common document contract](./01.contracts/common-document-contract.json),
+Registry의 profile·form·TemplateDefinition이 나누어 소유한다. `관련 문서`의
+선택적인 `Relation | Target` 표는 실제 의미 관계에 한해 사용하며 relation은
+`requires`, `designs`, `implements`, `verifies`, `operates`, `defines`, `cites` 중
+하나이고 target은 단일 Markdown 링크다. 단순 탐색 링크는 표 밖에 둔다.
 
 Template은 만드는 문서의 envelope를 투영하므로 profile이 요구하는
 "artifact_id" placeholder를 포함한다. "layer"는 ADR-0001부터 ADR-0061까지의 accepted ADR에만 남으며 어떤
@@ -403,18 +433,18 @@ optional identity만 보존한다.
 Stage 98(`docs/98.archive/`)에는 profile과 form이 없다. 그 경로는 문서
 inventory 밖이며 검증하지 않는다.
 
-#### Upstream and Downstream
+###### Upstream and Downstream
 
 - [Docs README](../README.md)
 
-#### Policy and Templates
+###### Policy and Templates
 
 - [Agent Governance Hub](../../.agents/README.md)
 - [Document Authoring Policy](../00.workspace/03.process/document-authoring.md)
 
-### Checks
+##### Checks
 
-#### Task Status Authoring
+###### Task Status Authoring
 
 Task 행 상태와 frontmatter `status`의 작성법은
 [Document Authoring Policy](../00.workspace/03.process/document-authoring.md)와
@@ -423,3 +453,23 @@ Task 최초 기록이 허용하는 상태와 Spec·Plan의 direct approval·firs
 approval 예외는 Document Lifecycle Policy가 정본이다. 이 README는 그 규칙을
 다시 적지 않는다. 지역 확장의 정확한 이름은 Registry
 `shared_contract.extensions`에 있다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

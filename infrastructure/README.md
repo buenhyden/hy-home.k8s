@@ -1,18 +1,37 @@
 ---
 title: "infrastructure"
-version: "0.5.0"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-20"
 ---
 # infrastructure
 
+## 문서 개요
+
+### 목적과 독자
+
+이 README는 infrastructure의 사용·연결·검사 위치를 찾는 운영자와 기여자를 안내한다. 현재 역할은 [Service](#service)와 [Usage](#usage)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 infrastructure의 진입 경로를 유지한다. 이 경로의 파일과 경계는 [Purpose](#purpose), 사용 조건은 [Usage](#usage), 검사는 [Checks](#checks)가 설명한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+
 > Linux server + k3d + 외부 서비스 연동 기반 로컬 플랫폼 인프라 자산을 관리한다.
 
-## Service
+#### Service
 
-### Purpose
+##### Purpose
 
 이 디렉터리는 로컬 Kubernetes 플랫폼 부트스트랩에 필요한 인프라 설정을 담는다. Linux server/native Docker Engine/k3d 클러스터, 외부 서비스 연동 계약, ArgoCD 설치 값 파일, bootstrap 검증 스크립트, 정적 계약 테스트를 포함한다.
 
@@ -35,7 +54,7 @@ infrastructure/
 
 - Stage 03 Spec 안내 (`docs/03.specs/README.md`)
 
-#### Audience
+###### Audience
 
 이 README의 주요 독자:
 
@@ -43,7 +62,7 @@ infrastructure/
 - Platform Engineers
 - Documentation Writers
 
-#### Infrastructure Coverage Matrix
+###### Infrastructure Coverage Matrix
 
 이 표는 `infrastructure/`의 현재 bootstrap/runtime-support entrypoint와
 운영 책임을 연결한다. `repository-quality` 게이트는 이 표가 실제
@@ -63,14 +82,14 @@ infrastructure/
 | `coredns-custom.yaml` | CoreDNS zone owned by platform maintainers. | Bootstrap applies it to `kube-system` and restarts CoreDNS; it resolves `openbao`, `prometheus` and `grafana.hy.home.arpa` to the host address `192.168.0.13` (ADR-0046). Bootstrap also creates the gateway CA ConfigMaps `openbao-ca`, `hy-home-root-ca` and `kiali-cabundle`. | Depends on the external Traefik routes for OpenBao, the Prometheus API (Basic Auth) and Grafana, and on the k3s `coredns-custom` import. | Validate with `bash scripts/validate-infrastructure-contracts.sh`; live resolution requires a running cluster. |
 | `ipaddresspool.yaml` and `l2advertisement.yaml` | MetalLB bootstrap manifests owned by platform maintainers. | Bootstrap-time LoadBalancer address pool and L2 advertisement. | Depends on local network range and MetalLB controller. | Validate manifests statically; live behavior requires cluster networking checks. |
 
-### Interfaces
+##### Interfaces
 
 | Interface | Producer | Consumer | Contract | Failure |
 | --- | --- | --- | --- | --- |
 | Vault connection contract | 외부 Vault operator (Vault runtime) | ESO (TLS through the external Traefik) | [Bootstrap Boundary Matrix](#bootstrap-boundary-matrix) | Repo-static checks do not read secret values, write Vault policy, refresh Vault auth, or repair live Vault state. |
 | PostgreSQL and Valkey connection contract | 외부 service workspace (PostgreSQL/Valkey runtime) | ArgoCD (management Valkey Service/EndpointSlice and ExternalSecret target) | [Bootstrap Boundary Matrix](#bootstrap-boundary-matrix) | Repo-static checks do not start external services, change Docker bind addresses, rotate credentials, or prove authenticated DB/K8s reachability. |
 
-#### Bootstrap Boundary Matrix
+###### Bootstrap Boundary Matrix
 
 이 표는 bootstrap-only 예외와 정상 GitOps 운영 경계를 분리한다. 정적 검증은
 이 경계가 문서화되어 있는지 확인하지만, k3d 생성, ArgoCD 설치, root app
@@ -84,36 +103,38 @@ infrastructure/
 | `Vault connection contract` | Owns `coredns-custom.yaml`, `gitops/platform/eso/vault-secret-store.yaml`, the `openbao-ca` ConfigMap bootstrap, Vault policy sample, and no-secret static checks. | External Vault operator owns Vault runtime, unseal, token handling, auth mount configuration, the `vault` audience binding, policy application, and secret rotation. | Bootstrap requires HTTPS plus a readable CA, prompts silently on `/dev/tty`, and has no noninteractive or insecure fallback; secret values are not printed or committed, and ESO reaches OpenBao over TLS through the external Traefik (ADR-0046). | `python3 scripts/validate-vault-eso-contracts.py --root .`; `bash scripts/validate-infrastructure-contracts.sh`; `bash scripts/check-secret-handling.sh .`; live `infrastructure/verify/verify-secrets.sh`. | Repo-static checks do not read secret values, write Vault policy, refresh Vault auth, or repair live Vault state. |
 | `PostgreSQL and Valkey connection contract` | Owns the required management Valkey K8s Service/EndpointSlice and ArgoCD ExternalSecret target; management/development PostgreSQL remain external host-loopback services without K8s route. | External service workspace owns PostgreSQL/Valkey runtime, container/network state, credentials, TLS/CA material if enabled, and rotation evidence. | Bootstrap requires management Valkey TCP reachability, may warn on selected host-loopback PostgreSQL TCP, and creates the initial ArgoCD Valkey Secret from approved Vault source. | `bash scripts/validate-infrastructure-contracts.sh`; live `infrastructure/verify/verify-external-services.sh` and `infrastructure/verify/verify-secrets.sh`. | Repo-static checks do not start external services, change Docker bind addresses, rotate credentials, or prove authenticated DB/K8s reachability. |
 
-#### Security Boundary
+###### Security Boundary
 
 secret과 credential을 저장소에 커밋하지 않는 경계는 아래 Usage > Prerequisites의 Scope 문단에 함께 적혀 있다.
 
-## Usage
+#### Usage
 
-### Prerequisites
+##### Prerequisites
 
 저장소 파일은 bootstrap 입력과 정적 인터페이스 계약을 소유한다. Linux 서버
 호스트, Docker, kubeconfig, live 클러스터, 외부 서비스, credential, 인증서,
 승인된 bootstrap 시점은 운영자가 소유한다. secret 값과 비공개 runtime 상태는
 이 트리나 검증 증거에 복사하지 않는다.
 
-#### Scope
+###### Scope
 
-##### In Scope
+<a id="in-scope"></a>
+**In Scope**
 
 - k3d 클러스터 설정과 bootstrap 스크립트
 - ArgoCD Helm values와 초기 GitOps 연결 자산
 - MetalLB/EndpointSlice 같은 로컬 외부 서비스 연결 manifest
 - repo-backed 정적 검증 스크립트와 계약 테스트
 
-##### Out of Scope
+<a id="out-of-scope"></a>
+**Out of Scope**
 
 - 외부 Vault/PostgreSQL/Valkey 런타임 자체 생성
 - AWS/Azure 실제 cloud 리소스 프로비저닝
 - 애플리케이션 워크로드 매니페스트
 - 정상 운영 변경을 위한 live cluster mutation
 
-#### Host Runtime Prerequisite Matrix
+###### Host Runtime Prerequisite Matrix
 
 이 표는 Linux server + native Docker Engine + k3d live validation을 시작하기 전
 확인해야 하는 runtime 전제를 모은다. 정적 검증은 이 표의 SSoT와 failure
@@ -128,9 +149,9 @@ boundary를 확인하지만, kubeconfig repair나 live cluster mutation을 자�
 | `Port and network contracts` | Current local contracts are Traefik LoadBalancer `172.18.0.240:443`, required management Valkey `192.168.0.13:26379`, and OpenBao through external Traefik `192.168.0.13:443`. Management/development PostgreSQL publish only to host loopback `127.0.0.1:25432/25433`; development Valkey has only its Docker-network `6379`. No current K8s PostgreSQL or development Valkey endpoint is declared. Current AD-0007 is reached through the [architecture stage router](../docs/02.architecture/README.md). | External service workspace owns service containers and addresses; this repository owns the declared K8s interface. | Static proof comes from `scripts/validate-infrastructure-contracts.sh`; live proof uses selected, authorized runtime checks after bootstrap. | Port conflicts or stale addresses block runtime checks and require external-service or bootstrap follow-up; host-loopback TCP does not prove K8s DB reachability. |
 | `Host networking constraints` | k8s hosts are `<name>.hy-k8s.home.arpa` served by the k8s router: the k3d serverlb bound to `192.168.0.14:80/443` (ADR-0043). External service hosts stay on `hy.home.arpa` behind the external Traefik. | Operator owns assigning `192.168.0.14` to the host, `hy-k8s.home.arpa` name resolution, the host firewall, and binding the external Traefik to its own address. | `validate-infrastructure-contracts.sh` checks the serverlb bind, NodePorts, and apex redirects statically; `CHECK_K8S_ROUTER=true` in `verify-ingress-tls.sh` is the explicit runtime check. | Host address, DNS, firewall, or external gateway state is outside repo-static ownership. |
 
-### Selected Start
+##### Selected Start
 
-#### Working Procedure
+###### Working Procedure
 
 1. bootstrap 전 Runbook (`docs/05.operations/03.runbooks/README.md`)의 외부 의존성 점검을 확인한다.
 2. `bootstrap-local.sh` 변경 시 bootstrap-only 예외 범위와 GitOps 소유권 전환 지점을 함께 점검한다.
@@ -139,7 +160,7 @@ boundary를 확인하지만, kubeconfig repair나 live cluster mutation을 자�
 5. `infrastructure/verify/*.sh`를 추가, 삭제, 리네임, 통합할 때는 이 README의
    Infrastructure Test Inventory와 `run-all.sh` 호출 목록을 함께 갱신한다.
 
-#### Link Basis
+###### Link Basis
 
 이 README의 링크 기준 위치는 `infrastructure/`다.
 
@@ -147,7 +168,7 @@ boundary를 확인하지만, kubeconfig repair나 live cluster mutation을 자�
 - 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
 - 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
 
-#### Reference Links
+###### Reference Links
 
 - PRD (`docs/01.requirements/README.md`)
 - Spec (`docs/03.specs/README.md`)
@@ -155,16 +176,16 @@ boundary를 확인하지만, kubeconfig repair나 live cluster mutation을 자�
 - [GitOps README](../gitops/README.md)
 - [Bootstrap version pins](./bootstrap-local.sh)
 
-## Checks
+#### Checks
 
-### Readiness
+##### Readiness
 
 저장소 범위의 증거는 `bash scripts/validate-infrastructure-contracts.sh`로
 얻는다. `bash infrastructure/verify/run-all.sh`는 의도적으로 bootstrap한
 환경에서만 실행하며 이때 아래 inventory에 기록된 전제 조건과 live·정적 결과
 경계를 따른다.
 
-#### Validation Note
+###### Validation Note
 
 `infrastructure/verify/`는 라이브 검증 스크립트만 소유한다.
 
@@ -192,7 +213,7 @@ Traefik이 모든 주소의 443을 점유하면 runtime blocker로 기록한다.
 `bash infrastructure/verify/run-all.sh`가 기본 kubeconfig로 통과해야 하며,
 rollback은 백업 파일을 `~/.kube/config`로 되돌리는 방식이다.
 
-#### Throwaway Test Clusters
+###### Throwaway Test Clusters
 
 운영 `hyhome` 클러스터와 별개로, 이 workspace가 소유한 일회성 k3d 클러스터에
 선택한 GitOps 앱만 올려 시험할 수 있다(`scripts/test_cluster.py`).
@@ -222,14 +243,14 @@ egress를 허용하고 NetworkPolicy는 허용만 더하므로, 그 namespace에
 돌리는 시험은 운영망에 닿을 수 있다. 클러스터 전체 차단은 호스트 방화벽이나
 전용 VM이 필요하다(SPEC-0161 W09-H02).
 
-#### Infrastructure Test Inventory
+###### Infrastructure Test Inventory
 
 라이브 검증 스크립트의 유지 계약은 [verify/](./verify/)의 Infrastructure
 Test Inventory가 소유한다.
 
-### Failure Handling
+##### Failure Handling
 
-#### Bootstrap Note
+###### Bootstrap Note
 
 - 실행 전 HTTPS Vault 주소와 읽기 가능한 `VAULT_CA_FILE`을 준비한다.
 - `./bootstrap-local.sh`는 토큰을 환경 변수나 명령 인자로 받지 않고
@@ -242,6 +263,26 @@ Test Inventory가 소유한다.
 - 외부 서비스(Vault/PostgreSQL/Valkey)는 별도 워크스페이스(repo)에서 관리한다.
 - `./bootstrap-local.sh`의 `kubectl apply`는 ArgoCD 소유권이 생기기 전 초기 namespace, secret, MetalLB, root GitOps application 생성을 위한 bootstrap-only 예외다. 정상 운영 변경은 GitOps PR과 ArgoCD reconciliation으로 처리한다.
 
-#### Runbook Links
+###### Runbook Links
 
 - Platform bootstrap runbook (`docs/05.operations/03.runbooks/README.md`)
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

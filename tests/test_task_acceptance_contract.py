@@ -630,40 +630,34 @@ class SpecPlanAuthorityTests(unittest.TestCase):
             with self.subTest(family=family):
                 self.assertTrue(refusals(family, ["draft"], [other, "draft"]))
 
-    def test_local_lifecycle_extensions_remain_effective_after_adoption(self) -> None:
-        raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
+    def test_local_lifecycle_extensions_remain_effective_as_candidate(self) -> None:
         spec = PurePosixPath("docs/03.specs/0999-new-package/spec.md")
         task = PurePosixPath("docs/03.specs/0999-new-package/01.tasks/tsk-0001-work.md")
-        for stage in ("approved", "adopted"):
-            registry = validate_registry(
-                ROOT,
-                raw | {"shared_contract": {**raw["shared_contract"], "stage": stage}},
-            )
-            with self.subTest(stage=stage):
-                self.assertNotIn(
-                    "LIFECYCLE-EDGE",
-                    {
-                        item.rule_id
-                        for item in compare_lifecycle(
-                            registry,
-                            {spec: LifecycleDocument(spec, "sdlc/spec", "draft")},
-                            {spec: LifecycleDocument(spec, "sdlc/spec", "approved")},
-                            base_mode="staged",
-                        )
-                    },
+        registry = load_registry(ROOT)
+        self.assertNotIn(
+            "LIFECYCLE-EDGE",
+            {
+                item.rule_id
+                for item in compare_lifecycle(
+                    registry,
+                    {spec: LifecycleDocument(spec, "sdlc/spec", "draft")},
+                    {spec: LifecycleDocument(spec, "sdlc/spec", "approved")},
+                    base_mode="staged",
                 )
-                self.assertNotIn(
-                    "LIFECYCLE-CREATE",
-                    {
-                        item.rule_id
-                        for item in compare_lifecycle(
-                            registry,
-                            {},
-                            {task: LifecycleDocument(task, "sdlc/task", "blocked")},
-                            base_mode="staged",
-                        )
-                    },
+            },
+        )
+        self.assertNotIn(
+            "LIFECYCLE-CREATE",
+            {
+                item.rule_id
+                for item in compare_lifecycle(
+                    registry,
+                    {},
+                    {task: LifecycleDocument(task, "sdlc/task", "blocked")},
+                    base_mode="staged",
                 )
+            },
+        )
 
     def test_new_requirement_is_created_in_draft_and_keeps_its_transitions(
         self,

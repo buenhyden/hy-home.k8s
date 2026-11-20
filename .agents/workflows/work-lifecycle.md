@@ -1,17 +1,35 @@
 ---
 title: "Work Lifecycle"
-version: "2.5.1"
+version: "3.0.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-20"
 ---
 
 # Work Lifecycle
 
-## Trigger
+## 문서 개요
 
-### When to Use
+### 목적과 독자
+
+작업자는 아래에 적힌 조건과 범위에서 업무 생명주기 절차를 사용한다.
+
+### 책임과 적용 범위
+
+이 절차의 적용 조건과 권한은 [사용 시점](#when-to-use)과 [권한 경계](#authority-boundary)에 따른다.
+
+## 내용 계약
+
+### 입력과 전제
+
+단계를 수행하기 전에 현재 요청과 명시된 입력을 읽는다.
+
+### 본문과 규칙
+
+#### Trigger
+
+##### When to Use
 
 Use one intake-to-handoff procedure for substantial repository work rather than
 separate bootstrap, preflight, and postflight rule copies.
@@ -21,30 +39,30 @@ Related policy and responsibility documents: [SDLC Flow](../../docs/00.workspace
 [Context and Memory](../governance/context-and-memory.md) and
 [Roles](../roles/README.md).
 
-#### Inputs
+###### Inputs
 
 Start at the current provider gateway, then load the minimum relevant policy,
 role responsibility, provider note, and owning Spec/Plan/Task. Re-observe Git
 state on resume; historical progress and provider-local memory are auxiliary.
 
-### When Not to Use
+##### When Not to Use
 
 This procedure names no repository work it must not be used for; if such a case is found, state it here.
 
-### Authority Boundary
+##### Authority Boundary
 
 This procedure applies [agent execution](../governance/agent-execution.md),
 [approval and safety](../../docs/00.workspace/04.quality/approval-and-safety.md), and
 [quality](../../docs/00.workspace/04.quality/quality.md). It does not grant new scope or override the
 active Task, registry permissions, or provider controls.
 
-## Procedure
+#### Procedure
 
-### Steps
+##### Steps
 
 The procedure parts are Intake, Resume, Implementation and Completion.
 
-#### Intake
+###### Intake
 
 1. State the outcome, acceptance IDs, in/out scope, material assumptions, and
    protected actions. Resolve contradictions before editing.
@@ -71,7 +89,7 @@ The procedure parts are Intake, Resume, Implementation and Completion.
    Quality preflight creates no business deadline, session timebox or
    final-validation reserve approval.
 
-#### Resume
+###### Resume
 
 Apply the [context policy resume decision](../governance/context-and-memory.md#resume-decision)
 before dependent writes. Put worktree identity and relevant file hashes under
@@ -81,7 +99,7 @@ budget state with the lane results and limitations of the Next Owner section
 (the [handoff fields](../../docs/00.workspace/04.quality/quality.md#handoff-evidence-contract)). On conflict, retain completed work and name the
 next owner; refresh the affected evidence before resuming.
 
-#### Implementation
+###### Implementation
 
 Make the smallest testable change. Demonstrate a focused failing case for a
 changed executable behavior, then its passing result; use selected profile,
@@ -111,7 +129,7 @@ conflict, and name the next owner. Stop the dependent action and continue
 independent approved safe work. Never weaken a contract, a gate, or a test to
 end the loop.
 
-#### Completion
+###### Completion
 
 1. Check acceptance, links, owner boundaries, language, and README navigation
    through the [semantic review contract](../../docs/00.workspace/04.quality/quality.md#semantic-review):
@@ -136,28 +154,48 @@ Hooks are supplemental evidence or enforcement only when their intended
 runtime actually loads them. Advisory compaction output is not completion
 evidence, and the progress-ledger rule belongs to [context and memory](../governance/context-and-memory.md#objective).
 
-### Failure Handling
+##### Failure Handling
 
 The stop rule is stated under Implementation in Steps ("Bound the attempt").
 
-## Outputs
+#### Outputs
 
-### Artifacts
+##### Artifacts
 
 This procedure defines no output format of its own beyond the results its Steps describe; if it needs one, define it here.
 
-### Handoff
+##### Handoff
 
 Completion and handoff are stated under Completion in Steps.
 
-## Verification
+#### Verification
 
-### Checks
+##### Checks
 
 Run the selected static checks and preserve exact results. Review this
 procedure when intake, delegation, completion, or handoff routing changes;
 keep shared lane meanings in quality policy.
 
-### Limits
+##### Limits
 
 The selected static checks do not establish provider-native or live behavior, and advisory compaction output is not completion evidence. Hooks are evidence or enforcement only when their intended runtime loads them, and quality preflight creates no business deadline, session timebox or final-validation reserve approval.
+
+## 적용과 확인
+
+### 적용 방법
+
+각 단계와 실패 처리 규칙을 명시된 조건에 따라 적용한다.
+
+### 확인 기준
+
+지정된 검사를 실행하고 실제 근거 수준을 보고한다.
+
+## 관계와 출처
+
+### 관련 문서
+
+본문의 관련 문서가 정책과 책임 소유자를 연결한다.
+
+### 외부 근거
+
+인용된 저장소 소유 문서가 이 절차를 정한다. 외부 자료는 참고 근거다.

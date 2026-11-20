@@ -517,7 +517,11 @@ class ValidatorIntegrationTests(unittest.TestCase):
             for item in raw["profiles"]
             if item["template_source"] is not None
         }
-        for relative in {SCHEMA_FILE.relative_to(ROOT).as_posix(), *templates}:
+        for relative in {
+            SCHEMA_FILE.relative_to(ROOT).as_posix(),
+            "docs/99.templates/01.contracts/common-document-contract.json",
+            *templates,
+        }:
             destination = cls.seed / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_bytes((ROOT / relative).read_bytes())
@@ -601,9 +605,15 @@ class ValidatorIntegrationTests(unittest.TestCase):
         self.assertIn(REGISTRY_PATH, output)
 
     def test_a_tampered_released_edition_fails_the_validator(self) -> None:
-        self.commit_registry(content_digest=OTHER_DIGEST)
+        approved = {
+            "stage": "approved",
+            "approved_by": "fixture-reviewer",
+            "approved_at": "2026-11-14",
+            "effective_from": "2026-11-14",
+        }
+        self.commit_registry(**approved, content_digest=OTHER_DIGEST)
         start = self.head()
-        self.restore_registry()
+        self.commit_registry(**approved)
         result, output = self.judge(start)
         self.assertNotEqual(result, 0, output)
         self.assertIn(EDITION, output)

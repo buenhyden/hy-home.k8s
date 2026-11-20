@@ -1,6 +1,6 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "2.1.3"
+version: "3.0.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -10,9 +10,27 @@ artifact_id: "AD-0007"
 
 # Current Local GitOps Platform Architecture Description (AD)
 
-## Context and Boundaries
+## 문서 개요
 
-### System Boundary
+### 목적과 독자
+
+This architecture description lets architects, GitOps implementers, and reviewers inspect the structural boundary for Current Local GitOps Platform. The actual components and flow are under [Structure](#structure) and [Runtime Behavior](#runtime-behavior).
+
+### 책임과 적용 범위
+
+platform maintains the current architecture description. The owned and excluded system boundary is stated in [System Boundary](#system-boundary); constraints remain in [Constraints](#constraints).
+
+## 내용 계약
+
+### 입력과 전제
+
+Inputs and assumptions remain in the cited upstream requirements, boundaries, and payload sections.
+
+### 본문과 규칙
+
+#### Context and Boundaries
+
+##### System Boundary
 
 - **Owns**:
   - Local k3d cluster configuration and bootstrap assets.
@@ -27,28 +45,30 @@ artifact_id: "AD-0007"
   - Preserve old conflicting runtime values in active architecture docs.
   - Treat deleted or archived documents as architecture input.
 
-#### Purpose and Readers
+###### Purpose and Readers
 
 This document describes the local GitOps platform using its current desired-state declarations and static contract evidence.
 The structure and deployment views identify the intended topology, with separately scoped runtime observations kept by the operating owners.
 This AD owns the durable platform view. Operating controls and procedures remain
 with the Stage 05 owners below, and later changes use their own scoped work units.
 
-##### Current architecture summary
+<a id="current-architecture-summary"></a>
+
+**Current architecture summary**
 
 The repository declares a k3d cluster on the Linux server's native Docker Engine, the ArgoCD App-of-Apps, platform Applications, the workload ApplicationSet, and external service interface contracts.
 The architecture's core goals are local reproducibility, GitOps-first ownership, secret-safe integration, and current-document traceability.
 
-#### Context
+###### Context
 
 - **Consumes**:
   - External service runtime readiness.
   - OpenBao source secrets and operator-managed secret rotation.
   - Linux server host Docker, DNS, and network state.
 
-### Constraints
+##### Constraints
 
-#### Agent architecture requirements
+###### Agent architecture requirements
 
 Agent execution, provider, memory and validation structure belongs to the
 [workspace architecture](../../00.workspace/02.architecture/01.descriptions/0006-workspace-agent-governance-platform.md).
@@ -57,15 +77,15 @@ owns protected live actions, and the [document lifecycle](../../00.workspace/03.
 owns document authority and disposition. This product view consumes those owners
 without defining their rules again.
 
-## Structure
+#### Structure
 
-### Building Blocks
+##### Building Blocks
 
 The root application in `gitops/clusters/local/root-application.yaml` points to `gitops/apps/root`.
 Platform Applications then install or configure ArgoCD, namespaces, cert-manager, Traefik, ESO, external services, Headlamp, Istio/Kiali, monitoring, Rollouts, and network policies.
 The apps ApplicationSet owns workload directories under `gitops/workloads/*`.
 
-#### System context and container views
+###### System context and container views
 
 These views follow the [C4 model](https://c4model.com/): a context view of the
 platform and its neighbours, and a container view of what runs inside it. A
@@ -155,7 +175,7 @@ flowchart LR
 | C9 | Alloy and kube-state-metrics | Collect metrics and logs and send them to the external backend | Kustomize manifests, `monitoring` | [monitoring](../../../gitops/platform/monitoring/) |
 | C10 | Workloads | Application workloads onboarded by the ApplicationSet, currently Adminer | Kustomize per workload, `apps` | [workloads](../../../gitops/workloads/) |
 
-#### Current platform sources and operating owners
+###### Current platform sources and operating owners
 
 | Boundary | Current source and contract | Operating owner |
 | --- | --- | --- |
@@ -169,7 +189,7 @@ The executable sources own exact values and versions. These boundaries and the
 accepted decisions explain their purpose; neither a document nor a static PASS
 proves current external availability, secret provisioning or live reconciliation.
 
-#### Delivery assurance architecture transferred from AD-0010
+###### Delivery assurance architecture transferred from AD-0010
 
 This AD inherits AD-0010's boundaries for platform validation, interfaces, examples, source revisions, and namespace evidence.
 [AD-0006](../../00.workspace/02.architecture/01.descriptions/0006-workspace-agent-governance-platform.md) and
@@ -233,7 +253,7 @@ Images keep the current non-latest tag-or-digest check, with no unverified blank
 Further digest/SBOM/provenance obligations are approved follow-on work with a consumer, owner, and trigger.
 The Istio CNI manifest is desired state and proves no actual admission or network state.
 
-### Interfaces
+##### Interfaces
 
 - **Key Entities / Flows**:
   - ArgoCD reconciles Git manifests into the local cluster.
@@ -252,9 +272,9 @@ The Istio CNI manifest is desired state and proves no actual admission or networ
 | `vault-backend` ClusterSecretStore to OpenBao paths | External OpenBao | External Secrets Operator | [ESO configuration](../../../gitops/platform/eso/) | not stated in this document |
 | `Service` and `EndpointSlice` interface `valkey-external:6379` | External management Valkey at host `192.168.0.13:26379` | ArgoCD | [external service interfaces](../../../gitops/platform/external-services/) | not stated in this document |
 
-## Runtime Behavior
+#### Runtime Behavior
 
-### Normal Flow
+##### Normal Flow
 
 - **Declared Runtime / Platform**:
   - Linux server shell with the native Docker Engine.
@@ -273,7 +293,7 @@ current live cluster state for this topology. The
 [platform bootstrap runbook](../../05.operations/03.runbooks/0001-argocd-platform-bootstrap-runbook.md)
 and the operating owners listed above own live verification.
 
-#### Deployment mapping
+###### Deployment mapping
 
 | Deployment node | Hosts | Source |
 | --- | --- | --- |
@@ -283,13 +303,13 @@ and the operating owners listed above own live verification.
 | CoreDNS host mapping | Resolves `openbao`, `prometheus` and `grafana` under `hy.home.arpa` to `192.168.0.13`, which the ESO, Kiali, Rollouts and Prometheus-auth paths need | [CoreDNS custom](../../../infrastructure/coredns-custom.yaml), [ADR-0046](../02.decisions/0046-external-services-over-host-addresses.md) |
 | hy-home.docker workspace on the same host | E3: OpenBao, management Valkey, Prometheus, Grafana, Loki, Tempo and the Alloy gateway | [external services](../../../gitops/platform/external-services/), [ADR-0046](../02.decisions/0046-external-services-over-host-addresses.md) |
 
-### Failure and Recovery
+##### Failure and Recovery
 
 No separate failure boundary is recorded in this description; the Reliability attribute in [Scenarios](#scenarios) states its reliability expectation.
 
-## Quality Scenarios
+#### Quality Scenarios
 
-### Scenarios
+##### Scenarios
 
 - **Performance**: Local platform components must stay suitable for the single-host k3d resource budget ([ADR-0042](../02.decisions/0042-linux-server-single-host-baseline.md)).
 - **Security**: Secrets are synced through ESO/OpenBao contracts ([ADR-0041](../02.decisions/0041-openbao-secret-backend.md)) without storing values in Git.
@@ -298,7 +318,7 @@ No separate failure boundary is recorded in this description; the Reliability at
 - **Observability**: Kiali and monitoring manifests integrate with external observability endpoints.
 - **Operability**: Static checks and runbooks separate repo-backed validation from live runtime validation.
 
-#### Quality scenario architecture paths
+###### Quality scenario architecture paths
 
 [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md)
 owns each scenario's measure, unit, environment, sample, and threshold or named
@@ -315,26 +335,28 @@ into an observed service-level result.
 | [Workload onboarding](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-workload-onboarding) ([REQ-0004-NFR-0001](../../01.requirements/0004-current-local-gitops-platform.md)) | The [workload ApplicationSet](../../../gitops/clusters/local/applicationset-apps.yaml) scans [workload declarations](../../../gitops/workloads/); their Rollout and AnalysisTemplate definitions provide a component-specific progressive-delivery path. | Manifest checks prove declared structure, not a successful rollout or universal availability. The application and Platform Owners capture actual Application, Rollout, pod, ingress, and TLS state under [POL-0007](../../05.operations/02.policies/0007-app-gitops-onboarding-policy.md) and [RUN-0010](../../05.operations/03.runbooks/0010-github-app-gitops-onboarding-runbook.md). |
 | [Single-host recovery](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-single-host-recovery) ([REQ-0004-NFR-0001](../../01.requirements/0004-current-local-gitops-platform.md)) | [k3d configuration](../../../infrastructure/k3d/k3d-cluster.yaml) and bootstrap assets implement the local single-host baseline selected by [ADR-0042](../02.decisions/0042-linux-server-single-host-baseline.md). | Static topology and resource preflight do not establish high availability or recovery duration. The Platform Owner records any approved rebuild and service-state observation through [POL-0001](../../05.operations/02.policies/0001-k8s-gitops-operations-policy.md) and [RUN-0001](../../05.operations/03.runbooks/0001-argocd-platform-bootstrap-runbook.md). |
 
-#### Implementation owners and remaining boundaries
+###### Implementation owners and remaining boundaries
 
 The repository checks structure, Kubernetes YAML, required policy tools, secret handling and the Vault/ESO boundaries, with offline render/built-in schema checks, per-target depth/tool-version/fallback results and ingress/resource-kind reference integrity for REQ-0004-FR-0008 and REQ-0004-FR-0010. This AD and ADR-0043 retain the current ingress architecture. Custom-CRD-schema, generated-output and live-observation checks are reported as DEFER with their owners. SPEC-0104 (completed, left the tree) delivered the static validation layers. Specs 0047, 0048, 0050 and 0051 were retired without successors and left the tree; Git history recovers them. Their scope has no implementation owner, and this AD's succession does not mean any tranche is complete.
 
-### Trade-offs
+##### Trade-offs
 
 Local platform components stay inside the single-host k3d resource budget of ADR-0042. Static checks and runbooks keep repository-backed validation apart from live runtime validation, so a configured check or repository-static result is never promoted to an observed service-level result.
 
-## Decisions and Adoption
+#### Decisions and Adoption
 
-### Decisions
+##### Decisions
 
 - **ADR**: [../decisions/0014-current-local-gitops-platform-contract.md](../02.decisions/0014-current-local-gitops-platform-contract.md)
 - **Current-state amendment**: [ADR-0054](../02.decisions/0054-platform-decision-current-state-amendment.md) replaces the platform ADR clauses that no longer match the repository
 
-#### Requirement Mapping
+###### Requirement Mapping
 
 - **Requirement**: [../../01.requirements/0004-current-local-gitops-platform.md](../../01.requirements/0004-current-local-gitops-platform.md)
 
-##### Transferred requirement members
+<a id="transferred-requirement-members"></a>
+
+**Transferred requirement members**
 
 | Current requirement | Retained architecture boundary | Implementation owner |
 | --- | --- | --- |
@@ -346,11 +368,11 @@ Local platform components stay inside the single-host k3d resource budget of ADR
 | REQ-0004-FR-0011 | Ordered review and rollback boundaries for local platform integration | None; N/A — Spec 0051 left the tree; Git history recovers it |
 | REQ-0004-FR-0012, REQ-0004-FR-0013 | Direct executable-source versions and self-source/external-source distinction | Executable manifests and ADR-0029 |
 
-### Adoption Boundaries
+##### Adoption Boundaries
 
 - **Implementation evidence**: N/A — SPEC-0008 left the tree; Git history recovers it; current structure is owned here, operating controls by the named Stage 05 documents.
 
-#### arc42 coverage
+###### arc42 coverage
 
 The twelve [arc42](https://arc42.org/overview/) sections are used as a
 content check, not as a required layout. Each row names where the content
@@ -371,7 +393,7 @@ lives; nothing is copied between this description, the ADRs and REQ-0004.
 | 11 Risks and technical debt | [Implementation owners and remaining boundaries](#implementation-owners-and-remaining-boundaries) | No separate risk register; residuals stay with their owners |
 | 12 Glossary | [Repository Vocabulary](../../../.agents/knowledge/glossary.md); [local Kubernetes vocabulary](../../00.workspace/01.project/glossary.md) | Shared meanings and platform terminology have separate owners. |
 
-### Lifecycle Traceability
+##### Lifecycle Traceability
 
 ADR links identify durable decisions; a Spec that left the tree does not own the current architecture.
 
@@ -400,7 +422,7 @@ ADR links identify durable decisions; a Spec that left the tree does not own the
 | N/A — [Acceptance criterion 03](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | tracked Kubernetes manifest syntax evidence | [ADR 0014](../02.decisions/0014-current-local-gitops-platform-contract.md) |
 | N/A — [Acceptance criterion 04](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | Currentness evidence from the repository quality gate | [ADR 0014](../02.decisions/0014-current-local-gitops-platform-contract.md) |
 
-### Archived Lineage
+##### Archived Lineage
 
 These documents were deleted from `docs/98.archive/` under SPEC-0140 and are recovered with `git show 69445fca:<path>`; ADR-0003 and ADR-0027 were removed earlier and are recovered from `fe3bd418^`.
 
@@ -417,3 +439,23 @@ These documents were deleted from `docs/98.archive/` under SPEC-0140 and are rec
 | AD-0010 | superseded architecture | Repository Delivery Evidence Architecture: a repository-static assurance control plane (routing, projection, validation depth, evidence classification, review, rollback) for the delivery and platform surfaces of PRD-0007, tied to ADR-0021. Replaced by AD-0007. | `docs/98.archive/superseded/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md` |
 | ADR-0003 | superseded decision | Chose External Secrets Operator with Vault Kubernetes Auth for runtime secrets: namespace/path least-privilege policies, no secret values in Git. Superseded by ADR-0041, which keeps the ESO and Kubernetes Auth pattern on an OpenBao backend. | `docs/98.archive/superseded/02.architecture/decisions/0003-eso-vault-k8s-auth.md` (recover with `git show fe3bd418^:<path>`) |
 | ADR-0027 | superseded decision | Declined Pod Security Admission until the Istio CNI node agent removed the need for privileged init containers, and recorded the prerequisite ordering. Superseded by ADR-0028 after that condition fired. | `docs/98.archive/superseded/02.architecture/decisions/0027-pod-security-standards-staged-adoption.md` (recover with `git show fe3bd418^:<path>`) |
+
+## 적용과 확인
+
+### 적용 방법
+
+Apply the decisions and procedures in the role payload under its stated conditions.
+
+### 확인 기준
+
+Check the role payload acceptance or verification conditions and report observed limits.
+
+## 관계와 출처
+
+### 관련 문서
+
+Follow the current upstream and downstream links in the role payload.
+
+### 외부 근거
+
+External evidence, when used, remains attributed and bounded in the role payload.

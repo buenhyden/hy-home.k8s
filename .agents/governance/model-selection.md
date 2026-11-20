@@ -1,34 +1,52 @@
 ---
 title: "Model Selection Policy"
-version: "1.9.2"
+version: "2.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 
 # Model Selection Policy
 
-## Purpose and Scope
+## 문서 개요
 
-### Objective
+### 목적과 독자
+
+Workers and reviewers use Model Selection Policy for the rules in its stated scope.
+
+### 책임과 적용 범위
+
+The policy's coverage is defined in [Purpose and Scope](#purpose-and-scope) and [Applies To](#applies-to).
+
+## 내용 계약
+
+### 입력과 전제
+
+Read the current request, owner and rule conditions before applying this policy.
+
+### 본문과 규칙
+
+#### Purpose and Scope
+
+##### Objective
 
 Use capability appropriate to the task without turning model age, role names,
 or static configuration into claims of observed fitness.
 
-### Applies To
+##### Applies To
 
 Capability, permissions, and responsibility are independent. Escalating a
 bounded task to a stronger permitted model does not grant new tools, writes,
 delegation, or approval, and does not change the role's registry membership.
 
-#### Exclusions
+###### Exclusions
 
 This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
-## Rules
+#### Rules
 
-### Requirements
+##### Requirements
 
 | Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
@@ -50,15 +68,15 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | MODEL-R006 | required | active |
 | MODEL-R007 | required | active |
 
-#### Top
+###### Top
 
 `MODEL-R001`
 
-#### Worker
+###### Worker
 
 `MODEL-R002`
 
-#### Cost and throughput
+###### Cost and throughput
 
 `MODEL-R003`
 
@@ -78,37 +96,37 @@ request and continue independent local work. Never silently choose a more
 expensive fallback. Unknown cost, RPM, TPM and subscription/API limits are
 unverified, not an invented task-wide stop or a claim of native enforcement.
 
-#### Selection and escalation
+###### Selection and escalation
 
 - `MODEL-R004`
 - `MODEL-R005`
 - `MODEL-R006`
 - `MODEL-R007`
 
-### Exceptions
+##### Exceptions
 
 Exception and escalation conditions are stated under Requirements.
 
-#### Approval and Review
+###### Approval and Review
 
 This policy defines no exception approval or review step of its own; the approval and safety policy's operator approval route applies. If it needs its own, state it here.
 
-## Enforcement
+#### Enforcement
 
-### Mechanisms
+##### Mechanisms
 
 Validate registry tier references, native binding tables, neutral permission
 ceilings and provider projections after changes.
 Assess model behavior with authorized, secret-free task evidence before
 claiming improved fitness.
 
-### Limits
+##### Limits
 
 The enforcement checks cover registry tier references, native binding tables, permission ceilings and provider projections. Escalating a bounded task to a stronger permitted model does not grant new tools, writes, delegation or approval, and improved model fitness is not claimed without authorized, secret-free task evidence.
 
-## Ownership
+#### Ownership
 
-### Owner
+##### Owner
 
 The [agent registry](../roles/registry.json) owns each role's
 capability-tier reference and neutral permission class. This policy defines
@@ -123,10 +141,30 @@ proves availability, entitlement, resolution or execution.
 - [Claude Provider](../../.claude/provider.md)
 - [Quality Policy](../../docs/00.workspace/04.quality/quality.md)
 
-#### Responsibilities
+###### Responsibilities
 
 Responsibilities are stated under Owner and Requirements.
 
-### Review Triggers
+##### Review Triggers
 
 Change and adoption conditions are stated under Enforcement.
+
+## 적용과 확인
+
+### 적용 방법
+
+Apply the rule, enforcement and exception clauses in the payload together.
+
+### 확인 기준
+
+Check named enforcement on actual input and report its evidence level accurately.
+
+## 관계와 출처
+
+### 관련 문서
+
+The ownership and related documents in the payload link adjacent owners.
+
+### 외부 근거
+
+Repository decisions and cited sources support these rules; external sources alone grant no authority.

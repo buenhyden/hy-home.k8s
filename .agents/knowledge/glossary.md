@@ -1,6 +1,6 @@
 ---
 title: "Common Repository Vocabulary"
-version: "0.1.0"
+version: "1.0.0"
 type: "governance/vocabulary"
 status: "draft"
 owner: "platform"
@@ -9,19 +9,37 @@ updated: "2026-11-20"
 
 # Repository Vocabulary
 
-## Purpose
+## 문서 개요
+
+### 목적과 독자
+
+이 어휘 문서는 Common Repository Vocabulary의 용어를 일관되게 사용하는 작성자와 검토자를 위한 정의다. 용도는 [Purpose](#purpose)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 이 어휘의 정의를 유지한다. 적용 경계는 [Scope](#scope), 규범 문장은 [Normative Language](#normative-language)에서 확인한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Purpose
 
 저장소 간 공유하는 작업·거버넌스 용어의 의미를 이 문서 하나에서 정의한다. 각 행의 링크는 동작 규칙과 소비자를 소유하는 현재 문서를 가리킨다. 용어 정의는 승인·실행 권한을 부여하지 않는다.
 
-## Scope
+#### Scope
 
 공통 용어의 의미, TERM ID, 혼동할 개념, 정책 소유자와 계약 판본을 다룬다. K8s 클러스터·context·namespace·application처럼 이 환경에서만 쓰는 의미는 [로컬 용어집](../../docs/00.workspace/01.project/glossary.md)에 둔다. 규칙·상태 전이·검사 알고리즘은 각 정책과 Stage 99 Registry가 소유한다.
 
-## Normative Language
+#### Normative Language
 
 대문자 MUST, MUST NOT, SHOULD, MAY는 RFC 2119와 RFC 8174의 읽기 규칙을 따른다. 이 어휘 문서나 강한 표현 자체는 권한을 만들지 않는다.
 
-## Repository Vocabulary
+#### Repository Vocabulary
 
 | Term ID | Term | Korean | Definition | Not to Confuse | Policy Owner | Contract Version |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -101,18 +119,38 @@ updated: "2026-11-20"
 | TERM-INDEPENDENT-REVIEW | Independent Review | 독립 검토 | 변경 작성자와 분리된 검토 주체가 범위와 위험에 맞춰 결과를 평가하는 절차. | 작성자의 자체 검증 또는 사용자 인수 | [Quality policy](../../docs/00.workspace/04.quality/quality.md) | 0.1.0 |
 | TERM-CURRENT-BASELINE | Current Baseline | 현행 기준선 | 지금 적용되는 요구·설계·정책·구현을 판단할 때 사용하는 실제 판본과 상태. | 과거 스냅샷 또는 계획한 목표 | [Document lifecycle](../../docs/00.workspace/03.process/document-lifecycle.md) | 0.1.0 |
 
-## Local Extensions
+#### Local Extensions
 
 공통 의미에 대한 로컬 확장은 없다. K8s에 한정된 용어는 [작업환경 용어집](../../docs/00.workspace/01.project/glossary.md)에서 별도 TERM-K8S ID로 정의한다.
 
-## Maintenance
+#### Maintenance
 
 의미 변경은 해당 용어의 정책 소유자와 현재 변경 Task에서 검토한다. 기존 ID는 재사용하고 계약 판본은 변경 범위에 맞춰 갱신한다. Stage 99 문서 profile, 링크·소유자 검사, knowledge 검사로 형식과 경로를 확인한다. 이 초안의 작성과 정적 검사 결과는 별도의 사용자 인수나 공통 계약 채택을 의미하지 않는다.
 
-## References
+#### References
 
 - [용어집 profile과 양식 안내](../../docs/99.templates/README.md)
 - [작업환경 SDLC](../../docs/00.workspace/03.process/sdlc.md)
 - [ADR-0058](../../docs/00.workspace/02.architecture/02.decisions/0058-repository-vocabulary-in-knowledge-surface.md) (공통 지식 표면에 용어 정의 문서 수용)
 - [ADR-0065](../../docs/00.workspace/02.architecture/02.decisions/0065-shared-vocabulary-and-workspace-ownership.md) (제안된 공통·로컬 소유 위치 정리; 인수 전)
 - [로컬 용어집](../../docs/00.workspace/01.project/glossary.md)
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

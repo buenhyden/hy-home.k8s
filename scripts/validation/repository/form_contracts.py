@@ -5,6 +5,11 @@ import pathlib
 import re
 
 from document_contracts import heading_contract
+from common_document_contract import (
+    CommonDocumentError,
+    has_common_envelope,
+    payload_markdown,
+)
 
 
 def collect_physical_form_paths(
@@ -158,9 +163,9 @@ def canonical_form_content_errors(
         "Replace every placeholder",
         "Describe the topic-specific",
     )
-    author_comment = re.compile(r"<!-- Author prompt: [^\n]+ -->")
+    author_comment = re.compile(r"<!-- (?:Author prompt|작성 규칙): [^\n]+ -->")
     useful_author_comment = re.compile(
-        r"(?m)^[ \t]*<!-- Author prompt: (?P<prompt>[^\n]*?) -->[ \t]*$"
+        r"(?m)^[ \t]*<!-- (?:Author prompt|작성 규칙): (?P<prompt>[^\n]*?) -->[ \t]*$"
     )
     markdownlint_directive = "<!-- markdownlint-disable-file MD033 MD041 -->"
     for form_path, source in sorted(
@@ -185,6 +190,12 @@ def canonical_form_content_errors(
         source = form_sources.get(form_path)
         if source is None or form_path.suffix != ".md":
             continue
+        if has_common_envelope(source):
+            try:
+                source = payload_markdown(source, profile_id=profile_id)
+            except CommonDocumentError as exc:
+                errors.append(f"{form_path} has a malformed common envelope: {exc}")
+                continue
         required_section_groups = [(2, heading_contract(profile).required, False)]
         for (
             heading_level,

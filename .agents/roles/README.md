@@ -1,17 +1,35 @@
 ---
 title: "Agent Responsibilities"
-version: "2.5.0"
+version: "3.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 
 # Agent Responsibilities
 
-## Responsibility
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 안내는 현재 작업에 맞는 책임 소유자를 찾는 독자를 위한 문서다.
+
+### 책임과 적용 범위
+
+이 안내의 범위는 [책임](#responsibility)과 [제외 책임](#excluded-responsibilities)에 명시한다. 정확한 역할 사실은 [중립 registry](registry.json)와 각 역할 본문이 소유한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+역할을 선택하기 전에 현재 요청과 해당 책임을 확인한다.
+
+### 본문과 규칙
+
+#### Responsibility
+
+##### Purpose
 
 작업에 필요한 책임을 먼저 고른 뒤, [agent registry](registry.json)에서 중립
 역할을 찾고 선택한 provider의 구체 값은
@@ -20,7 +38,7 @@ updated: "2026-11-17"
 이 값을 소비하며 검증을 받는 native 소비자다.
 이 라우터는 역할 명단이나 권한 목록의 사본이 아니다.
 
-#### Inputs and Outputs
+###### Inputs and Outputs
 
 책임은 도메인 경계를 설명할 뿐이다. 실제로 허용되는 동작은 registry 권한과
 명시적인 Task 소유권이 정한다. 검토 관점은 쓰기 권한이 아니다.
@@ -29,15 +47,15 @@ updated: "2026-11-17"
 guardrail·입력·출력·인계를 소유하고, 이 문서는 각 역할이 맥락으로 읽는 도메인
 경계만 담는다.
 
-### Excluded Responsibilities
+##### Excluded Responsibilities
 
 이 라우터는 역할 명단이나 권한 목록의 사본이 아니며, 책임은 도메인 경계만 설명한다. 실제로 허용되는 동작은 registry 권한과 명시적인 Task 소유권이 정하고, 구체 역할 본문이 자기 guardrail·입력·출력·인계를 소유하며, provider의 구체 값은 각 bindings가 소유한다. 검토 관점은 쓰기 권한이 아니다.
 
-## Current Contents
+#### Current Contents
 
-### Paths
+##### Paths
 
-#### Item Index
+###### Item Index
 
 | Path | Purpose |
 | --- | --- |
@@ -61,9 +79,9 @@ guardrail·입력·출력·인계를 소유하고, 이 문서는 각 역할이 �
 | [registry.json](registry.json) | 역할, 권한, skill, 인계를 담은 기계가 읽는 agent registry. |
 | [registry.schema.json](registry.schema.json) | registry.json의 구조를 검증하는 schema. |
 
-### Owners
+##### Owners
 
-#### Architecture
+###### Architecture
 
 시스템 구조와 중요한 결정을 지속 요구사항 및 변경별 계약과 일관되게 유지한다.
 Architecture Description과 ADR은 구조 관점과 지속 선택을, Spec은 변경별 동작을
@@ -79,7 +97,7 @@ Architecture Description과 ADR은 구조 관점과 지속 선택을, Spec은 �
 
 이 경계는 [architect](architect.md)가 맡는다.
 
-#### Documentation
+###### Documentation
 
 작성 문서와 탐색 경로가 유용하고 추적 가능하며 올바른 소유자로 연결되도록
 유지한다. 이 경계는 공통 작성·탐색 관심사와 배정된 문서 편집을 다루며, 모든
@@ -95,7 +113,7 @@ Stage 98은 검증하지 않는 보관 자리다.
   출처를 만들어내지 않는다.
 - 완료된 증거는 보존한다. 이력을 다시 쓰지 말고 Git 이력으로 복구한다.
 
-#### Infrastructure
+###### Infrastructure
 
 Kubernetes와 GitOps desired state를 재현 가능하고 격리된 상태로, 승인된 시스템
 계약에 맞게 유지한다. 배정된 범위의 구현은 지정된 인프라·GitOps 매니페스트와 그
@@ -110,7 +128,7 @@ Kubernetes와 GitOps desired state를 재현 가능하고 격리된 상태로, �
   [doc-writer](doc-writer.md)에게 넘긴다.
 - 클러스터 기동과 reconciliation은 명시적 승인 아래 운영자가 수행한다.
 
-#### Operations
+###### Operations
 
 안전한 운영 절차, 복구 가능성, 장애 증거, 에스컬레이션을 보존한다. 이 경계는
 배정된 운영 정책, runbook, 장애 지식을 소유한다. GitOps desired state나 live
@@ -124,7 +142,7 @@ Kubernetes와 GitOps desired state를 재현 가능하고 격리된 상태로, �
 - 지속적인 교정 조치는 소유자가 있는 요구사항, 결정, Spec 또는 운영 문서
   갱신으로 바꾼다.
 
-#### Quality
+###### Quality
 
 수용 기준을 재현 가능한 검사에 연결하고 실패, 한계, 회귀 위험을 보고한다. QA의
 쓰기 범위는 registry 권한과 위임 범위가 정한다. QA는 배정된 테스트, fixture,
@@ -140,7 +158,7 @@ concurrency, lane 밖 job은 거버넌스가 소유하고
 - 문서, 보안, 소유자 없는 구현 변경은 각 소유자에게 넘긴다. lane과 결과의
   의미는 quality policy를 따른다.
 
-#### Security
+###### Security
 
 승인된 계약에 비추어 secret 노출, 접근 통제, 격리, 안전하지 않은 실행을
 검토한다. 선택된 registry 역할이 읽기 전용이면 보안 검토도 읽기 전용이다. 발견
@@ -155,7 +173,7 @@ concurrency, lane 밖 job은 거버넌스가 소유하고
   기록한다.
 - 반복되는 장애 교훈은 과거 사실을 고쳐 쓰지 않고 지속 통제로 연결한다.
 
-#### Supervision
+###### Supervision
 
 승인된 작업을 조정하고 소유권, 의존성, 검토, 증거를 대조한다. supervisor의
 registry 권한 등급은 authoring이 아니라 orchestration이다. 거버넌스 유지보수에는
@@ -169,11 +187,11 @@ registry가, native 설정은 provider binding 표가 소유하고 projection은
 - 독립 검토를 유지하고 의견 충돌이나 승인 필요 사항은 사람에게 넘긴다.
 - 돌아온 결과를 수용 기준과 현재 저장소 증거에 대조한 뒤 최종 인계한다.
 
-## Usage
+#### Usage
 
-### Entry Points
+##### Entry Points
 
-#### Add and Find
+###### Add and Find
 
 관련된 책임 소유자만 읽는다. 제품 의도는 Requirement Package에, backend와 API
 동작은 Spec과 그 구현 Task에 있다.
@@ -191,19 +209,39 @@ projection을 통해 추가한다. 새 역할 본문은 `status: "draft"`로 만
 Task의 범위가 바뀌면 책임을 다시 판단한다. 정확한 역할, 권한, skill, 인계
 구성은 agent registry에 있다.
 
-#### Upstream and Downstream
+###### Upstream and Downstream
 
 - [Common Agent Governance](../README.md)
 - [Architecture Index](../../docs/02.architecture/README.md)
 - [Operations Index](../../docs/05.operations/README.md)
 
-#### Policy and Templates
+###### Policy and Templates
 
 - [SDLC Flow](../../docs/00.workspace/03.process/sdlc.md)
 - [Delegated Development](../workflows/delegated-development.md)
 - [Approval and Safety](../../docs/00.workspace/04.quality/approval-and-safety.md)
 - [Document Authoring](../../docs/00.workspace/03.process/document-authoring.md)
 
-### Checks
+##### Checks
 
 상태와 종료 규칙은 위 Add and Find에 함께 있다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 목록과 소유 절을 따라 구체적인 담당자를 찾는다.
+
+### 확인 기준
+
+각 탐색 경로를 현행 registry와 대상 역할 본문에 대조한다.
+
+## 관계와 출처
+
+### 관련 문서
+
+아래 본문에 이 안내의 소유자 링크가 있다.
+
+### 외부 근거
+
+연결한 registry와 역할 본문이 이 경로의 저장소 근거다.

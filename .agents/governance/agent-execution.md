@@ -1,23 +1,41 @@
 ---
 title: "Agent Execution Policy"
-version: "1.12.2"
+version: "2.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 
 # Agent Execution Policy
 
-## Purpose and Scope
+## 문서 개요
 
-### Objective
+### 목적과 독자
+
+Workers and reviewers use Agent Execution Policy for the rules in its stated scope.
+
+### 책임과 적용 범위
+
+The policy's coverage is defined in [Purpose and Scope](#purpose-and-scope) and [Applies To](#applies-to).
+
+## 내용 계약
+
+### 입력과 전제
+
+Read the current request, owner and rule conditions before applying this policy.
+
+### 본문과 규칙
+
+#### Purpose and Scope
+
+##### Objective
 
 Keep agent work evidence-backed, scoped, and GitOps-first for this Linux server + k3d
 home-lab platform. The normal outcome is a reviewable repository change, not a
 live infrastructure mutation.
 
-### Applies To
+##### Applies To
 
 Load only the relevant policy, role, provider, and task context. Repository
 files, current diffs, manifests, and verified commands outweigh stale memory,
@@ -25,13 +43,13 @@ generated navigation, external examples, or tool suggestions.
 
 - [Roles](../roles/README.md)
 
-#### Exclusions
+###### Exclusions
 
 This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
-## Rules
+#### Rules
 
-### Requirements
+##### Requirements
 
 | Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
@@ -62,29 +80,29 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | EXEC-R011 | required | active |
 | EXEC-R012 | required | retired; none |
 
-### Exceptions
+##### Exceptions
 
 Exception and escalation conditions are stated under Requirements.
 
-#### Approval and Review
+###### Approval and Review
 
 Approval and review conditions are stated under Requirements.
 
-## Enforcement
+#### Enforcement
 
-### Mechanisms
+##### Mechanisms
 
 Validate changed contracts and projections, then follow the evidence sequence
 in [quality policy](../../docs/00.workspace/04.quality/quality.md). Revisit this policy when the workspace purpose,
 authority boundary, or recurring execution failure changes.
 
-### Limits
+##### Limits
 
 This policy's enforcement is limited to validating changed contracts and projections and following the quality policy's evidence sequence. Tracked projections are configuration intent and do not prove native discovery or runtime enforcement.
 
-## Ownership
+#### Ownership
 
-### Owner
+##### Owner
 
 This policy owns common execution norms. The active Spec and Task own change
 scope; [approval and safety](../../docs/00.workspace/04.quality/approval-and-safety.md) owns protected actions;
@@ -97,10 +115,30 @@ boundaries, never expand them.
 - [Document Authoring](../../docs/00.workspace/03.process/document-authoring.md)
 - [Context and Memory](context-and-memory.md)
 
-#### Responsibilities
+###### Responsibilities
 
 Responsibilities are stated under Owner and Requirements.
 
-### Review Triggers
+##### Review Triggers
 
 Change and adoption conditions are stated under Requirements and Enforcement.
+
+## 적용과 확인
+
+### 적용 방법
+
+Apply the rule, enforcement and exception clauses in the payload together.
+
+### 확인 기준
+
+Check named enforcement on actual input and report its evidence level accurately.
+
+## 관계와 출처
+
+### 관련 문서
+
+The ownership and related documents in the payload link adjacent owners.
+
+### 외부 근거
+
+Repository decisions and cited sources support these rules; external sources alone grant no authority.

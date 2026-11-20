@@ -1,6 +1,6 @@
 ---
 title: "Agent and Document Governance Architecture Description (AD)"
-version: "3.5.0"
+version: "4.0.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -10,9 +10,27 @@ artifact_id: "AD-0006"
 
 # Agent and Document Governance Architecture Description (AD)
 
-## Context and Boundaries
+## 문서 개요
 
-### System Boundary
+### 목적과 독자
+
+This architecture description lets architects, GitOps implementers, and reviewers inspect the structural boundary for Agent and Document Governance Architecture Description (AD). The actual components and flow are under [Structure](#structure) and [Runtime Behavior](#runtime-behavior).
+
+### 책임과 적용 범위
+
+platform maintains the current architecture description. The owned and excluded system boundary is stated in [System Boundary](#system-boundary); constraints remain in [Constraints](#constraints).
+
+## 내용 계약
+
+### 입력과 전제
+
+Inputs and assumptions remain in the cited upstream requirements, boundaries, and payload sections.
+
+### 본문과 규칙
+
+#### Context and Boundaries
+
+##### System Boundary
 
 - Common governance owns the meaning of common policy, roles, and skills, and role metadata.
 - Stage 99 owns document profiles and forms and defines neither role permissions nor execution success.
@@ -27,7 +45,7 @@ artifact_id: "AD-0006"
   retains its Task acceptance and exact recovery route; current authority is
   the lifecycle policy and accepted ADR-0056, not a deleted package.
 
-#### Purpose and Readers
+###### Purpose and Readers
 
 This Architecture describes the current owner boundaries of agent, document, validation, and execution evidence.
 [ADR-0036](../02.decisions/0036-common-knowledge-and-prompt-surfaces.md) owns the common governance design. The earlier
@@ -46,9 +64,11 @@ the role roster, validator argv, and task state are referenced at their canonica
 The existence of a file does not prove the installed runtime's discovery or permission enforcement, nor hosted CI success;
 actual validation state is confirmed in the relevant Task.
 
-#### Context
+###### Context
 
-##### Consumer and validation flow
+<a id="consumer-and-validation-flow"></a>
+
+**Consumer and validation flow**
 
 1. A task sets its scope, role, skill, and approval boundaries in common governance and links to a package-local Plan/Task.
 2. The current domain owner and registries select the change's profile, affected paths, and required local lanes; actual tools, resources and execution authority are resolved before implementation without a business/session deadline gate.
@@ -65,13 +85,13 @@ the long full/ci sweep and blanket unit discovery are retired from completion.
 Distinct document, platform and
 security rules retain their failure meanings when their orchestration is shared.
 
-### Constraints
+##### Constraints
 
 No constraint is recorded separately in this description; the boundaries and non-goals it states are under [System Boundary](#system-boundary).
 
-## Structure
+#### Structure
 
-### Building Blocks
+##### Building Blocks
 
 | Component | Canonical owner | Responsibility |
 | --- | --- | --- |
@@ -106,7 +126,7 @@ the separate current P03 authorization. It retains the workspace/product subject
 split and the W/A policy split. The successor remains proposed; the Task records
 implementation and verification separately from the user's decision acceptance.
 
-#### Authority planes
+###### Authority planes
 
 | Plane | Canonical owner | Consumers and limits |
 | --- | --- | --- |
@@ -126,7 +146,7 @@ supported roster. `.agents/roles/` owns the current machine truth of common role
 `docs/00.workspace/` owns the workspace policy and `.agents/governance/` the agent execution policy. The current provider projection files are repository-static configuration,
 not evidence of an observed authenticated discovery or run.
 
-### Interfaces
+##### Interfaces
 
 Role metadata references canonical role bodies, skill IDs and provider binding
 paths; it does not copy native values or policy prose. Each provider binding
@@ -159,7 +179,7 @@ alone. Active policy, provider loading, and command selection do not consume a r
 current authority. Test fixtures are bounded synthetic inputs, never production
 configuration or runtime admission evidence.
 
-#### State, identity and evidence
+###### State, identity and evidence
 
 The common governance registry owns role/skill identity, Stage 99 owns document identity/profile/state, and the
 Validation Registry owns lanes and argv. A body change to an ordinary current document is judged by semantic/profile and link
@@ -191,7 +211,7 @@ the current Registry and common governance responsibilities. The past `agentSyst
 proposal is not claimed as an implemented parallel contract. A static declaration of high-risk execution or runtime
 enforcement is not evidence of successful execution or policy enforcement.
 
-#### Terminal disposition and historical lineage
+###### Terminal disposition and historical lineage
 
 Before a disposition, source → current semantic owner → every current consumer
 is proven. [ADR-0056](../02.decisions/0056-manual-document-disposition-review.md)
@@ -237,7 +257,7 @@ Spec/Plan creation-evidence contract.
 REQ-0005/0006 → REQ-0008 is the original supersession history (those requirements left the tree; Git history recovers them). REQ-0003 is the transitive
 current semantic successor of this convergence and does not rewrite the original decision target.
 
-#### Skill comparison records
+###### Skill comparison records
 
 The [evaluation router](../../../../.agents/evaluations/README.md) leads to
 representative harness evidence. Each evaluation's `task.md` owns the workload,
@@ -266,9 +286,9 @@ outputs stay unobserved; retired historical grading criteria are not silently
 reapplied to a changed contract. Retiring a fixed recurring grader leaves this
 evidence capacity available without adding a new QA gate.
 
-## Runtime Behavior
+#### Runtime Behavior
 
-### Normal Flow
+##### Normal Flow
 
 Tracked provider configuration and projections are secret-free repository configuration. The user's credential store is
 neither read nor migrated. Native parsers and canaries are handled in the provider owner's independent evidence lane,
@@ -286,7 +306,7 @@ The implementation validation owners are [document contracts](../../../../script
 [lifecycle](../../../../scripts/document_lifecycle.py), and the lanes the Validation Registry points to.
 Exact commands and tool versions are read from their execution owners and not copied into this Architecture.
 
-#### Local delivery stages
+###### Local delivery stages
 
 | Stage | Execution owner and boundary |
 | --- | --- |
@@ -328,7 +348,7 @@ protections, settings and execution require separate observation. W10 owns the
 review routing target for high-risk independent review and low-risk author
 review.
 
-#### Release and work-tracking boundaries
+###### Release and work-tracking boundaries
 
 One local release producer prepares the committed main release history in
 `CHANGELOG.md` through a release-preparation PR, then binds a SemVer tag and
@@ -362,9 +382,9 @@ A local commit does not authorize push, PR creation, workflow dispatch, release,
 cluster mutation, or external service changes. Hosted, native provider, and live
 verification require their own actual evidence and applicable authorization.
 
-### Failure and Recovery
+##### Failure and Recovery
 
-#### Loop and checkpoint
+###### Loop and checkpoint
 
 The [bounded validation runner](../../../../scripts/run-validation-lane.py) owns
 the timeout, output, and child cleanup limits, and the Task owns the no-progress stop and handoff evidence.
@@ -382,9 +402,9 @@ worktree without following symlinks. Request-bound retries, a capacity bound
 on every store connection, and verified atomic backup replacement protect
 context integrity. The store grants no authority to the stored context.
 
-## Quality Scenarios
+#### Quality Scenarios
 
-### Scenarios
+##### Scenarios
 
 | Quality attribute | Stimulus | Environment | Response | Measure |
 | --- | --- | --- | --- | --- |
@@ -398,13 +418,13 @@ context integrity. The store grants no authority to the stored context.
 | Maintainability (REQ-0003-FR-0024, REQ-0003-NFR-0001) | A wrapper, script or census outlives its consumer | The actual consumer graph | Targeted/affected/staged selection and purpose-specific gates replace fixed censuses and duplicate wrappers | Direct negative fixtures; aggregate all-files retirement stays with the owning Task |
 | Legibility (REQ-0003-FR-0002) | A gateway or provider note is added | Root and provider gateways | Gateways point to common owners without copied policy bodies | Native syntax parse and canonical-reference tests PASS |
 
-### Trade-offs
+##### Trade-offs
 
 Each selected leaf runs once per identical input, and ordinary document edits do not invoke implementation regression discovery, so registry selection replaces a full sweep on every Git event. Static, provider-runtime, hosted-CI and remote or live evidence stay separate classes, so an unobserved class keeps an owner and a retry trigger instead of passing on another class's result.
 
-## Decisions and Adoption
+#### Decisions and Adoption
 
-### Decisions
+##### Decisions
 
 - **Current decision**: [ADR-0036](../02.decisions/0036-common-knowledge-and-prompt-surfaces.md)
 - **Local QA and release decision**: [ADR-0048](../02.decisions/0048-local-qa-and-semver-release-ownership.md)
@@ -415,11 +435,11 @@ Each selected leaf runs once per identical input, and ordinary document edits do
 - **Accepted affected PR validation amendment**: [ADR-0063](../02.decisions/0063-affected-pr-gitops-validation.md) amends only ADR-0048's hosted validation clause: the required `style-pr` job reports the selected style, CI lock and static GitOps identity checks of the cumulative PR change as one fail-closed aggregate; the operator accepted it on 2026-11-18
 - **Historical decisions**: [ADR-0030](../02.decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md); earlier ADRs are in Archived Lineage
 
-#### Requirement Mapping
+###### Requirement Mapping
 
 - **Requirement Package**: [REQ-0003](../../../01.requirements/0003-workspace-agent-governance-platform.md)
 
-### Adoption Boundaries
+##### Adoption Boundaries
 
 - **Local QA and release implementation**: `scripts/qa.py` and `scripts/release.py`
 - **Completed change**: SPEC-0152 (left the tree; Git history recovers it) produced the manual policy and bounded approval reader. Its accepted Task and exact three-file recovery route are summarized in [REQ-0003 Archived Lineage](../../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage). Earlier Spec packages also remain recoverable through their lineage owners.
@@ -430,7 +450,7 @@ The prior architecture narrative is recoverable from this same path at commit
 counts, synthetic runtime records, and separate agent CI topology are not
 current contracts.
 
-#### Architecture responsibility transfer
+###### Architecture responsibility transfer
 
 | Original description | Retained current responsibility | Consumer transfer |
 | --- | --- | --- |
@@ -444,7 +464,7 @@ ADRs originally served this AD. Superseded ADR bodies are summarized in Archived
 The existing requirement IDs retain their identity. ADR-0048 owns the selected local QA and release transition; predecessor decisions remain
 historical evidence rather than parallel operating instructions.
 
-### Lifecycle Traceability
+##### Lifecycle Traceability
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
@@ -500,7 +520,7 @@ historical evidence rather than parallel operating instructions.
 | N/A — [Acceptance criterion 13](../../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Main release-preparation PR with one SemVer tag/Release producer | [ADR-0048](../02.decisions/0048-local-qa-and-semver-release-ownership.md) |
 | N/A — [Acceptance criterion 14](../../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | No proven one-off or duplicate script, test or `.github/` execution after consumer succession | [ADR-0048](../02.decisions/0048-local-qa-and-semver-release-ownership.md) |
 
-### Archived Lineage
+##### Archived Lineage
 
 Unless a row states a later disposition and recovery source, these documents were deleted from `docs/98.archive/` or the decision log under SPEC-0140 and are recovered with `git show 69445fca:<path>`.
 The ADR-0013 to ADR-0025 and ADR-0035 rows were already deleted from `docs/98.archive/superseded/` at that commit
@@ -553,3 +573,23 @@ The ADR-0013 to ADR-0025 and ADR-0035 rows were already deleted from `docs/98.ar
 | MIG-0023 | migration ledger | Absorbed seven responsibility documents under `.agents/roles/` into the responsibility router, each reduced to a boundary statement and a few contract bullets. Current owner is `.agents/roles/README.md`. | `docs/98.archive/migrations/0023-responsibility-document-router-absorption.md` |
 | ADR-0034 | deleted decision | Stage 00 Governance and Unified Quality Gates. Deleted from the tree on 2026-09-15 at commit `8a76bd3b`; recover it with `git show 8a76bd3b^:docs/02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md`. Its row was added under SPEC-0212 after the survey found its identity reserved by no lineage row. | `docs/02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md` |
 | ADR-0038 | deleted decision | Six-Disposition Archive Stage. Deleted from the tree on 2026-09-16 at commit `3473cc85`; recover it with `git show 3473cc85^:docs/02.architecture/decisions/0038-six-disposition-archive-stage.md`. Its row was added under SPEC-0212 after the survey found its identity reserved by no lineage row. | `docs/02.architecture/decisions/0038-six-disposition-archive-stage.md` |
+
+## 적용과 확인
+
+### 적용 방법
+
+Apply the decisions and procedures in the role payload under its stated conditions.
+
+### 확인 기준
+
+Check the role payload acceptance or verification conditions and report observed limits.
+
+## 관계와 출처
+
+### 관련 문서
+
+Follow the current upstream and downstream links in the role payload.
+
+### 외부 근거
+
+External evidence, when used, remains attributed and bounded in the role payload.

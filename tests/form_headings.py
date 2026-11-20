@@ -63,3 +63,39 @@ def form_body(
     if unknown:
         raise KeyError(f"{form_id} registers no section {unknown}")
     return lines
+
+
+def common_shell(role_lines: list[str]) -> list[str]:
+    """Nest a current fixture's role form in the canonical Markdown shell."""
+
+    payload = []
+    for line in role_lines:
+        heading = len(line) - len(line.lstrip("#"))
+        if heading and line[heading : heading + 1] == " ":
+            if heading > 4:
+                raise ValueError("fixture role heading exceeds the common shell depth")
+            payload.append("##" + line)
+        else:
+            payload.append(line)
+    return [
+        "## 문서 개요",
+        "### 목적과 독자",
+        "Synthetic fixture reader.",
+        "### 책임과 적용 범위",
+        "The fixture exercises the selected document role.",
+        "## 내용 계약",
+        "### 입력과 전제",
+        "Synthetic fixture input.",
+        "### 본문과 규칙",
+        *payload,
+        "## 적용과 확인",
+        "### 적용 방법",
+        "Run the focused fixture check.",
+        "### 확인 기준",
+        "The expected diagnostic decides the result.",
+        "## 관계와 출처",
+        "### 관련 문서",
+        "The role payload carries its links.",
+        "### 외부 근거",
+        "No external source is needed for this fixture.",
+    ]

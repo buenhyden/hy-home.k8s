@@ -1,6 +1,6 @@
 ---
 title: "Shared Vocabulary and Workspace Ownership"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/architecture-decision"
 status: "proposed"
 owner: "platform"
@@ -11,9 +11,27 @@ supersedes: "ADR-0064"
 
 # ADR-0065: Shared Vocabulary and Workspace Ownership
 
-## Context
+## 문서 개요
 
-### Problem and Drivers
+### 목적과 독자
+
+This ADR lets maintainers and architecture reviewers inspect the durable choice about Shared Vocabulary and Workspace Ownership. The chosen option and rationale remain in [Decision](#decision).
+
+### 책임과 적용 범위
+
+platform maintains this decision record. Its affected boundary is [Decision Scope](#decision-scope); options and consequences remain in the role payload.
+
+## 내용 계약
+
+### 입력과 전제
+
+Inputs and assumptions remain in the cited upstream requirements, boundaries, and payload sections.
+
+### 본문과 규칙
+
+#### Context
+
+##### Problem and Drivers
 
 ADR-0064 established the physical workspace policy owner and separated work-system
 architecture from the GitOps product. Those boundaries remain useful. Its glossary
@@ -21,7 +39,7 @@ location clause placed shared meanings and local terminology in one document. Th
 current P03 request instead requires separate common and local meaning owners and
 an environment owner with actual preparation content.
 
-### Decision Scope
+##### Decision Scope
 
 Correct vocabulary ownership and name the environment owner. Preserve the W/A
 policy split, architecture subjects, numbered categories, shared AD/ADR sequence
@@ -29,14 +47,14 @@ and stable identifiers. Consumers are knowledge, document profiles and validator
 workspace routers, provider readers and architecture descriptions. Common-contract
 adoption, native permissions, renumbering and later runtime work are excluded.
 
-## Options
+#### Options
 
-### Considered Options
+##### Considered Options
 
 Keep one local glossary, copy definitions into both locations, or divide meanings
 by scope and update their consumers together.
 
-### Trade-offs
+##### Trade-offs
 
 | Option | Benefit | Cost and Risk | Reason |
 | --- | --- | --- | --- |
@@ -44,9 +62,9 @@ by scope and update their consumers together.
 | Duplicate definitions | Both entry points contain every definition. | Independent sources can disagree about one meaning. | Conflicts with the single-owner requirement. |
 | Divide by scope | One definition per meaning and explicit local terminology. | Readers and validators follow two owners. | Selected by the current request, preserving IDs and updating consumers together. |
 
-## Decision
+#### Decision
 
-### Chosen Option
+##### Chosen Option
 
 This proposed decision records boundaries implemented under the separate current
 user authorization:
@@ -77,7 +95,7 @@ user authorization:
    IDs stay unchanged. Moves preserve identities and historical bodies under
    DOCLIFE-R023. Final renumbering and history disposition remain later work.
 
-### Authority and Effect
+##### Authority and Effect
 
 The user's 2026-11-20 P03 request separately authorizes implementation and consumer
 repair, recorded in the [current Task authorization](../../../03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md#p03-110-current-authorization).
@@ -87,7 +105,7 @@ Implementation, static checks, PR merge and acceptance are separate outcomes.
 Focused knowledge, profile, relationship, link and lifecycle checks confirm only
 the changed repository contract.
 
-#### Sources
+###### Sources
 
 - [REQ-0003-FR-0032](../../../01.requirements/0003-workspace-agent-governance-platform.md)
   requires one owner for shared meanings and separate policy rules.
@@ -97,7 +115,7 @@ the changed repository contract.
 - [ADR-0058](0058-repository-vocabulary-in-knowledge-surface.md) admits the common
   glossary and stable IDs without turning knowledge into policy.
 
-#### Supersession
+###### Supersession
 
 ADR-0064 is removed through this authorized correction, with its accepted history
 and retained obligations summarized in [AD-0006 Archived Lineage](../01.descriptions/0006-workspace-agent-governance-platform.md#archived-lineage).
@@ -105,26 +123,46 @@ Its acceptance remains historical evidence in SPEC-0224, not acceptance of this
 successor. Every ADR-0058 clause apart from the later location change is preserved.
 No approval or native-runtime result is inferred from replacement.
 
-### Lifecycle Traceability
+##### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
 | [AD-0006 Archived Lineage](../01.descriptions/0006-workspace-agent-governance-platform.md#archived-lineage), ADR-0064 | Supersedes ADR-0064 under current P03 authority; retains W/A, architecture and identifier obligations | [SPEC-0223](../../../03.specs/0223-work-residue-handoff/spec.md); its Task holds separate P03 authority and evidence, while completed residue-transfer constraints stay historical |
 | [ADR-0058](0058-repository-vocabulary-in-knowledge-surface.md) | Preserves the common glossary admission and non-location obligations | [SPEC-0223](../../../03.specs/0223-work-residue-handoff/spec.md), separate P03 follow-up |
 
-## Consequences
+#### Consequences
 
-### Impacts
+##### Impacts
 
 Common readers and both provider gateways reach one meaning owner. Local terms
 remain beside the workspace. The additional navigation boundary is checked by
 existing document and knowledge consumers. Native settings, cluster runtime and
 completed P00/P01/P02 behavior are retained.
 
-### Follow-up
+##### Follow-up
 
 The current Task records checks, review, delivery and pending decision acceptance.
 A failed change is recovered through a normal corrective PR, with predecessor
 bytes retained in Git. P04 owns later common-form work, the runtime prompts own
 native observations, and P17 owns final renumbering and approved history
 handling. None is performed by this ADR.
+
+## 적용과 확인
+
+### 적용 방법
+
+Apply the decisions and procedures in the role payload under its stated conditions.
+
+### 확인 기준
+
+Check the role payload acceptance or verification conditions and report observed limits.
+
+## 관계와 출처
+
+### 관련 문서
+
+Follow the current upstream and downstream links in the role payload.
+
+### 외부 근거
+
+External evidence, when used, remains attributed and bounded in the role payload.

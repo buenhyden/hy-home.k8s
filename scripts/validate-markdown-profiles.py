@@ -10,6 +10,7 @@ import importlib.util
 import json
 import math
 import re
+import subprocess
 import sys
 from dataclasses import dataclass, replace
 from functools import lru_cache
@@ -20,12 +21,20 @@ from typing import Any, Iterator, Mapping, Sequence
 from zoneinfo import ZoneInfo
 
 from frontmatter_yaml import FrontmatterError, load_frontmatter
+from document_authority import AuthorityError
 from json_schema_validation import SchemaEvaluationError, schema_errors
+from common_document_contract import (
+    CommonDocumentError,
+    has_common_envelope,
+    metadata_projection,
+    payload_markdown,
+)
 
 # This module is the markdown-profile facade over the document contract.
 # The names this file does not call itself are re-exported for the
 # harness validators that reach the contract through it.
 from document_contracts import (
+    CRITERION_ID,
     CommonForm,
     ConditionalConstraint,  # noqa: F401 - re-exported
     ConstantConstraint,  # noqa: F401 - re-exported
@@ -441,7 +450,7 @@ def _first_visible_table(
 
 IDENTIFIER_PATTERNS = {
     "requirement": re.compile(r"^REQ-[0-9]{4}-(?:FR|NFR|IF)-[0-9]{4}$"),
-    "criterion": re.compile(r"^VAL-[A-Z0-9-]+-[0-9]{3}$"),
+    "criterion": CRITERION_ID,
     "work-item": re.compile(r"^[A-Z][A-Z0-9-]+-[0-9]{3}$"),
 }
 TEMPLATE_IDENTIFIER_PATTERNS = IDENTIFIER_PATTERNS
@@ -805,6 +814,18 @@ def _form_heading(
     return form.section_heading(section_id, status, identity, marked)
 
 
+def _role_body(body: str, profile: DocumentProfile) -> str:
+    """Accept a caller's raw common shell at a role-body reader boundary."""
+
+    if not has_common_envelope(body):
+        return body
+    try:
+        return payload_markdown(body, profile_id=profile.profile_id)
+    except CommonDocumentError:
+        # The facade emits BODY-COMMON-ENVELOPE for malformed current shells.
+        return body
+
+
 def _table_diagnostics(
     path: PurePosixPath,
     profile: DocumentProfile,
@@ -819,6 +840,7 @@ def _table_diagnostics(
     non-unique section headings.
     """
 
+    body = _role_body(body, profile)
     if profile.body_contract and profile.body_contract.task_execution:
         return []  # The Task table reader owns every Task table (SPEC-0222).
     owned = {profile.body_contract.table_heading} if profile.body_contract else set()
@@ -936,6 +958,7 @@ def _core_table_diagnostics(
     recorded tables.
     """
 
+    body = _role_body(body, profile)
     core = [table for table in profile.tables if table.table_id]
     if (
         not core
@@ -1018,6 +1041,7 @@ def _requirement_quality_diagnostics(
     member.
     """
 
+    body = _role_body(body, profile)
     package = _requirement_package_number(path)
     if package is None or profile.form is None:
         return []
@@ -1034,6 +1058,7 @@ def _requirement_quality_diagnostics(
     )
     identity = {functional: core, quality: core, trace: local}
     members = {section: set() for section in identity}
+    interface_rows: list[tuple[str, str]] = []
     functional_rows = 0
     for section_id, row_identity in identity.items():
         heading = _form_heading(profile.form, section_id)
@@ -1046,6 +1071,11 @@ def _requirement_quality_diagnostics(
                 continue
             if section_id == functional:
                 functional_rows += len(rows)
+                interface_rows.extend(
+                    (_identifier_text(row[0]), row[2])
+                    for row in rows
+                    if len(row) > 2 and "-IF-" in _identifier_text(row[0])
+                )
             members[section_id].update(
                 value
                 for row in rows
@@ -1056,6 +1086,26 @@ def _requirement_quality_diagnostics(
         value for value in members[trace] if "-NFR-" in value
     }
     misplaced_quality = {value for value in members[quality] if "-NFR-" not in value}
+    declared_targets = {
+        value
+        for section in (functional, quality)
+        for value in members[section]
+        if "-FR-" in value or "-NFR-" in value
+    }
+    interface_faults: list[str] = []
+    interface_target = re.compile(rf"REQ-{package}-(?:FR|NFR)-[0-9]{{4}}")
+    for identifier, rationale in interface_rows:
+        marker = re.search(r"(?:^|;\s*)interface_refs:\s*(.+)$", rationale)
+        targets = (
+            [part.strip() for part in marker.group(1).split(",")]
+            if marker is not None
+            else []
+        )
+        if not targets or any(
+            interface_target.fullmatch(target) is None or target not in declared_targets
+            for target in targets
+        ):
+            interface_faults.append(identifier)
     empty = (
         [
             _diagnostic(
@@ -1086,6 +1136,11 @@ def _requirement_quality_diagnostics(
                 "BODY-QUALITY-MEMBER",
                 "a Quality Requirements row for each declared NFR",
                 declared_nfrs - members[quality],
+            ),
+            (
+                "BODY-INTERFACE-REF",
+                "each IF row has interface_refs to declared same-package FR/NFR members",
+                interface_faults,
             ),
         )
         if values
@@ -1280,6 +1335,12 @@ def _scan_requirements(section: str) -> RuleScan:
 def policy_rule_units(text: str, heading: str = "### Requirements") -> RuleScan:
     """The unit inventory of one policy's Requirements section, empty without it."""
 
+    if has_common_envelope(text):
+        try:
+            text = payload_markdown(text, profile_id="governance/rule")
+        except CommonDocumentError:
+            # The strict profile gate reports the malformed shell itself.
+            return _scan_requirements("")
     section = _exact_heading_section(text, heading)
     return _scan_requirements("" if section is None else section)
 
@@ -2205,7 +2266,9 @@ def _frontmatter_body(
                 else None
             )
             recovery = (
-                _exact_heading_section(body, "#" * located[0] + " " + located[1])
+                _exact_heading_section(
+                    _role_body(body, profile), "#" * located[0] + " " + located[1]
+                )
                 if located is not None
                 else None
             )
@@ -2449,6 +2512,7 @@ def _body_diagnostics(
     status: str = "",
     marked: bool = False,
 ) -> list[Diagnostic]:
+    body = _role_body(body, profile)
     scan = scan_headings(body)
     readme = profile.profile_class == "readme"
     diagnostics: list[Diagnostic] = []
@@ -2566,6 +2630,11 @@ def _terminal(registry: Any, profile: DocumentProfile, text: str) -> bool:
         _, metadata, _ = extract_frontmatter(text)
     except ContractError:
         return False
+    if has_common_envelope(text):
+        try:
+            text = payload_markdown(text, profile_id=profile.profile_id)
+        except CommonDocumentError:
+            pass
     status = task_status(metadata, text, profile)
     if not status:
         return False
@@ -2573,6 +2642,30 @@ def _terminal(registry: Any, profile: DocumentProfile, text: str) -> bool:
         profile.profile_id in domain.profile_ids
         and domain.validation_class(status) == "terminal"
         for domain in registry.lifecycle_domains
+    )
+
+
+def _accepted_completed_task(text: str, profile: DocumentProfile) -> bool:
+    """Recognize a retained package by its Task's recorded criterion decision."""
+
+    if profile.profile_id != "sdlc/task":
+        return False
+    try:
+        _, metadata, _ = extract_frontmatter(text)
+    except ContractError:
+        return False
+    if task_status(metadata, text, profile) != "completed":
+        return False
+    binding = profile.body_contract.task_execution if profile.body_contract else None
+    if binding is None:
+        return False
+    section = _exact_heading_section(text, f"## {binding.criterion_acceptance_section}")
+    table = _first_visible_table(section or "")
+    if table is None or not table[1] or "Acceptance" not in table[0]:
+        return False
+    acceptance = table[0].index("Acceptance")
+    return all(
+        len(row) == len(table[0]) and row[acceptance] == "accepted" for row in table[1]
     )
 
 
@@ -2596,6 +2689,16 @@ def document_language_diagnostics(
     }
     diagnostics: list[Diagnostic] = []
     checked: set[PurePosixPath] = set()
+
+    def language_payload(text: str, profile_id: str) -> str:
+        if has_common_envelope(text):
+            try:
+                text = payload_markdown(text, profile_id=profile_id)
+            except CommonDocumentError:
+                # The strict Markdown profile gate reports this shell error.
+                pass
+        return re.sub(r"<!--\s*작성 규칙:.*?-->", "", text, flags=re.S)
+
     for path, profile, text in documents:
         kind = document_language.classify(
             path,
@@ -2614,7 +2717,9 @@ def document_language_diagnostics(
             and path not in contract.pending_paths
         ):
             continue
-        found = document_language.findings(text, kind, contract)
+        found = document_language.findings(
+            language_payload(text, profile.profile_id), kind, contract
+        )
         if path in contract.pending_paths:
             if not found:
                 diagnostics.append(
@@ -2639,7 +2744,7 @@ def document_language_diagnostics(
         diagnostics.extend(
             Diagnostic(code, path, "", "english-only", detail, OWNER)
             for code, detail in document_language.findings(
-                text, "english-only", contract
+                language_payload(text, "english-only"), "english-only", contract
             )
         )
     for pending in sorted(contract.pending_paths - checked, key=PurePosixPath.as_posix):
@@ -2688,6 +2793,11 @@ def validate_document(
 def _document_content_table(
     text: str, title: str
 ) -> tuple[list[str], list[list[str]]] | None:
+    if has_common_envelope(text):
+        try:
+            text = payload_markdown(text, profile_id="common/readme")
+        except CommonDocumentError:
+            return None
     sections = [
         section
         for heading in (f"## {title}", f"### {title}", f"#### {title}")
@@ -2708,6 +2818,12 @@ def document_content_diagnostics(
 
     source = registry or load_registry(root)
     navigation = source.readme_navigation
+    if has_common_envelope(text):
+        try:
+            text = payload_markdown(text, profile_id=profile.profile_id)
+        except CommonDocumentError:
+            # The Markdown profile pass owns the malformed-shell diagnostic.
+            pass
     found = validate_document_content(
         root,
         path,
@@ -2732,6 +2848,8 @@ def validate_document_text(
     body_contract_path_prefixes: tuple[PurePosixPath, ...] = (),
     frontmatter_schema: Mapping[str, Any] | None = None,
     include_body: bool = True,
+    historical_completed: bool = False,
+    common_binding: object | None = None,
 ) -> list[Diagnostic]:
     """Validate exact caller-supplied text without consulting filesystem bytes."""
 
@@ -2752,6 +2870,91 @@ def validate_document_text(
         except ContractError:
             metadata = {}
         status = task_status(metadata, text, profile)
+    historical = profile.mode == "authored" and (
+        historical_completed
+        or (
+            profile.lifecycle_domain is not None
+            and profile.lifecycle_domain.validation_class(status) == "terminal"
+        )
+        or (profile.profile_id == "sdlc/architecture-decision" and status == "accepted")
+        or (profile.profile_class == "reference" and status == "published")
+    )
+    shell_required = profile.mode in {"template", "router"} or (
+        profile.mode == "authored" and not historical
+    )
+    if profile.mode in {"authored", "template", "router"} and (
+        has_common_envelope(text) or shell_required
+    ):
+        try:
+            projected = payload_markdown(text, profile_id=profile.profile_id)
+            body = (
+                extract_frontmatter(projected)[2]
+                if projected.startswith("---\n")
+                else projected
+            )
+            status = task_status(metadata, projected, profile)
+        except (CommonDocumentError, ContractError) as exc:
+            diagnostics.append(
+                _diagnostic(
+                    "BODY-COMMON-ENVELOPE",
+                    path,
+                    profile,
+                    "one canonical common shell with a role payload",
+                    str(exc),
+                )
+            )
+    if (
+        common_binding is not None
+        and profile.mode == "authored"
+        and metadata
+        and not historical
+    ):
+        scope_layer = {
+            "sdlc": "product",
+            "operation": "product",
+            "reference": "reference",
+            "governance": "agent",
+            "evaluation": "agent",
+        }.get(profile.profile_class, "")
+        if profile.profile_id == "governance/provider":
+            scope_layer = "provider"
+        artifact_id = metadata.get("artifact_id", "")
+        spec_family = (
+            re.match(r"^(SPEC-[0-9]{4})-(?:PLAN|TSK)-[0-9]{4}$", artifact_id)
+            if isinstance(artifact_id, str)
+            else None
+        )
+        scope_id = spec_family.group(1) if spec_family else artifact_id
+        workspace_scope = path.parts[:2] == ("docs", "00.workspace") or (
+            isinstance(scope_id, str)
+            and scope_id in common_binding.workspace_scope_artifact_ids
+        )
+        if workspace_scope:
+            scope_layer = "workspace"
+        scope_subject = (
+            common_binding.workspace_subject
+            if workspace_scope
+            or profile.profile_class not in {"sdlc", "operation", "reference"}
+            else metadata.get("title", "")
+        )
+        try:
+            metadata_projection(
+                metadata if "status" in metadata else {**metadata, "status": status},
+                profile_id=profile.profile_id,
+                binding=common_binding,
+                scope_subject=scope_subject,
+                scope_layer=scope_layer,
+            )
+        except CommonDocumentError as exc:
+            diagnostics.append(
+                _diagnostic(
+                    "FM-COMMON-METADATA",
+                    path,
+                    profile,
+                    "one source frontmatter projected to common metadata",
+                    str(exc),
+                )
+            )
     # SPEC-0225 (Q07-H01): the retained form is chosen by the document's marker.
     marked = "retained_form" in metadata
     if include_body:
@@ -3089,6 +3292,27 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
         )
         identity_documents: list[tuple[PurePosixPath, DocumentProfile, str]] = []
+        completed_package_tasks: dict[PurePosixPath, list[bool]] = {}
+        for task_path in inventory.current_paths:
+            task_profile = classify_path(registry, task_path)
+            if task_profile.profile_id != "sdlc/task":
+                continue
+            current_task = read_repository_text(root, task_path)
+            try:
+                prior_task = _run_git(
+                    root, ("show", f"HEAD:{task_path.as_posix()}")
+                ).decode("utf-8")
+            except (AuthorityError, subprocess.SubprocessError, UnicodeError):
+                prior_task = ""
+            completed_package_tasks.setdefault(task_path.parent.parent, []).append(
+                _accepted_completed_task(current_task, task_profile)
+                and _accepted_completed_task(prior_task, task_profile)
+            )
+        completed_packages = {
+            package
+            for package, decisions in completed_package_tasks.items()
+            if decisions and all(decisions)
+        }
         for path in inventory.current_paths:
             profile = classify_path(registry, path)
             if is_opaque_evaluation_output(registry, path):
@@ -3106,6 +3330,11 @@ def main(argv: Sequence[str] | None = None) -> int:
                     body_contract_path_prefixes=tuple(args.body_contract_path_prefix),
                     frontmatter_schema=frontmatter_schema,
                     include_body=content_paths is None or path in content_paths,
+                    historical_completed=(
+                        profile.profile_id in {"sdlc/spec", "sdlc/plan"}
+                        and path.parent in completed_packages
+                    ),
+                    common_binding=registry.common_document_contract,
                 )
             )
             if content_paths is None or path in content_paths:

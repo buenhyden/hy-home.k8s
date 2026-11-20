@@ -1,18 +1,36 @@
 ---
 title: "GitHub 앱 GitOps 온보딩 런북"
-version: "1.3.6"
+version: "2.0.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-20"
 artifact_id: "RUN-0010"
 ---
 
 # GitHub 앱 GitOps 온보딩 런북
 
-## Trigger and Scope
+## 문서 개요
 
-### Trigger
+### 목적과 독자
+
+이 런북은 GitHub 앱 GitOps 온보딩 런북 작업이나 장애를 수행·복구할 운영자와 검토자에게 실제 절차를 제공한다. 시작 조건은 [Trigger](#trigger)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 이 절차의 운영 범위를 유지한다. 대상은 [Targets](#targets), 사전 조건과 권한은 [Preflight](#preflight), 실행·복구는 [Procedure](#procedure)에서 확인한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Trigger and Scope
+
+##### Trigger
 
 이 런북은 GitHub 레포 기반 애플리케이션을 `hy-home.k8s` 클러스터에 GitOps 방식으로 온보딩하는
 단계별 운영 절차를 제공한다.
@@ -22,7 +40,7 @@ artifact_id: "RUN-0010"
 - canary 배포 실패 후 rollback 및 재배포가 필요할 때
 - OpenBao 시크릿 연동 초기 설정이 필요할 때
 
-### Targets
+##### Targets
 
 `examples/sample-app/`은 최소 온보딩 템플릿이고,
 `gitops/workloads/adminer/`는 stable/canary Service와 Istio routing까지 포함한 현재 active reference다.
@@ -31,17 +49,17 @@ artifact_id: "RUN-0010"
 
 관련 문서: **ESO/OpenBao Recovery**: [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md), **예시 템플릿**: [`../../../examples/sample-app`](../../../examples/sample-app), [`../../../gitops/workloads/adminer`](../../../gitops/workloads/adminer) — fuller active reference pattern
 
-## Preflight
+#### Preflight
 
-### Authority
+##### Authority
 
 애플리케이션 소유자는 이미지와 변경 PR을 준비하고 플랫폼 운영자는 대상
 클러스터와 `apps` namespace를 확인한다. 원격 push, 배포에 영향을 주는
 merge, 수동 재조정·중단과 비밀 변경은 각각 본문의 승인 조건을 따른다.
 
-### Environment
+##### Environment
 
-#### 사전 점검
+###### 사전 점검
 
 ```bash
 # apps-generator ApplicationSet 동작 확인
@@ -69,15 +87,17 @@ Prometheus 수집 상태가 필요하면 외부 observability 운영자에게
 파일이나 임의의 조회 helper를 읽지 않는다. 조회가 미실행이면 그 사실을
 남기고 AnalysisRun 결과를 성공으로 추정하지 않는다.
 
-## Procedure
+#### Procedure
 
-### Steps
+##### Steps
 
 아래 Procedure 1-5를 순서대로 수행한다. 배포 변경은 feature branch와 PR review를 거쳐 GitOps reconciliation으로 반영한다.
 
-#### Procedure 1: GitOps 매니페스트 생성 및 배포
+###### Procedure 1: GitOps 매니페스트 생성 및 배포
 
-##### 1-1. 예시 복사 및 플레이스홀더 교체
+<a id="1-1-예시-복사-및-플레이스홀더-교체"></a>
+
+**1-1. 예시 복사 및 플레이스홀더 교체**
 
 ```bash
 # 실제 대상에 맞게 값을 검토한 뒤 교체한다. 이 네 줄은 유효한 예시다.
@@ -119,14 +139,18 @@ Rollout의 모든 port·probe를 함께 검토·수정하고 정적 검사를 �
 예시 파일을 복사했다는 사실만으로 임의 port 지원이나 배포 성공을
 판정하지 않는다.
 
-##### 1-2. 접속 이름 확인
+<a id="1-2-접속-이름-확인"></a>
+
+**1-2. 접속 이름 확인**
 
 앱은 k8s 전용 router가 받는 `${APP}.hy-k8s.home.arpa`로 노출되므로 외부
 저장소 변경이 없다. 이름 해석(`/etc/hosts` 또는 DNS)이 `192.168.0.14`를 가리키는지
 operator가 확인한다. `hy-k8s.home.arpa/${APP}` 진입이 필요하면
 `gitops/platform/ingress-routes/apex-redirects.yaml`에 redirect Ingress를 추가한다.
 
-##### 1-3. GitOps 커밋 & 푸시
+<a id="1-3-gitops-커밋--푸시"></a>
+
+**1-3. GitOps 커밋 & 푸시**
 
 `apps-generator`는 `main`의 `gitops/workloads/*`를 읽고 생성한 Application에
 `automated.prune: true`, `selfHeal: true`를 적용한다. 따라서 PR을 `main`에
@@ -148,7 +172,9 @@ PR 검토·승인된 merge와 실제 `main` 반영 뒤 자동 reconciliation의 
 읽는다. 로컬 commit이나 push만으로 Application이 생성되었다고 판정하지
 않는다.
 
-##### 1-4. ArgoCD Application 생성 확인
+<a id="1-4-argocd-application-생성-확인"></a>
+
+**1-4. ArgoCD Application 생성 확인**
 
 ```bash
 # apps-generator가 path.basename 이름의 새 Application을 생성했는지 확인
@@ -167,7 +193,7 @@ kubectl -n argocd describe applicationset apps-generator
 argocd app sync "$APP"
 ```
 
-#### Procedure 2: 배포 상태 검증
+###### Procedure 2: 배포 상태 검증
 
 ```bash
 # Rollout 진행 상황 실시간 확인
@@ -190,7 +216,7 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
   -o /dev/null -w '%{http_code}' "https://${APP}.hy-k8s.home.arpa/"
 ```
 
-#### Procedure 3: canary 배포 업데이트 (이미지 버전 갱신)
+###### Procedure 3: canary 배포 업데이트 (이미지 버전 갱신)
 
 이 이미지 변경도 1-3의 자동 reconciliation 경계를 따른다. merge 직후 canary가
 시작될 수 있으므로 merge 전에 이미지·분석·롤백 범위를 확인한다.
@@ -214,14 +240,14 @@ git push origin chore/"${APP}"-"${NEW_TAG}"
 kubectl argo rollouts get rollout ${APP} -n apps --watch
 ```
 
-#### Procedure 4: 실패 시 복구 경로로 전환
+###### Procedure 4: 실패 시 복구 경로로 전환
 
 AnalysisTemplate 실패나 수동 중단이 필요하면 이후 배포를 멈추고
 [Recovery or Forward Repair](#recovery-or-forward-repair)의 승인된 canary 복구
 절차로 전환한다. 이전 stable 버전 복귀와 원인 수정을 확인한 뒤에만
 다음 온보딩 단계를 진행한다.
 
-#### Procedure 5: OpenBao 시크릿 연동 추가
+###### Procedure 5: OpenBao 시크릿 연동 추가
 
 애플리케이션 시크릿이 필요하면 승인된 OpenBao operator가 저장소 transcript
 밖의 비밀 채널에서 `secret/apps/${APP}/config`를 생성한다. 이 Runbook은
@@ -248,13 +274,13 @@ kubectl get externalsecret -n apps ${APP}-secret
 | 4 | 실패 시 복구 경로로 전환: AnalysisTemplate 실패나 수동 중단이 필요하면 이후 배포를 멈춘다. | 이전 stable 버전으로 복귀하고 원인 수정이 확인된다. | 승인된 canary 복구 절차(Recovery or Forward Repair)로 전환하고, 복귀와 원인 수정을 확인한 뒤에만 다음 온보딩 단계를 진행한다. |
 | 5 | OpenBao 시크릿 연동 추가: `external-secret.yaml`을 활성화하고 Rollout의 `envFrom`을 연결한다. | `READY=True`, `STATUS=SecretSynced`이며 secret value는 출력하지 않는다. | not stated in this document |
 
-### Stop Conditions
+##### Stop Conditions
 
 중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Steps에 두고 실패 시 Escalation의 Next Owner와 Recovery or Forward Repair를 따른다.
 
-## Verification
+#### Verification
 
-### Expected Results
+##### Expected Results
 
 Procedure 2의 Rollout, Pod, AnalysisRun, Ingress와 CA 검증을 거친 HTTPS 결과가
 아래 기대 상태를 만족하는지 확인한다. CA 파일을 사용할 수 없으면 TLS 완료
@@ -271,25 +297,25 @@ Procedure 2의 Rollout, Pod, AnalysisRun, Ingress와 CA 검증을 거친 HTTPS �
 
 - **Signals**: ArgoCD Application health/sync, Rollout status, AnalysisRun result, Pod readiness, Ingress certificate status
 
-### Unverified Conditions
+##### Unverified Conditions
 
 - **Evidence to Capture**: PR diff, ArgoCD app status, rollout history, relevant events/log snippets, HTTPS verification output
 
-### Lifecycle Traceability
+##### Lifecycle Traceability
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
 | [App GitOps Onboarding Policy](../02.policies/0007-app-gitops-onboarding-policy.md) | A new GitHub image must enter `gitops/workloads`, or a canary/analysis/ingress/secret integration needs bounded rollback and re-verification. | Application owner supplies image and PR evidence; Platform operator records ArgoCD, Rollout, AnalysisRun, Pod, and ingress/TLS results and owns GitOps rollback, while secret writes remain human-approved. |
 
-## Escalation
+#### Escalation
 
-### Next Owner
+##### Next Owner
 
 에스컬레이션: GitOps rollback과 ArgoCD·Rollout·AnalysisRun·Pod·ingress/TLS 결과 기록은 Platform operator(Preflight > Authority의 플랫폼 운영자, Lifecycle Traceability), 이미지와 PR 증적은 애플리케이션 소유자가 맡는다. 비밀 변경은 승인된 OpenBao operator의 인간 승인 사항이며(Procedure 5), TLS 완료 판정 보류는 인증서 owner에게 넘긴다(Verification > Expected Results).
 
-### Recovery or Forward Repair
+##### Recovery or Forward Repair
 
-#### Canary abort and rollback
+###### Canary abort and rollback
 
 AnalysisTemplate 실패나 수동 abort가 필요한 경우 승인된 운영자가 다음
 명령으로 workload 범위를 한정해 중단한다. 이전 stable 버전으로의 복귀를
@@ -308,9 +334,9 @@ GitOps manifest 수정이 필요하면 이미지 태그 또는 설정을 수정�
 완료는 Argo Rollouts 컨트롤러의 알림 엔진이 `slack:hy-home-alerts`로 보낸다
 (ADR-0054, SPEC-0141).
 
-### Recovery Procedures
+##### Recovery Procedures
 
-#### ArgoCD Application이 생성되지 않는 경우
+###### ArgoCD Application이 생성되지 않는 경우
 
 ```bash
 # apps-generator 이벤트 확인
@@ -320,7 +346,7 @@ kubectl -n argocd describe applicationset apps-generator
 kubectl kustomize gitops/workloads/${APP}/
 ```
 
-#### Pod가 1/1 Running (Istio sidecar 미주입)
+###### Pod가 1/1 Running (Istio sidecar 미주입)
 
 ```bash
 # namespace 라벨 확인
@@ -331,7 +357,7 @@ kubectl get namespace apps --show-labels | grep istio-injection
 argocd app sync platform-namespaces
 ```
 
-#### AnalysisRun 실패 (Prometheus 쿼리 오류)
+###### AnalysisRun 실패 (Prometheus 쿼리 오류)
 
 Procedure 2의 대상 Rollout에서 확인한 이번 리비전의 AnalysisRun 이름을
 `ANALYSIS_RUN`에 설정한다. `jq`로 해당 실행의 controller UID를 Rollout
@@ -355,7 +381,7 @@ rollout_uid=$(kubectl -n apps get "rollout/${APP:?대상 Rollout을 지정한다
 인증 조회 경로로 요청한다. 인증정보나 원시 비밀 출력은 해당 운영 Task나
 사건 기록에 복사하지 않는다.
 
-#### TLS 인증서 미발급
+###### TLS 인증서 미발급
 
 ```bash
 # Certificate 상태 확인
@@ -366,7 +392,7 @@ kubectl describe certificate ${APP}-tls -n apps
 kubectl get clusterissuer mkcert-ca-issuer -o jsonpath='{.status.conditions[0]}'
 ```
 
-#### Rollout OutOfSync (AppProject 권한 오류)
+###### Rollout OutOfSync (AppProject 권한 오류)
 
 ```bash
 # AppProject whitelist 확인
@@ -375,3 +401,23 @@ kubectl -n argocd get appproject apps -o yaml | grep -A2 "namespaceResourceWhite
 # human-approved AppProject bootstrap/break-glass only
 kubectl apply -f gitops/clusters/local/appproject-apps.yaml
 ```
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

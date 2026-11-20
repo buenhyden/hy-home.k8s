@@ -18,6 +18,11 @@ from typing import NamedTuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from semver_grammar import is_numeric_version  # noqa: E402
+from common_document_contract import (  # noqa: E402
+    CommonDocumentError,
+    has_common_envelope,
+    payload_markdown,
+)
 from validation.repository.bounded_io import (
     BoundedInputError,
     BoundedOutputError,
@@ -70,6 +75,11 @@ def _read_document(path: Path, relative: str) -> str:
 
 
 def _body(text: str) -> str:
+    if has_common_envelope(text):
+        try:
+            text = payload_markdown(text, profile_id="knowledge-reader")
+        except CommonDocumentError as exc:
+            raise KnowledgeSurfaceError(f"common envelope is malformed: {exc}") from exc
     return FRONTMATTER.sub("", text, count=1)
 
 

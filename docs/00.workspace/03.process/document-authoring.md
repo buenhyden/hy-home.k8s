@@ -1,22 +1,40 @@
 ---
 title: "Document Authoring Policy"
-version: "4.2.0"
+version: "5.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-19"
+updated: "2026-11-20"
 ---
 
 # Document Authoring Policy
 
-## Purpose and Scope
+## 문서 개요
 
-### Objective
+### 목적과 독자
+
+Workers and reviewers use Document Authoring Policy for the rules in its stated scope.
+
+### 책임과 적용 범위
+
+The policy's coverage is defined in [Purpose and Scope](#purpose-and-scope) and [Applies To](#applies-to).
+
+## 내용 계약
+
+### 입력과 전제
+
+Read the current request, owner and rule conditions before applying this policy.
+
+### 본문과 규칙
+
+#### Purpose and Scope
+
+##### Objective
 
 Select the document owner by purpose, author from its canonical template, and
 close the change with traceable evidence.
 
-### Applies To
+##### Applies To
 
 Use [SDLC flow](sdlc.md) to distinguish durable requirements, current
 architecture, change-specific behavior, and operating knowledge. Stage numbers
@@ -25,13 +43,13 @@ express ownership, not a one-way waterfall.
 - Stage 99 Author Guide (`docs/99.templates/README.md`)
 - Archive Index (`docs/98.archive/README.md`)
 
-#### Exclusions
+###### Exclusions
 
 This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
-## Rules
+#### Rules
 
-### Requirements
+##### Requirements
 
 | Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
@@ -50,12 +68,12 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | AUTHOR-R013 | Always | Preserve accepted decisions and completed evidence. Use successors, the applicable lifecycle relationship and the Archived Lineage summary in the owning current document; recover removed bytes from Git history rather than rewriting history, leaving redirects, or keeping a second recovery ledger; a closed work residue ledger entry is recovered from Git history. Before a current document leaves its stage, follow the manual consumer, preservation, hold and authorization review in [document lifecycle](document-lifecycle.md#requirements). If Git-history-only disposition is selected, also prove exact Git recovery. Keep the decision and applicable recovery evidence in the existing Task and current owner; unresolved conditions defer only that disposition. | `document-lifecycle` | none |
 | AUTHOR-R014 | Always | Run the checks selected by the affected paths and record evidence in the owning Task using [quality policy](../04.quality/quality.md). | `scripts/qa.py` | none |
 | AUTHOR-R015 | Always | Governed Markdown uses the ordered common prefix "title", "version", "type", "status", "owner", and "updated"; later keys appear only when the selected profile declares them. A new document starts at version "0.1.0" and its first stable approval raises it to "1.0.0" when the document is still at major zero. Document Revision, Contract Version and Registry Schema Version each use the ASCII numeric triplet `X.Y.Z` from `scripts/semver_grammar.py`. Each component is zero or begins with an ASCII digit from 1 through 9. Prefixes, whitespace, prerelease identifiers and build metadata are invalid. Compare components numerically in order. Product tags follow [Git release ownership](git.md#release-ownership). External deployment labels, database migration numbers and artifact identities retain their own types. Historical Registry integers are read as `N.0.0` only in the history reader. Current readers accept the Registry schema MAJOR they implement. | `markdown-profiles` | none |
-| AUTHOR-R016 | Always | Markdown templates use the double-braced UPPER_SNAKE_CASE value grammar, native templates use double-underscore UPPER_SNAKE_CASE markers, and author guidance uses the registered HTML comment form. The shared value markers are TITLE, OWNER, UPDATED, ARTIFACT_ID and PARENT_ID; parent_ids names exactly one direct structural owner rather than a duplicate spec_id. Authored documents contain none of those markers. The Registry's TemplateDefinition records `contract_id` and the numeric `contract_version` separately. Git and that contract identity and version record template history. The created document has its own "version". The Registry's `document_language` owns each document's language. Navigation, reference-pack, and operations profiles default to Korean. Policies under `.agents/governance/` use English. New prose in governed Markdown elsewhere under `.agents/` defaults to Korean, and existing English prose remains valid. Machine keys and required headings retain their registered grammar. Non-Markdown files under `.agents/`, and non-README files under `.claude/` and `.codex/`, use English only. READMEs follow the navigation profile. Other current documents, especially non-README Stage 01–03 authored documents, remain English, as do agent requirement sections. Template author prompts follow the registered language. Do not hand-edit generated current artifacts or create authored trees outside the taxonomy. | `markdown-profiles` | none |
-| AUTHOR-R017 | Always | The Stage 99 Registry's optional `shared_contract` identifies the approved shared edition and this local adapter. Its pinned source revision and digest identify the reviewed bytes; `approval_ref` records a separate shared decision. A Registry stage value is a local declaration, not acceptance evidence by itself. Actual local adoption requires the owning Task's integration check, the owner's semantic review under the [quality policy](../04.quality/quality.md#semantic-review), and criterion decision. Shared adoption also requires application evidence from each repository. Keep this adapter's status, language, and native extensions explicit. A new shared edition requires an actual owner decision and adoption evidence; do not create a separate local WGOV core. | `document-contract-registry` | none |
+| AUTHOR-R016 | Always | Markdown templates use the double-braced UPPER_SNAKE_CASE value grammar, native templates use double-underscore UPPER_SNAKE_CASE markers, and template guidance uses the registered HTML comment form `<!-- 작성 규칙: ... -->`. The shared value markers are TITLE, OWNER, UPDATED, ARTIFACT_ID and PARENT_ID; parent_ids names exactly one direct structural owner rather than a duplicate spec_id. Authored documents contain no guidance comments or unfilled markers. The Registry's TemplateDefinition records `contract_id` and the numeric `contract_version` separately. Git and that contract identity and version record template history. The created document has its own "version". A native Markdown definition keeps its common envelope separate from the provider payload; a native non-Markdown asset keeps its consumer syntax. The Registry's `document_language` owns each document's language. Navigation, reference-pack, and operations profiles default to Korean. Policies under `.agents/governance/` use English. New prose in governed Markdown elsewhere under `.agents/` defaults to Korean, and existing English prose remains valid. Machine keys and required role payload headings retain their registered grammar inside the common envelope. Non-Markdown files under `.agents/`, and non-README files under `.claude/` and `.codex/`, use English only. READMEs follow the navigation profile. Other current documents, especially non-README Stage 01–03 authored documents, remain English, as do agent requirement sections. Template guidance follows the registered language. Do not hand-edit generated current artifacts or create authored trees outside the taxonomy. | `markdown-profiles` | none |
+| AUTHOR-R017 | Always | The Stage 99 Registry's optional `shared_contract` identifies the recorded WGOV shared edition and this local adapter. Its pinned source revision and digest identify the reviewed bytes; `approval_ref` cites a separate shared decision but does not prove local adoption by itself. A Registry stage value is a local declaration, not acceptance evidence by itself. An edition with unverified approval facts remains a candidate. Actual local adoption requires the owning Task's integration check, the owner's semantic review under the [quality policy](../04.quality/quality.md#semantic-review), and criterion decision. Shared adoption also requires application evidence from each repository. Keep this adapter's status, language, and native extensions explicit. A new shared edition requires an actual owner decision and adoption evidence; do not create a separate local WGOV core. The independent common document contract has its own ID and adoption evidence. | `document-contract-registry` | none |
 | AUTHOR-R018 | Always | Approval and adoption are separate facts. An approved or adopted edition records past authority and does not freeze the contract; a later approved target supersedes it through a recorded change. Approval is never inferred from a role name, hash, signature or registry value; absent evidence stays unverified, and no new ledger is created for it; an unverified approval fact is not a work residue ledger entry. Partial adoption is never reported as full, and an approved compatible edition coexisting with a newer one is not a defect by itself. The target contract record names the contract ID, version, single authoring owner, approval reference with approver and date, scope, exceptions, effective point, migration, rollback and consumer edition. The registry carries `contract_id`, `version`, `stage` (`candidate`, `approved` or `adopted`), `owner`, `approval_ref`, `approved_by`, `approved_at`, `effective_from`, `extensions` and the optional `scope`, `migration`, `rollback` and `consumer_version`; an approved or adopted record needs the approval facts, and a fact no record states is `unverified` and is admitted only beside an `approval_ref`. | `document-contract-registry` | none |
 | AUTHOR-R019 | Always | A regional extension may bind paths, commands, environments, native syntax, quality targets and deployment. Each extension states its condition, owner, verification, review point and removal criterion. An extension never weakens or removes a common required condition, and a path or edition difference alone is no permanent exception. Standardization never forces one language, folder layout, CLI or quality number on every product. | `document-contract-registry` | none |
 | AUTHOR-R020 | Always | A derived or generated copy names its source and edition and changes only through that source; an edit made only in the copy is a defect. The Policy role, its forms and placement are owned by the [SDLC contract](sdlc.md#ownership-and-placement). | `agent-governance` (provider agent projections, provider baselines, skill links and the Codex rules digest changed alone); Semantic review for other copies | none |
-| AUTHOR-R021 | Always | Use the Registry described in [Stage 99](../../99.templates/README.md) to resolve the document role, canonical template, section IDs and titles, table contracts, applicability, relationships, and language. Apply a local extension only under its registered condition and follow its owner, validation, review, and removal criteria. Use the registered retained form where its scope applies. Follow the [Stage 99 authoring guidance](../../99.templates/README.md#entry-points) when creating a document. | `markdown-profiles` | none |
+| AUTHOR-R021 | Always | Use the Registry described in [Stage 99](../../99.templates/README.md) to resolve the document role, canonical template, shared envelope and role payload, section IDs and titles, table contracts, applicability, relationships, and language. Apply a local extension only under its registered condition and follow its owner, validation, review, and removal criteria. Use the registered retained form where its scope applies. Follow the [Stage 99 authoring guidance](../../99.templates/README.md#entry-points) when creating a document. | `markdown-profiles` | none |
 | AUTHOR-R022 | Always | Joint edition decisions belong to the request owner `buenhyden`; current documentation, QA and operations owners review their scope. Verify an existing approved source when available; otherwise record that no prior joint approved edition was established and first establish one candidate with the same identity across adapters. Missing future commit, digest or approval fields never block authorized investigation, policy/consumer repair or independent local work. Record candidate preparation, final approval, local adoption and joint adoption separately in the current Task, and do not claim an unread adapter adopted an edition. Bind final approval to the reviewed edition's actual content, revision and digest only after its real decision, and do not create a competing normative core. | Semantic review | none |
 | AUTHOR-R023 | Always | A rule ID and a policy code are permanent until a user-approved new baseline under the Q-07 contract. An ID is issued once, never renumbered and never reused. A retired rule keeps its row and never becomes `active` again; a restored rule takes a new ID, which the retired row may name as its successor. A registered code never changes and is never given to another policy, and the document lifecycle check refuses a missing ID, a retired row made active, a changed code and a shrunken `reserved_codes` list. | `document-lifecycle` | none |
 
@@ -125,12 +143,13 @@ relationships readable. In Stage 90, an Audit owns criteria, check scope,
 observations, evidenced findings with severity, corrective owners, and
 verification state. Research owns questions, methods, claims by source,
 limitations, and recommendations. Data owns scope and provenance, production
-method, field meanings and units, observed facts, and staleness bounds. The
-Registry owns local headings and form, and templates provide a starting point;
+method, field meanings and units, observed facts, and staleness bounds. The [common document contract](../../99.templates/01.contracts/common-document-contract.json)
+owns the shared heading envelope and kind meanings. The Registry owns each
+role payload form, and templates provide a starting point;
 each document's actual evidence and owner determine its facts, decisions, and
 current authority.
 
-#### Frontmatter order and versions
+###### Frontmatter order and versions
 
 `AUTHOR-R015`
 
@@ -152,27 +171,27 @@ Native Skill packages keep name and description at the top and
 place that six-key document envelope inside metadata. Preserve native
 invocation, tool and model controls; metadata does not grant execution authority.
 
-#### Template markers and language
+###### Template markers and language
 
 `AUTHOR-R016`
 
-#### Shared contract edition
+###### Shared contract edition
 
 `AUTHOR-R017`
 
-#### Approval and adoption
+###### Approval and adoption
 
 `AUTHOR-R018`
 
-#### Regional extensions
+###### Regional extensions
 
 `AUTHOR-R019`
 
-#### Derived and generated copies
+###### Derived and generated copies
 
 `AUTHOR-R020`
 
-#### Registry forms
+###### Registry forms
 
 `AUTHOR-R021`
 
@@ -183,37 +202,37 @@ condition for supplying the content. Resolve evidence pointers to an existing
 location. A format check establishes structural conformance. Record operator
 authority, live observations, and acceptance with their own evidence.
 
-#### Joint edition decisions
+###### Joint edition decisions
 
 `AUTHOR-R022`
 
-#### Rule ID permanence
+###### Rule ID permanence
 
 `AUTHOR-R023`
 
-### Exceptions
+##### Exceptions
 
 Exception and escalation conditions are stated under Requirements.
 
-#### Approval and Review
+###### Approval and Review
 
 Approval and review conditions are stated under Requirements.
 
-## Enforcement
+#### Enforcement
 
-### Mechanisms
+##### Mechanisms
 
 Run strict registry, Markdown-profile, link/owner, and lifecycle checks when
 their contracts are affected. A deletion or consolidation requires replacement
 coverage and consumer disposition in the same logical change.
 
-### Limits
+##### Limits
 
 The strict registry, Markdown-profile, link/owner and lifecycle checks run only when their contracts are affected. Native skill metadata does not grant execution authority, and a deletion or consolidation still requires replacement coverage and consumer disposition in the same logical change.
 
-## Ownership
+#### Ownership
 
-### Owner
+##### Owner
 
 Stage 99 README (`docs/99.templates/README.md`) is the human authoring guide.
 Its registry (`docs/99.templates/registry.json`) alone owns exact paths,
@@ -223,10 +242,30 @@ owns agent procedure, not a second machine contract.
 - [Document Lifecycle](document-lifecycle.md)
 - [Work Lifecycle](../../../.agents/workflows/work-lifecycle.md)
 
-#### Responsibilities
+###### Responsibilities
 
 Responsibilities are stated under Owner and Requirements.
 
-### Review Triggers
+##### Review Triggers
 
 Change and adoption conditions are stated under Requirements.
+
+## 적용과 확인
+
+### 적용 방법
+
+Apply the rule, enforcement and exception clauses in the payload together.
+
+### 확인 기준
+
+Check named enforcement on actual input and report its evidence level accurately.
+
+## 관계와 출처
+
+### 관련 문서
+
+The ownership and related documents in the payload link adjacent owners.
+
+### 외부 근거
+
+Repository decisions and cited sources support these rules; external sources alone grant no authority.

@@ -1,36 +1,54 @@
 ---
 title: "Agent Delivery Policy"
-version: "2.11.0"
+version: "3.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-19"
+updated: "2026-11-20"
 ---
 
 # Agent Delivery Policy
 
-## Purpose and Scope
+## 문서 개요
 
-### Objective
+### 목적과 독자
+
+Workers and reviewers use Agent Delivery Policy for the rules in its stated scope.
+
+### 책임과 적용 범위
+
+The policy's coverage is defined in [Purpose and Scope](#purpose-and-scope) and [Applies To](#applies-to).
+
+## 내용 계약
+
+### 입력과 전제
+
+Read the current request, owner and rule conditions before applying this policy.
+
+### 본문과 규칙
+
+#### Purpose and Scope
+
+##### Objective
 
 State the Git delivery commands an agent may run on the user's current
 request and the native controls that bound them (SDLC-R036, A). The common
 Git rules for people and agents stay in the
 [workspace Git policy](../../docs/00.workspace/03.process/git.md).
 
-### Applies To
+##### Applies To
 
 Agent sessions and subagents that commit, push, open or merge pull requests,
 tag, release or dispatch workflows.
 
-#### Exclusions
+###### Exclusions
 
 Commit, branch, release and Git-point rules are excluded; the workspace Git
 policy owns them.
 
-## Rules
+#### Rules
 
-### Requirements
+##### Requirements
 
 | Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
@@ -44,7 +62,7 @@ policy owns them.
 | GIT-R012 | required | active |
 | GIT-R013 | required | active |
 
-#### Agent delivery commands
+###### Agent delivery commands
 
 `GIT-R011`
 
@@ -60,28 +78,28 @@ and a workflow's enabled state stays under rule 9 of
 requested operation forbidden by policy but not denied stops and asks the user
 rather than relying on the missing prompt.
 
-### Exceptions
+##### Exceptions
 
 This policy states no exception condition of its own; the operator approval route applies.
 
-#### Approval and Review
+###### Approval and Review
 
 Approval and review conditions are stated under Requirements.
 
-## Enforcement
+#### Enforcement
 
-### Mechanisms
+##### Mechanisms
 
 Claude tracked settings and the Codex network prompt apply GIT-R012 and
 GIT-R013 natively; neither proves the other.
 
-### Limits
+##### Limits
 
 Tracked settings are repository-static intent; a Release made outside the producer, an unmatched tag rewrite and longer option clusters stay policy-only.
 
-## Ownership
+#### Ownership
 
-### Owner
+##### Owner
 
 This policy owns the agent delivery commands; each GIT rule ID has exactly one
 owner, this file or the workspace Git policy.
@@ -89,10 +107,30 @@ owner, this file or the workspace Git policy.
 - [Git Policy](../../docs/00.workspace/03.process/git.md)
 - [Agent Safety Execution](approval-and-safety.md)
 
-#### Responsibilities
+###### Responsibilities
 
 Responsibilities are stated under Owner and Requirements.
 
-### Review Triggers
+##### Review Triggers
 
 This policy changes as a governed-document change under the work lifecycle and the document lifecycle policy, with no adoption step of its own; if it needs one, state it here.
+
+## 적용과 확인
+
+### 적용 방법
+
+Apply the rule, enforcement and exception clauses in the payload together.
+
+### 확인 기준
+
+Check named enforcement on actual input and report its evidence level accurately.
+
+## 관계와 출처
+
+### 관련 문서
+
+The ownership and related documents in the payload link adjacent owners.
+
+### 외부 근거
+
+Repository decisions and cited sources support these rules; external sources alone grant no authority.

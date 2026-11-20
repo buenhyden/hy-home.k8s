@@ -1,22 +1,40 @@
 ---
 title: "Document Lifecycle Policy"
-version: "3.3.0"
+version: "4.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-19"
+updated: "2026-11-20"
 ---
 
 # Document Lifecycle Policy
 
-## Purpose and Scope
+## 문서 개요
 
-### Objective
+### 목적과 독자
+
+Workers and reviewers use Document Lifecycle Policy for the rules in its stated scope.
+
+### 책임과 적용 범위
+
+The policy's coverage is defined in [Purpose and Scope](#purpose-and-scope) and [Applies To](#applies-to).
+
+## 내용 계약
+
+### 입력과 전제
+
+Read the current request, owner and rule conditions before applying this policy.
+
+### 본문과 규칙
+
+#### Purpose and Scope
+
+##### Objective
 
 This policy governs document promotion, blocking, supersession, retirement,
 withdrawal, and historical recovery across the repository.
 
-### Applies To
+##### Applies To
 
 Stable identities are append-only and never reused. Retired identities are
 reserved by the first column of the owners' `Archived Lineage` and checked by
@@ -27,13 +45,13 @@ evidence is not rewritten to satisfy a later profile.
 - [Common Agent Governance](../../../.agents/README.md)
 - Archive Stage (`docs/98.archive/README.md`)
 
-#### Exclusions
+###### Exclusions
 
 This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
-## Rules
+#### Rules
 
-### Requirements
+##### Requirements
 
 | Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
@@ -109,17 +127,17 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   The operator verifies the original approval and current revocation before
   executing or resuming. A receipt never supplies criterion acceptance.
 
-### Exceptions
+##### Exceptions
 
 Exception and escalation conditions are stated under Requirements.
 
-#### Approval and Review
+###### Approval and Review
 
 Approval and review conditions are stated under Requirements.
 
-## Enforcement
+#### Enforcement
 
-### Mechanisms
+##### Mechanisms
 
 Lifecycle validators use bounded regular-file reads, strict UTF-8, explicit
 subprocess timeouts, and stage-zero Git bytes. Illegal edges, incomplete
@@ -132,13 +150,13 @@ package whose Tasks are all terminal (ADR-0057).
 Recovery proof, holds, consumers and authority stay manual. Review this policy
 whenever the registry lifecycle catalog changes.
 
-### Limits
+##### Limits
 
 The lifecycle validators do not decide recovery proof, holds, consumers or authority, which stay manual. A placeholder or date alone cannot establish resolution, and the manual disposition review of a document's normative, historical, audit and recovery value is not performed by a validator.
 
-## Ownership
+#### Ownership
 
-### Owner
+##### Owner
 
 The Stage 99 registry (`docs/99.templates/registry.json`) is the sole machine
 owner for lifecycle states, directed transitions, and the internal `mutable`,
@@ -150,10 +168,30 @@ the machine transition table.
 - Document Profile Registry (`docs/99.templates/registry.json`)
 - [Document Authoring Policy](document-authoring.md)
 
-#### Responsibilities
+###### Responsibilities
 
 Responsibilities are stated under Owner and Requirements.
 
-### Review Triggers
+##### Review Triggers
 
 Change and adoption conditions are stated under Enforcement.
+
+## 적용과 확인
+
+### 적용 방법
+
+Apply the rule, enforcement and exception clauses in the payload together.
+
+### 확인 기준
+
+Check named enforcement on actual input and report its evidence level accurately.
+
+## 관계와 출처
+
+### 관련 문서
+
+The ownership and related documents in the payload link adjacent owners.
+
+### 외부 근거
+
+Repository decisions and cited sources support these rules; external sources alone grant no authority.
