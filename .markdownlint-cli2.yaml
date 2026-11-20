@@ -32,9 +32,13 @@ config:
   MD051: false # link fragments
   MD056: false # table column count
   MD033:
-    # Reduced to the elements the corpus actually needs. Both appear on a
-    # single line of a terminal Stage 03 plan that cannot be re-fenced.
+    # Empty a[id/name] anchors preserve existing fragments when the common
+    # envelope nests former deep headings beyond H6. The link validator limits
+    # a to empty id/name tags; other HTML tags remain subject to MD033.
+    # The two feature tags occur on one immutable terminal
+    # Stage 03 plan line and remain terminal-document exceptions.
     allowed_elements:
+      - a
       - feature-or-system
       - feature-id
 

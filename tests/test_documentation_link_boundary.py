@@ -493,6 +493,62 @@ class FragmentLinkTests(unittest.TestCase):
             if item.rule_id == "LINK-FRAGMENT"
         ]
 
+    def anchor_shape_rules(self, source_text: str) -> list[str]:
+        context = replace(
+            self.context,
+            paths=(self.source,),
+            texts={**self.context.texts, self.source: source_text},
+        )
+        return [
+            item.rule_id
+            for item in validator._link_diagnostics(context)
+            if item.rule_id == "HTML-ANCHOR-SHAPE"
+        ]
+
+    def test_only_visible_empty_id_or_name_anchor_is_allowed(self) -> None:
+        visible = '# Example\n\n<a id="old-fragment"></a>\n\n<a name="named"></a>\n'
+        literals = (
+            '\n```html\n<a href="/literal">example</a>\n```\n'
+            '\n`<a onclick="literal()"></a>`\n'
+            '\n<!-- <a href="/comment">example</a> -->\n'
+            '\n\\<a href="/escaped">example\\</a>\n'
+            '\n    <a href="/indented">example</a>\n'
+            '\n> ```html\n> <a onclick="literal()">\n> ```\n'
+            '\n> <!--\n> <a onclick="literal()">\n> -->\n'
+            '\n>     <a onclick="literal()">\n'
+            '\n- ```html\n  <a onclick="literal()">\n  ```\n'
+        )
+        self.assertEqual(self.anchor_shape_rules(visible + literals), [])
+        self.assertEqual(
+            self.anchor_shape_rules(
+                '---\ntitle: "<a href=/metadata>"\n---\n\n' + visible
+            ),
+            [],
+        )
+        for source in (
+            '<a href="/path">link</a>',
+            '<a onclick="run()">',
+            '<a href="javascript:alert(1)" onclick="run()">\nClick</a>',
+            '> <a onclick="run()">',
+            '- <a onclick="run()">',
+            '- text\n\n    <a onclick="run()">',
+            '> - <a href="javascript:alert(1)" onclick="run()">',
+            '<feature-id>\n<a onclick="run()">\n</feature-id>',
+            '<feature-or-system>\n<a onclick="run()">\n</feature-or-system>',
+            '> <feature-id>\n> <a onclick="run()">\n> </feature-id>',
+            '<a\nhref="/path">text</a>',
+            '<a id="old-fragment" onclick="run()"></a>',
+            '<a id="old-fragment">\ncontent\n</a>',
+            '<a id="old-fragment"><b>nested</b></a>',
+            '<a id="old-fragment">content</a>',
+            "</a>",
+        ):
+            with self.subTest(source=source):
+                self.assertEqual(
+                    self.anchor_shape_rules(f"# Example\n\n{source}\n"),
+                    ["HTML-ANCHOR-SHAPE"],
+                )
+
     def test_a_broken_same_file_and_cross_file_fragment_fail(self) -> None:
         self.assertEqual(
             self.fragments("# Here\n\n[x](#missing)\n"), ["docs/README.md#missing"]
