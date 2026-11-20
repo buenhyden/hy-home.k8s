@@ -1,6 +1,6 @@
 ---
 title: "Independent Review and Read-Only Boundary Plan"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/plan"
 status: "draft"
 owner: "platform"
@@ -144,7 +144,7 @@ follows operator review of concrete evidence, never a passing QA label alone.
 | Check ID | Guarantee | Input | Trust Boundary | Required When | Evidence |
 | --- | --- | --- | --- | --- | --- |
 | review-delta | Evidence carry rejects normative/new obligations and preserves factual rows | Focused fixture diffs | Local classifier | Script change | Task Results |
-| approval-negative | Verdict/hash/role cannot become user approval | Current receipt shape and negative fixtures | Repository static | Approval consumer change | Task Results |
+| approval-negative | Known bare verdict/hash/role references and absent receipts are rejected; the operator still checks the original trusted interaction, scope, validity and revocation | Current receipt shape, negative fixtures and user interaction | Repository shape check plus human-owned authority | Approval consumer change | Task Results |
 | review-contract | Risk, scope and consumers follow the Spec and AD-0006 | Integrated policy/provider/reviewer diff | Independent semantic review | Contract change | Task Results |
 | native-boundary | A verified primary or alternative route reads permitted source, denies source write and outside-scope fake read, blocks external connection through a network-capable tool, exposes effective shell/file/MCP/hook inventory and reviews the focused diff | Installed provider, isolated source, fake sentinel and limits | Native runtime only | Supported selected route ready | Task Results or P07 handoff |
 | document-contract | New package, guide, Stage 99 binding and current links conform | Exact candidate tree/index | Repository static | Document change | Task Results |

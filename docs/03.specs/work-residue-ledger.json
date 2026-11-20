@@ -221,7 +221,7 @@
       "kind": "handoff",
       "state": "terminal",
       "owner": "W07",
-      "resume_condition": "Current validator and both approval consumers reject bare role/hash/QA/verdict references and missing human receipt in focused P06 tests. Human actor authenticity remains the operator's policy boundary",
+      "resume_condition": "Current validator and both approval consumers reject the 13 tested recognized bare role/hash/QA/verdict shapes and absent human receipt. This shape check does not authenticate the actor; the operator checks the original trusted interaction, current scope, validity and revocation under SAFE-R008/010. Unrecognized references are not machine-certified human approval",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       },

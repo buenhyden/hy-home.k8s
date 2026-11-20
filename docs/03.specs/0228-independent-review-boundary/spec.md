@@ -1,6 +1,6 @@
 ---
 title: "Independent Review and Read-Only Boundary"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
@@ -147,6 +147,10 @@ human-owned approval or criterion decision; the existing scoped execution
 receipt remains distinct. Actual cost, account or support limits stop only the
 dependent native probe. Preserve prior failed observations and route other
 safe work to the current owner.
+The static receipt validator rejects known bare nonhuman reference shapes and
+missing receipts; it does not authenticate a self-declared `actor`. The
+operator checks the original trusted user interaction, exact current scope,
+validity and revocation before treating a receipt as human authorization.
 
 #### Acceptance Criteria
 
@@ -156,7 +160,7 @@ safe work to the current owner.
 | --- | --- |
 | AC-0001 | Risk classification uses impact and authority; low, medium and high review routes, actual packet inputs and three independence dimensions are explicit and proportionate. |
 | AC-0002 | Result-only evidence carries review, while normative Task append, authority or acceptance changes, a new Task and a new ledger obligation demand focused re-review in regression tests. |
-| AC-0003 | A reviewer verdict, PASS, hash or role label cannot create human approval or criterion acceptance; current scoped execution authorization and native permissions remain separately checked. |
+| AC-0003 | Known bare reviewer verdict, PASS, hash and role references and missing receipts are rejected structurally; human approval requires a separately checked original trusted user interaction, current scope, validity and revocation, and criterion acceptance remains distinct from that approval and native permissions. |
 | AC-0004 | A high-risk review uses a verified primary or alternative read-only route with effective shell/file/MCP/hook inventory, permitted source read, denied dummy source write and outside-scope sentinel read, no external connection through a network-capable tool, and focused judgment; failed/unobserved/unsupported routes remain separate, including the original Desktop→SSH failure. |
 | AC-0005 | Current quality, process, provider and role consumers agree; needed environment instructions and Task/ledger handoff name owners without claiming static checks prove enforcement. |
 | AC-0006 | Focused checks and bounded native attempts use actual inputs, version, limits and results; integration, runtime success and user acceptance are reported separately, and P07 is the next prompt only for environment-dependent observation. |
@@ -166,7 +170,7 @@ safe work to the current owner.
 | Check ID | Guarantee | Input | Trust Boundary | Required When | Evidence |
 | --- | --- | --- | --- | --- | --- |
 | review-delta | Semantic additions cannot silently carry a previous review | Focused positive/negative diff fixtures | Local classifier only | Classifier change | Task Results |
-| approval-negative | Self-declared verdict/hash/role is refused as human authority | Lifecycle approval fixtures | Repository static | Approval consumer change | Task Results |
+| approval-negative | Known bare verdict/hash/role shapes and absent receipts are rejected, without claiming static actor authentication | Lifecycle approval fixtures and human interaction review | Repository shape check plus human-owned authority | Approval consumer change | Task Results |
 | review-contract | Risk, packet, provider and owner meanings are consistent | Changed policies, prompt, provider notes and diff | Semantic review | Contract change | Task Results |
 | native-boundary | Actual allowed read, denied source write and outside-scope read, blocked external connection, effective tool inventory and focused review are observed on a named confined route | Installed clients, isolated temporary source and fake sentinel | Provider runtime; no other route inferred | Supported selected route available | Task Results or explicit P07 handoff |
 | document-contract | New package and current owners satisfy profile, lifecycle and links | Exact changed docs and Stage 99 binding | Repository static | Document change | Task Results |
