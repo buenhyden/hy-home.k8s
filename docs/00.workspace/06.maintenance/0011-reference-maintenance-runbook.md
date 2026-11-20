@@ -1,6 +1,6 @@
 ---
 title: "Reference Maintenance Runbook"
-version: "2.0.0"
+version: "2.0.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -36,6 +36,7 @@ platform은 이 절차의 운영 범위를 유지한다. 대상은 [Targets](#ta
 참고 자료를 추가·갱신·종료할 때 사용하는 실행 체크리스트다.
 
 - 외부 조사 출처 또는 확인일을 갱신할 때
+- 현재 소비자가 특정 출처·버전·적용 범위·한계의 재확인을 요구할 때
 - 독립적인 Audit 또는 Data reference를 추가하거나 종료할 때
 - Reference category, filename, router, consumer link를 바꿀 때
 - 참고 자료가 현재 정책·요구·설계·절차를 중복하는지 재검토할 때
@@ -68,24 +69,27 @@ Reference
 ##### Steps
 
 1. 자료의 semantic owner를 분류한다.
-   - Agent governance는 공통 거버넌스(`.agents/`)에 둔다.
+   - Agent governance는 공통 거버넌스(`.agents/`)에, 사람과 agent가 함께 따르는 workspace 규칙은 `docs/00.workspace/`에 둔다.
    - 현재 요구와 아키텍처는 Stage 01/02에 둔다.
    - 구현 Spec/Plan/Task는 Stage 03에 둔다.
    - 운영 Guide/Policy/Runbook/Incident/Postmortem은 Stage 05에 둔다.
    - 출처 기반 비권위 Audit/Research/Data만 Stage 90에 둔다.
 2. pack 경로와 template을 함께 선택한다.
-   - Audit은 `audits/####-<slug>/`와
+   - Audit은 `02.audits/####-<slug>/`와
      [Audit Pack Template](../../99.templates/02.templates/90.references/audit-pack.template.md)을 사용한다.
-   - Data는 `data/####-<slug>/`와
+   - Data는 `03.data/####-<slug>/`와
      [Data Pack Template](../../99.templates/02.templates/90.references/data-pack.template.md)을 사용한다.
-   - Research는 `research/####-<slug>/`와
+   - Research는 `01.research/####-<slug>/`와
      [Research Pack Template](../../99.templates/02.templates/90.references/research-pack.template.md)을 사용한다.
    - 네 자리 번호는 category 안에서 고유해야 하고 slug는 날짜가 아닌 의미
      기반 kebab-case여야 한다. 관찰일은 본문 metadata에 둔다.
    pack은 router `####-<slug>/README.md`와 member `m####-<slug>.md`로 구성한다.
-3. 현재 동작 또는 버전 사실은 매니페스트, 설정, workflow, lock, 코드와
-   Stage 01/02 설명을 먼저 갱신한다. Reference를 실행 입력이나 mirror로
-   만들지 않는다.
+3. 현재 동작 또는 버전 사실을 매니페스트, 설정, workflow, lock, 코드에서
+   확인하고, 어긋난 Stage 01/02 설명은 그 owner에서 바로잡는다. 확인되지 않은
+   사실을 Reference의 현재 주장으로 게시하지 않는다. 현재 소비자가 특정
+   출처·버전·적용 범위·한계를 요구하면 해당 출처만 날짜를 붙여 재확인한다.
+   과거 게시 자료의 빈칸을 일괄 소급 보완할 의무로 삼지 않는다. Reference를
+   실행 입력이나 mirror로 만들지 않는다.
 4. pack 내부의 새 authored report는 category와 일치하는
    [Audit Reference](../../99.templates/02.templates/90.references/audit.template.md),
    [Data Reference](../../99.templates/02.templates/90.references/data.template.md),
@@ -156,15 +160,17 @@ Reference
 | Step | Action | Expected Result | On Failure |
 | --- | --- | --- | --- |
 | 1 | 자료의 semantic owner를 분류한다. | Reference가 공통 거버넌스나 현재 Stage 01/02/03/05 owner를 대체하지 않는다. | 잘못된 분류는 redirect를 만들지 않고 동일 변경을 revert하거나 canonical owner에 새 수정으로 바로잡는다. |
-| 2 | pack 경로와 template을 함께 선택한다. | 모든 pack 경로가 category별 `####-<slug>/` 규칙과 일치하는 template을 사용한다. | not stated in this document |
-| 3 | 현재 동작 또는 버전 사실은 매니페스트, 설정, workflow, lock, 코드와 Stage 01/02 설명을 먼저 갱신한다. | 현재 동작과 버전은 Stage 01/02 및 직접 구현 소스와 일치한다. | not stated in this document |
-| 4 | pack 내부의 새 authored report는 category와 일치하는 template을 사용하고 provenance, observation date, authority boundary, freshness trigger를 작성한다. | 보존 자료의 출처, 확인일, freshness trigger가 명시되어 있다. | not stated in this document |
+| 2 | pack 경로와 template을 함께 선택한다. | 모든 pack 경로가 category별 `####-<slug>/` 규칙과 일치하는 template을 사용한다. | profile 또는 경로가 둘 이상에 맞거나 맞는 것이 없으면 생성을 멈추고 Stage 99 Registry와 category router의 owner를 확인한다. 임의의 새 경로나 template으로 우회하지 않는다. |
+| 3 | 현재 동작 또는 버전 사실을 직접 구현 소스에서 확인하고 어긋난 Stage 01/02 설명은 그 owner에서 바로잡는다. | 현재 동작과 버전은 Stage 01/02 및 직접 구현 소스와 일치한다. | 직접 소스와 설명이 다르거나 원본을 확인할 수 없으면 현재 주장 게시를 멈추고 소스·설명 owner에게 정정 또는 관측을 넘긴다. 과거 Reference 본문은 현재 구현 근거로 대체하지 않는다. |
+| 4 | pack 내부의 새 authored report는 category와 일치하는 template을 사용하고 provenance, observation date, authority boundary, freshness trigger를 작성한다. | 보존 자료의 출처, 확인일, freshness trigger가 명시되어 있다. | 출처·확인일·권위 경계가 누락되면 해당 report 게시를 멈추고 자료 owner가 원출처를 확인해 보완한다. 검증하지 않은 주장은 미관측으로 표시한다. |
 | 5 | pack router가 member를 정확히 나열하게 하고 category router와 `docs/90.references/README.md`를 같은 변경에서 갱신한다. | pack, category, Stage router와 구성원 집합이 대조된다(Verification > Expected Results). | validator 실패 시 실패한 owner, router, link만 수정하고 무관한 문서를 일괄 재생성하지 않는다. |
 | 6 | 종료 대상의 current consumer를 canonical owner 또는 직접 저장소 소스로 전환하고 소비자, 보존 가치, hold, 처분 권한을 확인한다. | Git-history-only 처분이면 현재 원형과 일치하는 정확한 `commit:path`의 도달성과 임시 복구 bytes 일치를 기록했다. | 하나라도 미해결이면 그 처분만 보류하고 원형은 그대로 둔다. 객체·ref 부재, 접근 오류, 차이, 미확인 hold 또는 권한은 해당 처분 `DEFER`이며, 도달성이나 bytes 일치가 확인되지 않으면 처분하지 않고 문서 소유자에게 넘긴다. |
 
 ##### Stop Conditions
 
-중단 조건: 해당 없음 — 이 런북은 별도의 중단 조건 절을 두지 않으며, 보류 조건은 Actions의 6단계에 있다.
+Steps 표의 On Failure에 따라 경로·profile 불명확, 직접 출처와 설명의 충돌,
+출처·확인일·권위 경계 누락 시 해당 작성·게시를 멈춘다. 처분의 미확인 소비자·hold·
+권한·복구 증거는 6단계에 따라 해당 처분만 보류한다.
 
 #### Verification
 
@@ -213,8 +219,10 @@ git diff --check
 
 ##### Next Owner
 
-- Git 원문
-  도달성이나 bytes 일치가 확인되지 않으면 처분하지 않고 문서 소유자에게 넘긴다.
+- Git 원문 도달성이나 bytes 일치가 확인되지 않으면 처분하지 않고 문서
+  소유자에게 넘긴다. 운영 연락 담당자는
+  [Stage 05 운영 담당자](../../05.operations/README.md#owners)를 따른다.
+  담당자 지정만으로 문서 처분 승인이나 보호 작업 실행 권한이 생기지 않는다.
 
 ##### Recovery or Forward Repair
 

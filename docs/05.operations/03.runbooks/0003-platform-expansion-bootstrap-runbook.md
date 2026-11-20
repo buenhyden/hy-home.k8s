@@ -1,6 +1,6 @@
 ---
 title: "Platform Expansion Bootstrap Runbook"
-version: "2.0.0"
+version: "2.0.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -160,6 +160,8 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
 #### Escalation
 
 ##### Next Owner
+
+이 저장소의 운영 비상 연락·승인 담당자는 [Stage 05 Owners](../README.md#owners)를 따른다. 담당자 지정은 이 절차의 개별 실행 승인이 아니다.
 
 CA 입력을 복구할 수 없거나 승인된 조치 뒤에도 ClusterIssuer가 준비되지 않으면
 [서비스 메시·cert-manager 운영 정책](../02.policies/0003-service-mesh-cert-manager-policy.md)을 담당하는 플랫폼 운영자에게 넘긴다.

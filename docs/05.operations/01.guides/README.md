@@ -1,6 +1,6 @@
 ---
 title: "05.operations/guides"
-version: "1.0.0"
+version: "1.0.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -116,7 +116,7 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 이 README의 링크 기준 위치는 `docs/05.operations/01.guides/`다.
 
 - 같은 폴더의 Guide 문서는 `./`로 시작한다.
-- sibling operations folder는 `../policies/`, `../runbooks/`, `../incidents/`로 연결한다.
+- sibling operations folder는 `../02.policies/`, `../03.runbooks/`, `../04.incidents/`로 연결한다.
 - upstream docs stage는 `../../01.requirements/`, `../../02.architecture/`, `../../03.specs/`로 연결한다.
 
 ###### Upstream and Downstream

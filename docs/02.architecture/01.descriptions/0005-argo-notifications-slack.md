@@ -1,6 +1,6 @@
 ---
 title: "Argo Notifications Slack Architecture Description"
-version: "3.0.0"
+version: "3.1.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -105,11 +105,11 @@ ArgoCD Notifications evaluates Applications only, so Rollouts events are configu
 
 | Interface | Producer | Consumer | Contract | Failure |
 | --- | --- | --- | --- | --- |
-| OpenBao `secret/platform/notifications` property `slack_token` | OpenBao KV v2 | External Secrets Operator through `vault-backend` | [ADR-0041](../02.decisions/0041-openbao-secret-backend.md) | not stated in this document |
-| ExternalSecret `argocd-notifications-secret` | External Secrets Operator | ArgoCD Notifications controller through Secret key `slack-token` | [ExternalSecret reference](../../../gitops/platform/argocd/argocd-notifications-secret.yaml) | not stated in this document |
-| ConfigMap `argocd-notifications-cm` entries | GitOps declaration | ArgoCD Notifications controller | [Notifications ConfigMap](../../../gitops/platform/argocd/argocd-notifications-cm.yaml) | not stated in this document |
-| Application annotation `notifications.argoproj.io/subscribe.<trigger>.slack` | Application owner | ArgoCD Notifications controller | [Notifications ConfigMap](../../../gitops/platform/argocd/argocd-notifications-cm.yaml) | not stated in this document |
-| Rollouts events `on-rollout-completed` and `on-rollout-aborted` | Argo Rollouts controller notification engine | Shared Slack channel | [ADR-0054](../02.decisions/0054-platform-decision-current-state-amendment.md) | not stated in this document |
+| OpenBao `secret/platform/notifications` property `slack_token` | OpenBao KV v2 | External Secrets Operator through `vault-backend` | [ADR-0041](../02.decisions/0041-openbao-secret-backend.md) | An unavailable path, denied authentication or TLS failure prevents credential refresh; the operator checks store and ExternalSecret conditions and restores the approved path without a plaintext fallback. |
+| ExternalSecret `argocd-notifications-secret` | External Secrets Operator | ArgoCD Notifications controller through Secret key `slack-token` | [ExternalSecret reference](../../../gitops/platform/argocd/argocd-notifications-secret.yaml) | A missing target key or failed refresh leaves credential readiness unproven; restore ESO synchronization and inspect readiness and key names without exposing the value. |
+| ConfigMap `argocd-notifications-cm` entries | GitOps declaration | ArgoCD Notifications controller | [Notifications ConfigMap](../../../gitops/platform/argocd/argocd-notifications-cm.yaml) | Invalid templates or triggers prevent the affected event from being delivered; correct the Git declaration and inspect controller errors before claiming delivery. |
+| Application annotation `notifications.argoproj.io/subscribe.<trigger>.slack` | Application owner | ArgoCD Notifications controller | [Notifications ConfigMap](../../../gitops/platform/argocd/argocd-notifications-cm.yaml) | An invalid trigger, channel or channel permission leaves optional delivery unverified; correct that subscription and verify receipt separately from the declared shared default. |
+| Rollouts events `on-rollout-completed` and `on-rollout-aborted` | Argo Rollouts controller notification engine | Shared Slack channel | [Rollouts notification values](../../../gitops/apps/root/platform-rollouts-app.yaml), [ADR-0054](../02.decisions/0054-platform-decision-current-state-amendment.md) | Missing trigger/template, credential or Slack permission prevents confirmed receipt; inspect the Rollouts engine and its ExternalSecret, not only ArgoCD Notifications. Delivery failure never grants permission to bypass rollout safety. |
 
 #### Runtime Behavior
 
@@ -122,13 +122,19 @@ ArgoCD Notifications evaluates Applications only, so Rollouts events are configu
   - `notifications.enabled: true` is set in ArgoCD Helm values.
   - `argocd-notifications-cm` and `argocd-notifications-secret` are GitOps-managed through `platform-argocd-config`.
   - The ConfigMap declares the `subscriptions` block (shared channel `slack:hy-home-alerts` for health-degraded, sync-failed and deployed). Actual delivery requires separate approved runtime evidence; the static declaration is not that evidence.
+  - The Rollouts chart separately declares completion and abort templates, triggers and subscriptions to that shared channel. This is the mechanism for REQ-0002-FR-0003 and acceptance criterion 05; observing a completion message does not establish abort delivery.
 - **Verification Scope**:
   - Static contract checks cover notification and secret wiring.
   - Controller and ExternalSecret readiness and Slack delivery remain unobserved in this description. The [operations runbook](../../05.operations/03.runbooks/0004-rollouts-notifications-headlamp-runbook.md) owns runtime verification of these states and the controller send or error logs.
 
 ##### Failure and Recovery
 
-No separate failure boundary is recorded in this description; the failure and recovery behavior it states is in [Scenarios](#scenarios).
+The interface table states the failure handling of this design, not an observed
+recovery result. The
+[notification runbook](../../05.operations/03.runbooks/0004-rollouts-notifications-headlamp-runbook.md)
+owns the operator checks of OpenBao/ESO readiness, the responsible controller
+and actual Slack receipt. Preserve the failing event and redacted error result;
+configuration repair alone does not close the delivery acceptance condition.
 
 #### Quality Scenarios
 

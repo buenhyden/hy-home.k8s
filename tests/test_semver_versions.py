@@ -337,7 +337,8 @@ class RegistryComparisonTests(unittest.TestCase):
         self.assertEqual(diagnostics(self.current, copy.deepcopy(self.current)), [])
 
     def test_a_lowered_registry_schema_version_is_refused(self) -> None:
-        for value in (f"{MAJOR + 1}.0.0", f"{MAJOR}.1.0"):
+        next_minor = int(self.current["schema_version"].split(".")[1]) + 1
+        for value in (f"{MAJOR + 1}.0.0", f"{MAJOR}.{next_minor}.0"):
             with self.subTest(value=value):
                 base = {**self.current, "schema_version": value}
                 found = diagnostics(base, self.current)
@@ -850,8 +851,8 @@ class MissingVersionTests(unittest.TestCase):
         self.assertEqual(rules(document_text(None)), {"FM-KEYSET"})
 
     def test_a_contract_without_a_version_fails_the_registry_schema(self) -> None:
-        value = f"{MAJOR}.0.0"
         raw = raw_registry()
+        value = raw["schema_version"]
         self.assertTrue(registry_loads(MAJOR, value, raw))
         del raw["shared_contract"]["version"]
         self.assertFalse(registry_loads(MAJOR, value, raw))

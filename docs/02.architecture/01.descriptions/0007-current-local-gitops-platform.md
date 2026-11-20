@@ -1,6 +1,6 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "3.0.0"
+version: "3.1.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -268,9 +268,9 @@ The Istio CNI manifest is desired state and proves no actual admission or networ
 
 | Interface | Producer | Consumer | Contract | Failure |
 | --- | --- | --- | --- | --- |
-| Git manifests reconciled into the local cluster | Git repository | ArgoCD | [root Application](../../../gitops/clusters/local/root-application.yaml) | not stated in this document |
-| `vault-backend` ClusterSecretStore to OpenBao paths | External OpenBao | External Secrets Operator | [ESO configuration](../../../gitops/platform/eso/) | not stated in this document |
-| `Service` and `EndpointSlice` interface `valkey-external:6379` | External management Valkey at host `192.168.0.13:26379` | ArgoCD | [external service interfaces](../../../gitops/platform/external-services/) | not stated in this document |
+| Git manifests reconciled into the local cluster | Git repository | ArgoCD | [root Application](../../../gitops/clusters/local/root-application.yaml) | Fetch, render or admission failure prevents the affected desired state from reconciling; inspect Application conditions and fix the source or dependency through Git. A static PASS cannot close that runtime failure. |
+| `vault-backend` ClusterSecretStore to OpenBao paths | External OpenBao | External Secrets Operator | [ESO configuration](../../../gitops/platform/eso/) | DNS, TLS, authentication or missing-path failure prevents secret refresh; the operator restores the approved store boundary and checks readiness without copying a secret into Git or bypassing TLS. |
+| `Service` and `EndpointSlice` interface `valkey-external:6379` | External management Valkey at host `192.168.0.13:26379` | ArgoCD | [external service interfaces](../../../gitops/platform/external-services/) | Endpoint, network or credential failure makes ArgoCD's cache dependency unavailable; compare the declared tuple and secret readiness, then escalate external service recovery to its owner. An EndpointSlice patch requires the separate break-glass boundary. |
 
 #### Runtime Behavior
 
@@ -305,7 +305,13 @@ and the operating owners listed above own live verification.
 
 ##### Failure and Recovery
 
-No separate failure boundary is recorded in this description; the Reliability attribute in [Scenarios](#scenarios) states its reliability expectation.
+The interface table separates source reconciliation, secret refresh and the
+external cache dependency. The
+[bootstrap runbook](../../05.operations/03.runbooks/0001-argocd-platform-bootstrap-runbook.md)
+and [ESO/OpenBao recovery runbook](../../05.operations/03.runbooks/0002-argocd-eso-vault-recovery-runbook.md)
+own diagnosis, authorized recovery and post-recovery observations. External
+service data and backups remain with their external owner; repairing a
+repository declaration neither repairs that runtime nor proves recovery.
 
 #### Quality Scenarios
 

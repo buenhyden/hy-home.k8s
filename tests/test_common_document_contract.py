@@ -250,7 +250,10 @@ class CommonDocumentProjectionTests(unittest.TestCase):
     def test_workspace_scope_artifact_binding_is_exact_and_unique(self) -> None:
         original = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
         ids = original["common_document_contract"]["workspace_scope_artifact_ids"]
-        self.assertEqual(set(ids), {"REQ-0003", "SPEC-0226", "AD-0006", "GDE-0011"})
+        self.assertEqual(
+            set(ids),
+            {"REQ-0003", "SPEC-0226", "SPEC-0227", "AD-0006", "GDE-0011"},
+        )
         for replacement in ("REQ-0999", "SPEC-0226"):
             with self.subTest(replacement=replacement):
                 raw = json.loads(json.dumps(original))

@@ -56,9 +56,9 @@ boundary tests do not establish a hosted result; unobserved hosted checks remain
 recorded in `.github/rulesets/main-protection.md`. Title validation does not
 validate the merge commit message; use both local message checks under the Git
 policy for that message.
-This workflow does not run local purpose or
-document-content QA. Live evidence remains `DEFER` without direct observation
-and a named next owner.
+The hosted workflow runs selected purpose and document-content checks on its
+PR candidate; it does not establish local QA results. Live evidence remains
+`DEFER` without direct observation and a named next owner.
 Link the owning Task for execution status, acceptance, and check evidence;
 do not copy its progress or outcomes into this PR description.
 

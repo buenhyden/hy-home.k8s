@@ -1,6 +1,6 @@
 ---
 title: "ArgoCD ESO OpenBao Recovery Runbook"
-version: "2.0.0"
+version: "2.0.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -207,10 +207,10 @@ Steps의 Checklist를 확인하고, 변경할 각 ConfigMap의 적용 전 상태
 
 | Step | Action | Expected Result | On Failure |
 | --- | --- | --- | --- |
-| 1 | 사전 스냅샷을 저장한다 | not stated in this document | 중단하고 Escalation의 Next Owner(동일 증상이 반복되면 Operations 예외 승인 절차)와 Recovery or Forward Repair를 따른다 |
-| 2 | sealed 상태, 경로, 인증서를 먼저 분류한다 | not stated in this document | sealed:true이면 cluster 설정을 수정하지 않고 OpenBao unseal이 먼저다; host에서 sys/health가 응답하지 않으면 외부 workspace 운영자에게 넘긴다; 그 밖에는 중단하고 Escalation의 Next Owner(동일 증상이 반복되면 Operations 예외 승인 절차)와 Recovery or Forward Repair를 따른다 |
-| 3 | OpenBao가 sealed 상태면 operator-bound unseal 절차를 수행한다 | not stated in this document | 중단하고 Escalation의 Next Owner(동일 증상이 반복되면 Operations 예외 승인 절차)와 Recovery or Forward Repair를 따른다 |
-| 4 | 이름 해석이나 CA drift가 확인된 경우에만 bootstrap [7.3/11]과 같은 입력으로 다시 적용한다 | not stated in this document | CoreDNS custom zone 재적용이 상황을 악화시키면 Steps 1단계의 스냅샷으로 되돌린다; CA bundle 이전 입력이 없거나 신뢰를 확인할 수 없으면 CA 소유자에게 넘긴다 |
+| 1 | 사전 스냅샷을 저장한다 | 변경 전 `coredns-custom` 구성이 승인된 로컬 위치에 저장되고 Store·ExternalSecret·App 상태와 ESO 오류 신호를 비밀값 없이 기록한다 | 중단하고 Escalation의 Next Owner(동일 증상이 반복되면 Operations 예외 승인 절차)와 Recovery or Forward Repair를 따른다 |
+| 2 | sealed 상태, 경로, 인증서를 먼저 분류한다 | health·CoreDNS·CA·ESO 오류 결과로 sealed, 외부 runtime, DNS, TLS 또는 auth 실패 경로가 구분된다. 조회 실패는 정상으로 판정하지 않는다 | sealed:true이면 cluster 설정을 수정하지 않고 OpenBao unseal이 먼저다; host에서 sys/health가 응답하지 않으면 외부 workspace 운영자에게 넘긴다; 그 밖에는 중단하고 Escalation의 Next Owner(동일 증상이 반복되면 Operations 예외 승인 절차)와 Recovery or Forward Repair를 따른다 |
+| 3 | OpenBao가 sealed 상태면 operator-bound unseal 절차를 수행한다 | 승인된 OpenBao 운영자가 unseal한 경우 health가 `sealed:false`를 보이고 Store·ExternalSecret의 readiness metadata를 다시 확인한다 | 중단하고 Escalation의 Next Owner(동일 증상이 반복되면 Operations 예외 승인 절차)와 Recovery or Forward Repair를 따른다 |
+| 4 | 이름 해석이나 CA drift가 확인된 경우에만 bootstrap [7.3/11]과 같은 입력으로 다시 적용한다 | 승인된 대상 ConfigMap만 재적용되고 재조회에서 해당 DNS 또는 CA 오류가 사라진다. 재조회 전에는 복구 성공으로 판정하지 않는다 | CoreDNS custom zone 재적용이 상황을 악화시키면 Steps 1단계의 스냅샷으로 되돌린다; CA bundle 이전 입력이 없거나 신뢰를 확인할 수 없으면 CA 소유자에게 넘긴다 |
 | 5 | Store/ExternalSecret/ArgoCD 상태를 재평가한다 | vault-backend Ready=True, argocd-external-valkey Ready=True | 중단하고 Escalation의 Next Owner(동일 증상이 반복되면 Operations 예외 승인 절차)와 Recovery or Forward Repair를 따른다 |
 | 6 | 필요 시 ArgoCD 재평가/동기화를 수행한다 | platform-eso-config, platform-argocd-config Degraded 해소 | 중단하고 Escalation의 Next Owner(동일 증상이 반복되면 Operations 예외 승인 절차)와 Recovery or Forward Repair를 따른다 |
 | 7 | 복구한 경로에 해당하는 라이브 계약을 운영자가 선택해 검증한다 | 포트/서비스 계약 회귀 없음, argocd·external-secrets egress 통과, ingress/TLS 계약 유지 | 중단하고 Escalation의 Next Owner(동일 증상이 반복되면 Operations 예외 승인 절차)와 Recovery or Forward Repair를 따른다 |
@@ -251,6 +251,8 @@ Steps의 Checklist를 확인하고, 변경할 각 ConfigMap의 적용 전 상태
 #### Escalation
 
 ##### Next Owner
+
+이 저장소의 운영 비상 연락·승인 담당자는 [Stage 05 Owners](../README.md#owners)를 따른다. 담당자 지정은 이 절차의 개별 실행 승인이 아니다.
 
 - 동일 증상이 반복되면 Operations 예외 승인 절차를 따른다.
 

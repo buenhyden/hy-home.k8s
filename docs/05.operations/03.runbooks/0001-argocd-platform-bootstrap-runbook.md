@@ -1,6 +1,6 @@
 ---
 title: "ArgoCD Platform Bootstrap Runbook"
-version: "2.0.0"
+version: "2.0.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -181,11 +181,11 @@ Steps의 Checklist에서 호스트·CA 입력과 필수 Valkey 경로를 확인�
 
 | Step | Action | Expected Result | On Failure |
 | --- | --- | --- | --- |
-| 1 | 외부 런타임 연결성 및 OpenBao 상태를 점검한다 | not stated in this document | OpenBao가 sealed(status=503)이면 unseal 후 health를 다시 확인한다; 그 밖에는 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
-| 2 | 저장소의 OpenBao/ESO 계약을 값 조회 없이 정적으로 검증한다 | not stated in this document | 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
+| 1 | 외부 런타임 연결성 및 OpenBao 상태를 점검한다 | management Valkey 연결 검사가 성공하고 OpenBao health 응답이 unsealed 상태다 | OpenBao가 sealed(status=503)이면 unseal 후 health를 다시 확인한다; 그 밖에는 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
+| 2 | 저장소의 OpenBao/ESO 계약을 값 조회 없이 정적으로 검증한다 | 계약 검증기가 종료 코드 0을 반환한다. 이 결과는 live secret 동기화 증거가 아니다 | 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
 | 3 | ArgoCD TLS 인증서 입력을 확인한다 | cert.pem과 key.pem이 존재하고 ArgoCD host SAN을 포함한다 | 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
 | 4 | 부트스트랩 스크립트를 실행한다 | 4개 노드 Ready, argocd pod 정상, Traefik pod·svc 정상(NodePort 30080/30443, MetalLB 172.18.0.240) | bootstrap [2/11] 단계가 jq 오류로 중단되면 OpenBao 운영자가 경로·키·정책을 확인한 뒤 bootstrap을 재실행한다; 그 밖에는 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
-| 5 | Bootstrap 결과로 생성되는 ingress TLS secret을 확인한다 | not stated in this document | 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
+| 5 | Bootstrap 결과로 생성되는 ingress TLS secret을 확인한다 | `argocd-local-tls`의 type이 `kubernetes.io/tls`다. Secret 내용은 출력하지 않는다 | 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
 | 6 | ArgoCD 루트 앱 및 GitOps 경로 계약을 확인한다 | root-platform의 source.path가 gitops/apps/root이고 targetRevision이 main이다 | app path does not exist이면 gitops/apps/root 경로를 확인하고 앱을 재동기화한다; 그 밖에는 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
 | 7 | ESO 및 OpenBao 기반 비밀 동기화를 확인한다 | ExternalSecret·SecretStore·ClusterSecretStore 상태가 확인된다(정상 기준은 이 문서에 명시 없음) | WRONGPASS이면 ExternalSecret 재조정을 기다리고 지속되면 RUN-0002를 따른다; 그 밖에는 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
 | 8 | 외부 서비스 Kubernetes 인터페이스를 확인한다 | management Valkey(valkey-external)만 현행 데이터 서비스 interface이며 PostgreSQL 항목은 없다 | 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다; 외부 endpoint 복구는 External Endpoint Recovery를 따른다 |
@@ -236,6 +236,8 @@ Steps의 Checklist에서 호스트·CA 입력과 필수 Valkey 경로를 확인�
 #### Escalation
 
 ##### Next Owner
+
+이 저장소의 운영 비상 연락·승인 담당자는 [Stage 05 Owners](../README.md#owners)를 따른다. 담당자 지정은 이 절차의 개별 실행 승인이 아니다.
 
 루트 Application을 재조정할 수 없거나 복구 범위에 승인되지 않은 변경이 필요하면
 [플랫폼 운영 정책의 예외 경로](../02.policies/0001-k8s-gitops-operations-policy.md#exceptions)로 넘긴다.

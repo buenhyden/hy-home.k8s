@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "1.0.0"
+version: "1.0.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -201,27 +201,31 @@ form 경로의 대응은 Registry만 소유한다.
   타입을 지키는지(`BODY-CORE-TABLE-CELL`: 필수 셀 공란, 허용값 밖의 값, 정수 열의
   비정수)를 확인한다. 템플릿은 머리글만 검사하고, retained identity와 Task 표는
   제외한다.
-- **Core SDLC forms**: physical `requirements/`, `architecture/`, `specs/`
+- **Core SDLC forms**: `02.templates/01.requirements/`,
+  `02.templates/02.architecture/`, `02.templates/03.specs/`
   grouping은 `sdlc/requirement`, `sdlc/architecture-description`,
   `sdlc/architecture-decision`, `sdlc/spec`, `sdlc/plan`, `sdlc/task` profile의
   form을 담아 단계별 책임과 handoff를 기록한다. `sdlc/requirement`는 이 중
-  처음으로 `requirement` form(네 H2와 여덟 H3, Traceability 아래 지역 H3
+  `requirement` 역할 payload(Traceability 아래 지역 절
   `Lifecycle Traceability`와 `Archived Lineage`)을 쓰며 H2 목록을 두지 않는다.
   추적 표에 이 패키지의 NFR ID를 기록하면 같은 ID의 요구 행을
   `Quality Requirements`에 둔다. 기능 요구사항 표에는 FR과 IF 행을 둔다.
-  `sdlc/architecture-description`은 `architecture` form(다섯 H2와 열 개 H3,
-  Decisions and Adoption 아래 같은 두 지역 H3)을 쓰고 H2 목록을 두지 않으며, 각 요구 member를 자신의
+  현행 문서의 물리 외피는 공통 네 H2와 여덟 H3다. 아래 역할 payload의
+  최상위 절과 하위 절은 `본문과 규칙` 아래 H4와 H5로 작성하며, 검증기는
+  이를 논리 H2와 H3로 정규화한다. 등록된 retained form은 그 자체 계약을 따른다.
+  `sdlc/architecture-description`은 `architecture` 역할 payload(
+  Decisions and Adoption 아래 같은 두 지역 절)를 쓰고 H2 목록을 두지 않으며, 각 요구 member를 자신의
   `Upstream requirement` 열에서 인용한다. Requirement는 downstream 링크 열을
   두지 않고, 파생 역조회와 `REQUIREMENT-COVERAGE` 검사가 그 자리를 대신한다.
   `sdlc/architecture-decision`은 core `decision` 역할에 묶인 `adr` form(Context,
-  Options, Decision, Consequences의 네 H2와 여덟 H3, Decision 아래 지역 H3
+  Options, Decision, Consequences의 역할 절과 Decision 아래 지역 절
   `Lifecycle Traceability`)을 쓰고 H2 목록을 두지 않는다(SPEC-0222). 근거와 선행
-  결정은 Authority and Effect 아래 H4 `Sources`와 `Supersession`에 두고, 대안
+  결정은 Authority and Effect 아래 `Sources`와 `Supersession` 확장 절에 두고, 대안
   표는 core `decision.options` 표(`Option`, `Benefit`, `Cost and Risk`,
   `Reason`)다. 출처 사실이 없는 core 셀이 있는 ADR-0062는 열만 둔 core 표 뒤에
   기존 `Alternatives` 표를 `authority_ref: SPEC-0222`인 독자 지역 표로 유지한다.
-  `sdlc/spec`은 `spec` form(네 H2와 여덟 H3, Acceptance Criteria 아래 지역 H3
-  `Lifecycle Traceability`)을, `sdlc/plan`은 `plan` form(다섯 H2와 열 개 H3)을
+  `sdlc/spec`은 `spec` 역할 payload(Acceptance Criteria 아래 지역 절
+  `Lifecycle Traceability`)를, `sdlc/plan`은 `plan` 역할 payload를
   쓰며 둘 다 H2 목록을 두지 않는다. 두 form은 4.0.0 설계 목표의 제목과 section
   ID(`spec.intent.1` 등)를 쓴다(SPEC-0221).
   Spec의 기준 표는 `Criterion ID`와

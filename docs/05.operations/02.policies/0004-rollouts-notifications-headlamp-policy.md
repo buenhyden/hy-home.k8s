@@ -1,6 +1,6 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Operations Policy"
-version: "2.0.0"
+version: "2.0.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -164,6 +164,14 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 #### Enforcement
 
 ##### Mechanisms
+
+`Rules` 표의 RUN-0004 표기는 운영 확인 절차다. 정적 집행과 의미 검토는 다음처럼 구분한다.
+
+| Rule IDs | 정적 검사 또는 검토 | 운영 증거와 한계 |
+| --- | --- | --- |
+| ROLLOUT-R001, R007, R013–R015, R020 | `scripts/validate-infrastructure-contracts.sh`가 namespace, Rollouts/ArgoCD notification 선언, ESO 경로와 ArgoCD controller 활성 선언을 검사한다 | RUN-0004의 controller·Secret·Slack 결과를 별도로 확인한다. 선언 검사는 실제 전달을 증명하지 않는다 |
+| ROLLOUT-R002, R006, R022, R023 | `scripts/validate-k8s-manifests.sh`가 호출하는 `scripts/validation/platform/ingress.py`가 Rollouts dashboard/ingress와 Headlamp host/TLS 선언을 검사한다 | RUN-0004의 dashboard·Headlamp 접근 결과를 별도로 확인한다 |
+| ROLLOUT-R005, R021, R024 | 변경 검토자가 CRD 설치 값, Headlamp namespace와 POL-0001 ingress 경로를 Git diff에서 의미 검토하고 결과를 PR에 기록한다 | RUN-0004의 CRD·namespace·router 관측을 별도로 기록한다. 자동 검사가 있다고 주장하지 않는다 |
 
 | Control Area | Required Evidence | Runbook Owner |
 | --- | --- | --- |

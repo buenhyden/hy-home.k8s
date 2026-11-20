@@ -1,6 +1,6 @@
 ---
 title: "CI/CD 및 QA 검증 경계 가이드"
-version: "2.0.0"
+version: "2.0.1"
 type: "operation/guide"
 status: "active"
 owner: "platform"
@@ -38,7 +38,7 @@ platform은 이 안내의 범위를 유지한다. 실행 전제는 [Prerequisite
 
 ##### Outcome
 
-이 가이드는 변경 작성자가 로컬 정적 검증, GitHub Actions PR branch·title metadata와 별도 style,
+이 가이드는 변경 작성자가 로컬 정적 검증, GitHub Actions PR branch·title metadata와 별도 선택된 style·목적 검사,
 승인된 런타임 검증을 서로 다른 증적 등급으로 해석하도록 돕는다.
 
 주된 학습 목적은 `explanation`이다. 독자는 검증 결과가 어떤 증적 등급을
@@ -49,9 +49,11 @@ platform은 이 안내의 범위를 유지한다. 실행 전제는 [Prerequisite
 ###### Boundaries
 
 실행 순서나
-복구 절차를 복제하지 않고, 현재 검증 진입점과 증적의 한계를 안내한다. 목적 QA는
-로컬 QA가 소유하고 호스팅 CI는 branch·title metadata와 선택된 style만 확인한다는
-결정은 [ADR-0048](../02.architecture/02.decisions/0048-local-qa-and-semver-release-ownership.md)이 소유한다.
+복구 절차를 복제하지 않고, 현재 검증 진입점과 증적의 한계를 안내한다. 로컬 QA의
+실행과 결과 캐시는 로컬 QA가 소유한다. 호스팅 PR 검사는 branch·title metadata와 선택된
+style·목적 검사를 각자의 입력에서 확인하며, 현재 범위는
+[Quality Policy](quality.md#requirements)의 QUAL-R006과
+[ADR-0063](../02.architecture/02.decisions/0063-affected-pr-gitops-validation.md)의 P01 보완이 소유한다.
 
 검증 명령의 구현은 `scripts/README.md`, CI job 구성은
 `.github/workflows/ci.yml`, 실행·복구 절차는 연결된 Runbook이 소유한다.
@@ -90,11 +92,11 @@ platform은 이 안내의 범위를 유지한다. 실행 전제는 [Prerequisite
 | 구현·validator·QA 계약 변경 | 바뀐 규칙의 focused 회귀와, 작업 트리 입력에 별도 증거가 필요할 때 `python3 scripts/qa.py quick` | 새 동작의 실패·경계 사례를 해당 입력에서 확인 |
 | staged 변경 | `git diff --cached --check`, 실제 메시지 검사 및 선택된 `python3 scripts/qa.py staged` | 정확한 Git index snapshot과 commit 문법을 서로 다른 입력으로 확인 |
 | global QA 계약 변경 또는 명시적 한정 감사 | 변경 목적에 해당하는 named 동작·보안 회귀와 선택된 affected/staged gate | 사전 도구·예산 확인 후 필요한 보호만 확인; full/ci sweep·blanket unit discovery는 선택하지 않음 |
-| hosted CI | GitHub Actions의 PR branch·title result·`ci-summary`와 별도 PR `style-pr` | 각각의 PR SHA/run에서 branch·trusted-base authored title 문법과 선택된 style만 확인; 목적·문서 내용 QA를 대리하지 않음 |
+| hosted CI | GitHub Actions의 PR branch·title result·`ci-summary`와 별도 PR `style-pr` | 해당 PR merge candidate의 SHA/run에서 branch·trusted-base authored title 문법과 선택된 style·affected purpose 검사 결과를 확인; 로컬 QA 실행 증거를 대리하지 않음 |
 
 명령과 옵션의 현재 정의는 [`scripts/README.md`](../../../scripts/README.md)를
 따른다. 문서에 고정된 validator 개수나 fixture 개수를 성공 기준으로 삼지
-않는다. 문서 링크·owner 검사는 로컬 QA에만 속하며, 로컬 target 통과가
+않는다. PR에 선택된 문서 링크·owner 검사는 호스팅 목적 검사에도 포함될 수 있으며, 어느 정적 검사의 PASS도
 외부 URL 가용성을 증명하지 않는다.
 
 ###### 3. 호스팅 CI의 소유 경계를 확인한다
@@ -107,14 +109,14 @@ source이며, job과 required check의 현재 구성은
 경계는 [main 보호 기록](../../../.github/rulesets/main-protection.md)이 소유한다.
 `main` 하나의 trunk와 짧은 feature branch 전략은
 [ADR-0052](../02.architecture/02.decisions/0052-single-main-trunk-branch-strategy.md)가
-소유한다. 호스팅 workflow는 로컬 QA를 다시 실행하거나 PASS로 대리하지 않는다.
+소유한다. 호스팅 workflow는 선택된 목적 검사를 별도 candidate 입력에서 실행하며 로컬 QA의 PASS로 대리하지 않는다.
 이 문서는 job 목록을 복제하지 않는다. 로컬 성공은 호스팅 환경의
 권한·event·required-check 상태까지 증명하지 않는다.
 
 ###### 4. 증적 등급을 구분해 handoff한다
 
 - 로컬 정적 검증: checkout에 있는 파일과 도구의 계약을 확인한다.
-- 호스팅 CI: event와 PR branch·trusted-base title metadata, 선택된 PR style의
+- 호스팅 CI: event와 PR branch·trusted-base title metadata, 선택된 PR style·목적 검사의
   적용 가능한 결과를 각자의 SHA/run에서만 확인한다. title에는 생성 메시지
   예외가 없고, merge는 merge commit만 쓰며(의도한 저장소 설정은
   `.github/rulesets/main-protection.md`가 기록한다) 그 메시지는 별도 로컬

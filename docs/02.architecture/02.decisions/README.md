@@ -1,6 +1,6 @@
 ---
 title: "02.architecture/02.decisions (Product ADR)"
-version: "1.0.0"
+version: "1.0.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -106,10 +106,10 @@ platform은 docs/02.architecture/02.decisions의 탐색 경로를 유지한다. 
 
 ##### Entry Points
 
-1. 결정의 상위 요구와 참조 구조를 `01.requirements/`, `../descriptions/`에서 확인한다.
+1. 결정의 상위 요구와 참조 구조를 `01.requirements/`, `../01.descriptions/`에서 확인한다.
 2. 새 ADR은 `../../99.templates/02.templates/02.architecture/decision.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/02.decisions/####-<short-title>.md`다.
 3. `Accepted` ADR의 승인 목표, GitOps manifest의 현재 선언, 관측한 런타임 결과를 구분한다. 목표와 선언이 다르면 현재 구현과 미적용 범위를 표시하고, 런타임 판단은 관측 근거에 연결한다.
-4. ADR이 구현 또는 운영 계약을 바꾸면 `03.specs/`, `05.operations/policies/` 링크를 갱신한다.
+4. ADR이 구현 또는 운영 계약을 바꾸면 `03.specs/`, `05.operations/02.policies/` 링크를 갱신한다.
 5. 현재 기준선에서는 삭제된 결정을 포함한 ADR 번호를 보존하고 재사용을 금지한다. 번호 체계의 초기화는 별도로 승인된 최종 기준선 전환에서 해당 범위의 조건이 충족된 때에만 적용한다.
 
 ###### Relative Link Rules
@@ -117,7 +117,7 @@ platform은 docs/02.architecture/02.decisions의 탐색 경로를 유지한다. 
 이 README의 링크 기준 위치는 `docs/02.architecture/02.decisions/`다.
 
 - 같은 폴더의 ADR 문서는 `./`로 시작한다.
-- sibling AD stage는 `../descriptions/`로 연결한다.
+- sibling AD stage는 `../01.descriptions/`로 연결한다.
 - upstream/downstream docs stage는 `../../01.requirements/`, `../../03.specs/`, `../../05.operations/`로 연결한다. Retired Stage 04 execution route는 current link target으로 사용하지 않는다.
 - 새 ADR의 실제 Markdown 링크는 최종 ADR 파일 위치 기준으로 다시 계산하고, placeholder target은 code literal로 남긴다.
 

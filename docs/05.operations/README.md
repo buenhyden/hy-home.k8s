@@ -1,6 +1,6 @@
 ---
 title: "05.operations"
-version: "1.0.0"
+version: "1.0.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -33,7 +33,7 @@ platform은 docs/05.operations의 탐색 경로를 유지한다. 소유 파일�
 > 안정 상태 운영 지식, 정책, 런북, 사고 기록을 분류하는 operations stage다.
 
 `05.operations/`는 안정 상태 운영 지식, 운영 정책, 실행 런북, 사고 기록을 묶는 운영 허브다.
-안내 문서는 `guides/`, 정책은 `policies/`, 절차는 `runbooks/`, 사고와 회고는 `incidents/`에 둔다.
+안내 문서는 `01.guides/`, 정책은 `02.policies/`, 절차는 `03.runbooks/`, 사고와 회고는 `04.incidents/`에 둔다.
 
 ###### Stage Readers
 
@@ -80,10 +80,10 @@ provider/runtime, 실제 운영 검증은 각각 관측한 결과를 링크한�
 
 ```text
 05.operations/
-├── guides/
-├── policies/
-├── runbooks/
-├── incidents/
+├── 01.guides/
+├── 02.policies/
+├── 03.runbooks/
+├── 04.incidents/
 ├── AGENTS.md
 ├── CLAUDE.md
 └── README.md
@@ -102,12 +102,14 @@ provider/runtime, 실제 운영 검증은 각각 관측한 결과를 링크한�
 
 `05.operations`는 운영 지식을 한곳에 모으되, 문서가 맡는 일을 섞지 않는다.
 
-- `guides/`: 안정 상태에서 시스템을 이해하고 온보딩하거나 설정 흐름을 따라가기 위한 안내다.
-- `policies/`: 허용/금지/예외 승인, 검증 증적, 운영 통제 기준을 정의한다.
-- `runbooks/`: 정해진 순서로 실행하고, 검증하고, 실패 시 복구하는 절차다.
-- `incidents/`: 실제 사고의 사실 기록과 postmortem을 보관한다.
+- `01.guides/`: 안정 상태에서 시스템을 이해하고 온보딩하거나 설정 흐름을 따라가기 위한 안내다.
+- `02.policies/`: 허용/금지/예외 승인, 검증 증적, 운영 통제 기준을 정의한다.
+- `03.runbooks/`: 정해진 순서로 실행하고, 검증하고, 실패 시 복구하는 절차다.
+- `04.incidents/`: 실제 사고의 사실 기록과 postmortem을 보관한다.
 
 ##### Owners
+
+운영 비상 연락과 승인 담당자는 hyunyoun jo ([chochyjj@gmail.com](mailto:chochyjj@gmail.com))다. 연락담당자 지정은 개별 보호 행위의 승인이 아니며, 실제 실행은 [승인·안전 정책](../00.workspace/04.quality/approval-and-safety.md)을 따른다.
 
 ###### Operations Routing Matrix
 
@@ -155,8 +157,8 @@ marker는 실행 권한을 부여하지 않는다.
 
 ##### Entry Points
 
-1. 안정 상태 설명은 `guides/`, 준수해야 할 경계는 `policies/`, 실행 절차는 `runbooks/`, 사고 기록은 `incidents/`로 분리한다.
-2. 사고가 없으면 `incidents/`는 README만 유지하고, 첫 사고 기록이 생길 때만 `incidents/<year>/inc-####-<slug>/` 폴더를 만든다. Incident와 Postmortem은 같은 폴더에서 각각 `incident.md`와 `postmortem.md`를 사용한다.
+1. 안정 상태 설명은 `01.guides/`, 준수해야 할 경계는 `02.policies/`, 실행 절차는 `03.runbooks/`, 사고 기록은 `04.incidents/`로 분리한다.
+2. 사고가 없으면 `04.incidents/`는 README만 유지하고, 첫 사고 기록이 생길 때만 `04.incidents/<year>/inc-####-<slug>/` 폴더를 만든다. Incident와 Postmortem은 같은 폴더에서 각각 `incident.md`와 `postmortem.md`를 사용한다.
 3. live cluster mutation 예시는 승인 조건, bootstrap-only 예외, break-glass 문맥 없이 추가하지 않는다.
 4. 운영 문서가 현재 `infrastructure/bootstrap-local.sh`, `gitops/platform/external-services`, 정적 검증 계약과 충돌하지 않게 유지한다.
 
@@ -164,7 +166,7 @@ marker는 실행 권한을 부여하지 않는다.
 
 이 README의 링크 기준 위치는 `docs/05.operations/`다.
 
-- 하위 운영 폴더는 `./guides/`, `./policies/`, `./runbooks/`, `./incidents/`로 연결한다.
+- 하위 운영 폴더는 `./01.guides/`, `./02.policies/`, `./03.runbooks/`, `./04.incidents/`로 연결한다.
 - upstream docs stage는 `../01.requirements/`, `../02.architecture/`, `../03.specs/`로 연결한다.
 - 운영 목표 상태와 정적 검사의 원본은 [GitOps 선언](../../gitops/), [인프라 설정](../../infrastructure/), [검사 도구](../../scripts/)처럼 repository root 기준으로 연결한다. 실제 운영 검증 결과는 해당 Task나 운영 기록으로 연결한다.
 

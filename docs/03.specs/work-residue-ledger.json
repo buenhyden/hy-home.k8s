@@ -7,7 +7,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W07",
-      "resume_condition": "When a trusted Claude and Codex session can observe nested, resume and compact hook delivery (RUNTIME-CLOSE)",
+      "resume_condition": "When P08/P16 can retry F-06 native AGENTS loading and supported nested, resume and compact hook delivery in trusted Claude and Codex sessions; record native results separately from static configuration",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
@@ -17,7 +17,7 @@
       "kind": "conflict",
       "state": "open",
       "owner": "Q07",
-      "resume_condition": "After W11 and every applicable docs task, in the separate Q07 task",
+      "resume_condition": "In P17 final cutover, after applicable current document owners and consumers are ready; the P17 Task itself is not a prerequisite",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
@@ -37,7 +37,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "Q07",
-      "resume_condition": "In the Q07-CUTOVER task, after W11",
+      "resume_condition": "In P17 final cutover, after applicable current document owners and consumers are ready; remove remaining history and reservation bindings without making the P17 Task itself a prerequisite",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
@@ -69,21 +69,29 @@
     {
       "id": "SPEC-0205-STALE-TEXT",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W04+ platform",
-      "resume_condition": "When the owner of the Plan text, of the Stage 99 `AGENTS.md` and of the registry TemplateDefinition text next edits them in its own package",
+      "resume_condition": "Closed by P05 current owner correction; no outstanding current consumer of superseded heading-list wording",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md",
+        "evidence": "EVD-042"
       }
     },
     {
       "id": "SPEC-0211-REGISTRY-TEXT",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W04+ platform",
-      "resume_condition": "When the owner of those registry TemplateDefinition, form and profile texts next edits them in its own package",
+      "resume_condition": "Closed by P05 current owner correction and historical/native wording disposition; no historical producer provenance inferred",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md",
+        "evidence": "EVD-042"
       }
     },
     {
@@ -91,7 +99,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "Q07",
-      "resume_condition": "At Q07-CUTOVER, after every work package's acceptance",
+      "resume_condition": "In P17 final cutover, after applicable current document owners and consumers are ready; the P17 Task itself is not a prerequisite",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
@@ -99,61 +107,85 @@
     {
       "id": "W04-H02",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "platform",
-      "resume_condition": "When the runbook owner observes or states each result and failure action",
+      "resume_condition": "Closed by P05 current runbook text correction; live runbook execution remains a separate observation",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md",
+        "evidence": "EVD-042"
       }
     },
     {
       "id": "W04-H03",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "platform",
-      "resume_condition": "When the architecture owner states each interface's failure boundary",
+      "resume_condition": "Closed by P05 current architecture and GitOps text correction; runtime behavior remains separately observed",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md",
+        "evidence": "EVD-042"
       }
     },
     {
       "id": "W04-H04",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "platform",
-      "resume_condition": "When the reference maintainer re-observes the sources under RUN-0011 or states the requirement",
+      "resume_condition": "Closed by current owner disposition and transfer of valid F-06 native loading obligation to AGENT-04 for P08/P16; historical cells were not all filled and external originals were not reobserved",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md",
+        "evidence": "EVD-042"
       }
     },
     {
       "id": "W04-H05",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "platform",
-      "resume_condition": "When each rule gains a check or is reclassified as semantic review",
+      "resume_condition": "Closed by P05 current policy owner correction; no live rollout acceptance inferred",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md",
+        "evidence": "EVD-042"
       }
     },
     {
       "id": "W04-H06",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "platform",
-      "resume_condition": "When the Stage 05 owner names the escalation contact and approver",
+      "resume_condition": "Closed by current owner and runbook contact route; naming the person is not standing break-glass authorization or live operations acceptance",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md",
+        "evidence": "EVD-042"
       }
     },
     {
       "id": "W04-H07",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "platform",
-      "resume_condition": "When the Requirement owner revises REQ-0002 with approval",
+      "resume_condition": "Closed by P05 current requirement/architecture correction; no new criterion acceptance inferred",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md",
+        "evidence": "EVD-042"
       }
     },
     {
@@ -185,7 +217,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W07",
-      "resume_condition": "At the next approval or receipt validator change, or at W11-ACCEPT",
+      "resume_condition": "In P06 independent review, exercise approval and receipt rejection cases on the current validator; successful QA, hashes and role names cannot grant approval or integration",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
@@ -195,7 +227,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W07",
-      "resume_condition": "When the Desktop host owner supplies the outgoing turn permission fields or a client fix, rerun the read-only reviewer write denial on that path",
+      "resume_condition": "In P06, after Desktop host permission fields or client fix are available, rerun the actual Desktop-over-SSH read-only reviewer write-denial case; EVD-163 and EVD-167 remain failures until then",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
@@ -255,7 +287,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W09",
-      "resume_condition": "Before a test cluster runs product pods in a namespace whose policy allows 192.168.0.13, or when the user provides a host firewall rule or a dedicated VM",
+      "resume_condition": "In P07/P14, before test product pods run in a namespace allowing 192.168.0.13, establish and verify a host firewall or isolated VM egress boundary; the prior live LAN egress failure remains open",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }

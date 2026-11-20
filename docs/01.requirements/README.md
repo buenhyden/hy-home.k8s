@@ -1,6 +1,6 @@
 ---
 title: "01.requirements"
-version: "1.0.0"
+version: "1.0.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -64,9 +64,9 @@ platform은 docs/01.requirements의 탐색 경로를 유지한다. 소유 파일
 - OpenAPI·GraphQL·Proto 같은 실행 가능한 interface 계약
 - 장애 대응 절차와 운영 명령
 
-포함하지 말아야 할 내용은 각각 `../02.architecture/descriptions/`,
-`../02.architecture/decisions/`, `../03.specs/`,
-`../05.operations/runbooks/`로 분리한다. 실행 가능한 OpenAPI·GraphQL·Proto
+포함하지 말아야 할 내용은 각각 `../02.architecture/01.descriptions/`,
+`../02.architecture/02.decisions/`, `../03.specs/`,
+`../05.operations/03.runbooks/`로 분리한다. 실행 가능한 OpenAPI·GraphQL·Proto
 계약은 이를 구현하는 Stage 03 Spec Package가 소유한다.
 
 현행 작성 경로는 `####-<slug>.md` 하나이며 부모 stage가 문서 유형을 결정한다.
@@ -76,7 +76,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 
 ##### Excluded Responsibilities
 
-이 stage는 상세 구현 방법, 변경 한정 설계, 파일 수준 구현 순서와 구체 기술 스택·장기 구조 결정, 장애 대응 절차와 운영 명령을 소유하지 않으며, 이는 각각 `../02.architecture/descriptions/`, `../02.architecture/decisions/`, `../03.specs/`, `../05.operations/runbooks/`로 분리한다. OpenAPI·GraphQL·Proto 같은 실행 가능한 interface 계약은 이를 구현하는 Stage 03 Spec Package가 소유한다.
+이 stage는 상세 구현 방법, 변경 한정 설계, 파일 수준 구현 순서와 구체 기술 스택·장기 구조 결정, 장애 대응 절차와 운영 명령을 소유하지 않으며, 이는 각각 `../02.architecture/01.descriptions/`, `../02.architecture/02.decisions/`, `../03.specs/`, `../05.operations/03.runbooks/`로 분리한다. OpenAPI·GraphQL·Proto 같은 실행 가능한 interface 계약은 이를 구현하는 Stage 03 Spec Package가 소유한다.
 
 #### Current Contents
 
@@ -111,7 +111,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 2. `../99.templates/02.templates/01.requirements/requirement-package.template.md`를 복사해 `####-<slug>.md`를 만든다. 템플릿은 재사용 가능하도록 `artifact_id`를 비워 두므로, 복사 직후 아직 발급되지 않은 다음 번호를 `REQ-####`로 할당하고 경로 번호와 일치시킨다.
 3. package 안의 기능·비기능·interface 요구에는 각각 `REQ-####-FR-####`, `REQ-####-NFR-####`, `REQ-####-IF-####` 형식의 안정 ID를 발급한다. 다른 문서에서도 축약형 `FR-####`가 아니라 전체 ID를 사용하며, 삭제된 ID를 재사용하지 않는다.
 4. 문제·목표·stakeholder 요구, 기능·비기능·interface 요구, 제약, acceptance 기준과 범위·비범위를 구현 독립적으로 작성한다.
-5. 관련 `../02.architecture/descriptions/`, `../02.architecture/decisions/`, `../03.specs/` 추적 링크를 함께 갱신한다. 변경 가능한 실행 계약과 interface 구현 산출물은 Stage 03에 둔다.
+5. 관련 `../02.architecture/01.descriptions/`, `../02.architecture/02.decisions/`, `../03.specs/` 추적 링크를 함께 갱신한다. 변경 가능한 실행 계약과 interface 구현 산출물은 Stage 03에 둔다.
 6. Agent 기능 요구에는 허용·금지 행동과 human-in-the-loop 기준을 포함하고, 에이전트 실행 요구사항은 영어로 유지한다.
 
 ###### Relative Link Rules

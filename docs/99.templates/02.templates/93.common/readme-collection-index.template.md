@@ -12,7 +12,7 @@ updated: "{{UPDATED}}"
 
 ### 목적과 독자
 
-<!-- 작성 규칙: Give authors one form for a collection README: a human index that states the stage responsibility, lists its current items, and routes readers to the create, review and transition rules and to its upstream, downstream, policy and template documents. -->
+<!-- 작성 규칙: Give authors one form for a collection README: a human index that states the collection responsibility, lists its current items, and routes readers to the create, review and transition rules and to its upstream, downstream, policy and template documents. -->
 
 ### 책임과 적용 범위
 
@@ -36,7 +36,7 @@ updated: "{{UPDATED}}"
 <!-- 작성 규칙: 포함하는 산출물, 제외 대상, 이 컬렉션을 관할하는 owner를 정하고 유입·유출 조건을 밝힌다. -->
 
 ##### Excluded Responsibilities
-<!-- 작성 규칙: 이 단계가 소유하지 않는 책임과 그 소유처를 이 문서의 사실만으로 밝힌다. -->
+<!-- 작성 규칙: 이 컬렉션이 소유하지 않는 책임과 그 소유처를 이 문서의 사실만으로 밝힌다. -->
 
 #### Current Contents
 ##### Paths

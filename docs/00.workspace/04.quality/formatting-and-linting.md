@@ -1,6 +1,6 @@
 ---
 title: "Formatting and Linting Policy"
-version: "2.0.0"
+version: "2.0.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -43,8 +43,9 @@ reads is not a convention; it is drift that reads like one.
 stages, arguments and exclusions. Its local staged and selected manual QA
 invocations share the same rule owner; the hosted `ci-summary` job is not a
 formatter. The separate PR-only `style-pr` job may invoke the same selected style
-rule against its own merge input; it does not certify local purpose or
-document-content checks. `.editorconfig` reaches editors only and proves nothing
+rule against its own merge input. The job also reports separately selected
+hosted purpose and document-content checks under [QUAL-R006](quality.md#requirements);
+none of these results certifies a local QA run. `.editorconfig` reaches editors only and proves nothing
 about committed bytes.
 
 ###### Exclusions

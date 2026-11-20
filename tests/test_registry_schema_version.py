@@ -232,7 +232,8 @@ class LoaderTests(unittest.TestCase):
 
     def test_the_strict_schema_pins_the_exact_current_value(self) -> None:
         raw = raw_registry()
-        raw["schema_version"] = f"{AUTHORITY.REGISTRY_MAJOR}.1.0"
+        major, minor, _ = raw["schema_version"].split(".")
+        raw["schema_version"] = f"{major}.{int(minor) + 1}.0"
         self.assertNotEqual(rules_of_load(raw), set())
         schema = raw_schema()
         schema["properties"]["schema_version"] = {"const": raw["schema_version"]}

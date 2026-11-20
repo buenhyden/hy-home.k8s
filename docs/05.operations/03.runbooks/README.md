@@ -1,6 +1,6 @@
 ---
 title: "05.operations/runbooks"
-version: "1.0.0"
+version: "1.0.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -125,14 +125,14 @@ platform은 docs/05.operations/03.runbooks의 탐색 경로를 유지한다. 소
 
 - Policies: [05.operations/policies](../02.policies/README.md)
 - Incident Records: [05.operations/incidents](../04.incidents/README.md)
-- Postmortems: `../incidents/<year>/inc-####-<slug>/postmortem.md`
+- Postmortems: `../04.incidents/<year>/inc-####-<slug>/postmortem.md`
 
 ###### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/05.operations/03.runbooks/`다.
 
 - 같은 폴더의 Runbook 문서는 `./`로 시작한다.
-- sibling operations folder는 `../guides/`, `../policies/`, `../incidents/`로 연결한다.
+- sibling operations folder는 `../01.guides/`, `../02.policies/`, `../04.incidents/`로 연결한다.
 - upstream docs stage는 `../../02.architecture/`, `../../03.specs/`로 연결한다.
 
 ###### Upstream and Downstream

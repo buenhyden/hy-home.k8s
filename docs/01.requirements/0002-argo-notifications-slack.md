@@ -1,6 +1,6 @@
 ---
 title: "Argo Notifications Slack Requirement Package"
-version: "4.0.0"
+version: "4.0.1"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -129,7 +129,7 @@ This update adds no runtime observation.
 - **Acceptance criterion 02**: An operator can check the sync state of the notification credential held in the runtime secret backend. Evidence: `argocd-notifications-secret` ExternalSecret `Ready=True`, synced from the OpenBao backend.
 - **Acceptance criterion 03**: An operator can notice a sync failure in Slack. Evidence: receipt of a sync failure event in Slack is confirmed.
 - **Acceptance criterion 04**: An operator can notice health degradation in Slack. Evidence: receipt of a health degraded event in Slack is confirmed.
-- **Acceptance criterion 05**: An operator can notice a Rollouts abort in Slack. Evidence: receipt of an abort notification is confirmed. The Rollouts chart declares the route to the shared channel. Live receipt of an abort notification remains unobserved.
+- **Acceptance criterion 05**: An operator can notice a Rollouts abort in the approved Slack channel. Evidence: receipt of an abort notification is confirmed. Live receipt remains unobserved; [AD-0005](../02.architecture/01.descriptions/0005-argo-notifications-slack.md) owns the controller and routing mechanism.
 
 ###### Verification Method
 
