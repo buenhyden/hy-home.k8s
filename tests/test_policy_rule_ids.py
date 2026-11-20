@@ -815,10 +815,9 @@ class RegistryRecordTests(unittest.TestCase):
     def test_the_schema_names_the_key_and_the_current_major(self) -> None:
         schema = json.loads(SCHEMA_FILE.read_text("utf-8"))
         self.assertIn("policy_rule_ids", schema["properties"])
-        self.assertEqual(
-            schema["properties"]["schema_version"]["const"],
-            f"{AUTHORITY.REGISTRY_MAJOR}.0.0",
-        )
+        version = schema["properties"]["schema_version"]["const"]
+        self.assertEqual(version, raw_registry()["schema_version"])
+        self.assertEqual(int(version.split(".")[0]), AUTHORITY.REGISTRY_MAJOR)
 
 
 class RulesTableDefinitionTests(unittest.TestCase):

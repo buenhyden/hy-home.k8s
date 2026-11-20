@@ -1,6 +1,6 @@
 ---
 title: "02.architecture/descriptions (AD)"
-version: "1.0.0"
+version: "1.0.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -39,7 +39,7 @@ platform은 docs/02.architecture/01.descriptions의 탐색 경로를 유지한�
 보안·관측성·운영성 관점으로 해석하는 AD(Architecture Description) stage다.
 여기서 정의한 아키텍처 관점은 ADR과 Spec의 상위 입력으로 사용된다.
 
-AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택 자체는 `../decisions/`의 ADR에 남기고,
+AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택 자체는 `../02.decisions/`의 ADR에 남기고,
 파일 단위 구현 설계나 운영 명령 절차는 각각 `../../03.specs/`, `../../05.operations/`로 넘긴다.
 
 ###### Collection Readers
@@ -70,7 +70,7 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 
 ##### Excluded Responsibilities
 
-이 collection은 단일 기술 결정 기록, 세부 구현 파일 설계, 운영 명령 절차를 소유하지 않는다. 단일 기술 선택은 `../decisions/`의 ADR에 남기고, 파일 단위 구현 설계와 운영 명령 절차는 각각 `../../03.specs/`, `../../05.operations/`로 넘긴다.
+이 collection은 단일 기술 결정 기록, 세부 구현 파일 설계, 운영 명령 절차를 소유하지 않는다. 단일 기술 선택은 `../02.decisions/`의 ADR에 남기고, 파일 단위 구현 설계와 운영 명령 절차는 각각 `../../03.specs/`, `../../05.operations/`로 넘긴다.
 
 #### Current Contents
 
@@ -93,7 +93,7 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 
 1. 관련 `01.requirements/` 문서를 먼저 읽어 요구사항 경계를 고정한다.
 2. 새 AD는 `../../99.templates/02.templates/02.architecture/description.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/01.descriptions/####-<system-or-domain>.md`다. 안정 ID `AD-####`는 frontmatter에 둔다.
-3. 주요 설계 결정은 `02.architecture/decisions/`에 별도 ADR로 연결한다.
+3. 주요 설계 결정은 `02.architecture/02.decisions/`에 별도 ADR로 연결한다.
 4. 구현 계약은 `03.specs/`에 두고, 그 계약을 작성하는 Spec에서 관련 AD를 인용한다. 역방향 탐색은 이 관계에서 파생한다.
 
 ###### Relative Link Rules
@@ -101,7 +101,7 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 이 README의 링크 기준 위치는 `docs/02.architecture/01.descriptions/`다.
 
 - 같은 폴더의 AD 문서는 `./`로 시작한다.
-- sibling ADR stage는 `../decisions/`로 연결한다.
+- sibling ADR stage는 `../02.decisions/`로 연결한다.
 - upstream/downstream docs stage는 `../../01.requirements/`, `../../03.specs/`, `../../05.operations/`로 연결한다.
 - 새 AD의 실제 Markdown 링크는 최종 AD 파일 위치 기준으로 다시 계산하고, placeholder target은 code literal로 남긴다.
 

@@ -1,6 +1,6 @@
 ---
 title: "Workspace Engineering Research Pack"
-version: "1.0.0"
+version: "1.1.0"
 type: "reference/research-pack"
 status: "in-review"
 owner: "platform"
@@ -70,7 +70,7 @@ upstream 구현을 비교하고, 후속 workspace 조사에 필요한 질문과 
 | --- | --- |
 | 외부 주장 판정 | 위 다섯 값과 그 주장의 출처·범위·한계를 기록한다. |
 | 출처 갱신 결과 | `new`는 새로 수용한 근거, `changed`는 비교 범위의 변화, `unchanged`는 실제 관련 본문 비교에서 변화가 없었던 결과, `unreachable`은 필요한 본문에 접근하지 못한 결과다. |
-| 이번 workspace 관찰 | 항상 `not observed in this cycle`이다. 후보 경로는 후속 조사 selector이며 현재 실태 판정이 아니다. |
+| 이번 workspace 관찰 | 각 멤버가 명시한 날짜·입력·범위로만 판단한다. 외부 조사 cycle의 `not observed in this cycle`과 후보 selector는 현재 구현 증거가 아니며, 별도 로컬 대조는 그 멤버가 확인한 정적 사실로 한정한다. |
 | 문서 QA | 검사 대상 snapshot과 결과를 [QA 결과 분류](../../../00.workspace/04.quality/quality.md#result-vocabulary)에 따라 실행 Task에 기록한다. |
 
 상충하는 외부 자료는 제품·버전·채널·관찰일로 나누며 해결되지 않은 차이를
@@ -112,6 +112,7 @@ upstream 구현을 비교하고, 후속 workspace 조사에 필요한 질문과 
 | [Source coverage (m0012 successor)](m0026-source-coverage.md) | 원 요청·requirement·claim·source 대응, 갱신·이관 처분과 역사적 증거 |
 | [Scope application index](m0013-scope-application-index.md) | 외부 근거를 scope별 후속 조사 질문·selector·합격 기준·승인 경계에 연결 |
 | [Current-state addendum 2026-11-05](m0014-current-state-addendum-2026-11-05.md) | 게시된 m0001~m0012의 당시 저장소 관측 차이와 내부 상충·중복, 현행 QA·양식·제품 발행 소유자 안내 |
+| [Source and audit applicability](m0027-source-and-audit-applicability.md) | 기존 출처의 확인 범위와 현재 문서·감사 항목의 소유자 연결; 정적 대조와 후속 native 관측의 구분 |
 
 #### Usage
 

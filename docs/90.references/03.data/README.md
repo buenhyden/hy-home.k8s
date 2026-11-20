@@ -1,6 +1,6 @@
 ---
 title: "90.references/data"
-version: "1.0.0"
+version: "1.0.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -32,7 +32,7 @@ platform은 docs/90.references/03.data의 탐색 경로를 유지한다. 소유 
 
 > 오래 유지할 data pack, 그 dataset, dataset 출처를 두는 곳이다.
 
-`data/`는 오래 유지할 dataset 자료를 둔다. 저장소가 의존하는 데이터의 형태와
+`03.data/`는 오래 유지할 dataset 자료를 둔다. 저장소가 의존하는 데이터의 형태와
 출처, 각 스냅샷을 수집한 방법, 갱신·보존 경계가 여기에 해당한다. 이후의 plan,
 spec, guide, task가 인용할 수 있는 안정적인 조회 영역이다. 그렇다고 이 폴더가
 활성 정책의 소유자가 되지는 않는다.
@@ -81,7 +81,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 ##### Paths
 
 ```text
-data/
+03.data/
 └── README.md                          # This file
 ```
 
@@ -100,9 +100,9 @@ data/
 ##### Entry Points
 
 1. data pack 자료를 추가하거나 바꾸기 전에 해당 Spec 패키지(`docs/03.specs/`)가 있으면 그 Plan과 Task를 읽는다.
-2. `data/####-<slug>/README.md`는
+2. `03.data/####-<slug>/README.md`는
    [data-pack.template.md](../../99.templates/02.templates/90.references/data-pack.template.md)로 만들고,
-   작성하는 dataset는 `data/####-<slug>/m####-<slug>.md` 경로에
+   작성하는 dataset는 `03.data/####-<slug>/m####-<slug>.md` 경로에
    [data.template.md](../../99.templates/02.templates/90.references/data.template.md)로 만든다.
 3. pack 멤버에는 pack 내부의 `m####` 번호를 매기고, 각 dataset에는 소속 pack의
    `DATA-####-m####` artifact identity를 붙인다.

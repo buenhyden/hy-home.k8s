@@ -1,7 +1,7 @@
 {
   "$schema": "./contracts/document-profile.schema.json",
   "$id": "https://hy-home.k8s/docs/99.templates/registry.json",
-  "schema_version": "22.0.0",
+  "schema_version": "22.1.0",
   "profiles": [
     {
       "id": "sdlc/requirement",
@@ -2335,13 +2335,13 @@
             "The navigation section Current Paths is read as the H3 of the form, with its H4 subsections, up to the next H3 or H2."
           ],
           "negative": [
-            "A root README missing a form H3 fails BODY-HEADING-REQUIRED.",
+            "A root README missing a form H3 fails BODY-H3-REQUIRED.",
             "A Directory Index header that omits Purpose or reorders its columns fails BODY-TABLE-COLUMNS.",
             "A navigation section absent from the form or repeated in it fails REGISTRY_README_NAVIGATION.",
             "A required table column after an optional one fails REGISTRY_TABLE_COLUMNS."
           ],
           "regression": [
-            "The loaded root README profiles keep heading lists equal to the form H2 titles.",
+            "The loaded root README profiles derive their role payload from the form beneath the common four-H2/eight-H3 envelope; profiles carry no H2 heading list.",
             "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries.",
             "tests/test_readme_navigation.py covers an H3 navigation section and the registry rule for a form H3."
           ]
@@ -2473,7 +2473,7 @@
             "A direct child missing from Paths fails README-NAV-COMPLETE."
           ],
           "regression": [
-            "The loaded stage README profiles keep heading lists equal to the form H2 titles.",
+            "The loaded stage README profiles derive their role payload from the form beneath the common four-H2/eight-H3 envelope; profiles carry no H2 heading list.",
             "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries.",
             "tests/test_readme_navigation.py covers a complete Paths listing and a missing child.",
             "tests/test_repository_quality_rules.py covers a document-content table under an H4."
@@ -2558,7 +2558,7 @@
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
         "contract_version": "2.0.0",
-        "purpose": "Give authors one form for a collection README: a human index that states the stage responsibility, lists its current items, and routes readers to the create, review and transition rules and to its upstream, downstream, policy and template documents.",
+        "purpose": "Give authors one form for a collection README: a human index that states the collection responsibility, lists its current items, and routes readers to the create, review and transition rules and to its upstream, downstream, policy and template documents.",
         "responsibility": "A collection README owns the human-facing index of a document collection and routes readers to canonical owners; it restates no detailed policy and holds no agent-only instruction.",
         "non_goals": [
           "Restating detailed policy, which belongs to its canonical owner document.",
@@ -2589,8 +2589,8 @@
           "docs/05.operations/02.policies/README.md",
           "docs/05.operations/03.runbooks/README.md",
           "docs/90.references/02.audits/README.md",
-          "docs/90.references/03.data/README.md",
           "docs/90.references/01.research/README.md",
+          "docs/90.references/03.data/README.md",
           "docs/99.templates/02.templates/README.md",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
@@ -2615,7 +2615,7 @@
             "A direct child missing from Paths fails README-NAV-COMPLETE."
           ],
           "regression": [
-            "The loaded collection README profiles keep heading lists equal to the form H2 titles.",
+            "The loaded collection README profiles derive their role payload from the form beneath the common four-H2/eight-H3 envelope; profiles carry no H2 heading list.",
             "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries.",
             "tests/test_readme_navigation.py covers a complete Paths listing and a missing child.",
             "tests/test_repository_quality_rules.py covers a document-content table under an H4."
@@ -2762,7 +2762,7 @@
             "A child link under Purpose whose folder label does not resolve fails README-NAV-LABEL."
           ],
           "regression": [
-            "The loaded Service README profiles keep heading lists equal to the form H2 titles.",
+            "The loaded Service README profiles derive their role payload from the form beneath the common four-H2/eight-H3 envelope; profiles carry no H2 heading list.",
             "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries.",
             "tests/test_readme_navigation.py covers a service-style README with child links under Purpose and a broken child link.",
             "tests/test_repository_quality_rules.py covers a document-content matrix under an H4."
@@ -3017,7 +3017,6 @@
           "docs/99.templates/registry.json",
           "docs/99.templates/01.contracts/document-profile.schema.json",
           "docs/99.templates/02.templates/90.references/data-pack.template.md",
-          "docs/90.references/03.data/README.md",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -3247,7 +3246,7 @@
             "A link-only Structure or Overview section fails BODY-SECTION-EMPTY."
           ],
           "regression": [
-            "The Workspace profiles keep empty heading lists and the form carries no extension and no table.",
+            "The Workspace profiles carry no H2 heading list; their form projects the role payload beneath the common four-H2/eight-H3 envelope and carries no extension or table.",
             "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
           ]
         },
@@ -3337,17 +3336,17 @@
         ],
         "validation": {
           "positive": [
-            "The Service README documents and the template pass the form tree, navigation, document-content, author-prompt and residue checks.",
+            "The runtime-governance README and its template pass the form tree, navigation, document-content, author-prompt and residue checks.",
             "A Commands table with Command and Output columns, in that order, passes the document table check.",
-            "The navigation section Purpose of the implementation profile is read as the H3 of the form, with its H4 subsections, up to the next H3 or H2."
+            "The runtime-governance Purpose section is read from its registered role payload beneath the common envelope."
           ],
           "negative": [
-            "A Service README missing a form H3 fails BODY-H3-REQUIRED.",
+            "A runtime-governance README missing a required form H3 fails BODY-H3-REQUIRED.",
             "A Commands header that omits Output or reorders its columns fails BODY-TABLE-COLUMNS.",
             "A child link under Purpose whose folder label does not resolve fails README-NAV-LABEL."
           ],
           "regression": [
-            "The loaded Service README profiles keep heading lists equal to the form H2 titles.",
+            "The loaded Service README profiles derive their role payload from the form beneath the common four-H2/eight-H3 envelope; profiles carry no H2 heading list.",
             "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries.",
             "tests/test_readme_navigation.py covers a service-style README with child links under Purpose and a broken child link.",
             "tests/test_repository_quality_rules.py covers a document-content matrix under an H4."
@@ -3710,7 +3709,7 @@
         ],
         "validation": {
           "positive": [
-            "The template and a document of the audit role pass the form tree check with the form's core H2 sections and their required H3 sections.",
+            "The audit template and an authored audit pass the form tree check with the core role payload projected beneath the common four-H2/eight-H3 envelope.",
             "A table with the recorded columns in the recorded order under its form section ID passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
           ],
           "negative": [
@@ -3935,7 +3934,7 @@
         ],
         "validation": {
           "positive": [
-            "The template and a document of the research role pass the form tree check with the form's core H2 sections and their required H3 sections.",
+            "The research template and an authored research report pass the form tree check with the core role payload projected beneath the common four-H2/eight-H3 envelope.",
             "A table with the recorded columns in the recorded order under its form section ID passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
           ],
           "negative": [
@@ -4161,7 +4160,7 @@
         ],
         "validation": {
           "positive": [
-            "The template and a document of the data-reference role pass the form tree check with the form's three core H2 sections and their six required H3 sections.",
+            "The data-reference template and an authored data reference pass the form tree check with the core role payload projected beneath the common four-H2/eight-H3 envelope.",
             "A table with the recorded columns in the recorded order under its form section ID passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
           ],
           "negative": [
@@ -4302,7 +4301,7 @@
             "A Lifecycle Traceability table whose keys differ from the body contract fails REGISTRY_TABLE_BODY_CONTRACT."
           ],
           "regression": [
-            "The loaded decision profiles keep heading lists equal to the form H2 titles.",
+            "Current decision profiles derive their role payload from the form beneath the common four-H2/eight-H3 envelope; accepted retained-form ADRs keep their recorded layout.",
             "tests/test_common_form_tree.py asserts exactly the ADR form, its two extensions, its two tables and this definition in the repository registry."
           ]
         },
@@ -4527,7 +4526,7 @@
             "An interface table whose columns differ from Interface, Producer, Consumer, Contract and Failure fails BODY-TABLE-COLUMNS."
           ],
           "regression": [
-            "The loaded description profiles keep heading lists equal to the form H2 titles.",
+            "The loaded description profiles derive their role payload from the form beneath the common four-H2/eight-H3 envelope; profiles carry no H2 heading list.",
             "tests/test_common_form_tree.py asserts exactly the Architecture form, its two local extensions, its three tables and this definition in the repository registry."
           ]
         },
@@ -4805,7 +4804,7 @@
             "A work-unit or checks table whose columns differ from the core plan.work_units or plan.checks columns fails BODY-TABLE-COLUMNS."
           ],
           "regression": [
-            "The loaded Plan profiles keep heading lists equal to the form H2 titles.",
+            "Current non-retained Plan documents derive their role payload from the form beneath the common four-H2/eight-H3 envelope; profiles carry no H2 heading list.",
             "tests/test_task_execution_contract.py keeps PLAN-PROMOTION, PLAN-GLOBAL-CONSTRAINTS and TASK-PARENT-APPROVAL active on the repository registry with the forms bound.",
             "tests/test_common_form_tree.py asserts exactly the Plan form, its two tables and this definition in the repository registry."
           ]
@@ -5225,7 +5224,7 @@
             "An edited, removed or reordered recorded evidence cell fails TASK-EVIDENCE-RETENTION and a removed work row fails TASK-ITEM-DELETE."
           ],
           "regression": [
-            "The loaded Task profiles keep heading lists equal to the form H2 titles.",
+            "Current non-retained Task documents derive their role payload from the form beneath the common four-H2/eight-H3 envelope; profiles carry no H2 heading list.",
             "tests/test_task_execution_contract.py keeps every TASK- rule active on the repository registry with the form bound, reads each side of a comparison with its own registry and reads only the core header.",
             "tests/test_common_form_tree.py asserts exactly the Task form, its extensions, its four tables and this definition in the repository registry."
           ]
@@ -5626,7 +5625,7 @@
             "A table section outside the form fails REGISTRY_TABLE_SECTION."
           ],
           "regression": [
-            "The loaded guide profiles keep heading lists equal to the form H2 titles.",
+            "The loaded guide profiles derive their role payload from the form beneath the common four-H2/eight-H3 envelope; profiles carry no H2 heading list.",
             "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
           ]
         },
@@ -5821,7 +5820,7 @@
             "A relabeled or reordered Actions column under Response fails BODY-TABLE-COLUMNS."
           ],
           "regression": [
-            "The loaded incident profiles keep heading lists equal to the form H2 titles.",
+            "The loaded incident profiles derive their role payload from the form beneath the common four-H2/eight-H3 envelope; profiles carry no H2 heading list.",
             "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries.",
             "tests/test_native_skill_envelope.py shows INCIDENT-RESOLUTION-EVIDENCE failing without Verified State evidence and passing with it."
           ]
@@ -5999,8 +5998,8 @@
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
         "contract_version": "2.0.0",
-        "purpose": "Give authors one form for a operations policy that states one normative rule set with its purpose, scope, requirements, exceptions and ownership.",
-        "responsibility": "A operations policy owns the rules, their enforcement and the exceptions and ownership of one governed concern; procedures stay with runbooks and explanations with guides.",
+        "purpose": "Give authors one form for an operations policy that states one normative rule set with its purpose, scope, requirements, exceptions and ownership.",
+        "responsibility": "An operations policy owns the rules, their enforcement and the exceptions and ownership of one governed concern; procedures stay with runbooks and explanations with guides.",
         "non_goals": [
           "Executable operating procedures, which belong to a runbook.",
           "Stable explanatory material, which belongs to a guide.",
@@ -6039,7 +6038,7 @@
         "validation": {
           "positive": [
             "Each operations policy and the template pass the form tree, table, body-contract, author-prompt and residue checks.",
-            "A operations policy whose Rules table keeps the core columns and whose Rule Levels table keeps Rule ID, Level and Status passes the policy rule check.",
+            "An operations policy whose Rules table keeps the core columns and whose Rule Levels table keeps Rule ID, Level and Status passes the policy rule check.",
             "An operations policy that states normative rules, with one Rules row per active rule and one Rule Levels row per issued rule ID, passes the POLICY-RULE checks."
           ],
           "negative": [
@@ -6051,7 +6050,7 @@
             "A source profile named by two template twins that carry tables fails REGISTRY_TABLE_TWIN."
           ],
           "regression": [
-            "The loaded policy profiles keep heading lists equal to the form H2 titles.",
+            "The loaded policy profiles derive their role payload from the form beneath the common four-H2/eight-H3 envelope; profiles carry no H2 heading list.",
             "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries.",
             "tests/test_policy_rule_ids.py asserts each document rule, the registry code record and the Rules and Rule Levels table definitions."
           ]
@@ -6336,7 +6335,7 @@
             "A Lifecycle Traceability table whose keys differ from the body contract fails REGISTRY_TABLE_BODY_CONTRACT."
           ],
           "regression": [
-            "The loaded postmortem profiles keep heading lists equal to the form H2 titles.",
+            "The loaded postmortem profiles derive their role payload from the form beneath the common four-H2/eight-H3 envelope; profiles carry no H2 heading list.",
             "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
           ]
         },
@@ -6543,7 +6542,7 @@
             "A table section outside the form fails REGISTRY_TABLE_SECTION."
           ],
           "regression": [
-            "The loaded runbook profiles keep heading lists equal to the form H2 titles.",
+            "The loaded runbook profiles derive their role payload from the form beneath the common four-H2/eight-H3 envelope; profiles carry no H2 heading list.",
             "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
           ]
         },
@@ -6742,7 +6741,7 @@
             "A Requirement without a Functional Requirements member fails BODY-TABLE-ROWS."
           ],
           "regression": [
-            "The loaded requirement profiles keep heading lists equal to the form H2 titles.",
+            "The loaded requirement profiles derive their role payload from the form beneath the common four-H2/eight-H3 envelope; profiles carry no H2 heading list.",
             "tests/test_common_form_tree.py asserts exactly the Requirement form, its two local extensions, its three tables and this definition in the repository registry."
           ]
         },
@@ -7007,7 +7006,7 @@
             "A checks table whose columns differ from the core spec.checks columns fails BODY-TABLE-COLUMNS."
           ],
           "regression": [
-            "The loaded Spec profiles keep heading lists equal to the form H2 titles.",
+            "Current non-retained Spec documents derive their role payload from the form beneath the common four-H2/eight-H3 envelope; profiles carry no H2 heading list.",
             "tests/test_common_form_tree.py asserts exactly the Spec form, its local extension, its two tables and this definition in the repository registry."
           ]
         },
@@ -7200,7 +7199,7 @@
         ],
         "validation": {
           "positive": [
-            "The template and a document of the provider-native role pass the strict Markdown profile check with the H2 list the profile records."
+            "The provider-native template and a native document pass the strict Markdown profile check without an authored heading tree."
           ],
           "negative": [
             "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
@@ -7208,7 +7207,7 @@
             "A table recorded for this role fails REGISTRY_TABLE_SECTION, because a role without a form records no table."
           ],
           "regression": [
-            "tests/test_common_form_tree.py asserts the profiles bound to provider-native, their unchanged H2 lists and this definition's tables.",
+            "tests/test_common_form_tree.py asserts the profiles bound to provider-native, their native mode and this definition's tables.",
             "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
           ]
         },
@@ -7307,7 +7306,7 @@
         ],
         "validation": {
           "positive": [
-            "The template and a document of the provider-native role pass the strict Markdown profile check with the H2 list the profile records."
+            "The provider-native template and a native document pass the strict Markdown profile check without an authored heading tree."
           ],
           "negative": [
             "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
@@ -7315,7 +7314,7 @@
             "A table recorded for this role fails REGISTRY_TABLE_SECTION, because a role without a form records no table."
           ],
           "regression": [
-            "tests/test_common_form_tree.py asserts the profiles bound to provider-native, their unchanged H2 lists and this definition's tables.",
+            "tests/test_common_form_tree.py asserts the profiles bound to provider-native, their native mode and this definition's tables.",
             "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
           ]
         },
@@ -7405,7 +7404,7 @@
             "A table recorded for this role fails REGISTRY_TABLE_SECTION, because a role without a form records no table."
           ],
           "regression": [
-            "tests/test_common_form_tree.py asserts the profiles bound to provider-native, their unchanged H2 lists and this definition's tables.",
+            "tests/test_common_form_tree.py asserts the profiles bound to provider-native, their native mode and this definition's tables.",
             "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
           ]
         },
@@ -7516,7 +7515,7 @@
         ],
         "validation": {
           "positive": [
-            "The template and a document of the knowledge-map role pass the form tree check with the form's H2 sections and no H3."
+            "The knowledge-map template and an authored document pass the form tree check with the role payload projected beneath the common four-H2/eight-H3 envelope."
           ],
           "negative": [
             "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
@@ -7672,7 +7671,7 @@
         ],
         "validation": {
           "positive": [
-            "The template and a document of the vocabulary role pass the form tree check with the form's H2 sections and no H3.",
+            "The vocabulary template and an authored document pass the form tree check with the role payload projected beneath the common four-H2/eight-H3 envelope.",
             "A table with the recorded columns in the recorded order under its section id passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
           ],
           "negative": [
@@ -7779,7 +7778,7 @@
         ],
         "validation": {
           "positive": [
-            "The template and a document of the prompt role pass the form tree check with the form's H2 sections and no H3."
+            "The prompt template and an authored document pass the form tree check with the role payload projected beneath the common four-H2/eight-H3 envelope."
           ],
           "negative": [
             "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
@@ -7882,7 +7881,7 @@
         ],
         "validation": {
           "positive": [
-            "The template and a document of the governance-document role pass the form tree check with the form's six H2 sections and no H3."
+            "The governance-document template and an authored provider note pass the form tree check with the role payload projected beneath the common four-H2/eight-H3 envelope."
           ],
           "negative": [
             "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
@@ -7986,7 +7985,7 @@
         ],
         "validation": {
           "positive": [
-            "The template and a document of the governance-role role pass the form tree check with the form's six H2 sections and the eight H3 under Current Contract."
+            "The governance-role template and an authored role pass the form tree check with the role payload under Current Contract projected beneath the common four-H2/eight-H3 envelope."
           ],
           "negative": [
             "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
@@ -8113,7 +8112,7 @@
             "A source profile named by two template twins that carry tables fails REGISTRY_TABLE_TWIN."
           ],
           "regression": [
-            "The loaded policy profiles keep heading lists equal to the form H2 titles.",
+            "The loaded policy profiles derive their role payload from the form beneath the common four-H2/eight-H3 envelope; profiles carry no H2 heading list.",
             "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries.",
             "tests/test_policy_rule_ids.py asserts each document rule, the registry code record and the Rules and Rule Levels table definitions."
           ]
@@ -8295,7 +8294,7 @@
             "A source profile named by two template twins that carry tables fails REGISTRY_TABLE_TWIN."
           ],
           "regression": [
-            "The Skill profiles keep empty heading lists; the authored workflow profile derives its heading lists from the form.",
+            "The Skill profiles carry no H2 heading list; authored workflows derive their role payload from the form beneath the common four-H2/eight-H3 envelope.",
             "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
           ]
         },
@@ -8942,7 +8941,7 @@
         ],
         "validation": {
           "positive": [
-            "The template and a document of the evaluation-task role pass the form tree check with the form's H2 sections and no H3.",
+            "The evaluation-task template and an authored document pass the form tree check with the role payload projected beneath the common four-H2/eight-H3 envelope.",
             "A table with the recorded columns in the recorded order under its section id passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
           ],
           "negative": [
@@ -9149,7 +9148,7 @@
         ],
         "validation": {
           "positive": [
-            "The template and a document of the evaluation-score role pass the form tree check with the form's H2 sections and no H3.",
+            "The evaluation-score template and an authored document pass the form tree check with the role payload projected beneath the common four-H2/eight-H3 envelope.",
             "A table with the recorded columns in the recorded order under its section id passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
           ],
           "negative": [
@@ -9347,7 +9346,7 @@
         ],
         "validation": {
           "positive": [
-            "The template and a document of the evaluation-results role pass the form tree check with the form's H2 sections and no H3.",
+            "The evaluation-results template and an authored document pass the form tree check with the role payload projected beneath the common four-H2/eight-H3 envelope.",
             "A table with the recorded columns in the recorded order under its section id passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
           ],
           "negative": [
@@ -9905,6 +9904,7 @@
     "workspace_scope_artifact_ids": [
       "REQ-0003",
       "SPEC-0226",
+      "SPEC-0227",
       "AD-0006",
       "GDE-0011"
     ],
@@ -10009,7 +10009,7 @@
                 "condition": "always",
                 "content": "가이드의 대상 독자",
                 "required_content": [
-                  "가이드의 대상 독자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "가이드의 대상 독자를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
@@ -10038,7 +10038,7 @@
                 "condition": "always",
                 "content": "작업 결과와 범위·비목표",
                 "required_content": [
-                  "작업 결과와 범위·비목표을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "작업 결과와 범위·비목표를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
@@ -10308,7 +10308,7 @@
                 "condition": "always",
                 "content": "실패·분기·중단·문의",
                 "required_content": [
-                  "실패·분기·중단·문의을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "실패·분기·중단·문의를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
@@ -10501,7 +10501,7 @@
                 "condition": "always",
                 "content": "실행 트리거와 복구/운영 목표",
                 "required_content": [
-                  "실행 트리거와 복구/운영 목표을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "실행 트리거와 복구/운영 목표를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
@@ -10530,7 +10530,7 @@
                 "condition": "always",
                 "content": "서비스·환경·영향 범위",
                 "required_content": [
-                  "서비스·환경·영향 범위을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "서비스·환경·영향 범위를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
@@ -10620,7 +10620,7 @@
                 "condition": "always",
                 "content": "백업·가용성·동시 작업·비밀 보호",
                 "required_content": [
-                  "백업·가용성·동시 작업·비밀 보호을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "백업·가용성·동시 작업·비밀 보호를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
@@ -11124,7 +11124,7 @@
                 "condition": "always",
                 "content": "심각도·기간·추정 구분과 사건 식별·현재 상태",
                 "required_content": [
-                  "심각도·기간·추정 구분과 사건 식별·현재 상태을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "심각도·기간·추정 구분과 사건 식별·현재 상태를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
@@ -11304,7 +11304,7 @@
                 "condition": "always",
                 "content": "재발 방지 Task·담당·조건과 근거",
                 "required_content": [
-                  "재발 방지 Task·담당·조건과 근거을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "재발 방지 Task·담당·조건과 근거를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
@@ -11341,7 +11341,7 @@
             "condition": "a document in a status the body contract enforces states its follow-up Task or an N/A reason",
             "owner": "platform",
             "verification": "the body-contract check",
-            "review": "when the form version changes",
+            "review": "when the Incident form version changes",
             "removal": "when incident lineage has another registered owner",
             "parent_id": "incident.resolution",
             "title": "Lifecycle Traceability",
@@ -11497,7 +11497,7 @@
                 "condition": "always",
                 "content": "대상 사건·판본·독자와 검토 범위",
                 "required_content": [
-                  "대상 사건·판본·독자와 검토 범위을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "대상 사건·판본·독자와 검토 범위를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
@@ -11526,7 +11526,7 @@
                 "condition": "always",
                 "content": "관측 영향·범위·기간과 탐지·대응 평가",
                 "required_content": [
-                  "관측 영향·범위·기간과 탐지·대응 평가을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "관측 영향·범위·기간과 탐지·대응 평가를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
@@ -11616,7 +11616,7 @@
                 "condition": "always",
                 "content": "확인되지 않은 원인·가정·필요한 추가 증거",
                 "required_content": [
-                  "확인되지 않은 원인·가정·필요한 추가 증거을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "확인되지 않은 원인·가정·필요한 추가 증거를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
@@ -11743,8 +11743,8 @@
             "condition": "a document in a status the body contract enforces states its follow-up Task or an N/A reason",
             "owner": "platform",
             "verification": "the body-contract check",
-            "review": "when the form version changes",
-            "removal": "when incident lineage has another registered owner",
+            "review": "when the Postmortem form version changes",
+            "removal": "when postmortem lineage has another registered owner",
             "parent_id": "postmortem.actions",
             "title": "Lifecycle Traceability",
             "authority_ref": "ADR-0059"
@@ -11923,7 +11923,7 @@
                 },
                 "content": "주 독자",
                 "required_content": [
-                  "주 독자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "주 독자를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "상세 정책의 독립 정본이나 에이전트 전용 지침을 만들지 않는다.",
@@ -11952,7 +11952,7 @@
                 },
                 "content": "프로젝트 목적·실제 지원 범위·비목표",
                 "required_content": [
-                  "프로젝트 목적·실제 지원 범위·비목표을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "프로젝트 목적·실제 지원 범위·비목표를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "상세 정책의 독립 정본이나 에이전트 전용 지침을 만들지 않는다.",
@@ -12042,7 +12042,7 @@
                 },
                 "content": "시작·검사·기대 결과",
                 "required_content": [
-                  "시작·검사·기대 결과을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "시작·검사·기대 결과를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "상세 정책의 독립 정본이나 에이전트 전용 지침을 만들지 않는다.",
@@ -12103,7 +12103,7 @@
                 },
                 "content": "현재 디렉터리별 목적·소유자",
                 "required_content": [
-                  "현재 디렉터리별 목적·소유자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "현재 디렉터리별 목적·소유자를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "상세 정책의 독립 정본이나 에이전트 전용 지침을 만들지 않는다.",
@@ -12222,7 +12222,7 @@
                 },
                 "content": "현행 사용·개발·운영 링크",
                 "required_content": [
-                  "현행 사용·개발·운영 링크을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "현행 사용·개발·운영 링크를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "상세 정책의 독립 정본이나 에이전트 전용 지침을 만들지 않는다.",
@@ -12417,7 +12417,7 @@
                 },
                 "content": "이 단계가 소유하지 않는 책임과 그 소유처",
                 "required_content": [
-                  "이 단계가 소유하지 않는 책임과 그 소유처을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "이 단계가 소유하지 않는 책임과 그 소유처를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "Task 상태를 독립적으로 수동 관리하지 않는다.",
@@ -12507,7 +12507,7 @@
                 },
                 "content": "하위 유형·정본·비권위 기록 경계",
                 "required_content": [
-                  "하위 유형·정본·비권위 기록 경계을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "하위 유형·정본·비권위 기록 경계를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "Task 상태를 독립적으로 수동 관리하지 않는다.",
@@ -12597,7 +12597,7 @@
                 },
                 "content": "상태 전이·승격·처분 소비자",
                 "required_content": [
-                  "상태 전이·승격·처분 소비자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "상태 전이·승격·처분 소비자를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "Task 상태를 독립적으로 수동 관리하지 않는다.",
@@ -12763,7 +12763,7 @@
                 },
                 "content": "서비스 책임·소유자",
                 "required_content": [
-                  "서비스 책임·소유자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "서비스 책임·소유자를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "민감한 운영 상태를 노출하거나 모든 서비스에 미존재 도구를 강제하지 않는다.",
@@ -12792,7 +12792,7 @@
                 },
                 "content": "입출력·API·의존 서비스와 보안 경계",
                 "required_content": [
-                  "입출력·API·의존 서비스와 보안 경계을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "입출력·API·의존 서비스와 보안 경계를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "민감한 운영 상태를 노출하거나 모든 서비스에 미존재 도구를 강제하지 않는다.",
@@ -12853,7 +12853,7 @@
                 },
                 "content": "실제 환경·지원 범위",
                 "required_content": [
-                  "실제 환경·지원 범위을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "실제 환경·지원 범위를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "민감한 운영 상태를 노출하거나 모든 서비스에 미존재 도구를 강제하지 않는다.",
@@ -12882,7 +12882,7 @@
                 },
                 "content": "실제 수정·생성·개발 절차",
                 "required_content": [
-                  "실제 수정·생성·개발 절차을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "실제 수정·생성·개발 절차를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "민감한 운영 상태를 노출하거나 모든 서비스에 미존재 도구를 강제하지 않는다.",
@@ -12943,7 +12943,7 @@
                 },
                 "content": "검증 명령·입력·기대 결과",
                 "required_content": [
-                  "검증 명령·입력·기대 결과을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "검증 명령·입력·기대 결과를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "민감한 운영 상태를 노출하거나 모든 서비스에 미존재 도구를 강제하지 않는다.",
@@ -13147,7 +13147,7 @@
                 "condition": "always",
                 "content": "보장하려는 의미·위험 통제",
                 "required_content": [
-                  "보장하려는 의미·위험 통제을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "보장하려는 의미·위험 통제를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
@@ -13266,7 +13266,7 @@
                 "condition": "always",
                 "content": "예외 사유·범위·위험·기한과 승인·재검토",
                 "required_content": [
-                  "예외 사유·범위·위험·기한과 승인·재검토을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "예외 사유·범위·위험·기한과 승인·재검토를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
@@ -13327,7 +13327,7 @@
                 "condition": "always",
                 "content": "집행 지점·검사·수동 확인·실패 조치",
                 "required_content": [
-                  "집행 지점·검사·수동 확인·실패 조치을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "집행 지점·검사·수동 확인·실패 조치를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
@@ -14092,7 +14092,7 @@
                 },
                 "content": "비적용·상시 규칙과 경계",
                 "required_content": [
-                  "비적용·상시 규칙과 경계을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "비적용·상시 규칙과 경계를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
@@ -14153,7 +14153,7 @@
                 },
                 "content": "입력 확인·수행·기대 결과",
                 "required_content": [
-                  "입력 확인·수행·기대 결과을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "입력 확인·수행·기대 결과를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
@@ -14182,7 +14182,7 @@
                 },
                 "content": "실패·중단·복구·인계",
                 "required_content": [
-                  "실패·중단·복구·인계을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "실패·중단·복구·인계를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
@@ -14243,7 +14243,7 @@
                 },
                 "content": "산출물·소비자·보존 범위",
                 "required_content": [
-                  "산출물·소비자·보존 범위을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "산출물·소비자·보존 범위를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
@@ -14362,7 +14362,7 @@
                 },
                 "content": "검사·산출물이 보장하지 않는 범위",
                 "required_content": [
-                  "검사·산출물이 보장하지 않는 범위을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "검사·산출물이 보장하지 않는 범위를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
@@ -17885,7 +17885,7 @@
                 "condition": "always",
                 "content": "해결할 문제와 측정 가능한 기대 결과",
                 "required_content": [
-                  "해결할 문제와 측정 가능한 기대 결과을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "해결할 문제와 측정 가능한 기대 결과를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
@@ -17975,7 +17975,7 @@
                 "condition": "always",
                 "content": "대상 사용자·상황·적용 범위",
                 "required_content": [
-                  "대상 사용자·상황·적용 범위을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "대상 사용자·상황·적용 범위를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
@@ -18004,7 +18004,7 @@
                 "condition": "always",
                 "content": "제약·전제·비목표",
                 "required_content": [
-                  "제약·전제·비목표을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "제약·전제·비목표를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
@@ -18065,7 +18065,7 @@
                 "condition": "always",
                 "content": "안정 ID별 결과·근거·우선순위",
                 "required_content": [
-                  "안정 ID별 결과·근거·우선순위을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "안정 ID별 결과·근거·우선순위를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
@@ -18542,7 +18542,7 @@
                 "condition": "always",
                 "content": "컴포넌트·책임·소유자",
                 "required_content": [
-                  "컴포넌트·책임·소유자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "컴포넌트·책임·소유자를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "과거 실행 로그를 현행 구조로 취급하지 않는다.",
@@ -18632,7 +18632,7 @@
                 "condition": "always",
                 "content": "실행·배치·상호작용과 환경별 차이",
                 "required_content": [
-                  "실행·배치·상호작용과 환경별 차이을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "실행·배치·상호작용과 환경별 차이를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "구성 선언, 실행 예정 명령 또는 정적 검사 결과를 운영 관측으로 제시하지 않는다.",
@@ -18662,7 +18662,7 @@
                 "condition": "always",
                 "content": "실패·재시도·격리·복구 경계",
                 "required_content": [
-                  "실패·재시도·격리·복구 경계을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "실패·재시도·격리·복구 경계를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "과거 실행 로그를 현행 구조로 취급하지 않는다.",
@@ -18723,7 +18723,7 @@
                 "condition": "always",
                 "content": "품질 시나리오·위험·후속 소유자",
                 "required_content": [
-                  "품질 시나리오·위험·후속 소유자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "품질 시나리오·위험·후속 소유자를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "과거 실행 로그를 현행 구조로 취급하지 않는다.",
@@ -18842,7 +18842,7 @@
                 "condition": "always",
                 "content": "현행 판본·대체·역사 참조와 채택 경계",
                 "required_content": [
-                  "현행 판본·대체·역사 참조와 채택 경계을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "현행 판본·대체·역사 참조와 채택 경계를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "과거 실행 로그를 현행 구조로 취급하지 않는다.",
@@ -19083,7 +19083,7 @@
                 "condition": "always",
                 "content": "결정 범위·영향받는 소비자",
                 "required_content": [
-                  "결정 범위·영향받는 소비자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "결정 범위·영향받는 소비자를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "accepted를 구현·인수 완료로 치환하지 않는다.",
@@ -19173,7 +19173,7 @@
                 "condition": "always",
                 "content": "장점·위험·비용·비채택 사유",
                 "required_content": [
-                  "장점·위험·비용·비채택 사유을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "장점·위험·비용·비채택 사유를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "accepted를 구현·인수 완료로 치환하지 않는다.",
@@ -19234,7 +19234,7 @@
                 "condition": "always",
                 "content": "선택·적용 조건·규범 소유자",
                 "required_content": [
-                  "선택·적용 조건·규범 소유자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "선택·적용 조건·규범 소유자를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "accepted를 구현·인수 완료로 치환하지 않는다.",
@@ -19577,7 +19577,7 @@
                 "condition": "always",
                 "content": "변경 목적과 사용자 가치",
                 "required_content": [
-                  "변경 목적과 사용자 가치을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "변경 목적과 사용자 가치를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "Plan의 실행 순서·Task 진행 상태를 중복 저술하지 않는다.",
@@ -19667,7 +19667,7 @@
                 "condition": "always",
                 "content": "변경할 기능·입출력·경계",
                 "required_content": [
-                  "변경할 기능·입출력·경계을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "변경할 기능·입출력·경계를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "Plan의 실행 순서·Task 진행 상태를 중복 저술하지 않는다.",
@@ -19786,7 +19786,7 @@
                 "condition": "always",
                 "content": "위반·경계·취소·실패·복구·사람 인계",
                 "required_content": [
-                  "위반·경계·취소·실패·복구·사람 인계을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "위반·경계·취소·실패·복구·사람 인계를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "Plan의 실행 순서·Task 진행 상태를 중복 저술하지 않는다.",
@@ -19876,7 +19876,7 @@
                 "condition": "always",
                 "content": "필수 관측·검증 방법·판정 주체와 규범·탐색 근거",
                 "required_content": [
-                  "필수 관측·검증 방법·판정 주체와 규범·탐색 근거을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "필수 관측·검증 방법·판정 주체와 규범·탐색 근거를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "Plan의 실행 순서·Task 진행 상태를 중복 저술하지 않는다.",
@@ -20083,7 +20083,7 @@
                 "condition": "always",
                 "content": "Spec 참조·계획 범위·완료 상태",
                 "required_content": [
-                  "Spec 참조·계획 범위·완료 상태을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "Spec 참조·계획 범위·완료 상태를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
@@ -20202,7 +20202,7 @@
                 "condition": "always",
                 "content": "여러 작업 단위가 함께 쓰는 파일·환경·잠금과 사용 순서",
                 "required_content": [
-                  "여러 작업 단위가 함께 쓰는 파일·환경·잠금과 사용 순서을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "여러 작업 단위가 함께 쓰는 파일·환경·잠금과 사용 순서를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
@@ -20263,7 +20263,7 @@
                 "condition": "always",
                 "content": "작업 단위·담당·파일 경계·수용 기준 연결·복구 순서",
                 "required_content": [
-                  "작업 단위·담당·파일 경계·수용 기준 연결·복구 순서을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "작업 단위·담당·파일 경계·수용 기준 연결·복구 순서를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
@@ -20353,7 +20353,7 @@
                 "condition": "always",
                 "content": "기준별 정상·위반·회귀·입력·생산자",
                 "required_content": [
-                  "기준별 정상·위반·회귀·입력·생산자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "기준별 정상·위반·회귀·입력·생산자를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
@@ -20382,7 +20382,7 @@
                 "condition": "always",
                 "content": "commit/push/pr/merge 시점과 중복 방지",
                 "required_content": [
-                  "commit/push/pr/merge 시점과 중복 방지을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "commit/push/pr/merge 시점과 중복 방지를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
@@ -20443,7 +20443,7 @@
                 "condition": "always",
                 "content": "현행 인계 위치·담당·검증 조건·Task 영수증 참조",
                 "required_content": [
-                  "현행 인계 위치·담당·검증 조건·Task 영수증 참조을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "현행 인계 위치·담당·검증 조건·Task 영수증 참조를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
@@ -21213,7 +21213,7 @@
                 "condition": "always",
                 "content": "입력·도구·설정·명령·exit·증거 위치",
                 "required_content": [
-                  "입력·도구·설정·명령·exit·증거 위치을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "입력·도구·설정·명령·exit·증거 위치를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "새 수용 기준·정책을 임의 생성하거나 실패 원문을 덮어쓰지 않는다.",
@@ -21303,7 +21303,7 @@
                 "condition": "always",
                 "content": "기준별 수용·미수용·판정자·근거",
                 "required_content": [
-                  "기준별 수용·미수용·판정자·근거을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "기준별 수용·미수용·판정자·근거를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "새 수용 기준·정책을 임의 생성하거나 실패 원문을 덮어쓰지 않는다.",

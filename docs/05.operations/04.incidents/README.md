@@ -1,6 +1,6 @@
 ---
 title: "05.operations/incidents"
-version: "1.0.0"
+version: "1.0.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -79,7 +79,7 @@ Incident Record와 Postmortem은 각각 고정 basename `incident.md`와
 ##### Paths
 
 ```text
-05.operations/incidents/
+05.operations/04.incidents/
 ├── <year>/
 └── README.md
 ```
@@ -143,7 +143,7 @@ Postmortem은 다음 항목을 포함한다.
 
 - Incident record는 `./<year>/inc-####-<slug>/incident.md` 경로를 사용한다.
 - Postmortem은 같은 incident 폴더의 `./<year>/inc-####-<slug>/postmortem.md` 경로를 사용한다.
-- sibling operations folder는 `../policies/`, `../runbooks/`, `../guides/`로 연결한다.
+- sibling operations folder는 `../02.policies/`, `../03.runbooks/`, `../01.guides/`로 연결한다.
 
 ###### Upstream and Downstream
 

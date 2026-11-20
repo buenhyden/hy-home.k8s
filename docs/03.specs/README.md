@@ -97,13 +97,14 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ├── 0224-workspace-path-cutover/
 ├── 0225-q07-history-bound-checks/
 ├── 0226-common-document-contract/
+├── 0227-docs-sdlc-reconciliation/
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── README.md
 └── work-residue-ledger.json
 ```
 
-현재 열린 package는 네 개다.
+현재 package는 다음과 같다. 상태와 인수 여부는 각 문서가 소유한다.
 
 | Path | Purpose |
 | --- | --- |
@@ -111,6 +112,7 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 | [SPEC-0224 Workspace Path Cutover](./0224-workspace-path-cutover/) | W 계층 문서를 `docs/00.workspace/`로 옮기고 SAFE·GIT 규칙을 W/A로 나누며 `docs/` 분류 폴더를 번호화하는 변경 package다. |
 | [SPEC-0225 Q07 History-Bound Check Conversion](./0225-q07-history-bound-checks/) | Q07-H01이 지목한 이력·번호 의존 검사를 바꾸거나 없애고, 전환 시점에 처리할 데이터를 잔여에 기록하는 변경 package다. |
 | [SPEC-0226 Common Document Contract](./0226-common-document-contract/) | P04 공통 외피·유형별 내용·metadata·관계 의미를 Stage 99와 실제 생산자·검증기에 연결하는 변경 package다. |
+| [SPEC-0227 Current Documentation and SDLC Reconciliation](./0227-docs-sdlc-reconciliation/) | P05 현행 문서 소유자·SDLC 권위·운영 잔여를 정합화하는 변경 package다. |
 | [work-residue-ledger.json](./work-residue-ledger.json) | 열린 인계·충돌·채택·조사 잔여 항목을 포인터로만 담는 work residue ledger다. 실행 상태, 증거, 수용은 담지 않고 Task가 소유한다. 종결된 항목은 그 Task가 속한 package의 종료 commit까지 삭제한다. |
 | [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시다. |
 | [CLAUDE.md](./CLAUDE.md) | Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다. |

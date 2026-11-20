@@ -1,6 +1,6 @@
 ---
 title: "Kiali Observability 연결 복구 Runbook"
-version: "3.0.0"
+version: "3.0.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -268,6 +268,8 @@ kubectl -n istio-system logs deploy/kiali --since=2m | rg -i 'grafana|401'
 #### Escalation
 
 ##### Next Owner
+
+이 저장소의 운영 비상 연락·승인 담당자는 [Stage 05 Owners](../README.md#owners)를 따른다. 담당자 지정은 이 절차의 개별 실행 승인이 아니다.
 
 - Grafana auth changes belong to the external observability workspace; this repository only verifies their result.
 

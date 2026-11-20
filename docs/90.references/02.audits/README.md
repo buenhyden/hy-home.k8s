@@ -1,6 +1,6 @@
 ---
 title: "90.references/audits"
-version: "1.0.0"
+version: "1.0.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -32,7 +32,7 @@ platform은 docs/90.references/02.audits의 탐색 경로를 유지한다. 소�
 
 > 구현 audit pack, 그 보고서, 오래 유지할 audit 증거를 두는 곳이다.
 
-`audits/`는 오래 유지할 audit 자료를 둔다. 저장소에 실제로 무엇이 있는지를
+`02.audits/`는 오래 유지할 audit 자료를 둔다. 저장소에 실제로 무엇이 있는지를
 관찰 날짜와 함께 확인한 결과, 각 관찰을 얻은 방법, 그로부터 나온 발견 사항이
 여기에 해당한다. 이후의 plan, spec, guide, task가 인용할 수 있는 안정적인 조회
 영역이다. 그렇다고 이 폴더가 활성 정책의 소유자가 되지는 않는다.
@@ -81,7 +81,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 ##### Paths
 
 ```text
-audits/
+02.audits/
 ├── 0001-sdlc-governance/              # SDLC 거버넌스 감사 (AUD-0001)
 └── README.md                          # This file
 ```
@@ -101,9 +101,9 @@ audits/
 ##### Entry Points
 
 1. audit pack 자료를 추가하거나 바꾸기 전에 해당 Spec 패키지(`docs/03.specs/`)가 있으면 그 Plan과 Task를 읽는다.
-2. `audits/####-<slug>/README.md`는
+2. `02.audits/####-<slug>/README.md`는
    [audit-pack.template.md](../../99.templates/02.templates/90.references/audit-pack.template.md)로 만들고,
-   작성하는 보고서는 `audits/####-<slug>/m####-<slug>.md` 경로에
+   작성하는 보고서는 `02.audits/####-<slug>/m####-<slug>.md` 경로에
    [audit.template.md](../../99.templates/02.templates/90.references/audit.template.md)로 만든다.
 3. pack 멤버에는 pack 내부의 `m####` 번호를 매기고, 각 보고서에는 소속 pack의
    `AUD-####-m####` artifact identity를 붙인다.

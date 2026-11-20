@@ -1,6 +1,6 @@
 ---
 title: "gitops"
-version: "1.0.0"
+version: "1.1.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -90,8 +90,8 @@ patch/apply가 필요한 경우에도 이는 human-approved break-glass 예외�
 
 | Interface | Producer | Consumer | Contract | Failure |
 | --- | --- | --- | --- | --- |
-| 외부 서비스 Service와 EndpointSlice 파일 | 외부 management Valkey·Loki·Tempo·Alloy | 이 문서에 명시 없음 | [External Service Contract Matrix](#external-service-contract-matrix) | 이 문서에 명시 없음 |
-| OpenBao·Prometheus·Grafana 외부 HTTPS 이름 | 외부 서비스 | 이 문서에 명시 없음 | [External Service Contract Matrix](#external-service-contract-matrix) | 이 문서에 명시 없음 |
+| 외부 서비스 Service와 EndpointSlice 파일 | 외부 management Valkey·Loki·Tempo·Alloy | ArgoCD의 Valkey 연결, in-cluster Alloy의 Loki 전송, Kiali의 Tempo 조회, mesh sidecar의 Alloy OTLP 전송 | [External Service Contract Matrix](#external-service-contract-matrix) | 주소·포트·네트워크 실패는 해당 cache 또는 telemetry 경로를 끊는다. Git의 tuple과 실제 연결 상태를 구분해 확인하고 외부 런타임 복구는 서비스 소유자에게 넘긴다. 직접 EndpointSlice 변경은 위 break-glass 경계를 따른다. |
+| OpenBao·Prometheus·Grafana 외부 HTTPS 이름 | 외부 OpenBao·Prometheus·Grafana 서비스 | OpenBao는 ESO, Prometheus는 Alloy remote-write·Rollouts analysis·Kiali, Grafana는 Kiali와 브라우저 사용자 | [External Service Contract Matrix](#external-service-contract-matrix) | DNS·TLS·인증 실패 시 secret refresh, metric 전송·조회 또는 UI 연결을 성공으로 판정하지 않는다. CA·선언·권한을 해당 운영 절차에서 확인하며 TLS 우회나 평문 secret 대체는 허용하지 않는다. |
 
 ###### External Service Contract Matrix
 

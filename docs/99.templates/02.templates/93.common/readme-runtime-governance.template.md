@@ -12,11 +12,11 @@ updated: "{{UPDATED}}"
 
 ### 목적과 독자
 
-<!-- 작성 규칙: Give authors one form for the runtime-governance README: a human document that states the role of the repository GitHub surface, its supported environment, its interfaces, how to develop and check it, and where to operate it. -->
+<!-- 작성 규칙: Give authors one form for the runtime-governance README: a human document that states the role of this repository's GitHub automation surface, its supported environment, interfaces, checks and operation owners. -->
 
 ### 책임과 적용 범위
 
-<!-- 작성 규칙: The runtime-governance README owns the human-facing description of the GitHub surface and routes readers to canonical owners; it restates no detailed policy and holds no agent-only instruction. -->
+<!-- 작성 규칙: The runtime-governance README routes readers from GitHub workflow, repository setting and integration facts to their canonical owners; it restates no detailed policy and holds no agent-only instruction. -->
 
 ## 내용 계약
 
@@ -30,7 +30,7 @@ updated: "{{UPDATED}}"
 
 #### Service
 ##### Purpose
-<!-- 작성 규칙: 이 영역의 목적과 주 독자를 설명한다. -->
+<!-- 작성 규칙: 이 저장소의 GitHub 자동화 표면의 목적과 주 독자를 설명한다. -->
 
 <!-- 작성 규칙: 이 영역의 파일마다 그 파일을 읽는 런타임을 짝지어 보인다. -->
 

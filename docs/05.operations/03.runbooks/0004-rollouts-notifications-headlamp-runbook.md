@@ -1,6 +1,6 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Runbook"
-version: "2.0.0"
+version: "2.0.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -218,6 +218,8 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
 #### Escalation
 
 ##### Next Owner
+
+이 저장소의 운영 비상 연락·승인 담당자는 [Stage 05 Owners](../README.md#owners)를 따른다. 담당자 지정은 이 절차의 개별 실행 승인이 아니다.
 
 - Notifications 문제가 발생하면 OpenBao secret과 ExternalSecret 동기화 상태를 먼저 복구하고 controller 재시작은 마지막 수단으로 둔다.
 

@@ -1,6 +1,6 @@
 ---
 title: "90.references/research"
-version: "1.0.0"
+version: "1.0.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -32,7 +32,7 @@ platform은 docs/90.references/01.research의 탐색 경로를 유지한다. 소
 
 > 연구 팩과 보고서, 출처 기록과 연구 종합을 두는 곳이다.
 
-`research/`는 워크스페이스 엔지니어링과 아카이브 보존·출처에 관한 연구 팩을
+`01.research/`는 워크스페이스 엔지니어링과 아카이브 보존·출처에 관한 연구 팩을
 둔다. 출처에 근거한 발견, 관찰 날짜가 붙은 출처 확인, 종합을
 이후의 plan, spec, guide, task가 인용할 수 있는 안정적인 조회 영역이지만
 이 폴더가 활성 정책의 소유자가 되지는 않는다.
@@ -82,7 +82,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 ##### Paths
 
 ```text
-research/
+01.research/
 ├── 0001-workspace-engineering/
 ├── 0002-archive-retention-and-provenance/
 └── README.md
@@ -99,7 +99,7 @@ research/
 보고서의 lifecycle·관찰일은 각 보고서가, 출처·주장·요구사항 대응은 pack의
 해당 보고서가 소유한다. 이 collection은 pack 탐색만 안내한다.
 
-현재 research pack은 `research/####-<slug>/`에만 있다. 네 자리 번호는 Research
+현재 research pack은 `01.research/####-<slug>/`에만 있다. 네 자리 번호는 Research
 안에서 유일하고 slug는 의미 있는 kebab-case이며 날짜가 아니다. pack 안의 보고서는
 registry가 요구하는 `m####-` identity prefix 뒤에 의미 있는 주제 이름을 붙인다.
 이 prefix는 identity이지 정렬 키가 아니다. 새 보고서 파일 이름에 `part-*.md`,

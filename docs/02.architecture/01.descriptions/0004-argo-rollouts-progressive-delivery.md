@@ -1,6 +1,6 @@
 ---
 title: "Argo Rollouts Progressive Delivery Architecture Description"
-version: "3.0.0"
+version: "3.1.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -102,10 +102,10 @@ The platform owns the controller install, dashboard access, AppProject permissio
 
 | Interface | Producer | Consumer | Contract | Failure |
 | --- | --- | --- | --- | --- |
-| Rollouts dashboard `rollouts.hy-k8s.home.arpa` | `argo-rollouts` dashboard | Browser users | [Rollouts Application](../../../gitops/apps/root/platform-rollouts-app.yaml) | not stated in this document |
-| Controller metrics `argo-rollouts:8090` | Argo Rollouts controller | In-cluster Alloy, remote-written to the external Prometheus | [ADR-0045](../02.decisions/0045-in-cluster-telemetry-collection.md) | not stated in this document |
-| `Rollout` and `AnalysisTemplate` CRDs | Application teams through workload manifests | Argo Rollouts controller | `gitops/workloads/adminer/rollout.yaml` | not stated in this document |
-| Analysis queries to `https://prometheus.hy.home.arpa` | Reference `AnalysisTemplate` | External Prometheus | [ADR-0046](../02.decisions/0046-external-services-over-host-addresses.md) | not stated in this document |
+| Rollouts dashboard `rollouts.hy-k8s.home.arpa` | `argo-rollouts` dashboard | Browser users | [Rollouts Application](../../../gitops/apps/root/platform-rollouts-app.yaml) | DNS, TLS or ingress failure prevents browser access; the operator checks the route and certificate separately from controller health before restoring the declared path. |
+| Controller metrics `argo-rollouts:8090` | Argo Rollouts controller | In-cluster Alloy, remote-written to the external Prometheus | [ADR-0045](../02.decisions/0045-in-cluster-telemetry-collection.md) | A failed scrape or remote-write leaves telemetry incomplete; inspect the Alloy target and backend path without treating missing metrics as a healthy controller or a failed Rollout. |
+| `Rollout` and `AnalysisTemplate` CRDs | Application teams through workload manifests | Argo Rollouts controller | [Reference Rollout](../../../gitops/workloads/adminer/rollout.yaml) | Missing CRDs or a rejected AppProject kind prevents reconciliation; correct the dependency or reviewed allow-list in Git before retrying, without bypassing project admission. |
+| Analysis queries to `https://prometheus.hy.home.arpa` | Reference `AnalysisTemplate` | External Prometheus | [Reference analysis](../../../gitops/workloads/adminer/analysis-template.yaml), [ADR-0046](../02.decisions/0046-external-services-over-host-addresses.md) | Transport, TLS, credential or query errors are not a passing measurement. Inspect the AnalysisRun and restore its dependency; a failed stability measurement follows the declared abort path instead of authorizing promotion. |
 
 #### Runtime Behavior
 
@@ -126,7 +126,12 @@ The platform owns the controller install, dashboard access, AppProject permissio
 
 ##### Failure and Recovery
 
-No separate failure boundary is recorded in this description; the failure and recovery behavior it states is in [Scenarios](#scenarios).
+The interface table states the failure boundaries of the declared design;
+it records no live failure or recovery observation. The
+[Rollouts runbook](../../05.operations/03.runbooks/0004-rollouts-notifications-headlamp-runbook.md)
+owns authorized status checks, promotion, abort and recovery. Repair the
+affected desired-state or external dependency first; a notification or
+dashboard response does not establish a successful analysis or rollout.
 
 #### Quality Scenarios
 

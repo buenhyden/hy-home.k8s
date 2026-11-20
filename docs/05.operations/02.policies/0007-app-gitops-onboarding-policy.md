@@ -1,6 +1,6 @@
 ---
 title: "앱 GitOps 온보딩 정책"
-version: "2.0.0"
+version: "2.0.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -276,6 +276,8 @@ platform은 이 운영 정책을 유지한다. 적용 대상은 [Applies To](#ap
 #### Enforcement
 
 ##### Mechanisms
+
+- ONBOARD-R013은 apex path가 필요한 경우에만 적용한다. `scripts/validation/platform/ingress.py`의 현재 고정 앱 경로 검사는 새 앱을 자동으로 등록하지 않는다. 변경 검토자가 새 redirect Ingress와 `scripts/validate-infrastructure-contracts.sh`의 앱 목록을 함께 대조하고, 선택된 정적 검증 및 RUN-0010의 실제 ingress/TLS 결과를 별도 증거로 남긴다. 둘 중 하나가 없으면 이 규칙을 충족했다고 판정하지 않는다.
 
 - 정적 검증 증적: GitOps 구조, k8s manifest, secret-handling 검증이 통과해야 한다.
 - 런타임 증적: 승인된 온보딩 후 명명된 ArgoCD Application의 `Synced/Healthy`, Rollout 상태, 실제 Pod ready/desired 컨테이너 수와 Ingress TLS 상태를 확인한다. 현재 sample의 `2/2`를 모든 새 앱의 고정 컨테이너 수로 취급하지 않는다.

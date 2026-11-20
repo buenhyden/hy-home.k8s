@@ -1,6 +1,6 @@
 ---
 title: "90.references"
-version: "1.0.0"
+version: "1.0.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -49,7 +49,7 @@ platform은 docs/90.references의 탐색 경로를 유지한다. 소유 파일�
 - 배포 승인, live mutation, secret-bearing procedure
 - 매니페스트·설정·잠금 파일을 복제한 현재 버전 인벤토리
 - generated wiki, redirect, 이전 본문 복제본, 영구 corpus census
-- `audits/`, `data/`, `research/` 밖의 느슨한 authored reference
+- `02.audits/`, `03.data/`, `01.research/` 밖의 느슨한 authored reference
 
 Stage 90 자료는 공통 거버넌스(`.agents/`)와 현재 Stage 01/02/03/05 owner를
 인용할 수 있지만,
@@ -67,9 +67,9 @@ Stage 98의 문서나 파일을 인용하거나 cross-link하지 않는다. 일�
 
 ```text
 docs/90.references/
-├── audits/
-├── data/
-├── research/
+├── 02.audits/
+├── 03.data/
+├── 01.research/
 ├── AGENTS.md
 ├── CLAUDE.md
 └── README.md
@@ -107,8 +107,8 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
    공통 거버넌스와 Stage 01/02/03/05의 canonical owner에 작성한다.
 2. Reference로 유지할 자료는 고유 목적, provenance, observation date,
    authority boundary, freshness trigger, 현재 consumer를 확인한다.
-3. 현재 pack은 `audits/####-<slug>/`, `data/####-<slug>/`,
-   `research/####-<slug>/` 중 하나에만 둔다. `####`는 category 안에서 고유한
+3. 현재 pack은 `02.audits/####-<slug>/`, `03.data/####-<slug>/`,
+   `01.research/####-<slug>/` 중 하나에만 둔다. `####`는 category 안에서 고유한
    네 자리 번호이고 `<slug>`는 날짜가 아닌 의미 기반 kebab-case 이름이다.
 4. pack `README.md`는 category와 일치하는
    [Audit](../99.templates/02.templates/90.references/audit-pack.template.md),
