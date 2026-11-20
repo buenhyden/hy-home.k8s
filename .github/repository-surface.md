@@ -1,6 +1,6 @@
 ---
 title: "GitHub Configuration Hub"
-version: "0.7.0"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -8,9 +8,27 @@ updated: "2026-11-20"
 ---
 # GitHub Configuration Hub
 
-## Service
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 README는 .github의 사용·연결·검사 위치를 찾는 운영자와 기여자를 안내한다. 현재 역할은 [Service](#service)와 [Usage](#usage)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 .github의 진입 경로를 유지한다. 이 경로의 파일과 경계는 [Purpose](#purpose), 사용 조건은 [Usage](#usage), 검사는 [Checks](#checks)가 설명한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Service
+
+##### Purpose
 
 이 문서는 `hy-home.k8s`의 GitHub 자동화 surface를 안내하는 routing 문서다.
 정책의 정본은 아니다. `.github/README.md`는 GitHub가 저장소 프로필 페이지로
@@ -24,9 +42,9 @@ updated: "2026-11-20"
 - `SECURITY.md` - 취약점 신고 안내
 - `AGENTS.md` - 이 폴더의 에이전트 지시
 
-### Interfaces
+##### Interfaces
 
-#### Policy Routing
+###### Policy Routing
 
 - branch 전략은 `docs/00.workspace/03.process/git.md`가 소유한다.
   `workflows/ci.yml`의 `ci-summary` job은 PR의 base와 source prefix를
@@ -70,7 +88,7 @@ updated: "2026-11-20"
 - PR 작성자와 리뷰어 안내는 `PULL_REQUEST_TEMPLATE.md`에 있다.
 - 전체 SHA로 Action을 고정하는 규칙은 저장소 품질 gate가 강제한다.
 
-#### Workflow Roles
+###### Workflow Roles
 
 - `ci.yml`의 `ci-summary`는 main 대상 push·pull request·`workflow_dispatch`
   에서 PR branch·title·새 commit metadata를 처리한다. PR title과 commit
@@ -99,7 +117,7 @@ updated: "2026-11-20"
   GitHub Release는 승인된 정확한 main commit의 단일 producer가 맡는다.
   저장소 파일만으로 실제 게시나 원격 설정을 인증하지 않는다.
 
-#### Workflow Responsibility Matrix
+###### Workflow Responsibility Matrix
 
 | Workflow | Role | Trigger / scope | Required evidence | Boundary |
 | --- | --- | --- | --- | --- |
@@ -107,13 +125,13 @@ updated: "2026-11-20"
 | `greetings.yml` | Repository maintenance greeting automation. | Runs on issue or PR intake events. | Posts onboarding guidance only. | Not a QA gate, not a reviewer approval, and not deployment automation. |
 | `labeler.yml` | Repository maintenance labeling automation. | Runs on every opened or synchronized pull request; the action matches paths itself. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |
 
-#### Security Boundary
+###### Security Boundary
 
 이 문서는 secret, credential, 권한 경계만을 다루는 내용을 따로 두지 않는다. 그런 내용을 두게 되면 여기에 적는다.
 
-## Usage
+#### Usage
 
-### Prerequisites
+##### Prerequisites
 
 이 디렉터리는 PR branch·title·새 commit metadata, 선택된 PR style 검사와 저장소 유지보수
 자동화를 제공한다.
@@ -121,15 +139,15 @@ updated: "2026-11-20"
 full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 또는 release
 게시자가 아니다.
 
-### Selected Start
+##### Selected Start
 
 이 문서는 GitHub 자동화 surface를 안내하는 routing 문서이며 로컬 작업 절차를 담지 않는다.
 
-## Checks
+#### Checks
 
-### Readiness
+##### Readiness
 
-#### Source Basis
+###### Source Basis
 
 - 현재 workflow 계약은 `.github/workflows/*.yml`과 공통
   [Quality policy](../docs/00.workspace/04.quality/quality.md)가 소유한다.
@@ -137,10 +155,30 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 - 외부 도구 계약이 바뀌면 공식 출처를 확인하고 현재 소유자와 소비자를
   함께 갱신한다.
 
-### Failure Handling
+##### Failure Handling
 
 이 문서는 운영 관측과 복구만을 다루는 내용을 따로 두지 않는다. 그런 내용을 두게 되면 여기에 적는다.
 
-#### Runbook Links
+###### Runbook Links
 
 이 문서는 runbook이나 운영 가이드 링크를 따로 두지 않는다. 연결할 운영 문서가 생기면 여기에 연결한다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

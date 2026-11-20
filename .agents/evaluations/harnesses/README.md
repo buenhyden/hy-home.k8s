@@ -1,23 +1,41 @@
 ---
 title: "Agent Evaluation Trial Evidence"
-version: "0.4.1"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 
 # Agent Evaluation Trial Evidence
 
-## Responsibility
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 README는 .agents/evaluations/harnesses에서 현재 소유 문서를 찾는 작성자와 검토자를 안내한다. 이 컬렉션의 목적은 [Purpose](#purpose)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 .agents/evaluations/harnesses의 탐색 경로를 유지한다. 소유 파일은 [Paths](#paths), 진입 방법은 [Usage](#usage)에 연결하며 개별 문서의 계약은 해당 정본이 소유한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Responsibility
+
+##### Purpose
 
 이 라우터는 같은 작업과 기준선에서 관측한 `noSkill`, `withSkill` 출력의
 진입점이다. 안내는 [평가 root](../README.md)가, 승인과 실제 실행 상태는 원래
 Task가 소유한다.
 
-#### Inputs and Outputs
+###### Inputs and Outputs
 
 실제 cycle마다 작업과 기준선 식별, 두 조건의 입력과 원시 출력, provider·세션
 출처, 한 번의 짝 실행, 신호, 기준 ID, 불완전한 시도를 보관한다. 생성된 예시,
@@ -32,15 +50,15 @@ cycle 하나는 정확히
 [상위 라우터](../README.md)가 밝히고, [양식](../templates/README.md)은 schema를
 복사하지 않고 Stage 99를 가리킨다.
 
-### Excluded Responsibilities
+##### Excluded Responsibilities
 
 이 라우터는 안내와 집계 결과를 소유하지 않는다. 안내는 평가 root가, 승인과 실제 실행 상태는 원래 Task가 소유하며, 유일한 집계 결과 소유자는 상위 라우터가 밝힌다. 양식의 schema는 복사하지 않고 Stage 99를 가리키며, 생성된 예시, 실행하지 않은 조건, 과거 합성 응답은 관측된 실행이 아니다.
 
-## Current Contents
+#### Current Contents
 
-### Paths
+##### Paths
 
-#### Item Index
+###### Item Index
 
 받아들인 직접 cycle 디렉터리를 여기에 한 번씩 색인한다. 실행하지 않은 시도를 나타내는
 자리표시 행은 두지 않는다.
@@ -48,15 +66,15 @@ cycle 하나는 정확히
 | Path | Purpose |
 | --- | --- |
 
-### Owners
+##### Owners
 
 이 README는 분류 표를 따로 두지 않는다. 분류 표를 두게 되면 여기에 둔다.
 
-## Usage
+#### Usage
 
-### Entry Points
+##### Entry Points
 
-#### Add and Find
+###### Add and Find
 
 두 조건을 수집하기 전에 작업과 기준선을 고정한다. 비교를 재현할 수 있도록
 skill과 판본, provider·세션 입력을 보존한다. 주장된 점수마다 원시 관측과 선언된
@@ -66,16 +84,36 @@ skill과 판본, provider·세션 입력을 보존한다. 주장된 점수마다
 추가하고, rubric이 요구하면 사람 보정과 함께 점수를 유일한 집계 소유자에게
 넘긴다.
 
-#### Upstream and Downstream
+###### Upstream and Downstream
 
 - [Evaluation root](../README.md)
 - [Evaluation forms router](../templates/README.md)
 
-#### Policy and Templates
+###### Policy and Templates
 
 - [Agent evaluator responsibility](../../roles/agent-evaluator.md)
 - [Quality policy](../../../docs/00.workspace/04.quality/quality.md#agent-evaluation-evidence)
 
-### Checks
+##### Checks
 
 상태와 종료 규칙은 위 Add and Find에 함께 있다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

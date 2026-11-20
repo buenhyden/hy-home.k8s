@@ -28,6 +28,12 @@ from document_contracts import (
     local_extension_names,
     registry_schema_version,
     task_criterion_ids,
+    is_criterion_id,
+)
+from common_document_contract import (
+    CommonDocumentError,
+    has_common_envelope,
+    payload_markdown,
 )
 from semver_grammar import numeric_version_order
 
@@ -654,11 +660,7 @@ def _task_item_edge_diagnostics(
         if linked is not None:
             return linked
         plain = tuple(part.strip() for part in cell.split(","))
-        return (
-            plain
-            if all(re.fullmatch(r"VAL-[A-Z0-9-]+-[0-9]{3}", part) for part in plain)
-            else None
-        )
+        return plain if all(is_criterion_id(part) for part in plain) else None
 
     def effective_status(row: Mapping[str, str], header: str | None) -> str:
         value = row["Status"].strip()
@@ -1698,7 +1700,16 @@ def document_from_text(
         profile_issue = f"frontmatter type is unknown: {claimed_profile_id!r}"
     status = metadata.get("status")
     if status is None:
-        status = task_status(metadata, text, selected_profile) or None
+        semantic = text
+        if has_common_envelope(text):
+            try:
+                semantic = payload_markdown(
+                    text, profile_id=selected_profile.profile_id
+                )
+            except CommonDocumentError:
+                # The Markdown profile gate reports malformed common shells.
+                pass
+        status = task_status(metadata, semantic, selected_profile) or None
     if not isinstance(status, str):
         return LifecycleDocument(
             path=path,

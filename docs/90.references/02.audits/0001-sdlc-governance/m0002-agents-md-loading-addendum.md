@@ -1,18 +1,36 @@
 ---
 title: "AGENTS.md Loading Addendum"
-version: "0.2.1"
+version: "1.0.0"
 type: "reference/audit"
 status: "draft"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-20"
 artifact_id: "AUD-0001-m0002"
 ---
 
 # Reference: AGENTS.md Loading Addendum
 
-## Scope
+## 문서 개요
 
-### Subject
+### 목적과 독자
+
+이 감사 문서는 AGENTS.md Loading Addendum의 관찰과 시정 항목을 확인하는 감사자와 소유자에게 근거를 제공한다. 주제는 [Subject](#subject)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 이 감사 기록을 유지한다. 읽은 대상은 [Read Coverage](#read-coverage), 발견과 조치는 [Findings](#findings) 및 [Actions](#actions)에 기록한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Scope
+
+##### Subject
 
 This dated addendum to [m0001](./m0001-sdlc-governance-audit.md) records how
 the two providers load folder `AGENTS.md` files, observed on 2026-11-06 at
@@ -20,29 +38,29 @@ the two providers load folder `AGENTS.md` files, observed on 2026-11-06 at
 publication. Readers are the operator and agents that change provider
 behavior.
 
-#### Reference Type
+###### Reference Type
 
 A dated assurance assessment. It informs SPEC-0149 and the folder rule
 reading obligation in `.agents/governance/agent-execution.md`.
 
-#### Authority Boundary
+###### Authority Boundary
 
 This report holds observations and findings only. Provider loading rules live
 in `.claude/provider.md`, `.codex/provider.md` and
 `.agents/governance/agent-execution.md`.
 
-#### Related Documents
+###### Related Documents
 
 - [Audit pack](./README.md)
 - [m0001 SDLC governance audit](./m0001-sdlc-governance-audit.md)
 - [Agent Execution Policy](../../../../.agents/governance/agent-execution.md)
 
-### Read Coverage
+##### Read Coverage
 
 The question: does each provider receive the `AGENTS.md` of every folder it
 works in? Excluded: user-level provider settings and managed settings.
 
-#### Criteria and Inspected Surface
+###### Criteria and Inspected Surface
 
 | Criterion | In-scope surface |
 | --- | --- |
@@ -50,14 +68,14 @@ works in? Excluded: user-level provider settings and managed settings.
 | Hook delivery to the model | `scripts/provider_write_guard.py` output and both adapters |
 | Stage 90 member immutability | `docs/90.references/AGENTS.md` rule 3 and m0001 history |
 
-#### Sources
+###### Sources
 
 Claude Code memory and hooks documentation and the Codex AGENTS.md and hooks
 documentation, read 2026-11-06; repository history at `296e3379`.
 
-## Findings
+#### Findings
 
-### Evidence
+##### Evidence
 
 | Observation | Source and input | Result |
 | --- | --- | --- |
@@ -68,7 +86,7 @@ documentation, read 2026-11-06; repository history at `296e3379`.
 | m0001 was published in `73b1df48` and then edited in `d4338908`, `041add36`, `342fbe6c`, `2071e8c2` and `c3e343a0` | `git log` of the member | Rule 3 was not followed; no validator enforces it |
 | A Codex probe in `docs/03.specs` stopped with a usage-limit error until 2026-11-09 18:37 | `codex exec -s read-only`, 2026-11-06 | F-06 stays UNKNOWN |
 
-### Conflicts and Gaps
+##### Conflicts and Gaps
 
 | Finding ID | Requirement | Evidence | Classification | Action | Owner | Acceptance |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -82,9 +100,9 @@ documentation, read 2026-11-06; repository history at `296e3379`.
 | F-09: Neither provider loaded folder `AGENTS.md` files outside its native path; Claude loaded none | P1 | Memory and Codex documentation |
 | F-10: m0001 was rewritten five times after publication against rule 3 | P2 | m0001 history |
 
-## Actions
+#### Actions
 
-### Owners
+##### Owners
 
 | Remediation | Owner | Due or decision date |
 | --- | --- | --- |
@@ -93,7 +111,7 @@ documentation, read 2026-11-06; repository history at `296e3379`.
 | F-10: later changes to this pack go into a new dated member; m0001 is left as it now stands, because restoring its published bytes would restore links to a deleted package; `validate-document-contract-registry.py` now refuses such a rewrite against the staged index, including a rename Git pairs (`REFERENCE_PUBLISHED_REWRITE`, SPEC-0150); an unpaired delete-and-add escapes it, and the lifecycle validator separately refuses a `published` member returning to `draft` | platform | Decided and enforced 2026-11-06 |
 | F-06: repeat the Codex probe after the limit resets | operator | 2026-11-09 or later |
 
-### Acceptance Conditions
+##### Acceptance Conditions
 
 Claude delivery and Codex delivery are recorded in the SPEC-0149 Task, recovered
 with `git show ea4e36be:docs/03.specs/0149-agents-md-hook-context/tasks/tsk-0001-agents-md-hook-context.md`.
@@ -103,7 +121,27 @@ Codex delivery is unobserved until the usage limit resets; whether codex-cli
 not survive a context compaction, so rules supplied before one are not
 supplied again.
 
-#### Review and Freshness
+###### Review and Freshness
 
 Refresh when either provider changes how it loads instructions or hooks, or
 when the guard output changes.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

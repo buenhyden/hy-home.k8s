@@ -1,18 +1,36 @@
 ---
 title: "Reference: Git Provenance and Superseded Record Citation"
-version: "0.3.1"
+version: "1.0.0"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-20"
 artifact_id: "RES-0002-m0001"
 ---
 
 # Reference: Git Provenance and Superseded Record Citation
 
-## Question and Scope
+## 문서 개요
 
-### Question
+### 목적과 독자
+
+이 연구 문서는 Reference: Git Provenance and Superseded Record Citation의 질문·근거·적용 한계를 검토하는 조사자와 후속 문서 작성자를 위한 기록이다. 질문은 [Question](#question)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 이 조사의 범위를 유지한다. 포함한 관찰·제외는 [Scope](#scope), 원천 자료는 [Sources](#sources)에서 확인한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Question and Scope
+
+##### Question
 
 This dated reference records what primary sources say about naming and keeping
 Git objects, keeping superseded decisions and incident records, signalling moved
@@ -22,7 +40,7 @@ ADR-0039. ADR-0039 and its successor ADR-0040 left the tree (Git history
 recovers them); on 2026-11-05 the current Stage 98 decision is
 [ADR-0053](../../../00.workspace/02.architecture/02.decisions/0053-unvalidated-archive.md).
 
-#### Research Questions
+###### Research Questions
 
 - How does Git name, keep and lose objects, so that a deleted document can be
   recovered from history? (informs ADR-0053's Git-history recovery clause)
@@ -30,11 +48,11 @@ recovers them); on 2026-11-05 the current Stage 98 decision is
   moved URLs, removing sensitive data, schema annotations and Markdown link
   parsing?
 
-#### Reference Type
+###### Reference Type
 
 Research reference with source-backed claims and stated limits.
 
-### Scope
+##### Scope
 
 Included: Git revision syntax, object inspection, garbage collection, clone
 depth and filters; the original ADR article; SRE postmortem practice; HTTP
@@ -43,16 +61,16 @@ conditionals, annotations, and `format`; CommonMark links and code; Diátaxis.
 Excluded: hosting-provider garbage collection policy, digital preservation
 certification, and any runtime behavior.
 
-#### Method
+###### Method
 
 Each primary source was fetched on its observation date and a claim is recorded
 only with a captured quotation. A source that could not be fetched is recorded
 as `unreachable` without a claim. External statements are kept apart from this
 repository's local choices.
 
-## Sources
+#### Sources
 
-### Primary Sources
+##### Primary Sources
 
 | Source ID | Source | Version | Checked At | Finding | Application | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -98,22 +116,24 @@ repository's local choices.
 | [Diátaxis](https://diataxis.fr/)                                                                                                                            | Not graded | 2026-09-15 | Fetched                                                                                                                 |
 | [PREMIS Ontology](https://www.loc.gov/standards/premis/ontology/index.html)                                                                                 | Not graded | 2026-09-15 | `unreachable`: HTTP 403 twice, and `https://www.loc.gov/standards/premis/v3/` also returned HTTP 403; no claim recorded |
 
-#### Related Documents
+###### Related Documents
 
 - [Research pack](README.md)
 - [ADR-0053](../../../00.workspace/02.architecture/02.decisions/0053-unvalidated-archive.md)
 - Spec 0082, ADR-0039 and ADR-0040 left the tree; Git history recovers them (see the pack README)
 
-### Versions and Dates
+##### Versions and Dates
 
-#### Review and Freshness
+###### Review and Freshness
 
 Refresh when a cited Git, HTTP, JSON Schema, or CommonMark section changes, when
 PREMIS becomes reachable and an object, event, agent, or rights distinction is
 needed, or when ADR-0053 or its successor revises retention or citation. Current
 truth stays with the governance and registry owners named above.
 
-##### 2026-09-28 Retention and Provenance Addendum
+<a id="2026-09-28-retention-and-provenance-addendum"></a>
+
+**2026-09-28 Retention and Provenance Addendum**
 
 The earlier 2026-09-15 findings and source results above remain their dated evidence. The sources below were read directly on 2026-09-28 to assess the proposed Archive standard; they do not grant repository approval. The current local decision was ADR-0040 when this addendum was written; ADR-0040 has since left the tree and ADR-0053 (2026-11-05) supersedes it. The "frozen exact-byte bodies", "Archive index" and "successor decision" mentioned below describe that earlier local model, which ADR-0053 removed.
 
@@ -133,9 +153,9 @@ The earlier 2026-09-15 findings and source results above remain their dated evid
 | Git, git-ls-files | https://git-scm.com/docs/git-ls-files | 2026-09-28 | Read directly; stage and eol expose index/worktree facts |
 | Git, gitattributes | https://git-scm.com/docs/gitattributes | 2026-09-28 | Read directly; path attributes and checkout transformations |
 
-## Analysis
+#### Analysis
 
-### Claim-Source Matrix
+##### Claim-Source Matrix
 
 | Claim | Source | Verification state |
 | --- | --- | --- |
@@ -149,7 +169,7 @@ The earlier 2026-09-15 findings and source results above remain their dated evid
 | Link-like text in code is not a link | CommonMark 0.31.2 (2026-09-15) | verified |
 | PREMIS object, event, agent and rights distinctions | PREMIS Ontology | unverified (`unreachable`) |
 
-### Findings
+##### Findings
 
 Git recovers a deleted document by name from any reachable commit, but a
 shallow or partial clone, or an object pruned after loss of every ref, can lack
@@ -158,7 +178,7 @@ superseded records and set no retention period or citation policy, so those
 choices are local. Format keywords and Markdown code are not enforcement or
 links, which bears on any comparison that rewrites them.
 
-#### Git object naming and availability
+###### Git object naming and availability
 
 - `<rev>:<path>` "names the blob or tree at the given path in the tree-ish
   object named by the part before the colon" (gitrevisions, Specifying
@@ -176,7 +196,7 @@ links, which bears on any comparison that rewrites them.
   requests "a subset of reachable objects" (git-clone). A shallow or partial
   clone may lack the object an envelope names.
 
-#### Superseded decisions and incident records
+###### Superseded decisions and incident records
 
 - The original ADR article states: "If a decision is reversed, we will keep the
   old one around, but mark it as superseded", with a reference to its
@@ -189,7 +209,7 @@ links, which bears on any comparison that rewrites them.
   with "both an owner and a tracking number" (SRE Workbook, Postmortem Culture).
   Neither chapter sets a retention period or a citation policy.
 
-#### Public URLs and sensitive data
+###### Public URLs and sensitive data
 
 - HTTP 301 and 308 mean the resource "has been assigned a new permanent URI",
   and 410 means it is "no longer available at any location" and likely
@@ -200,7 +220,7 @@ links, which bears on any comparison that rewrites them.
   (GitHub Docs, Removing sensitive data). This is hosting-product guidance, and
   it is why a history rewrite cannot be a routine retention step.
 
-#### Schema conditionals and annotations
+###### Schema conditionals and annotations
 
 - `if`/`then`/`else` applies `then` only when `if` is valid, and
   `dependentRequired` requires properties when a given property is present
@@ -211,7 +231,7 @@ links, which bears on any comparison that rewrites them.
   proof that a validator enforces it. These guide pages are explanatory, not the
   normative specification.
 
-#### Markdown links and code
+###### Markdown links and code
 
 - A link reference definition "does not correspond to a structural element of a
   document", and code fence content "is treated as literal text, not parsed as
@@ -219,35 +239,55 @@ links, which bears on any comparison that rewrites them.
   link, so a comparison that rewrites it changes bytes a renderer never treats
   as links.
 
-#### Documentation purpose
+###### Documentation purpose
 
 - Diátaxis "identifies four distinct needs, and four corresponding forms of
   documentation" (diataxis.fr). A retained body keeps the purpose it had; an index
   is navigation, not a fifth form.
 
-### Alternatives
+##### Alternatives
 
 This reference weighs no design alternatives, because it records what primary sources say; the local choices belong to ADR-0053, and a later member that compares options records them here.
 
-## Application and Limits
+#### Application and Limits
 
-### Design Implications
+##### Design Implications
 
 Local retention, citation and validation decisions belong to
 [ADR-0053](../../../00.workspace/02.architecture/02.decisions/0053-unvalidated-archive.md) and
 its successors; this reference only informs them.
 
-### Unverified Conditions
+##### Unverified Conditions
 
 PREMIS was `unreachable` (HTTP 403) and supports no claim. The JSON Schema pages
 are explanatory. Hosting-provider garbage collection policy and preservation
 certification are outside the scope. Observations date from 2026-09-15 and
 2026-09-28 and were not re-fetched on 2026-11-05.
 
-#### Authority Boundary
+###### Authority Boundary
 
 A claim here states what an external source documents. Whether this repository
 retains, cites, or validates something is decided by
 [common governance](../../../../.agents/README.md), the Stage 99 registry, and
 [ADR-0053](../../../00.workspace/02.architecture/02.decisions/0053-unvalidated-archive.md).
 This reference is not policy.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

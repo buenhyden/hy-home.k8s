@@ -1,20 +1,38 @@
 ---
 title: "Claude Provider Notes"
-version: "1.10.0"
+version: "2.0.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-20"
 ---
 
 # Claude Provider Notes
 
-## Overview
+## 문서 개요
+
+### 목적과 독자
+
+Workers and maintainers use these notes for the `claude` execution surface.
+
+### 책임과 적용 범위
+
+Native loading and configuration are scoped by [Authority Boundary](#authority-boundary) and [Current Contract](#current-contract); common policy owns shared rules.
+
+## 내용 계약
+
+### 입력과 전제
+
+Read the actual client identity, registry and common execution policy before applying provider claims.
+
+### 본문과 규칙
+
+#### Overview
 
 Describe Claude-native loading, permissions, and hooks without duplicating
 shared execution policy or the agent roster.
 
-## Authority Boundary
+#### Authority Boundary
 
 Root `CLAUDE.md` is the thin Claude gateway and must not import the Codex
 gateway. `.claude/CLAUDE.md` is the local baseline;
@@ -22,7 +40,7 @@ gateway. `.claude/CLAUDE.md` is the local baseline;
 Their limit is set in
 [agent execution](../.agents/governance/agent-execution.md#owner).
 
-## Governance Context
+#### Governance Context
 
 Load the gateway, [work lifecycle](../.agents/workflows/work-lifecycle.md), relevant
 responsibility, and current Task. [Claude bindings](bindings.json) own native
@@ -31,7 +49,7 @@ values. The neutral registry owns responsibility and permission-class meaning.
 A role's native departure is declared in the binding table; its ceiling is
 [SAFE-R019](../.agents/governance/approval-and-safety.md#execution-controls).
 
-## Current Contract
+#### Current Contract
 
 Each `.claude/skills/<id>` is a relative link to
 `../../.agents/skills/<id>`. `disable-model-invocation: true` requires explicit
@@ -185,16 +203,36 @@ See [subagent fields](https://code.claude.com/docs/en/sub-agents),
 [model IDs](https://support.claude.com/en/articles/11940350-claude-code-model-configuration),
 and [settings](https://code.claude.com/docs/en/settings).
 
-## Validation and Refresh
+#### Validation and Refresh
 
 Validate registry/projection semantics, tool metadata, settings, and hook
 configuration after relevant changes. Separately evidence native discovery,
 permission enforcement, hooks, model resolution, and authenticated operation.
 Repository-static or hosted CI results cannot establish runtime success.
 
-## Related Documents
+#### Related Documents
 
 - [Claude Baseline](CLAUDE.md)
 - [Agent Registry](../.agents/roles/registry.json)
 - [Model Selection](../.agents/governance/model-selection.md)
 - [Quality Policy](../docs/00.workspace/04.quality/quality.md)
+
+## 적용과 확인
+
+### 적용 방법
+
+Follow the provider contract in its supported execution context.
+
+### 확인 기준
+
+Configuration checks and runtime observations are separate evidence.
+
+## 관계와 출처
+
+### 관련 문서
+
+The related documents in the payload link common policy and provider owners.
+
+### 외부 근거
+
+Repository policy and cited runtime observations support these claims; vendor references grant no authority.

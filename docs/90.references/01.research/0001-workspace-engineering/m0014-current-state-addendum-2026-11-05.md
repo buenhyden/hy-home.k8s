@@ -1,18 +1,36 @@
 ---
 title: "Reference: Current-State Addendum 2026-11-05"
-version: "0.2.1"
+version: "1.0.0"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-20"
 artifact_id: "RES-0001-m0014"
 ---
 
 # Reference: Current-State Addendum 2026-11-05
 
-## Question and Scope
+## 문서 개요
 
-### Question
+### 목적과 독자
+
+이 연구 문서는 Reference: Current-State Addendum 2026-11-05의 질문·근거·적용 한계를 검토하는 조사자와 후속 문서 작성자를 위한 기록이다. 질문은 [Question](#question)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 이 조사의 범위를 유지한다. 포함한 관찰·제외는 [Scope](#scope), 원천 자료는 [Sources](#sources)에서 확인한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Question and Scope
+
+##### Question
 
 This addendum records, on 2026-11-05, where the local repository statements
 in the published members m0001 to m0012 of this pack no longer describe the
@@ -22,7 +40,7 @@ member with the matching row below. It also records the passages inside
 those members that contradict or repeat each other, so a reader knows which
 statement is the latest.
 
-#### Research Questions
+###### Research Questions
 
 1. Which local claims of m0001 to m0012 does the current repository
    contradict, and what does it say instead?
@@ -30,16 +48,16 @@ statement is the latest.
    same member, and which one is the latest?
 3. Which passages inside one member are material repetitions?
 
-#### Reference Type
+###### Reference Type
 
 Repository-static observation of this repository at branch
 `docs/requirements-conformance` on 2026-11-05, compared line by line with the
 dated local claims of m0001 to m0012. No external source was re-read and no
 runtime, hosted or cluster state was observed.
 
-### Scope
+##### Scope
 
-#### Method
+###### Method
 
 Read-only reviews compared every local path, count, setting, state and
 owner named in m0001 to m0012 with the tracked tree, `git log` and the
@@ -47,9 +65,9 @@ registries by direct tracked-file reads, citing file and line. Findings marked u
 left out. Line numbers refer to the members as published at commit
 `726e1956`.
 
-## Sources
+#### Sources
 
-### Primary Sources
+##### Primary Sources
 
 | Source ID | Source | Version | Checked At | Finding | Application | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -69,22 +87,22 @@ left out. Line numbers refer to the members as published at commit
 | [`infrastructure/README.md`](../../../../infrastructure/README.md) and `gitops/` | Repository primary | 2026-11-05 | Platform and verifier facts |
 | [ADR-0054](../../../02.architecture/02.decisions/0054-platform-decision-current-state-amendment.md) and [ADR-0055](../../../00.workspace/02.architecture/02.decisions/0055-governance-decision-current-state-amendment.md) | Repository decision | 2026-11-05 | Current clause amendments |
 
-#### Related Documents
+###### Related Documents
 
 - [Pack router](README.md)
 - [Source ledger](m0012-source-coverage.md)
 - [Stage 90 rules](../../AGENTS.md)
 
-### Versions and Dates
+##### Versions and Dates
 
-#### Review and Freshness
+###### Review and Freshness
 
 Refresh this addendum, or add a later dated one, when a named owner, count or
 path changes again, or when a member of this pack is revised or succeeded.
 
-## Analysis
+#### Analysis
 
-### Claim-Source Matrix
+##### Claim-Source Matrix
 
 The repository-wide current state that most corrections below rely on:
 
@@ -105,9 +123,9 @@ The repository-wide current state that most corrections below rely on:
 | Static infrastructure checks are `scripts/validate-infrastructure-contracts.sh`; live verifiers are six `infrastructure/verify/verify-*.sh` scripts plus `run-all.sh` | `infrastructure/README.md`; `infrastructure/verify/` | verified 2026-11-05 |
 | Namespaces carry Pod Security labels (`platform` and `monitoring` restricted, other platform namespaces audit/warn restricted, `apps` baseline audit/warn, `istio-system` privileged); the adminer Rollout sets a pod and container `securityContext`; Alloy runs `v1.18.1`; thirteen declarations track `targetRevision: main` | `gitops/platform/namespaces/`; `gitops/workloads/adminer/rollout.yaml`; `gitops/platform/monitoring/alloy-k8s-logs.yaml`; `gitops/` | verified 2026-11-05 |
 
-### Findings
+##### Findings
 
-#### Superseded local claims per member
+###### Superseded local claims per member
 
 | Member | Superseded local claims (published line numbers) | Current state |
 | --- | --- | --- |
@@ -124,7 +142,7 @@ The repository-wide current state that most corrections below rely on:
 | m0011 | `contracts/agent-checkpoint.schema.json` and a closed checkpoint contract (111-117, 218-224, 274-277, 527); tiers with `progress.md` as durable owner (141-146); `memory/README.md`, `memory/progress.md`, `contracts/harness-contract.json` as existing (144, 306-311); provider memory described without the local disabled settings (43-45, 456-462); Stage 00 memory and checkpoint owners (439-443, 511-515) | Ignored checkpoints are optional recovery aids without a schema; memory rows of the matrix above |
 | m0012 | `.agents/agents/`, `docs/00.agent-governance/**`, Spec 052, `docs/04.execution/**`, `document-profiles.json`, `templates/sdlc/architecture/*`, `.github/README.md`, `infrastructure/tests/`, `scripts/validate-repo-quality-gates.sh`, `.gemini/`, `docs/90.references/llm-wiki/` (575, 674, 689, 718-724, 746-794, 808, 1026-1036, 1153-1192); five workflows and 12 roles / 4 surfaces / 48 adapters (572, 689, 770, 806, 842); pinned line references such as `.codex/CODEX.md:102-105` and `infrastructure/README.md:106-110` (821-859); SPEC-0124 and SPEC-0125 (445-490) | Rows of the matrix above; templates live under `docs/99.templates/templates/`; pinned line numbers no longer match and must be re-read; SPEC-0124 and SPEC-0125 left the tree and Git history recovers them |
 
-#### Contradictions inside a member
+###### Contradictions inside a member
 
 | Member | Earlier statement | Later or controlling statement |
 | --- | --- | --- |
@@ -138,7 +156,7 @@ The repository-wide current state that most corrections below rely on:
 | m0011 | Ledger "remains" and "confirmed" (306-311, 378-397) | Ledger retired (122-129, 223) |
 | m0012 | "Only WERPC-008 may delete predecessor files" and "records repository-static paths" (1317-1323) | Current provenance is external-only and no repository observation is made (34, 1329-1333); the earlier text is not a current rule |
 
-#### Material repetition inside a member
+###### Material repetition inside a member
 
 | Member | Repeated passages (lines) |
 | --- | --- |
@@ -160,13 +178,13 @@ m0003 (66-72, 203-231), m0004 (191-228), m0005 (141-152), m0008 (270-272,
 They are research recommendations of their dated cycles, not policy; the
 current rules are in `.agents/governance/`.
 
-### Alternatives
+##### Alternatives
 
 This addendum weighs no design alternatives, because it records where the local repository statements of m0001 to m0012 no longer describe the repository; a later member that compares options records them here.
 
-## Application and Limits
+#### Application and Limits
 
-### Design Implications
+##### Design Implications
 
 Navigation verified on 2026-11-16 (method not stated in this document). The GitHub configuration link in m0008
 names the former path. Use the
@@ -185,16 +203,36 @@ A later research cycle can succeed the most out-of-date members (m0004,
 m0008, m0012) with fresh members instead of relying on this addendum; the
 choice belongs to the pack owner.
 
-### Unverified Conditions
+##### Unverified Conditions
 
 Repository-static only; no runtime, hosted or cluster observation. Line
 numbers are fixed to the published members at `726e1956`. Findings the
 reviews marked uncertain are omitted.
 
-#### Authority Boundary
+###### Authority Boundary
 
 This addendum establishes only what the tracked files said on 2026-11-05. It
 is not a requirement, decision or policy. The current owners are the linked
 Stage 01, 02 and 05 documents, `.agents/governance/`, the registries and the
 implementing files. External-source claims in the members are not
 re-evaluated here.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

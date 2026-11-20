@@ -1,22 +1,40 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Operations Policy"
-version: "1.6.2"
+version: "2.0.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 artifact_id: "POL-0004"
 ---
 
 # Argo Rollouts, Notifications & Headlamp Operations Policy
 
-## Purpose and Scope
+## 문서 개요
 
-### Objective
+### 목적과 독자
+
+이 정책은 Argo Rollouts, Notifications & Headlamp Operations Policy의 운영 조건을 적용할 플랫폼 운영자와 변경 검토자를 위한 규칙이다. 정책 목표는 [Objective](#objective)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 이 운영 정책을 유지한다. 적용 대상은 [Applies To](#applies-to), 규칙과 집행 조건은 [Rules](#rules) 및 [Enforcement](#enforcement)가 소유한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Purpose and Scope
+
+##### Objective
 
 이 문서는 Argo Rollouts(점진적 배포), Argo Notifications(Slack 알림), Headlamp(클러스터 UI) 운영 통제 기준을 정의한다.
 
-### Applies To
+##### Applies To
 
 - Argo Rollouts — `argo-rollouts` namespace
 - Argo Notifications (ArgoCD 내장 컨트롤러) — `argocd` namespace
@@ -30,13 +48,13 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 - **Agents**: 운영 자동화 에이전트
 - **Environments**: Linux server local cluster
 
-#### Exclusions
+###### Exclusions
 
 범위에서 제외한다고 따로 표시한 항목은 없으며, chart 버전은 위 Applies To의 문단대로 각 Application manifest가 소유한다.
 
-## Rules
+#### Rules
 
-### Requirements
+##### Requirements
 
 | Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
@@ -98,7 +116,7 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 | ROLLOUT-R026 | required | active |
 | ROLLOUT-R027 | required | active |
 
-#### Argo Rollouts
+###### Argo Rollouts
 
 - `ROLLOUT-R001`
 - `ROLLOUT-R002`
@@ -113,7 +131,7 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 - `ROLLOUT-R011`
 - `ROLLOUT-R012`
 
-#### Argo Notifications
+###### Argo Notifications
 
 - `ROLLOUT-R013`
 - `ROLLOUT-R014`
@@ -124,7 +142,7 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 - `ROLLOUT-R019`
 - `ROLLOUT-R020`
 
-#### Headlamp
+###### Headlamp
 
 - `ROLLOUT-R021`
 - `ROLLOUT-R022`
@@ -134,18 +152,18 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 - `ROLLOUT-R026`
 - `ROLLOUT-R027`
 
-### Exceptions
+##### Exceptions
 
 - Rollouts analysis skip, notifications disablement, or Headlamp authentication changes require platform owner approval and a linked PR.
 - Live cluster changes follow the shared exception in [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions).
 
-#### Approval and Review
+###### Approval and Review
 
 예외 승인은 위 Exceptions의 platform owner 승인과 연결된 PR 요건을 따른다.
 
-## Enforcement
+#### Enforcement
 
-### Mechanisms
+##### Mechanisms
 
 | Control Area | Required Evidence | Runbook Owner |
 | --- | --- | --- |
@@ -163,28 +181,28 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 
 - **Runbook**: [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../03.runbooks/0004-rollouts-notifications-headlamp-runbook.md)
 
-### Limits
+##### Limits
 
 Rollout과 AnalysisTemplate 참조의 정적 검사는 REQ-0004 workload onboarding 시나리오의 source 쪽 입력일 뿐이다. 대시보드 동작, Slack 전달, Headlamp 접근과 실제 promotion 결과는 이름 있는 환경의 운영자 증거가 필요하며, 이 정책은 제품 임계값의 작성 원본이 아니다.
 
-## Ownership
+#### Ownership
 
-### Owner
+##### Owner
 
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/02.decisions/0014-current-local-gitops-platform-contract.md)
 - **ADR-0011**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/02.decisions/0011-argo-rollouts-progressive-delivery.md)
 - **ADR-0012**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/02.decisions/0012-argo-notifications-slack.md)
 - **ADR-0054**: [`../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md`](../../02.architecture/02.decisions/0054-platform-decision-current-state-amendment.md)
 
-#### Responsibilities
+###### Responsibilities
 
 책임 주체는 아래 Lifecycle Traceability 표의 Control owner 열에 적혀 있다.
 
-### Review Triggers
+##### Review Triggers
 
 변경 검토 시점은 위 Enforcement의 운영 변경 시 즉시 및 정기 분기 검토 항목을 따른다.
 
-### Lifecycle Traceability
+##### Lifecycle Traceability
 
 - **Rollouts Spec**: SPEC-0004 (left the tree; Git history recovers it)
 - **Notifications Spec**: SPEC-0005 (left the tree; Git history recovers it)
@@ -194,3 +212,23 @@ Rollout과 AnalysisTemplate 참조의 정적 검사는 REQ-0004 workload onboard
 | --- | --- | --- |
 | N/A — SPEC-0004 left the tree and is recovered from Git history, so no eligible upstream document is available to link as the promoting owner | Platform Owner for promotion approval, analysis exceptions, CRDs, dashboard, and rollback evidence | Argo Rollouts chart values, Rollout resources, AnalysisTemplate review, dashboard ingress/TLS, and runbook evidence |
 | N/A — SPEC-0005 left the tree and is recovered from Git history, so no eligible upstream document is available to link as the promoting owner | Platform Owner for subscription policy; secret owner for the Slack credential path | OpenBao-to-ESO secret contract, ArgoCD notifications ConfigMap and annotations, Rollouts controller notification values, controller logs, and plaintext-secret gates |
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

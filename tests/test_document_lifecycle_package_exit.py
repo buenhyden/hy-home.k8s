@@ -213,6 +213,7 @@ class PackageExitStagedWiringTest(unittest.TestCase):
         target.write_text(json.dumps(raw))
         for relative in {
             "docs/99.templates/01.contracts/document-profile.schema.json",
+            "docs/99.templates/01.contracts/common-document-contract.json",
             *(
                 item["template_source"]
                 for item in raw["profiles"]

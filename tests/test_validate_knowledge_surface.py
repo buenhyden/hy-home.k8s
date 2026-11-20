@@ -10,7 +10,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from tests.form_headings import form_body
+from tests.form_headings import common_shell, form_body
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
@@ -58,7 +58,10 @@ def load_validator():
 
 
 def document(
-    rows: str, prose: str = "This map points at owners and states no policy of its own."
+    rows: str,
+    prose: str = "This map points at owners and states no policy of its own.",
+    *,
+    common_envelope: bool = False,
 ) -> str:
     sections = {
         "Overview": [prose],
@@ -70,10 +73,11 @@ def document(
         "Validation and Refresh": ["The validator judges this file."],
         "Related Documents": ["- none"],
     }
+    body = form_body("knowledge-map", sections)
     return (
         FRONTMATTER
         + "# Sample Map\n\n"
-        + "\n\n".join(form_body("knowledge-map", sections))
+        + "\n\n".join(common_shell(body) if common_envelope else body)
         + "\n"
     )
 
@@ -89,6 +93,15 @@ class KnowledgeSurfaceValidatorTests(unittest.TestCase):
         (self.root / "owner").mkdir()
         (self.root / "owner" / "README.md").write_text(OWNER_TEXT, encoding="utf-8")
         self.surface = surface
+
+    def test_common_shell_preserves_pointer_rows_and_rejects_empty_table(self):
+        self.write_readme("sample.md")
+        sample = self.surface / "sample.md"
+        row = "| Domain | `owner/README.md` | `owner/README.md` | Owner exists |"
+        sample.write_text(document(row, common_envelope=True), encoding="utf-8")
+        self.assertNotIn("KNOWLEDGE-POINTER-EMPTY", self.codes())
+        sample.write_text(document("", common_envelope=True), encoding="utf-8")
+        self.assertIn("KNOWLEDGE-POINTER-EMPTY", self.codes())
 
     def test_bounded_fact_metadata_invalidates_stale_and_sensitive_observations(self):
         owner = self.root / "owner/README.md"

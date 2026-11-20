@@ -1,17 +1,35 @@
 ---
 title: "Delegated Development"
-version: "1.5.0"
+version: "2.0.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-11-19"
+updated: "2026-11-20"
 ---
 
 # Delegated Development
 
-## Trigger
+## 문서 개요
 
-### When to Use
+### 목적과 독자
+
+작업자는 아래에 적힌 조건과 범위에서 위임 개발 절차를 사용한다.
+
+### 책임과 적용 범위
+
+이 절차의 적용 조건과 권한은 [사용 시점](#when-to-use)과 [권한 경계](#authority-boundary)에 따른다.
+
+## 내용 계약
+
+### 입력과 전제
+
+단계를 수행하기 전에 현재 요청과 명시된 입력을 읽는다.
+
+### 본문과 규칙
+
+#### Trigger
+
+##### When to Use
 
 Delegate bounded work through a supported runtime mechanism while preserving
 responsibility, least privilege, and independent evidence.
@@ -21,27 +39,27 @@ Related documents: [Roles](../roles/README.md),
 [Work Lifecycle](work-lifecycle.md) and
 [Approval and Safety](../../docs/00.workspace/04.quality/approval-and-safety.md).
 
-#### Inputs
+###### Inputs
 
 Neutral role and skill content lives in common governance; Claude and Codex
 projections add native metadata only. Tracked files do not prove that a runtime
 discovers, loads, or enforces them. Delegation requires explicit user or
 applicable instruction authorization and an available runtime mechanism.
 
-### When Not to Use
+##### When Not to Use
 
 This procedure names no repository work it must not be used for; if such a case is found, state it here.
 
-### Authority Boundary
+##### Authority Boundary
 
 The [agent registry](../roles/registry.json) owns exact role IDs,
 permission classes, handoff edges, capability-tier references, skill references,
 and projection paths. This procedure explains their use without duplicating the
 roster or tool inventory.
 
-## Procedure
+#### Procedure
 
-### Steps
+##### Steps
 
 1. Resolve the role, permission class, skills, and native projection from the
    registry. Read that projection and its imported responsibility owners.
@@ -90,28 +108,48 @@ Subagents never perform live mutation or secret-value operations. A higher
 capability tier does not grant broader permission. Provider-native runtime
 evidence remains distinct from repository-static projection parity.
 
-### Failure Handling
+##### Failure Handling
 
 Failure handling is stated in steps 4 and 6 of Steps.
 
-## Outputs
+#### Outputs
 
-### Artifacts
+##### Artifacts
 
 This procedure defines no output format of its own beyond the results its Steps describe; if it needs one, define it here.
 
-### Handoff
+##### Handoff
 
 Completion and handoff are stated in steps 6 and 7 of Steps.
 
-## Verification
+#### Verification
 
-### Checks
+##### Checks
 
 Run registry, projection/config, and semantic/permission checks when a role,
 import, permission, handoff, skill, or provider projection changes. Confirm the
 actual provider mechanism separately before claiming native delegation.
 
-### Limits
+##### Limits
 
 The static checks do not confirm native delegation, because the actual provider mechanism must be confirmed separately. Tracked files do not prove that a runtime discovers, loads or enforces them, provider-native runtime evidence remains distinct from repository-static projection parity, and a higher capability tier does not grant broader permission.
+
+## 적용과 확인
+
+### 적용 방법
+
+각 단계와 실패 처리 규칙을 명시된 조건에 따라 적용한다.
+
+### 확인 기준
+
+지정된 검사를 실행하고 실제 근거 수준을 보고한다.
+
+## 관계와 출처
+
+### 관련 문서
+
+본문의 관련 문서가 정책과 책임 소유자를 연결한다.
+
+### 외부 근거
+
+인용된 저장소 소유 문서가 이 절차를 정한다. 외부 자료는 참고 근거다.

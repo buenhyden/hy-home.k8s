@@ -1,6 +1,6 @@
 ---
 title: "00.workspace"
-version: "0.3.0"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -8,9 +8,27 @@ updated: "2026-11-20"
 ---
 # 00.workspace
 
-## Responsibility
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 README는 docs/00.workspace에서 현재 소유 문서를 찾는 작성자와 검토자를 안내한다. 이 컬렉션의 목적은 [Purpose](#purpose)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 docs/00.workspace의 탐색 경로를 유지한다. 소유 파일은 [Paths](#paths), 진입 방법은 [Usage](#usage)에 연결하며 개별 문서의 계약은 해당 정본이 소유한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Responsibility
+
+##### Purpose
 
 > 사람과 에이전트가 함께 따르는 작업 시스템 기준(W 계층)의 정본 stage다.
 
@@ -19,9 +37,11 @@ updated: "2026-11-20"
 절차가 여기에 있다. 책임 계층의 정의는 SDLC 정책(`03.process/sdlc.md`)의
 SDLC-R036이 소유하며, 2026-11-19 경로 전환으로 W 계층 문서가 이곳으로 옮겨졌다.
 
-#### Inputs and Outputs
+###### Inputs and Outputs
 
-##### In Scope
+<a id="in-scope"></a>
+
+**In Scope**
 
 - 공통 어휘(TERM)와 프로젝트 범위의 진입점
 - 작업 시스템(문서·역할·QA Registry, 도구, CI) 구조와 지속 결정
@@ -30,13 +50,15 @@ SDLC-R036이 소유하며, 2026-11-19 경로 전환으로 W 계층 문서가 이
 - 재현 가능한 로컬 검증 환경 준비 안내
 - 참고 자료와 도구의 반복 유지보수 절차
 
-##### Out of Scope
+<a id="out-of-scope"></a>
+
+**Out of Scope**
 
 - 제품(k8s GitOps 플랫폼) 요구·구조·운영 문서
 - 에이전트 실행 절차, 역할, Skill과 제공자 설정
 - 요청별 Spec·Plan·Task와 실행 증거
 
-### Excluded Responsibilities
+##### Excluded Responsibilities
 
 제품 요구는 [`../01.requirements/`](../01.requirements/), 제품 구조와 결정은
 [`../02.architecture/`](../02.architecture/), 제품 운영은
@@ -45,9 +67,9 @@ SDLC-R036이 소유하며, 2026-11-19 경로 전환으로 W 계층 문서가 이
 문서 형식·profile·양식은 [`../99.templates/`](../99.templates/)가 소유한다.
 이 stage는 그 내용을 복사하지 않고 링크한다.
 
-## Current Contents
+#### Current Contents
 
-### Paths
+##### Paths
 
 | Path | Purpose |
 | --- | --- |
@@ -60,9 +82,9 @@ SDLC-R036이 소유하며, 2026-11-19 경로 전환으로 W 계층 문서가 이
 | [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
 | [CLAUDE.md](./CLAUDE.md) | Claude가 이 stage의 `AGENTS.md`를 불러오게 하는 한 줄 `@AGENTS.md` import |
 
-### Owners
+##### Owners
 
-#### Reader Route
+###### Reader Route
 
 | 찾는 것 | 먼저 볼 위치 | 판단 기준 |
 | --- | --- | --- |
@@ -74,27 +96,47 @@ SDLC-R036이 소유하며, 2026-11-19 경로 전환으로 W 계층 문서가 이
 | 로컬 검증 환경 준비 | [05.environment](./05.environment/README.md) | lock과 실제 interpreter identity로 checkout 밖의 환경을 준비한다. lock은 `.github/requirements/`가 소유한다. |
 | 검증 선택·결과 | [04.quality](./04.quality/README.md)와 [scripts README](../../scripts/README.md) | quality는 의무와 판정, scripts는 실행 진입점을 소유한다. |
 
-## Usage
+#### Usage
 
-### Entry Points
+##### Entry Points
 
 1. 일하는 방식 자체를 바꿀 때는 해당 정책을 개정하고 규칙 ID를 유지한다.
 2. 하나의 규칙 ID는 한 문서만 소유한다. W와 A로 나뉜 SAFE·GIT 규칙의 소유는
    `docs/99.templates/registry.json`의 `policy_rule_ids` 기록이 나열한다.
 3. 새 분류 폴더는 실제 문서가 생길 때만 만든다.
 
-#### Upstream and Downstream
+###### Upstream and Downstream
 
 - [Docs README](../README.md)
 - [Requirements README](../01.requirements/README.md)
 - [Specs README](../03.specs/README.md)
 - [Agents README](../../.agents/README.md)
 
-#### Policy and Templates
+###### Policy and Templates
 
 - Document Authoring (`03.process/document-authoring.md`)
 - [Templates README](../99.templates/README.md)
 
-### Checks
+##### Checks
 
 문서 상태 전이와 처분은 문서 수명주기 정책(`03.process/document-lifecycle.md`)을 따른다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

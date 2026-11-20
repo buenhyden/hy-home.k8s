@@ -21,6 +21,7 @@ def lifecycle_registry_fixture(raw: dict[str, Any]) -> dict[str, Any]:
         "sdlc/architecture-description",
         "sdlc/spec",
         "sdlc/plan",
+        "common/program-non-target",
         *(domain["profile_ids"][0] for domain in raw["lifecycle_domains"]),
     }
     profiles = [{**profile} for profile in raw["profiles"] if profile["id"] in selected]
@@ -51,9 +52,23 @@ def lifecycle_registry_fixture(raw: dict[str, Any]) -> dict[str, Any]:
         for key, value in raw.items()
         if key not in {"readme_navigation", "document_language"}
     }
+    common_document = raw["common_document_contract"]
+    profile_kinds = {
+        profile_id: kind
+        for profile_id, kind in common_document["profile_kinds"].items()
+        if profile_id in selected
+    }
+    declared_kinds = set(common_document["profile_kinds"].values()) | set(
+        common_document["unused_kinds"]
+    )
     return {
         **registry,
         "profiles": profiles,
+        "common_document_contract": {
+            **common_document,
+            "profile_kinds": profile_kinds,
+            "unused_kinds": sorted(declared_kinds - set(profile_kinds.values())),
+        },
         "lifecycle_domains": [
             {
                 **domain,

@@ -1,27 +1,45 @@
 ---
 title: "Codex Provider Notes"
-version: "1.9.0"
+version: "2.0.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-20"
 ---
 
 # Codex Provider Notes
 
-## Overview
+## 문서 개요
+
+### 목적과 독자
+
+Workers and maintainers use these notes for the `codex` execution surface.
+
+### 책임과 적용 범위
+
+Native loading and configuration are scoped by [Authority Boundary](#authority-boundary) and [Current Contract](#current-contract); common policy owns shared rules.
+
+## 내용 계약
+
+### 입력과 전제
+
+Read the actual client identity, registry and common execution policy before applying provider claims.
+
+### 본문과 규칙
+
+#### Overview
 
 Describe Codex-native loading and configuration without duplicating shared
 execution policy or the agent roster.
 
-## Authority Boundary
+#### Authority Boundary
 
 `AGENTS.md` is the thin Codex gateway; `.codex/CODEX.md` is the local
 baseline. Codex also loads a folder `AGENTS.md` natively for work below it;
 those files carry folder agent rules and never widen the gateway. Native sandbox, approval, and configuration surfaces govern the
 running client. The neutral registry owns shared role and permission meaning.
 
-## Governance Context
+#### Governance Context
 
 Load the gateway, [work lifecycle](../.agents/workflows/work-lifecycle.md), relevant
 responsibility, and current Task. [Codex bindings](bindings.json) own concrete
@@ -29,7 +47,7 @@ model, reasoning, skill and native scope values; TOML role projections consume
 those values under the neutral registry's role and permission-class ceiling.
 Configured values alone do not prove provider resolution or tool enforcement.
 
-## Current Contract
+#### Current Contract
 
 Codex discovers project packages at `.agents/skills/<id>/SKILL.md`. Their
 `agents/openai.yaml` sets `allow_implicit_invocation: false`; use explicit
@@ -208,7 +226,7 @@ team document, not a special automatic entry filename.
 - Follow `RTK.md` for shell tooling. Record an unavailable tool or runtime
   instead of inspecting private configuration to manufacture readiness.
 
-## Validation and Refresh
+#### Validation and Refresh
 
 Validate registry/projection semantics and native configuration after relevant
 changes. Check the intended installed client's documented configuration when a
@@ -217,9 +235,29 @@ observed against. An undated capability denial is not a current contract. Separa
 execution, model resolution, sandbox/approval behavior, and event delivery;
 repository-static PASS establishes none of them.
 
-## Related Documents
+#### Related Documents
 
 - [Codex Baseline](CODEX.md)
 - [Agent Registry](../.agents/roles/registry.json)
 - [Model Selection](../.agents/governance/model-selection.md)
 - [Quality Policy](../docs/00.workspace/04.quality/quality.md)
+
+## 적용과 확인
+
+### 적용 방법
+
+Follow the provider contract in its supported execution context.
+
+### 확인 기준
+
+Configuration checks and runtime observations are separate evidence.
+
+## 관계와 출처
+
+### 관련 문서
+
+The related documents in the payload link common policy and provider owners.
+
+### 외부 근거
+
+Repository policy and cited runtime observations support these claims; vendor references grant no authority.

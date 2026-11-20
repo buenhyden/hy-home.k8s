@@ -10,8 +10,8 @@ its contracts and the form catalog. The parent
 
 Stage 99 is the machine contract every governed document is validated
 against. `registry.json` declares each profile's path pattern, frontmatter,
-sections, lifecycle and relationships; `contracts/` holds the JSON Schemas;
-`templates/` holds the forms that authors copy.
+role payload form, lifecycle and relationships; `01.contracts/` holds the shared
+document contract and JSON Schemas; `02.templates/` holds the forms that authors copy.
 
 | Work here | Role (`.agents/roles/`) | Skills | Claude | Codex |
 | --- | --- | --- | --- | --- |
@@ -41,8 +41,9 @@ Canonical sources are the documents linked or named in the opening paragraph and
    in `tests/`, and update the validators that consume it in the same change.
 2. Every `template_source` must exist and every form must be referenced by a
    profile. Add or remove a form together with its profile.
-3. Keep forms free of real values: placeholders stay placeholders and
-   templates keep the `{{ARTIFACT_ID}}` placeholder.
+3. Keep authored forms free of example facts: placeholders stay placeholders and
+   stable-identity templates keep the `{{ARTIFACT_ID}}` placeholder. Native
+   Markdown template wrappers carry their raw payload in the registered fence.
 4. A state or field removed from a profile must also leave the templates,
    schemas and the policy that described it.
 5. `docs/98.archive/**` has no profile; do not add one.

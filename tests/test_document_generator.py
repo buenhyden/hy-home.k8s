@@ -139,7 +139,6 @@ SAMPLES: dict[str, tuple[str, str | None, str | None]] = {
     "common/readme-implementation": (".agents/README.md", None, None),
     "common/readme-workspace-staging": ("_workspace/README.md", None, None),
     "common/readme-runtime-governance": (".github/repository-surface.md", None, None),
-    "common/folder-agents-guide": ("scripts/AGENTS.md", None, None),
     "evaluation/task": (".agents/evaluations/harnesses/sample/task.md", None, None),
     "evaluation/score": (".agents/evaluations/harnesses/sample/score.md", None, None),
     "evaluation/results": (".agents/evaluations/results.md", None, None),
@@ -158,6 +157,7 @@ AUTHORING_RULES = frozenset(
         "BODY-H1-PLACEHOLDER",
         "BODY-HEADING-EMPTY",
         "BODY-SECTION-EMPTY",
+        "BODY-INTERFACE-REF",
         "POLICY-RULE-CODE",
         "POLICY-RULE-ID",
         "POLICY-RULE-INLINE",
@@ -190,7 +190,7 @@ def expected_generable_ids() -> frozenset[str]:
     for profile in registry["profiles"]:
         template = profile.get("template_source")
         if (
-            profile["mode"] == "template"
+            profile["mode"] not in {"authored", "router"}
             or not template
             or not template.endswith(".md")
         ):
@@ -302,6 +302,31 @@ class RoundTripTests(TreeCase):
         self.registry = PROFILE_CHECK.load_registry(self.root)
         self.profiles = {item.profile_id: item for item in self.registry.profiles}
 
+    def test_common_document_shell_is_generated_for_spec(self) -> None:
+        self.prepare("sdlc/spec")
+        rendered = self.generate("sdlc/spec", SAMPLES["sdlc/spec"][0])
+        self.assertRegex(rendered, r"## 문서 개요\n\s*### 목적과 독자")
+        self.assertRegex(rendered, r"## 내용 계약\n\s*### 입력과 전제")
+        self.assertIn("### 본문과 규칙\n", rendered)
+
+    def test_four_native_markdown_forms_extract_payload_only(self) -> None:
+        for profile_id in (
+            "common/folder-agents-guide",
+            "common/native-skill-package",
+            "common/provider-native-metadata",
+            "common/provider-native-command",
+        ):
+            with self.subTest(profile=profile_id):
+                profile = self.profiles[profile_id]
+                assert profile.template is not None
+                wrapper = (self.root / profile.template).read_text(encoding="utf-8")
+                payload = GENERATOR.native_template_payload(
+                    self.root, profile_id, registry=self.registry
+                )
+                self.assertIn("~~~~~~~native-payload\n" + payload + "~~~~~~~", wrapper)
+                self.assertNotIn("## 문서 개요", payload)
+                self.assertNotIn('type: "common/template-', payload)
+
     def prepare(self, profile_id: str) -> str:
         """Free the sample target and give a Plan or Task its parents, as a caller would."""
 
@@ -342,21 +367,18 @@ class RoundTripTests(TreeCase):
                     self.assertNotIn("{{" + name + "}}", text)
 
                 block = frontmatter_block(text)
-                if profile_id == "common/folder-agents-guide":
-                    self.assertIsNone(block)
-                else:
-                    data = LOADER.load_frontmatter(block)
-                    template_data = LOADER.load_frontmatter(frontmatter_block(template))
-                    self.assertEqual(data["title"], "Sample Title")
-                    self.assertEqual(data["owner"], "platform")
-                    self.assertEqual(data["updated"], "2026-11-14")
-                    self.assertEqual(data["type"], template_data["type"])
-                    self.assertEqual(data["status"], template_data["status"])
-                    self.assertEqual(data["version"], "0.1.0")
-                    self.assertEqual(data.get("artifact_id"), identity)
-                    self.assertEqual(
-                        data.get("parent_ids"), None if parent is None else [parent]
-                    )
+                data = LOADER.load_frontmatter(block)
+                template_data = LOADER.load_frontmatter(frontmatter_block(template))
+                self.assertEqual(data["title"], "Sample Title")
+                self.assertEqual(data["owner"], "platform")
+                self.assertEqual(data["updated"], "2026-11-14")
+                self.assertEqual(data["type"], template_data["type"])
+                self.assertEqual(data["status"], template_data["status"])
+                self.assertEqual(data["version"], "0.1.0")
+                self.assertEqual(data.get("artifact_id"), identity)
+                self.assertEqual(
+                    data.get("parent_ids"), None if parent is None else [parent]
+                )
 
                 found = PROFILE_CHECK.validate_document_text(
                     text, PurePosixPath(target), profile, "strict", today=TODAY
@@ -430,6 +452,7 @@ class ProfileAndRouteRefusalTests(TreeCase):
 
     def test_non_generable_profiles(self) -> None:
         cases = {
+            "common/folder-agents-guide": "scripts/AGENTS.md",
             "common/native-skill-package": ".agents/skills/sample/SKILL.md",
             "common/provider-native-metadata": ".claude/agents/sample.md",
             "common/provider-native-command": ".claude/commands/sample.md",
@@ -603,7 +626,7 @@ class OutputCheckRefusalTests(TreeCase):
         source = (self.root / path).read_text(encoding="utf-8")
         table = (
             "| Criterion ID | Expected Result |\n| --- | --- |\n"
-            "| VAL-FEATURE-001 | Named test, contract, integration, or review evidence |"
+            "| AC-0001 | Named test, contract, integration, or review evidence |"
         )
         self.assertIn(table, source)
         target = SAMPLES["sdlc/spec"][0]
@@ -640,7 +663,7 @@ class OutputCheckRefusalTests(TreeCase):
         error = self.refuse(
             "GENERATOR-OUTPUT", "operation/guide", SAMPLES["operation/guide"][0]
         )
-        self.assertIn("BODY-HEADING-UNSUPPORTED", error)
+        self.assertIn("BODY-COMMON-ENVELOPE", error)
 
     def test_generator_ignores_nonstructural_heading_text(self) -> None:
         template = (self.root / self.GUIDE_TEMPLATE).read_text(encoding="utf-8")
@@ -655,12 +678,12 @@ class OutputCheckRefusalTests(TreeCase):
                     "> ## Quoted heading\n\n"
                 )
                 source = template.replace(
-                    "## Troubleshooting", example + "## Troubleshooting", 1
+                    "#### Troubleshooting", example + "#### Troubleshooting", 1
                 )
                 self.assertNotEqual(source, template)
                 self.write(self.GUIDE_TEMPLATE, source)
                 text = self.generate("operation/guide", SAMPLES["operation/guide"][0])
-                self.assertIn(example + "## Troubleshooting", text)
+                self.assertIn(example + "#### Troubleshooting", text)
 
     def test_generator_refuses_wrong_registered_table_columns(self) -> None:
         template = (self.root / self.GUIDE_TEMPLATE).read_text(encoding="utf-8")

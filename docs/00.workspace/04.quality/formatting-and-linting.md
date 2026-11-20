@@ -1,24 +1,42 @@
 ---
 title: "Formatting and Linting Policy"
-version: "1.8.2"
+version: "2.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 
 # Formatting and Linting Policy
 
-## Purpose and Scope
+## 문서 개요
 
-### Objective
+### 목적과 독자
+
+Workers and reviewers use Formatting and Linting Policy for the rules in its stated scope.
+
+### 책임과 적용 범위
+
+The policy's coverage is defined in [Purpose and Scope](#purpose-and-scope) and [Applies To](#applies-to).
+
+## 내용 계약
+
+### 입력과 전제
+
+Read the current request, owner and rule conditions before applying this policy.
+
+### 본문과 규칙
+
+#### Purpose and Scope
+
+##### Objective
 
 Each formatting and linting rule has one semantic owner. Git normalization,
 editor hints and hook delivery may project that rule for their distinct jobs,
 and each suppression states why it exists. A configuration file that no tool
 reads is not a convention; it is drift that reads like one.
 
-### Applies To
+##### Applies To
 
 `.gitattributes` owns Git text and line-ending normalization.
 `.pre-commit-config.yaml` owns hook integration, including pinned revisions,
@@ -29,13 +47,13 @@ rule against its own merge input; it does not certify local purpose or
 document-content checks. `.editorconfig` reaches editors only and proves nothing
 about committed bytes.
 
-#### Exclusions
+###### Exclusions
 
 Exclusions of files from formatters and linters are stated under Requirements.
 
-## Rules
+#### Rules
 
-### Requirements
+##### Requirements
 
 | Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
@@ -67,17 +85,17 @@ Exclusions of files from formatters and linters are stated under Requirements.
 | FMT-R011 | required | active |
 | FMT-R012 | required | active |
 
-### Exceptions
+##### Exceptions
 
 Exception and escalation conditions are stated under Requirements.
 
-#### Approval and Review
+###### Approval and Review
 
 Approval and review conditions are stated under Requirements.
 
-## Enforcement
+#### Enforcement
 
-### Mechanisms
+##### Mechanisms
 
 Measure a suppression before changing it: remove it in a copy of the tracked
 corpus outside the working tree, run the tool over that copy, and classify
@@ -86,13 +104,13 @@ confined to terminal documents cannot be retired by editing; findings in
 current documents can. Re-measure when a blocking document changes state or
 when a hook revision moves, and record the result in the owning Task.
 
-### Limits
+##### Limits
 
 A suppression is measured in a copy of the tracked corpus, not in the working tree, so a finding confined to terminal documents cannot be retired by editing and is only classified. The result holds for the measured hook revision and document states, and must be re-measured when a blocking document changes state or a hook revision moves. The hosted `ci-summary` job is not a formatter.
 
-## Ownership
+#### Ownership
 
-### Owner
+##### Owner
 
 This policy owns which tool covers which file type, where a shared byte rule
 is declared, and the discipline for suppressing a rule. It does not own lane,
@@ -105,10 +123,30 @@ inside a tool's own configuration. Terminal-document immutability belongs to
 - [Document Lifecycle Policy](../03.process/document-lifecycle.md)
 - [Git Policy](../03.process/git.md)
 
-#### Responsibilities
+###### Responsibilities
 
 Responsibilities are stated under Owner and Requirements.
 
-### Review Triggers
+##### Review Triggers
 
 This policy changes as a governed-document change under the work lifecycle and the document lifecycle policy, with no adoption step of its own; if it needs one, state it here.
+
+## 적용과 확인
+
+### 적용 방법
+
+Apply the rule, enforcement and exception clauses in the payload together.
+
+### 확인 기준
+
+Check named enforcement on actual input and report its evidence level accurately.
+
+## 관계와 출처
+
+### 관련 문서
+
+The ownership and related documents in the payload link adjacent owners.
+
+### 외부 근거
+
+Repository decisions and cited sources support these rules; external sources alone grant no authority.

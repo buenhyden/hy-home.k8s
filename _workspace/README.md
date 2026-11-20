@@ -1,16 +1,35 @@
 ---
 title: "workspace"
-version: "0.4.0"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-19"
+updated: "2026-11-20"
 ---
 # _workspace
 
+## 문서 개요
+
+### 목적과 독자
+
+이 README는 _workspace에 임시 지원 산출물을 두는 작업자에게 저장·정리 경계를 안내한다. 목적은 [Overview](#overview)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 _workspace의 staging 경계를 유지한다. 허용·금지 항목은 [Scope](#scope), 추적되는 하위 경로는 [Structure](#structure)에 기록한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+
 > 비밀이 아닌 임시 분석 산출물을 두는 저장소 로컬 지원 staging 영역이다.
 
-## Overview
+#### Overview
 
 `_workspace/`는 감사, migration dry-run, route inventory 작업 중에 생기는
 수명이 짧고 비밀이 아닌 산출물을 두는 격리된 저장소 지원 staging 경계다.
@@ -20,9 +39,9 @@ QA·CI 진단 출력은 `diagnostics/`에 둘 수 있다.
 이 README와 아래 Structure의 하위 README 6개만 추적한다. 나머지 하위 항목은
 ignore 상태로 남고 Git에 강제로 추가하면 안 된다.
 
-## Scope
+#### Scope
 
-### Permitted Artifacts
+##### Permitted Artifacts
 
 - 임시 감사 scratch
 - 가리고 정리한, 비밀이 아닌 dry-run 요약
@@ -35,7 +54,7 @@ ignore 상태로 남고 Git에 강제로 추가하면 안 된다.
 모든 산출물은 저장소 지원 범위 안에 있어야 하고 지워도 안전해야 하며
 credential이나 secret이 담긴 runtime 세부 정보를 포함하지 않아야 한다.
 
-### Forbidden Local State
+##### Forbidden Local State
 
 다음 항목은 `_workspace/`에 두지 않는다.
 
@@ -48,16 +67,16 @@ credential이나 secret이 담긴 runtime 세부 정보를 포함하지 않아�
 인증 material, 토큰, shell history, 비밀이 담긴 로그는 저장소와 이 staging
 경계 밖에 둔다. 비밀이 없는 QA·CI 진단 출력만 `diagnostics/`에 둔다.
 
-## Structure
+#### Structure
 
 | Path | Purpose |
 | --- | --- |
 | [`diagnostics/`](diagnostics/README.md) | QA·CI 진단 출력 (`ci/`, `validation/`) |
 | [`repo-support/`](repo-support/README.md) | 감사·분석과 미리보기 산출물 (`analysis/`, `previews/`) |
 
-## Usage
+#### Usage
 
-### Promotion and Cleanup
+##### Promotion and Cleanup
 
 오래 남길 결과는 정본 소유 경로로 옮긴다.
 
@@ -75,7 +94,7 @@ credential이나 secret이 담긴 runtime 세부 정보를 포함하지 않아�
 template, 리뷰, secret 처리 계약을 지켜야 한다. 가공하지 않은 scratch를
 force-add로 옮기지 않는다.
 
-### Tracking Rules
+##### Tracking Rules
 
 추적되는 형태는 다음과 같다.
 
@@ -103,10 +122,30 @@ _workspace/
 이 규칙을 확인하는 동안 ignore된 하위 항목을 나열하거나, 열거나, 읽거나,
 해시하거나, 옮기거나, 삭제하지 않는다.
 
-## Related Documents
+#### Related Documents
 
 - [Documentation Protocol](../docs/00.workspace/03.process/document-authoring.md)
 - [Approval Boundaries](../docs/00.workspace/04.quality/approval-and-safety.md)
 - [Subagent Protocol](../.agents/workflows/delegated-development.md)
 - Documentation Contract (`docs/99.templates/README.md`)
 - [Workspace-staging 문서 양식 탐색](../docs/99.templates/README.md)
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

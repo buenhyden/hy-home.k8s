@@ -1,16 +1,35 @@
 ---
 title: "secrets"
-version: "0.3.2"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 # secrets
 
-## Service
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 README는 secrets의 사용·연결·검사 위치를 찾는 운영자와 기여자를 안내한다. 현재 역할은 [Service](#service)와 [Usage](#usage)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 secrets의 진입 경로를 유지한다. 이 경로의 파일과 경계는 [Purpose](#purpose), 사용 조건은 [Usage](#usage), 검사는 [Checks](#checks)가 설명한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+
+#### Service
+
+##### Purpose
 
 `secrets/`는 로컬 개발에 필요한 **민감 파일의 보관 경로**다. 이 폴더의 실제
 자료는 저장소에 추적되지 않는다. 추적되는 것은 디렉터리 형태를 유지하는
@@ -29,22 +48,22 @@ Operator이며, 저장소에는 그 참조만 존재한다.
 - [GitOps](../gitops/README.md)
 - [Scripts](../scripts/README.md)
 
-#### Audience
+###### Audience
 
 - Platform maintainers
 - 로컬 플랫폼을 부트스트랩하는 개발자
 
-### Interfaces
+##### Interfaces
 
 이 문서에는 별도의 외부 입출력 계약이 없으며, 경로 값의 소유처는 Usage > Prerequisites에 적혀 있다.
 
-#### Security Boundary
+###### Security Boundary
 
 키 자료를 커밋하지 않는 경계는 아래 Usage > Prerequisites에 적혀 있다.
 
-## Usage
+#### Usage
 
-### Prerequisites
+##### Prerequisites
 
 - `.gitignore`가 `secrets/certs/*.pem`, `*.srl`, `*.crt`, `*.p12`를 제외한다.
   새 확장자를 쓰기 전에 제외 규칙을 먼저 추가한다.
@@ -54,20 +73,22 @@ Operator이며, 저장소에는 그 참조만 존재한다.
 - 이 폴더는 클러스터 비밀값을 정의하지 않는다. 워크로드가 쓰는 비밀값은 ESO를
   통해 Vault에서 온다.
 
-#### Scope
+###### Scope
 
-##### In Scope
+<a id="in-scope"></a>
+**In Scope**
 
 - 로컬 TLS 인증서와 키의 배치 경로 (`certs/`)
 - 해당 경로의 추적 금지 경계
 
-##### Out of Scope
+<a id="out-of-scope"></a>
+**Out of Scope**
 
 - 클러스터 비밀값의 선언과 동기화 — `gitops/platform/eso/` 소유
 - 비밀값 탐지 규칙과 baseline — `scripts/check-secret-handling.sh`, `.secrets.baseline` 소유
 - 인증서 발급 절차의 canonical 설명 — `.env.example`와 부트스트랩 스크립트 소유
 
-### Selected Start
+##### Selected Start
 
 - 로컬 인증서 발급 명령과 필요한 파일 목록은 `.env.example` 상단 주석을 따른다.
 - 인증서를 교체한 뒤에는 SAN이 `*.hy-k8s.home.arpa`를 포함하는지 확인한다.
@@ -75,9 +96,9 @@ Operator이며, 저장소에는 그 참조만 존재한다.
 - 키 파일 권한은 소유자 전용으로 유지한다. 이 경계는 운영자가 소유하며 저장소
   검증이 대신 확인하지 않는다.
 
-## Checks
+#### Checks
 
-### Readiness
+##### Readiness
 
 | 검증기 | 확인 대상 |
 | --- | --- |
@@ -94,10 +115,30 @@ python3 scripts/qa.py full
 PASS는 추적된 바이트에 대한 증적이다. 로컬 워크트리에 놓인 추적되지 않는 키
 파일의 안전성은 증명하지 않는다.
 
-### Failure Handling
+##### Failure Handling
 
 이 문서는 운영 관측과 복구만을 다루는 내용을 따로 두지 않는다. 그런 내용을 두게 되면 여기에 적는다.
 
-#### Runbook Links
+###### Runbook Links
 
 이 문서는 runbook이나 운영 가이드 링크를 따로 두지 않는다. 연결할 운영 문서가 생기면 여기에 연결한다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

@@ -69,6 +69,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         }
         for relative in {
             "docs/99.templates/01.contracts/document-profile.schema.json",
+            "docs/99.templates/01.contracts/common-document-contract.json",
             *templates,
         }:
             target = cls.seed_root / relative
@@ -189,7 +190,6 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         for placeholder, value in substitutions.items():
             text = text.replace(placeholder, value)
         self.assertNotIn("{{", text)
-        text = text.replace("VAL-FEATURE-001", "VAL-P02-004")
         text = text.replace("WORK-001", "WORK-004")
         if status == "completed":
             text = (
@@ -200,7 +200,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 .replace(
                     "| NOT_RUN | none | true | none |",
                     "| NOT_RUN | none | true | none |\n"
-                    "| EVD-002 | [VAL-P02-004](../spec.md#criteria) "
+                    "| EVD-002 | [AC-0001](../spec.md#criteria) "
                     "| WORK-004 | automated | Exact revision or fixture | none "
                     "| Named deterministic check | 0 "
                     "| PASS | [Synthetic fixture result](#next-owner) | true | EVD-001 |",
@@ -286,13 +286,13 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             if name == "plan.md":
                 # Anchors into the registered template text, not a heading list.
                 text = text.replace(
-                    "### Constraints\n\n",
-                    "### Constraints\n\nThe synthetic goal and its boundary.\n\n",
+                    "##### Constraints\n",
+                    "##### Constraints\nThe synthetic goal and its boundary.\n\n",
                     1,
                 )
                 text = text.replace(
-                    "#### Global Constraints\n\n",
-                    "#### Global Constraints\n\n"
+                    "###### Global Constraints\n",
+                    "###### Global Constraints\n"
                     "The approved [Spec](spec.md#scope) "
                     "defines this synthetic package's scope and review boundary.\n\n",
                     1,
@@ -325,11 +325,11 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         task = task.replace(
             "| NOT_RUN | none | true | none |",
             "| NOT_RUN | none | true | none |\n"
-            "| EVD-002 | [VAL-P02-004](../spec.md#criteria) "
+            "| EVD-002 | [AC-0001](../spec.md#criteria) "
             f"| WORK-004 | review | {review_input} | none "
             "| Independent semantic review | none | PASS | "
             "Synthetic reviewer receipt | true | none |\n"
-            "| EVD-003 | [VAL-P02-004](../spec.md#criteria) "
+            "| EVD-003 | [AC-0001](../spec.md#criteria) "
             f"| WORK-004 | observation | {approval_input} | none "
             "| Spec/Plan first-record approval | none | PASS | "
             "Synthetic user approval receipt | true | none |",

@@ -1,22 +1,40 @@
 ---
 title: "Approval and Safety Policy"
-version: "1.9.0"
+version: "2.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-19"
+updated: "2026-11-20"
 ---
 
 # Approval and Safety Policy
 
-## Purpose and Scope
+## 문서 개요
 
-### Objective
+### 목적과 독자
+
+Workers and reviewers use Approval and Safety Policy for the rules in its stated scope.
+
+### 책임과 적용 범위
+
+The policy's coverage is defined in [Purpose and Scope](#purpose-and-scope) and [Applies To](#applies-to).
+
+## 내용 계약
+
+### 입력과 전제
+
+Read the current request, owner and rule conditions before applying this policy.
+
+### 본문과 규칙
+
+#### Purpose and Scope
+
+##### Objective
 
 Agents prepare desired-state changes and local evidence within the user's
 scope. Protected actions require explicit human or operator authority.
 
-### Applies To
+##### Applies To
 
 Kubernetes, Argo CD, Vault, cloud, remote Git, and CI operations affect state
 outside the reviewable repository. Keep those actions separate from writing
@@ -31,13 +49,13 @@ SAFE-R019) is owned once by the
 
 - Operations Index (`docs/05.operations/README.md`)
 
-#### Exclusions
+###### Exclusions
 
 This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
-## Rules
+#### Rules
 
-### Requirements
+##### Requirements
 
 | Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
@@ -86,7 +104,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | SAFE-R005 | No mutation | Explicit operator action with target, command class, rollback, and evidence |
 | SAFE-R006 | Do not read or record values | Stop and use the approved secret/incident process; never expose values |
 
-#### Authoring and execution
+###### Authoring and execution
 
 `SAFE-R007`
 
@@ -103,7 +121,7 @@ the relevant Task and paths; review does not grant writes or authorization.
 Reuse valid approval for the same scope, subject and reviewed revision rather
 than asking the human to repeat a completed routine review.
 
-#### Operator approval route
+###### Operator approval route
 
 `SAFE-R008`
 
@@ -116,7 +134,7 @@ reviewer verdict is no approval. Historical approval is evidence of a past
 decision, never a reusable standing grant. The operator route does not
 delegate live/secret operations to a subagent.
 
-#### Execution controls
+###### Execution controls
 
 - `SAFE-R013`
 - `SAFE-R014`
@@ -125,30 +143,30 @@ delegate live/secret operations to a subagent.
 - `SAFE-R020`
 - `SAFE-R021`
 
-### Exceptions
+##### Exceptions
 
 This policy states no exception condition of its own; the operator approval route is stated under Requirements.
 
-#### Approval and Review
+###### Approval and Review
 
 Approval and review conditions are stated under Requirements.
 
-## Enforcement
+#### Enforcement
 
-### Mechanisms
+##### Mechanisms
 
 Run the affected safety, secret-handling, permission, and policy checks when a
 protected surface changes. Report unexecuted external checks using the
 [quality result vocabulary](quality.md#result-vocabulary). Never bypass a
 failing required check or provider restriction.
 
-### Limits
+##### Limits
 
 A Python or Node script that opens files itself stays outside shell-write observation, and so do permission rules that match shell file commands, so instruction-level and rule-level controls are advisory for that class. SAFE-R018 states that `read-only-evidence` names what the registry grants, not what an operating system enforces, and the two supported providers differ under that one name. External checks that were not executed are reported as such rather than counted as passed.
 
-## Ownership
+#### Ownership
 
-### Owner
+##### Owner
 
 This policy owns approval decisions. Native sandbox, tool, permission, and
 approval controls may be stricter; static configuration never proves runtime
@@ -158,10 +176,30 @@ enforcement. Runbooks describe authorized procedures, not standing approval.
 - [Git Policy](../03.process/git.md)
 - [Quality Policy](quality.md)
 
-#### Responsibilities
+###### Responsibilities
 
 Responsibilities are stated under Owner and Requirements.
 
-### Review Triggers
+##### Review Triggers
 
 This policy changes as a governed-document change under the work lifecycle and the document lifecycle policy, with no adoption step of its own; if it needs one, state it here.
+
+## 적용과 확인
+
+### 적용 방법
+
+Apply the rule, enforcement and exception clauses in the payload together.
+
+### 확인 기준
+
+Check named enforcement on actual input and report its evidence level accurately.
+
+## 관계와 출처
+
+### 관련 문서
+
+The ownership and related documents in the payload link adjacent owners.
+
+### 외부 근거
+
+Repository decisions and cited sources support these rules; external sources alone grant no authority.

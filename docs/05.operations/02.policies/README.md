@@ -1,16 +1,34 @@
 ---
 title: "05.operations/policies"
-version: "0.4.0"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 # 05.operations/policies
 
-## Responsibility
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 README는 docs/05.operations/02.policies에서 현재 소유 문서를 찾는 작성자와 검토자를 안내한다. 이 컬렉션의 목적은 [Purpose](#purpose)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 docs/05.operations/02.policies의 탐색 경로를 유지한다. 소유 파일은 [Paths](#paths), 진입 방법은 [Usage](#usage)에 연결하며 개별 문서의 계약은 해당 정본이 소유한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Responsibility
+
+##### Purpose
 
 > GitOps 플랫폼 운영 정책과 통제 기준(허용/금지/예외/검증)을 관리한다.
 
@@ -20,7 +38,7 @@ updated: "2026-11-17"
 정책 문서는 “무엇이 허용되고 금지되는가”와 “어떤 증적이 필요한가”를 정의한다.
 명령 순서, 반복 실행 체크리스트, bootstrap/break-glass 절차, 복구 절차는 [runbooks](../03.runbooks/README.md), 배경과 온보딩 설명은 [guides](../01.guides/README.md), 정책 위반이나 장애 기록은 [incidents](../04.incidents/README.md)로 보낸다.
 
-#### Collection Readers
+###### Collection Readers
 
 이 README의 주요 독자:
 
@@ -28,30 +46,34 @@ updated: "2026-11-17"
 - Operators
 - Documentation Writers
 
-#### Inputs and Outputs
+###### Inputs and Outputs
 
-##### In Scope
+<a id="in-scope"></a>
+
+**In Scope**
 
 - 운영 정책 문서(Operations Policy)
 - 통제 항목(Required/Allowed/Disallowed)
 - 예외 승인 흐름
 - 정책 검증 방법 및 검토 주기
 
-##### Out of Scope
+<a id="out-of-scope"></a>
+
+**Out of Scope**
 
 - 실행 절차 중심의 명령 순서 문서
 - 장애 타임라인/사후 분석
 - 온보딩 중심 가이드
 
-### Excluded Responsibilities
+##### Excluded Responsibilities
 
 이 collection은 실행 절차 중심의 명령 순서 문서, 장애 타임라인과 사후 분석, 온보딩 중심 가이드를 소유하지 않는다. 명령 순서, 반복 실행 체크리스트, bootstrap/break-glass 절차, 복구 절차는 runbooks로, 배경과 온보딩 설명은 guides로, 정책 위반이나 장애 기록은 incidents로 보낸다.
 
-## Current Contents
+#### Current Contents
 
-### Paths
+##### Paths
 
-#### 문서 인덱스
+###### 문서 인덱스
 
 | Path | Purpose |
 | --- | --- |
@@ -61,7 +83,7 @@ updated: "2026-11-17"
 | [`./0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | 메트릭·로그·Grafana·AppProject 통합 정책(Alloy remote-write, 은퇴한 metrics NodePort 포함) |
 | [`./0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md) | Rollout/AnalysisTemplate/network/TLS/OpenBao 기반 앱 온보딩 정책 |
 
-### Owners
+##### Owners
 
 | 필요 상황 | 문서 유형 |
 | --- | --- |
@@ -72,9 +94,9 @@ updated: "2026-11-17"
 | 실행 가능한 명령 블록이나 체크리스트를 작성해야 함 | Runbook으로 이동 |
 | 작업 배경과 사용법을 익혀야 함 | Guide로 이동 |
 
-## Usage
+#### Usage
 
-### Entry Points
+##### Entry Points
 
 1. 정책 수정 전에 관련 Spec/Runbook을 확인한다.
 2. [policy.template.md](../../99.templates/02.templates/05.operations/policy.template.md)를 기준으로 섹션을 유지한다.
@@ -83,7 +105,7 @@ updated: "2026-11-17"
 5. 정책 문서에는 실행 절차를 복제하지 않는다. 검증은 필요한 증적과 성공 기준만 남기고, 실행 가능한 명령 순서와 체크리스트는 소유 runbook 링크로 연결한다.
 6. 고위험 명령 예시는 [Operations Mutation Boundary](../README.md#operations-mutation-boundary)를 따른다.
 
-#### Usage Instructions
+###### Usage Instructions
 
 이 영역은 운영 통제 기준을 확인하고 변경 영향 범위를 판단할 때 사용한다.
 
@@ -91,18 +113,18 @@ updated: "2026-11-17"
 2. 필요한 증적과 예외 승인 경로를 확인한다.
 3. 실제 명령 순서나 복구 절차가 필요하면 연결된 Runbook으로 이동한다.
 
-#### Verification and Monitoring
+###### Verification and Monitoring
 
 - 정책 문서 구조 검증은 [policy.template.md](../../99.templates/02.templates/05.operations/policy.template.md)와 `scripts/qa.py`를 기준으로 한다.
 - 정책 준수 증적은 연결된 Runbook의 verification output, CI 결과, GitOps diff, review evidence로 남긴다.
 
-#### Incident and Recovery Links
+###### Incident and Recovery Links
 
 - Runbooks: [05.operations/runbooks](../03.runbooks/README.md)
 - Incident Records: [05.operations/incidents](../04.incidents/README.md)
 - Postmortems: `../incidents/<year>/inc-####-<slug>/postmortem.md`
 
-#### Relative Link Rules
+###### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/05.operations/02.policies/`다.
 
@@ -110,7 +132,7 @@ updated: "2026-11-17"
 - sibling operations folder는 `../guides/`, `../runbooks/`, `../incidents/`로 연결한다.
 - upstream docs stage는 `../../02.architecture/`, `../../03.specs/`로 연결한다.
 
-#### Upstream and Downstream
+###### Upstream and Downstream
 
 - [05.operations/guides](../01.guides/README.md)
 - [05.operations/runbooks](../03.runbooks/README.md)
@@ -119,11 +141,31 @@ updated: "2026-11-17"
 - [AD](../../02.architecture/01.descriptions/0007-current-local-gitops-platform.md)
 - [Runbook](../03.runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 
-#### Policy and Templates
+###### Policy and Templates
 
 - [Operation Template](../../99.templates/02.templates/05.operations/policy.template.md)
 - [Collection Index README Form](../../99.templates/02.templates/93.common/readme-collection-index.template.md)
 
-### Checks
+##### Checks
 
 이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

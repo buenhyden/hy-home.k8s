@@ -174,8 +174,8 @@ class RepositoryQualityRuleTests(unittest.TestCase):
             (
                 "examples/README.md",
                 lambda text: re.sub(
-                    r"(?m)^#{2,4} Example Role Matrix$",
-                    "## Missing Example Role Matrix",
+                    r"(?m)^###### Example Role Matrix$",
+                    "###### Missing Example Role Matrix",
                     text,
                     count=1,
                 ),

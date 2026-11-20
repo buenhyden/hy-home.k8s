@@ -9,6 +9,7 @@
     "$schema",
     "$id",
     "schema_version",
+    "common_document_contract",
     "profiles",
     "lifecycle_domains"
   ],
@@ -20,7 +21,49 @@
       "const": "https://hy-home.k8s/docs/99.templates/registry.json"
     },
     "schema_version": {
-      "const": "21.0.0"
+      "const": "22.0.0"
+    },
+    "common_document_contract": {
+      "description": "Local candidate binding to the separate WORKSPACE-DOCUMENT-CORE contract; it records no approval or user acceptance.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_id",
+        "version",
+        "stage",
+        "source",
+        "content_digest",
+        "workspace_subject",
+        "workspace_scope_artifact_ids",
+        "profile_kinds",
+        "excluded_profiles",
+        "unused_kinds",
+        "relation_kinds"
+      ],
+      "properties": {
+        "contract_id": {"const": "WORKSPACE-DOCUMENT-CORE"},
+        "version": {"$ref": "#/$defs/numeric_version"},
+        "stage": {"const": "candidate"},
+        "source": {"const": "docs/99.templates/01.contracts/common-document-contract.json"},
+        "content_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "workspace_subject": {"const": "hy-home.k8s"},
+        "workspace_scope_artifact_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {"enum": ["REQ-0003", "SPEC-0226", "AD-0006", "GDE-0011"]}
+        },
+        "profile_kinds": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {"pattern": "^(?:common|governance|sdlc|operation|reference|evaluation)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"},
+          "additionalProperties": {"type": "string", "minLength": 1}
+        },
+        "excluded_profiles": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "unused_kinds": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "relation_kinds": {"type": "array", "uniqueItems": true, "minItems": 7, "maxItems": 7, "items": {"type": "string"}}
+      }
     },
     "shared_contract": {
       "description": "Identifies reviewed common input and the local adapter; structural validity does not authenticate approval or adoption.",

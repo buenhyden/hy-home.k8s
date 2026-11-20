@@ -1,25 +1,43 @@
 ---
 title: "K8s GitOps Platform Operations Policy"
-version: "1.8.3"
+version: "2.0.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-20"
 artifact_id: "POL-0001"
 ---
 
 # K8s GitOps Platform Operations Policy
 
-## Purpose and Scope
+## 문서 개요
 
-### Objective
+### 목적과 독자
+
+이 정책은 K8s GitOps Platform Operations Policy의 운영 조건을 적용할 플랫폼 운영자와 변경 검토자를 위한 규칙이다. 정책 목표는 [Objective](#objective)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 이 운영 정책을 유지한다. 적용 대상은 [Applies To](#applies-to), 규칙과 집행 조건은 [Rules](#rules) 및 [Enforcement](#enforcement)가 소유한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Purpose and Scope
+
+##### Objective
 
 이 문서는 Linux server 기반 로컬 k3d GitOps 플랫폼의 운영 통제를 정의한다.
 여기서 multi-node 또는 HA는 production 고가용성 보장이 아니라
 `infrastructure/k3d/k3d-cluster.yaml`의 `servers: 1`, `agents: 3` 로컬
 검증 baseline을 뜻한다.
 
-### Applies To
+##### Applies To
 
 - k3d cluster와 ArgoCD pull 기반 GitOps 운영
 - ESO와 외부 OpenBao의 시크릿 경계
@@ -31,13 +49,13 @@ artifact_id: "POL-0001"
 - **Roles**: Platform Owner, Security Reviewer, GitOps/Docs automation agents
 - **Environment**: Linux server local cluster와 GitHub Actions
 
-#### Exclusions
+###### Exclusions
 
 이 정책은 위 Applies To에 적은 범위 밖으로 제외한다고 따로 표시한 항목을 두지 않는다.
 
-## Rules
+#### Rules
 
-### Requirements
+##### Requirements
 
 | Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
@@ -81,7 +99,7 @@ artifact_id: "POL-0001"
 | GITOPS-R017 | required | active |
 | GITOPS-R018 | required | active |
 
-#### Control Register
+###### Control Register
 
 | Control | Accountable role | Enforcement surface | Evidence |
 | --- | --- | --- | --- |
@@ -92,7 +110,7 @@ artifact_id: "POL-0001"
 | PLAT-005 least privilege | Security Reviewer | AppProject, RBAC, NetworkPolicy | wildcard absence and destination/egress review |
 | PLAT-006 validation | Change author | local validators and GitHub Actions | static PASS plus separately approved runtime evidence when required |
 
-#### Required
+###### Required
 
 - `GITOPS-R001`
 - `GITOPS-R002`
@@ -105,13 +123,13 @@ artifact_id: "POL-0001"
 - `GITOPS-R009`
 - `GITOPS-R010`
 
-#### Allowed
+###### Allowed
 
 - `GITOPS-R011`
 - `GITOPS-R012`
 - `GITOPS-R013`
 
-#### Disallowed
+###### Disallowed
 
 - `GITOPS-R014`
 - `GITOPS-R015`
@@ -119,7 +137,7 @@ artifact_id: "POL-0001"
 - `GITOPS-R017`
 - `GITOPS-R018`
 
-### Exceptions
+##### Exceptions
 
 이 절은 Stage 05 전체의 live 변경 예외 기준이다. 다른 Policy는 자신의
 component 고유 예외만 추가하고 이 기준을 반복하지 않는다.
@@ -133,13 +151,13 @@ desired state와 맞추고 승인·검증 증적을 남긴다. 예외는 만료 
 [Approval and Safety Policy](../../00.workspace/04.quality/approval-and-safety.md)가
 소유하며, Runbook은 이 예외 안에서 실행할 절차만 제공한다.
 
-#### Approval and Review
+###### Approval and Review
 
 예외의 승인과 검토 주체는 위 Exceptions의 승인 문장과 Ownership의 Responsibilities 표에 적혀 있다.
 
-## Enforcement
+#### Enforcement
 
-### Mechanisms
+##### Mechanisms
 
 | Control Area | Required Evidence | Runbook Owner |
 | --- | --- | --- |
@@ -161,19 +179,19 @@ NetworkPolicy, CI workflow 계약이 바뀔 때 즉시 검토한다. 고정된 j
 - [Platform Bootstrap Runbook](../03.runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - [ESO Recovery Runbook (RUN-0002)](../03.runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 
-### Limits
+##### Limits
 
 이 정책의 매니페스트 값과 정적 PASS 결과는 REQ-0004 목표에 대한 구성 근거일 뿐, 측정된 reconcile 상태나 복구 시간이 아니다. 정적 통제 결과는 런타임 주장과 분리하며, 제품 품질의 표본·공식·목표는 이 정책이 아니라 REQ-0004 시나리오가 소유한다.
 
-## Ownership
+#### Ownership
 
-### Owner
+##### Owner
 
 이 정책이 근거로 삼는 상위 문서는 다음과 같다.
 
 - [AD-0007 Current Local GitOps Platform](../../02.architecture/01.descriptions/0007-current-local-gitops-platform.md)
 
-#### Responsibilities
+###### Responsibilities
 
 | Role | Responsibility | Escalation owner |
 | --- | --- | --- |
@@ -181,14 +199,34 @@ NetworkPolicy, CI workflow 계약이 바뀔 때 즉시 검토한다. 고정된 j
 | Security Reviewer | OpenBao, RBAC, NetworkPolicy, 예외의 최소권한을 검토한다. | Workspace Owner |
 | Change author | 정적 검증과 필요한 승인·runtime 증적을 handoff한다. | Platform Owner |
 
-### Review Triggers
+##### Review Triggers
 
 변경 검토 시점은 위 Enforcement의 월 1회 및 계약 변경 시 검토 문단을 따른다.
 
-### Lifecycle Traceability
+##### Lifecycle Traceability
 
 SPEC-0008은 초기 구현 증적이며 트리를 떠났다(Git history로 복구). 현재 플랫폼 구조는 위 AD-0007이 소유한다.
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
 | N/A — SPEC-0008 left the tree; Git history recovers it | Platform Owner; Security Reviewer for secrets and exceptions | k3d topology, GitOps desired state, OpenBao/ESO, ingress, AppProject, NetworkPolicy, static and approved runtime evidence |
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

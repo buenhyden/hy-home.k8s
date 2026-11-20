@@ -1,6 +1,6 @@
 ---
 title: "Context and Memory Policy"
-version: "1.15.0"
+version: "2.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -9,27 +9,45 @@ updated: "2026-11-20"
 
 # Context and Memory Policy
 
-## Purpose and Scope
+## 문서 개요
 
-### Objective
+### 목적과 독자
+
+Workers and reviewers use Context and Memory Policy for the rules in its stated scope.
+
+### 책임과 적용 범위
+
+The policy's coverage is defined in [Purpose and Scope](#purpose-and-scope) and [Applies To](#applies-to).
+
+## 내용 계약
+
+### 입력과 전제
+
+Read the current request, owner and rule conditions before applying this policy.
+
+### 본문과 규칙
+
+#### Purpose and Scope
+
+##### Objective
 
 Retain only the context needed to resume safely. Repository state and the
 owning SDLC document, not a memory ledger, determine current truth; the retired progress ledger stays retired, and the work residue ledger of ADR-0060 is a different, residue-only owner.
 
-### Applies To
+##### Applies To
 
 Compaction and handoff can preserve useful summaries while also carrying stale
 assumptions. Resume only through the [resume decision](#resume-decision).
 
 - Archive Index (`docs/98.archive/README.md`)
 
-#### Exclusions
+###### Exclusions
 
 This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
-## Rules
+#### Rules
 
-### Requirements
+##### Requirements
 
 | Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
@@ -83,11 +101,11 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | CTX-R022 | required | active |
 | CTX-R023 | required | active |
 
-#### Shared workspace memory store
+###### Shared workspace memory store
 
 `CTX-R009`
 
-#### Bounded observation metadata
+###### Bounded observation metadata
 
 `CTX-R019`
 
@@ -100,7 +118,7 @@ expiry changes also invalidate caches even if the file hash is unchanged.
 The validator checks metadata, file identity and dates; it cannot authenticate
 an approval or infer whether a writer concealed sensitive content.
 
-#### Resume decision
+###### Resume decision
 
 `CTX-R020`
 
@@ -116,29 +134,29 @@ not block independent local work. A summary saying PASS does not waive this
 recheck. These are agent and operator obligations, not a claim of native
 runtime enforcement.
 
-### Exceptions
+##### Exceptions
 
 This policy defines no exception condition of its own; exceptions follow the approval and safety policy's operator approval route. If this policy needs its own, state it here.
 
-#### Approval and Review
+###### Approval and Review
 
 Approval and review conditions are stated under Requirements.
 
-## Enforcement
+#### Enforcement
 
-### Mechanisms
+##### Mechanisms
 
 Check summaries for stale owner links, duplicated task state, and sensitive
 data. Report conflicting memory rather than rewriting the repository to match
 it. Use [quality policy](../../docs/00.workspace/04.quality/quality.md) for evidence and handoff classification.
 
-### Limits
+##### Limits
 
 Temporary checkpoints and provider-local memory are advisory and confer no execution authority, and this policy grants no provider or runtime capability, execution permission or approval authority. Its checks look for stale owner links, duplicated task state and sensitive data, and conflicting memory is reported rather than used to rewrite the repository.
 
-## Ownership
+#### Ownership
 
-### Owner
+##### Owner
 
 This policy owns repository context retention, resume verification, and the
 boundary for advisory provider-local memory. It grants no provider/runtime
@@ -155,10 +173,30 @@ execution authority.
 - [Approval and Safety](../../docs/00.workspace/04.quality/approval-and-safety.md)
 - [Quality Policy](../../docs/00.workspace/04.quality/quality.md)
 
-#### Responsibilities
+###### Responsibilities
 
 Responsibilities are stated under Owner and Requirements.
 
-### Review Triggers
+##### Review Triggers
 
 This policy changes as a governed-document change under the work lifecycle and the document lifecycle policy, with no adoption step of its own; if it needs one, state it here.
+
+## 적용과 확인
+
+### 적용 방법
+
+Apply the rule, enforcement and exception clauses in the payload together.
+
+### 확인 기준
+
+Check named enforcement on actual input and report its evidence level accurately.
+
+## 관계와 출처
+
+### 관련 문서
+
+The ownership and related documents in the payload link adjacent owners.
+
+### 외부 근거
+
+Repository decisions and cited sources support these rules; external sources alone grant no authority.

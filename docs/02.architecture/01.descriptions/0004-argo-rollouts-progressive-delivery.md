@@ -1,18 +1,36 @@
 ---
 title: "Argo Rollouts Progressive Delivery Architecture Description"
-version: "2.1.2"
+version: "3.0.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-20"
 artifact_id: "AD-0004"
 ---
 
 # Argo Rollouts Progressive Delivery Architecture Description
 
-## Context and Boundaries
+## 문서 개요
 
-### System Boundary
+### 목적과 독자
+
+This architecture description lets architects, GitOps implementers, and reviewers inspect the structural boundary for Argo Rollouts Progressive Delivery. The actual components and flow are under [Structure](#structure) and [Runtime Behavior](#runtime-behavior).
+
+### 책임과 적용 범위
+
+platform maintains the current architecture description. The owned and excluded system boundary is stated in [System Boundary](#system-boundary); constraints remain in [Constraints](#constraints).
+
+## 내용 계약
+
+### 입력과 전제
+
+Inputs and assumptions remain in the cited upstream requirements, boundaries, and payload sections.
+
+### 본문과 규칙
+
+#### Context and Boundaries
+
+##### System Boundary
 
 - **Owns**:
   - The Argo Rollouts Helm chart deployment boundary
@@ -29,17 +47,19 @@ artifact_id: "AD-0004"
   - Multi-cluster Rollouts
   - Standardizing per-app Analysis metrics
 
-#### Purpose and Readers
+###### Purpose and Readers
 
 This document defines the reference architecture and quality attributes of progressive delivery based on Argo Rollouts.
 It describes the current GitOps declarations and traces them to the platform requirements. The operational verification scope is recorded under [Normal Flow](#normal-flow).
 
-##### Current architecture summary
+<a id="current-architecture-summary"></a>
+
+**Current architecture summary**
 
 GitOps declares the Argo Rollouts controller and dashboard in the `argo-rollouts` namespace. The designed workload path combines `Rollout`, `AnalysisTemplate`, Istio routing, Traefik, and cert-manager TLS.
 The platform owns the controller install, dashboard access, AppProject permissions, observability exposure, and a default that imposes no promotion mode, with failure safety through an approved `AnalysisTemplate`.
 
-#### Context
+###### Context
 
 - **Consumes**:
   - ArgoCD App-of-Apps reconciliation
@@ -47,9 +67,9 @@ The platform owns the controller install, dashboard access, AppProject permissio
   - The external Prometheus and observability stack (analysis queries use `https://prometheus.hy.home.arpa`, [ADR-0046](../02.decisions/0046-external-services-over-host-addresses.md))
   - Per-application Rollout manifests
 
-### Constraints
+##### Constraints
 
-#### Agent architecture requirements
+###### Agent architecture requirements
 
 - **Model/Provider Strategy**: Agents may update docs and manifests only through repo-backed GitOps flow.
 - **Tooling Boundary**: Direct `kubectl apply` or live promotion is not allowed without explicit human approval.
@@ -57,9 +77,9 @@ The platform owns the controller install, dashboard access, AppProject permissio
 - **Guardrail Boundary**: the Rollouts controller sends only its completion and abort events to the shared Slack channel; the notification architecture is owned by [AD-0005](./0005-argo-notifications-slack.md).
 - **Latency / Cost Budget**: Not applicable.
 
-## Structure
+#### Structure
 
-### Building Blocks
+##### Building Blocks
 
 - Platform root app includes `gitops/apps/root/platform-rollouts-app.yaml`.
 - The chart source and exact revision are owned by the [Rollouts Application](../../../gitops/apps/root/platform-rollouts-app.yaml); this AD does not maintain a second version pin.
@@ -67,7 +87,7 @@ The platform owns the controller install, dashboard access, AppProject permissio
 - The declared dashboard route uses Traefik TLS behind the dedicated k8s router for browser access ([ADR-0043](../02.decisions/0043-dedicated-k8s-ingress-router.md)).
 - Application teams consume the CRDs through workload manifests, for example `gitops/workloads/adminer/rollout.yaml`.
 
-### Interfaces
+##### Interfaces
 
 - **Key Entities / Flows**:
   - `Rollout`: application deployment state machine.
@@ -87,9 +107,9 @@ The platform owns the controller install, dashboard access, AppProject permissio
 | `Rollout` and `AnalysisTemplate` CRDs | Application teams through workload manifests | Argo Rollouts controller | `gitops/workloads/adminer/rollout.yaml` | not stated in this document |
 | Analysis queries to `https://prometheus.hy.home.arpa` | Reference `AnalysisTemplate` | External Prometheus | [ADR-0046](../02.decisions/0046-external-services-over-host-addresses.md) | not stated in this document |
 
-## Runtime Behavior
+#### Runtime Behavior
 
-### Normal Flow
+##### Normal Flow
 
 - **Runtime / Platform**:
   - Linux server + k3d/k3s local platform managed by ArgoCD.
@@ -104,13 +124,13 @@ The platform owns the controller install, dashboard access, AppProject permissio
   - Static checks cover Application and kustomization structure and manifest syntax.
   - Controller availability and dashboard reachability remain unobserved in this description. The [operations runbook](../../05.operations/03.runbooks/0004-rollouts-notifications-headlamp-runbook.md) owns runtime verification.
 
-### Failure and Recovery
+##### Failure and Recovery
 
 No separate failure boundary is recorded in this description; the failure and recovery behavior it states is in [Scenarios](#scenarios).
 
-## Quality Scenarios
+#### Quality Scenarios
 
-### Scenarios
+##### Scenarios
 
 | Quality attribute | Stimulus | Environment | Response | Measure |
 | --- | --- | --- | --- | --- |
@@ -121,26 +141,26 @@ No separate failure boundary is recorded in this description; the failure and re
 | Observability | An operator inspects controller metrics | In-cluster Alloy scraping `argo-rollouts:8090` with remote-write to the external Prometheus | Controller metrics reach the external Prometheus | The controller target is up in Prometheus |
 | Operability | An operator checks progress, promotion, abort or rollback | Dashboard, CLI and runbook | The path is available without platform changes | Each path is listed in the runbook checks |
 
-### Trade-offs
+##### Trade-offs
 
 One shared controller serves every app that adopts Rollouts, so an adopting app needs no controller change, while every app depends on that controller. Pinned requests and limits keep the controller and dashboard inside the single-host k3d cluster, and progress, promotion, abort and rollback stay on the dashboard, CLI and runbook paths without a platform change.
 
-## Decisions and Adoption
+#### Decisions and Adoption
 
-### Decisions
+##### Decisions
 
 - **ADR**: [`../decisions/0011-argo-rollouts-progressive-delivery.md`](../02.decisions/0011-argo-rollouts-progressive-delivery.md)
 - **ADR**: [`../decisions/0054-platform-decision-current-state-amendment.md`](../02.decisions/0054-platform-decision-current-state-amendment.md) — current promotion-mode clause
 
-#### Requirement Mapping
+###### Requirement Mapping
 
 - **Requirement**: [`../../01.requirements/0001-argo-rollouts-progressive-delivery.md`](../../01.requirements/0001-argo-rollouts-progressive-delivery.md)
 
-### Adoption Boundaries
+##### Adoption Boundaries
 
 - **Spec**: N/A — SPEC-0004 left the tree; Git history recovers it ([REQ-0001 Archived Lineage](../../01.requirements/0001-argo-rollouts-progressive-delivery.md#archived-lineage))
 
-### Lifecycle Traceability
+##### Lifecycle Traceability
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
@@ -154,3 +174,23 @@ One shared controller serves every app that adopts Rollouts, so an adopting app 
 | N/A — [Acceptance criterion 02](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) remains package-owned | The live evidence boundary of the Dashboard HTTPS response and progress display | [ADR 0011](../02.decisions/0011-argo-rollouts-progressive-delivery.md) |
 | N/A — [Acceptance criterion 03](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) remains package-owned | Reconciliation evidence of the ArgoCD Rollout health state | [ADR 0011](../02.decisions/0011-argo-rollouts-progressive-delivery.md) |
 | N/A — [Acceptance criterion 04](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) remains package-owned | The validation boundary that separates repo-static gates from runtime checks | [ADR 0011](../02.decisions/0011-argo-rollouts-progressive-delivery.md) |
+
+## 적용과 확인
+
+### 적용 방법
+
+Apply the decisions and procedures in the role payload under its stated conditions.
+
+### 확인 기준
+
+Check the role payload acceptance or verification conditions and report observed limits.
+
+## 관계와 출처
+
+### 관련 문서
+
+Follow the current upstream and downstream links in the role payload.
+
+### 외부 근거
+
+External evidence, when used, remains attributed and bounded in the role payload.

@@ -1,22 +1,40 @@
 ---
 title: "docs: 프로젝트 문서 허브"
-version: "0.9.0"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 # docs: 프로젝트 문서 허브
 
-## Responsibility
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 README는 docs에서 현재 소유 문서를 찾는 작성자와 검토자를 안내한다. 이 컬렉션의 목적은 [Purpose](#purpose)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 docs의 탐색 경로를 유지한다. 소유 파일은 [Paths](#paths), 진입 방법은 [Usage](#usage)에 연결하며 개별 문서의 계약은 해당 정본이 소유한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Responsibility
+
+##### Purpose
 
 요구사항, 구조적 결정, 변경 계약, 실행 증거와 운영 지식을 연결하는
 `hy-home.k8s` 문서 진입점이다. 각 문서는 한 가지 목적의 정본을 가지며
 README는 탐색을 돕고 별도의 정책·상태 목록을 만들지 않는다.
 
-#### Inputs and Outputs
+###### Inputs and Outputs
 
 - 공통 Agent 거버넌스는 문서 stage 밖의 `.agents/`가 소유한다.
   정책·역할·스킬·SDLC를 관리하며 제공자 차이는 네이티브 영역에 둔다.
@@ -35,13 +53,13 @@ README는 탐색을 돕고 별도의 정책·상태 목록을 만들지 않는�
 Stage 04는 사용하지 않는다. 모든 변경이 모든 stage의 새 문서를 요구하지는
 않지만, 필요한 요구·결정·수용 기준·실행 증거는 서로 추적 가능해야 한다.
 
-### Excluded Responsibilities
+##### Excluded Responsibilities
 
 이 README는 탐색을 돕을 뿐 별도의 정책·상태 목록을 만들지 않는다. 공통 Agent 거버넌스는 문서 stage 밖의 `.agents/`가 소유하고, Stage 90 자료는 다른 stage의 규칙이나 실행 권한을 덮어쓰지 않으며, Stage 98은 검증 대상이 아닌 historical archive라 활성 stage의 문서가 현재 owner처럼 라우팅하지 않는다. Stage 04는 사용하지 않으며, 정적 검증은 live cluster 변경 승인이나 실제 provider 실행 증거가 아니다.
 
-## Current Contents
+#### Current Contents
 
-### Paths
+##### Paths
 
 | Path | Purpose |
 | --- | --- |
@@ -59,13 +77,13 @@ Stage 04는 사용하지 않는다. 모든 변경이 모든 stage의 새 문서�
 `.agents/roles/registry.json`은 문서 registry와 별개로 역할 ID, 권한, handoff,
 skill과 provider projection을 소유한다.
 
-### Owners
+##### Owners
 
 분류: 해당 없음 — 이 stage README는 하위 유형을 따로 나누지 않는다.
 
-## Usage
+#### Usage
 
-### Entry Points
+##### Entry Points
 
 1. [작업 기준 stage](00.workspace/README.md)의 SDLC 흐름(`00.workspace/03.process/sdlc.md`)으로 목적과 소유 stage를 정한다.
 2. [Stage 99 안내](99.templates/README.md)와 registry에서 최종 경로의
@@ -83,7 +101,7 @@ skill과 provider projection을 소유한다.
 
 정적 검증은 live cluster 변경 승인이나 실제 provider 실행 증거가 아니다.
 
-#### 문서 역할과 언어 계약
+###### 문서 역할과 언어 계약
 
 사람이 읽는 안내와 요약은 한국어를 우선하고, AI Agent가 실행 기준으로 삼는
 정책·프롬프트·도구·검증 계약은 영어를 우선한다. 한 문서가 두 독자를 함께
@@ -95,19 +113,19 @@ skill과 provider projection을 소유한다.
 운영 안내처럼 사람이 먼저 읽는 문서는 한국어로 두되, 그 안에 들어가는 AI Agent
 실행 지시나 도구 계약은 영어로 분리한다.
 
-#### Upstream and Downstream
+###### Upstream and Downstream
 
 - [Root README](../README.md)
 - [Archive](98.archive/README.md)
 - [Scripts](../scripts/README.md)
 
-#### Policy and Templates
+###### Policy and Templates
 
 - [Governance Hub](../.agents/README.md)
 - Document Lifecycle (`00.workspace/03.process/document-lifecycle.md`)
 - [Templates](99.templates/README.md)
 
-### Checks
+##### Checks
 
 1. 완료된 본문을 새 형식에 맞추려고 다시 쓰지 않는다. 더 이상 현재가 아닌
    문서는 문서 수명주기 정책(`00.workspace/03.process/document-lifecycle.md`)의
@@ -115,3 +133,23 @@ skill과 provider projection을 소유한다.
    원본 `commit:path`에서 복구한다. Stage 98은 검증하지 않는 기록 보관소로,
    README와 disposition 디렉터리 구조만 유지한다. 현재 문서는 Archive 대신
    현재 owner를 링크한다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

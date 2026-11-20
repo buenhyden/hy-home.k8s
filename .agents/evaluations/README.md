@@ -1,17 +1,35 @@
 ---
 title: "Agent Evaluation Evidence"
-version: "0.3.2"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 
 # Agent Evaluation Evidence
 
-## Service
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 README는 .agents/evaluations의 사용·연결·검사 위치를 찾는 운영자와 기여자를 안내한다. 현재 역할은 [Service](#service)와 [Usage](#usage)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 .agents/evaluations의 진입 경로를 유지한다. 이 경로의 파일과 경계는 [Purpose](#purpose), 사용 조건은 [Usage](#usage), 검사는 [Checks](#checks)가 설명한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Service
+
+##### Purpose
 
 이 디렉터리는 같은 작업을 실제로 짝지어 실행한 근거로 안내한다. 한 번은
 `noSkill` 기준선, 한 번은 `withSkill` 실행이다. 평가는
@@ -29,25 +47,25 @@ native skill 적재, 명령 실행, 권한 강제, 저장소 QA 관문 통과를
 - [Common agent governance](../README.md)
 - [Stage 03 Spec navigation](../../docs/03.specs/README.md)
 
-### Interfaces
+##### Interfaces
 
 - [Agent evaluator responsibility](../roles/agent-evaluator.md)
 - [Quality policy](../../docs/00.workspace/04.quality/quality.md#agent-evaluation-evidence)
 - [Stage 99 profiles and templates](../../docs/99.templates/README.md)
 
-#### Configuration Boundary
+###### Configuration Boundary
 
 실행 전에 두 조건에 같은 작업과 기준선을 선언한다. 실제 prompt, skill 판본,
 provider·세션 식별, 한 쌍 실행 선언, 채점자와 기준 ID를 cycle과 함께 보관한다.
 작업이나 rubric이 바뀌면 새 비교 입력이 되며, 이전 점수를 조용히 고치지 않는다.
 
-#### Security Boundary
+###### Security Boundary
 
 이 문서는 secret, credential, 권한 경계만을 다루는 내용을 따로 두지 않는다. 그런 내용을 두게 되면 여기에 적는다.
 
-## Usage
+#### Usage
 
-### Prerequisites
+##### Prerequisites
 
 작업, 실제 출력 두 개, 채점 근거를 관측된 세션에 연결할 수 있을 때만 cycle을
 받아들인다. cycle 하나에는 짝 실행 하나만 두고, 추가 실행은 별도 cycle
@@ -62,30 +80,50 @@ provider·native·runtime 주장은 원래 근거 소유자가 가진다.
 않는다. 작업 공간에 없는 사용자 제공 skill 정의는 참고 기준일 뿐이며, 이
 경로는 그것을 설치하거나 만들지 않는다.
 
-### Selected Start
+##### Selected Start
 
 이 디렉터리는 관측된 평가 근거로 안내하는 라우터이며 로컬 작업 절차만을 다루는 별도 내용이 없다.
 
-## Checks
+#### Checks
 
-### Readiness
+##### Readiness
 
-#### Validation
+###### Validation
 
 실제 입력에서 현재 Stage 99 profile, 링크, 선언된 짝의 완결성, 점수 계산을
 확인한다. 포함되는 모든 cycle에 완결된 실제 짝이 있을 때만 결과를 기록하고,
 불완전한 짝은 미완료로 남긴다. 집계는 고정 품질 임계값 없이 실제 cycle 수를
 보고한다. 저장소 QA, 독립 의미 검토, provider runtime 관측은 서로 다른 lane이다.
 
-### Failure Handling
+##### Failure Handling
 
-#### Operations
+###### Operations
 
 원시 출력과 세션 출처는 관측된 실행과 함께 두고, 선언된 rubric에 따라 채점을
 기록한 뒤 `results.md`에서 한 번만 집계한다. provider·세션을 쓸 수 없거나
 skill 또는 응답이 없으면 원래 Task 소유자에게 보고한다. 행을 채우려고 출력을
 합성하지 않는다.
 
-#### Runbook Links
+###### Runbook Links
 
 이 문서는 runbook이나 운영 가이드 링크를 따로 두지 않는다. 연결할 운영 문서가 생기면 여기에 연결한다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

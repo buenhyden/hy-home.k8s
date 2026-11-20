@@ -1,6 +1,6 @@
 ---
 title: "Domain Index"
-version: "0.3.0"
+version: "1.0.0"
 type: "governance/knowledge"
 status: "draft"
 owner: "platform"
@@ -9,20 +9,38 @@ updated: "2026-11-20"
 
 # Domain Index
 
-## Overview
+## 문서 개요
+
+### 목적과 독자
+
+이 지식 문서는 Domain Index에서 현재 소유 경로를 찾는 작업자와 검토자의 탐색을 돕는다. 개요는 [Overview](#overview)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 이 지식 지도를 유지한다. 권한 경계는 [Authority Boundary](#authority-boundary), 실제 포인터는 [Pointer Index](#pointer-index)에 기록한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Overview
 
 A reader working in one operating domain asks which document is authoritative
 for it and which file to open first. This index answers that per domain and
 carries no content of its own.
 
-## Authority Boundary
+#### Authority Boundary
 
 A row names an owner; it does not summarize one. Operating policies, runbooks
 and architecture descriptions keep their scope, their evidence rules and their
 approval boundaries. Where a row and its owner disagree, the owner is correct
 and the row is stale.
 
-## Pointer Index
+#### Pointer Index
 
 | Domain | Owner path | Entry path | Stays valid while |
 | --- | --- | --- | --- |
@@ -38,7 +56,7 @@ and the row is stale.
 | Local validation environment | `docs/00.workspace/05.environment/` | `docs/00.workspace/05.environment/README.md` | The hashed validation lock and external-checkout tool environment remain the preparation inputs |
 | Agent responsibilities and permissions | `.agents/roles/` | `.agents/roles/README.md` | The registry stays the single source for roles and permission classes |
 
-## Validation and Refresh
+#### Validation and Refresh
 
 The external-service audit uses this bounded provenance observation. Re-read
 the source for its values; owner review is required before promotion or reuse
@@ -70,8 +88,28 @@ knowledge validator. A row is refreshed when its domain changes owner, and
 retired when the domain stops existing. A new operating policy or runbook does
 not by itself require a row; only a change of canonical owner does.
 
-## Related Documents
+#### Related Documents
 
 - [Common Knowledge](README.md)
 - [Project Map](project-map.md)
 - Operations policies (`docs/05.operations/02.policies/README.md`)
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

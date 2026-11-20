@@ -25,7 +25,14 @@ from typing import Any, Callable, Iterable, Mapping, Sequence
 from urllib.parse import unquote, urlsplit
 
 from frontmatter_yaml import FrontmatterError, load_frontmatter
+from common_document_contract import (
+    CommonDocumentError,
+    has_common_envelope,
+    payload_markdown,
+    relation_rows,
+)
 from document_contracts import (
+    CRITERION_ID,
     Diagnostic,
     DocumentContractError,
     DocumentProfile,
@@ -2585,6 +2592,34 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
         diagnostics.extend(
             _explicit_anchor_shape_diagnostics(source, profile, context.texts[source])
         )
+        if has_common_envelope(context.texts[source]):
+            try:
+                typed = relation_rows(context.texts[source])
+            except CommonDocumentError as exc:
+                diagnostics.append(
+                    _diag(
+                        "RELATION-TYPED",
+                        source,
+                        profile,
+                        "one typed relation table with a declared kind and one link per row",
+                        str(exc),
+                    )
+                )
+                typed = ()
+            for relation, raw in typed:
+                destination_kind, _ = _local_destination(
+                    source, raw, template=context.profiles[source].mode == "template"
+                )
+                if relation != "cites" and destination_kind == "external":
+                    diagnostics.append(
+                        _diag(
+                            "RELATION-AUTHORITY",
+                            source,
+                            profile,
+                            "non-cites relation to a repository target",
+                            f"{relation}: {raw}",
+                        )
+                    )
         diagnostics.extend(
             _stage_reference_diagnostics(source, profile, context.texts[source])
         )
@@ -2750,7 +2785,20 @@ def _gfm_table_cells(line: str, *, cell_padding: str | None = None) -> list[str]
     return cells
 
 
+def _semantic_text(text: str) -> str:
+    """Project a present shell for role readers; raw links keep their own text."""
+
+    if not has_common_envelope(text):
+        return text
+    try:
+        return payload_markdown(text, profile_id="document-reader")
+    except CommonDocumentError:
+        # The Markdown profile validator reports the malformed shell directly.
+        return text
+
+
 def _exact_heading_section(text: str, heading: str) -> str | None:
+    text = _semantic_text(text)
     marker, _, title = heading.partition(" ")
     return root_heading_section(text, len(marker), title)
 
@@ -2758,6 +2806,7 @@ def _exact_heading_section(text: str, heading: str) -> str | None:
 def _exact_rendered_heading_section(text: str, heading: str) -> str | None:
     """Slice one root heading from the same rendered block view as links."""
 
+    text = _semantic_text(text)
     lines = _rendered_container_lines(text)
     matches = [
         index
@@ -2820,7 +2869,7 @@ def _first_visible_table(
 BODY_LINK_EXCLUSION = re.compile(r"^N/A — \S(?:.*\S)?$")
 BODY_IDENTIFIER_PATTERNS = {
     "requirement": re.compile(r"^REQ-[A-Z0-9-]+-[0-9]{2,3}$"),
-    "criterion": re.compile(r"^VAL-[A-Z0-9-]+-[0-9]{3}$"),
+    "criterion": CRITERION_ID,
     "work-item": re.compile(r"^[A-Z][A-Z0-9-]+-[0-9]{3}$"),
 }
 
@@ -3044,7 +3093,8 @@ def lifecycle_markdown_evidence(
         return tuple(resolved)
 
     all_links = local_links(_extract_links(text))
-    rendered_lines = _rendered_container_lines(text)
+    semantic = _semantic_text(text)
+    rendered_lines = _rendered_container_lines(semantic)
     root_h2 = tuple(
         line.text[3:].strip()
         for line in rendered_lines
@@ -3064,7 +3114,7 @@ def lifecycle_markdown_evidence(
     body_rows: tuple[tuple[tuple[str, str], ...], ...] = ()
     body_table_links: tuple[PurePosixPath, ...] = ()
     body_contract_valid = False
-    document_status = task_status(frontmatter_mapping(text), text, profile)
+    document_status = task_status(frontmatter_mapping(text), semantic, profile)
 
     if profile.body_contract is not None:
         contract = profile.body_contract
@@ -3784,7 +3834,7 @@ def _body_contract_link_diagnostics(
         if profile is None:
             continue
         status = task_status(
-            context.metadata[path], context.texts.get(path, ""), profile
+            context.metadata[path], _semantic_text(context.texts.get(path, "")), profile
         )
         if not _body_contract_link_is_enforced(
             path, profile, status, body_contracts, path_prefixes
@@ -3923,7 +3973,7 @@ def _requirement_coverage_diagnostics(
         if profile is None or column is None or profile.body_contract is None:
             continue
         status = task_status(
-            context.metadata[path], context.texts.get(path, ""), profile
+            context.metadata[path], _semantic_text(context.texts.get(path, "")), profile
         )
         if status not in profile.body_contract.enforced_statuses:
             continue
@@ -3939,7 +3989,7 @@ def _requirement_coverage_diagnostics(
         ):
             continue
         text = context.texts[path]
-        status = task_status(context.metadata[path], text, profile)
+        status = task_status(context.metadata[path], _semantic_text(text), profile)
         identifier = next(
             (
                 item.column
@@ -4266,7 +4316,7 @@ def _readme_findings(
     tree: TrackedTree,
 ) -> list[Diagnostic]:
     folder = path.parent
-    text = source.text
+    text = _semantic_text(source.text)
     visible, blocks = _readme_visible_lines(text)
     section = _readme_section(text, rule.section)
     found: list[Diagnostic] = []
@@ -4589,20 +4639,27 @@ def _inventory_documents(context: Context) -> list[dict[str, Any]]:
     for path in context.paths:
         profile = context.profiles[path]
         metadata = context.metadata[path]
-        documents.append(
-            {
-                "path": path.as_posix(),
-                "profile": profile.profile_id,
-                "profileClass": profile.profile_class,
-                "mode": profile.mode,
-                "title": str(metadata.get("title", "")),
-                "status": str(metadata.get("status", "")),
-                "ownerKey": owner_keys[path],
-                "origin": "baseline"
-                if path in context.baseline_paths
-                else "program-created",
-            }
-        )
+        entry: dict[str, Any] = {
+            "path": path.as_posix(),
+            "profile": profile.profile_id,
+            "profileClass": profile.profile_class,
+            "mode": profile.mode,
+            "title": str(metadata.get("title", "")),
+            "status": str(metadata.get("status", "")),
+            "ownerKey": owner_keys[path],
+            "origin": "baseline"
+            if path in context.baseline_paths
+            else "program-created",
+        }
+        if has_common_envelope(context.texts[path]):
+            try:
+                entry["typedRelations"] = [
+                    {"kind": kind, "target": href}
+                    for kind, href in relation_rows(context.texts[path])
+                ]
+            except CommonDocumentError:
+                entry["typedRelations"] = []
+        documents.append(entry)
     return documents
 
 

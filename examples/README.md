@@ -1,16 +1,35 @@
 ---
 title: "examples"
-version: "0.4.1"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 # examples
 
-## Service
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 README는 examples의 사용·연결·검사 위치를 찾는 운영자와 기여자를 안내한다. 현재 역할은 [Service](#service)와 [Usage](#usage)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 examples의 진입 경로를 유지한다. 이 경로의 파일과 경계는 [Purpose](#purpose), 사용 조건은 [Usage](#usage), 검사는 [Checks](#checks)가 설명한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+
+#### Service
+
+##### Purpose
 
 > `hy-home.k8s` 플랫폼의 앱 온보딩 예시와 cloud target 참조 구현을 관리한다.
 
@@ -33,7 +52,7 @@ examples/
 - [Azure executable example](azure/README.md)
 - [Docs README](../docs/README.md)
 
-#### Audience
+###### Audience
 
 이 README의 주요 독자:
 
@@ -42,7 +61,7 @@ examples/
 - Cloud Architects
 - Documentation Writers
 
-#### 예시 목록
+###### 예시 목록
 
 | 디렉토리 | 설명 | 관련 문서 |
 | --- | --- | --- |
@@ -50,7 +69,7 @@ examples/
 | [`aws`](aws) | EKS 1.35 target, Terraform AWS provider 6.x 기반 AWS migration 참조 예시 | [AWS example boundary](./aws/README.md) |
 | [`azure`](azure) | AKS 1.35 target, Bicep, AGC/Gateway API 기반 Azure migration 참조 예시 | [Azure example boundary](./azure/README.md) |
 
-#### Example Role Matrix
+###### Example Role Matrix
 
 | Example path | Role | Active source of truth | Validation |
 | --- | --- | --- | --- |
@@ -58,48 +77,50 @@ examples/
 | `aws/` | Cloud migration reference implementation for AWS. | [`aws/README.md`](aws/README.md) and adjacent executable assets; not live provider-latest guidance. | `python3 scripts/qa.py full`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
 | `azure/` | Cloud migration reference implementation for Azure. | [`azure/README.md`](azure/README.md) and adjacent executable assets; not live provider-latest guidance. | `python3 scripts/qa.py full`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
 
-### Interfaces
+##### Interfaces
 
 이 문서는 참조 자산의 경계만 다루며 별도의 외부 입출력 계약을 정의하지 않는다.
 
-#### Security Boundary
+###### Security Boundary
 
 보안 경계는 Usage > Prerequisites에 적혀 있다.
 
-## Usage
+#### Usage
 
-### Prerequisites
+##### Prerequisites
 
 `examples/`는 자산을 정본 소유 경로로 복사해 검증하기 전까지 참조 전용이다.
 provider credential, secret material, live 계정이나 클러스터 변경은 여기에 두지
 않는다. 활성 로컬 desired state는 계속 [`gitops/`](../gitops/)가 소유한다.
 
-#### Scope
+###### Scope
 
-##### In Scope
+<a id="in-scope"></a>
+**In Scope**
 
 - GitOps 앱 온보딩 예시와 placeholder 치환 흐름
 - AWS EKS 1.35 target Terraform 참조 구현
 - AKS 1.35 target Bicep/Kubernetes 참조 구현
 - provider별 실행 자산과 인접 운영 경계
 
-##### Out of Scope
+<a id="out-of-scope"></a>
+**Out of Scope**
 
 - 실제 AWS/Azure 계정 배포
 - live Kubernetes 클러스터 변경
 - production-grade 비용 산정과 SLA 보장
 - secret material 또는 provider credential 저장
 
-### Selected Start
+##### Selected Start
 
-#### Working Procedure
+###### Working Procedure
 
 1. 로컬 앱 온보딩은 [sample-app](sample-app/README.md)을 복사해 시작한다.
 2. AWS/Azure 예시는 각 provider README와 현재 공식 자료를 함께 검토한다.
 3. provider module, Kubernetes version, ingress/gateway 선택이 바뀌면 관련 README와 실행 자산을 같은 변경에서 갱신한다.
 4. 변경 후 `python3 scripts/qa.py full`와 outdated marker scan을 실행한다.
 
-#### Link Basis
+###### Link Basis
 
 이 README의 링크 기준 위치는 `examples/`다.
 
@@ -107,13 +128,13 @@ provider credential, secret material, live 계정이나 클러스터 변경은 �
 - 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
 - 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
 
-#### Reference Links
+###### Reference Links
 
 - [Root README](../README.md)
 - [GitOps README](../gitops/README.md)
 - [Ingress NGINX retirement statement](https://kubernetes.io/blog/2026/01/29/ingress-nginx-statement/)
 
-#### 사용 방법
+###### 사용 방법
 
 각 예시 디렉터리의 `README.md`를 참조한다. 새 앱 온보딩 시 `sample-app/`은 active onboarding template으로 시작점 역할을 하며, 복사 후 플레이스홀더 교체와 검증을 마쳐야 `gitops/workloads/<appname>` active desired state로 다룬다. fuller active reference는 `gitops/workloads/adminer/`와 비교한다.
 
@@ -121,25 +142,45 @@ provider credential, secret material, live 계정이나 클러스터 변경은 �
 cp -r examples/sample-app gitops/workloads/<appname>
 ```
 
-#### 구현 참조
+###### 구현 참조
 
 로컬 앱 패턴을 확인할 때는 활성 GitOps 구현과 예시 템플릿을 구분한다.
 
 - [`../gitops/workloads/adminer`](../gitops/workloads/adminer) — DB 관리 UI (Rollout + AnalysisTemplate + PeerAuthentication)
 
-## Checks
+#### Checks
 
-### Readiness
+##### Readiness
 
 복사한 예시에 맞춰 `python3 scripts/qa.py full`,
 `bash scripts/validate-k8s-manifests.sh .`,
 `bash scripts/check-secret-handling.sh .`를 실행한다. 이 저장소 정적 검사는
 provider나 live cluster의 준비 상태를 증명하지 않는다.
 
-### Failure Handling
+##### Failure Handling
 
 이 문서는 참조 전용 예시를 다루며 live 환경을 변경하지 않으므로 관측과 복구 절차가 없다.
 
-#### Runbook Links
+###### Runbook Links
 
 이 문서는 참조 전용 예시를 다루므로 runbook 링크가 없다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

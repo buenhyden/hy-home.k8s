@@ -1,24 +1,42 @@
 ---
 title: "Observability Platform Operations Policy"
-version: "1.6.2"
+version: "2.0.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 artifact_id: "POL-0005"
 ---
 
 # Observability Platform Operations Policy
 
-## Purpose and Scope
+## 문서 개요
 
-### Objective
+### 목적과 독자
+
+이 정책은 Observability Platform Operations Policy의 운영 조건을 적용할 플랫폼 운영자와 변경 검토자를 위한 규칙이다. 정책 목표는 [Objective](#objective)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 이 운영 정책을 유지한다. 적용 대상은 [Applies To](#applies-to), 규칙과 집행 조건은 [Rules](#rules) 및 [Enforcement](#enforcement)가 소유한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Purpose and Scope
+
+##### Objective
 
 이 문서는 local cluster와 외부 observability backend 사이의 메트릭·로그
 수집 통제를 하나의 정책으로 정의한다. 서비스 포트, in-cluster Alloy 수집과 remote write,
 Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 
-### Applies To
+##### Applies To
 
 - `gitops/platform/external-services/`의 Istio 포트 명명
 - `gitops/platform/argocd/`와 `gitops/platform/monitoring/`의 metrics endpoint
@@ -29,13 +47,13 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 - **Roles**: Platform Owner, Observability Owner, approved operator
 - **Environment**: Linux server local cluster와 연결된 external observability services
 
-#### Exclusions
+###### Exclusions
 
 범위에서 제외한다고 따로 표시한 항목은 Purpose and Scope 절에 없으며, 외부 observability 설정의 소유 경계는 아래 Exceptions에 적혀 있다.
 
-## Rules
+#### Rules
 
-### Requirements
+##### Requirements
 
 | Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
@@ -57,7 +75,7 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 | OBSERV-R006 | required | active |
 | OBSERV-R007 | required | active |
 
-#### Control Register
+###### Control Register
 
 | Control | Accountable role | Enforcement surface | Evidence |
 | --- | --- | --- | --- |
@@ -68,15 +86,15 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 | OBS-005 access | Platform Owner | Grafana service account role and AppProject destinations | Viewer-only token and monitoring destination |
 | OBS-006 in-cluster metric collection | Observability Owner | in-cluster Alloy `prometheus.remote_write` to `https://prometheus.hy.home.arpa/api/v1/write` through the external Traefik with Basic Auth (`monitoring/prometheus-api-auth`) and the `hy-home-root-ca` gateway CA, and `monitoring` egress to host `192.168.0.13:443` (ADR-0046) | `cluster="k3d-hyhome"` series for jobs `kubernetes-pods`, `kubelet`, `cadvisor` in the external Prometheus |
 
-#### Service Port Naming
+###### Service Port Naming
 
 `OBSERV-R001`
 
-#### In-Cluster Metric Collection
+###### In-Cluster Metric Collection
 
 `OBSERV-R002`
 
-#### Logs, Rules, and Access
+###### Logs, Rules, and Access
 
 - `OBSERV-R003`
 - `OBSERV-R004`
@@ -84,7 +102,7 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 - `OBSERV-R006`
 - `OBSERV-R007`
 
-### Exceptions
+##### Exceptions
 
 AppProject live 변경은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions)의
 공통 live 변경 예외를 따른다. 이 정책이 추가하는 조건은 manifest와 관련
@@ -92,13 +110,13 @@ Runbook을 같은 변경으로 동기화하는 것이다. 외부
 Prometheus·Grafana·Loki 설정 변경은 외부 observability workspace가 소유하며
 이 저장소의 Runbook은 그 결과를 검증만 한다.
 
-#### Approval and Review
+###### Approval and Review
 
 예외 승인은 위 Exceptions가 가리키는 POL-0001의 공통 live 변경 예외를 따른다.
 
-## Enforcement
+#### Enforcement
 
-### Mechanisms
+##### Mechanisms
 
 | Control Area | Required Evidence | Runbook Owner |
 | --- | --- | --- |
@@ -120,19 +138,19 @@ Alloy의 relabel·remote-write 설정과 실제 외부 Prometheus의 series 수�
 - [ArgoCD Metrics Runbook](../03.runbooks/0008-argocd-metrics-prometheus-runbook.md)
 - [K8s Observability Runbook](../03.runbooks/0009-k8s-observability-runbook.md)
 
-### Limits
+##### Limits
 
 Alloy relabel과 remote-write 구성은 외부 Prometheus에 실제로 series가 도착했다는 증거와 종류가 다르다. 이름 있는 클러스터와 외부 endpoint를 관측하기 전까지 `up`과 `argocd_app_info` 조건은 미확인으로 남으며, 이 정책과 RUN-0008, RUN-0009는 담당과 검증 경로를, REQ-0004 telemetry 시나리오는 공식·표본·목표를 제공한다.
 
-## Ownership
+#### Ownership
 
-### Owner
+##### Owner
 
 이 정책이 근거로 삼는 상위 문서는 다음과 같다.
 
 - [Service Mesh and cert-manager Policy](./0003-service-mesh-cert-manager-policy.md)
 
-#### Responsibilities
+###### Responsibilities
 
 | Role | Responsibility | Escalation owner |
 | --- | --- | --- |
@@ -140,12 +158,32 @@ Alloy relabel과 remote-write 구성은 외부 Prometheus에 실제로 series가
 | Observability Owner | Prometheus, Grafana, Loki, Alloy 수집 계약을 유지한다. | Platform Owner |
 | Approved operator | Runbook에 따라 runtime 증적과 복구 결과를 기록한다. | Platform Owner |
 
-### Review Triggers
+##### Review Triggers
 
 변경 검토 조건은 위 Enforcement의 검토 문단에 적혀 있다.
 
-### Lifecycle Traceability
+##### Lifecycle Traceability
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
 | N/A — current GitOps and external observability contracts have no promoting Spec or Task to link | Platform Owner and Observability Owner | service naming, Alloy relabel and remote write, Prometheus/Grafana/Loki config, AppProject destination, owning Runbooks |
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

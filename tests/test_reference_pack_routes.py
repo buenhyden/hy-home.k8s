@@ -22,6 +22,7 @@ from document_contracts import (  # noqa: E402
     classify_path,
     load_registry,
 )
+from common_document_contract import payload_markdown  # noqa: E402
 
 
 def load_registry_validator():
@@ -85,9 +86,17 @@ class ReferencePackRouteTest(unittest.TestCase):
                 ROOT
                 / f"docs/99.templates/02.templates/90.references/{kind}-pack.template.md"
             )
+            text = template.read_text("utf-8")
+            physical = [line for line in text.splitlines() if line.startswith("## ")]
+            self.assertEqual(
+                physical,
+                ["## 문서 개요", "## 내용 계약", "## 적용과 확인", "## 관계와 출처"],
+            )
             headings = [
                 line
-                for line in template.read_text("utf-8").splitlines()
+                for line in payload_markdown(
+                    text, profile_id=f"reference/{kind}-pack"
+                ).splitlines()
                 if line.startswith("## ")
             ]
             with self.subTest(kind=kind):

@@ -25,7 +25,7 @@ GIT_TIMEOUT_SECONDS = 10
 # current registry, so no reader keeps an older generation. A MAJOR step edits
 # REGISTRY_MAJOR and DOC_REGISTRY_MAJOR in scripts/provider_write_guard.py, with
 # the registry value and the schema const.
-REGISTRY_MAJOR = 21
+REGISTRY_MAJOR = 22
 READABLE_REGISTRY_MAJORS = (REGISTRY_MAJOR,)
 TOP_LEVEL_KEYS = frozenset(
     {
@@ -47,6 +47,7 @@ OPTIONAL_TOP_LEVEL_KEYS = frozenset(
         "readme_navigation",
         "document_language",
         "shared_contract",
+        "common_document_contract",
         "common_forms",
         "frontmatter_keys",
         "frontmatter_dialect",

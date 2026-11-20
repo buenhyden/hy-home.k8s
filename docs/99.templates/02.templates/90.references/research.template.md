@@ -10,80 +10,106 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 # Reference: [Item Name]
 
-## Question and Scope
+## 문서 개요
 
-### Question
+### 목적과 독자
 
-<!-- Author prompt: identify the referenced subject, reader need, and observation boundary. -->
+<!-- 작성 규칙: Give authors one form for a Stage 90 research member that records a dated inquiry with its observation boundary and sources. -->
 
-#### Research Questions
+### 책임과 적용 범위
 
-<!-- Author prompt: State each answerable question and its decision use. -->
+<!-- 작성 규칙: A research member owns its dated evidence and states what it cannot establish; it never becomes policy or current authority by itself. -->
 
-#### Reference Type
+## 내용 계약
 
-<!-- Author prompt: Identify this Research as a dated inquiry and name the decision or knowledge gap it informs. -->
+### 입력과 전제
 
-### Scope
+<!-- 작성 규칙: 이 문서를 작성할 때 필요한 실제 입력, 권한과 전제를 밝힌다. -->
 
-<!-- Author prompt: define included questions, exclusions, and time boundary. -->
+### 본문과 규칙
 
-#### Method
+<!-- 작성 규칙: 아래 역할별 절의 내용과 표를 해당 문서의 실제 사실로 채운다. -->
 
-<!-- Author prompt: State how sources were selected, compared, and verified. -->
+#### Question and Scope
+##### Question
+<!-- 작성 규칙: identify the referenced subject, reader need, and observation boundary. -->
 
-## Sources
+###### Research Questions
+<!-- 작성 규칙: State each answerable question and its decision use. -->
 
-### Primary Sources
+###### Reference Type
+<!-- 작성 규칙: Identify this Research as a dated inquiry and name the decision or knowledge gap it informs. -->
+
+##### Scope
+<!-- 작성 규칙: define included questions, exclusions, and time boundary. -->
+
+###### Method
+<!-- 작성 규칙: State how sources were selected, compared, and verified. -->
+
+#### Sources
+##### Primary Sources
 
 | Source ID | Source | Version | Checked At | Finding | Application | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
-| <!-- Author prompt: Give a stable source ID. --> | <!-- Author prompt: Link the original location. --> | <!-- Author prompt: State the actual source version, or none. --> | <!-- Author prompt: State when it was directly read. --> | <!-- Author prompt: State what the source actually supports. --> | <!-- Author prompt: State the selected application. --> | <!-- Author prompt: State the application limits or what stays unverified. --> |
+| <!-- 작성 규칙: Give a stable source ID. --> | <!-- 작성 규칙: Link the original location. --> | <!-- 작성 규칙: State the actual source version, or none. --> | <!-- 작성 규칙: State when it was directly read. --> | <!-- 작성 규칙: State what the source actually supports. --> | <!-- 작성 규칙: State the selected application. --> | <!-- 작성 규칙: State the application limits or what stays unverified. --> |
 
-<!-- Author prompt: Prefer primary sources and distinguish source authority from a local adoption decision. -->
+<!-- 작성 규칙: Prefer primary sources and distinguish source authority from a local adoption decision. -->
 
 | Source | Grade | Retrieved | Relevance |
 | --- | --- | --- | --- |
-| <!-- Author prompt: Link the source. --> | <!-- Author prompt: State evidence grade. --> | <!-- Author prompt: Use an ISO date. --> | <!-- Author prompt: State direct support. --> |
+| <!-- 작성 규칙: Link the source. --> | <!-- 작성 규칙: State evidence grade. --> | <!-- 작성 규칙: Use an ISO date. --> | <!-- 작성 규칙: State direct support. --> |
 
-#### Related Documents
+###### Related Documents
+<!-- 작성 규칙: link canonical consumers, successor evidence, and source ledgers. -->
 
-<!-- Author prompt: link canonical consumers, successor evidence, and source ledgers. -->
+##### Versions and Dates
+###### Review and Freshness
+<!-- 작성 규칙: state refresh triggers, staleness risks, and current-truth owner. -->
 
-### Versions and Dates
+#### Analysis
+<!-- 작성 규칙: keep sourced claims distinct from interpretation. -->
 
-#### Review and Freshness
-
-<!-- Author prompt: state refresh triggers, staleness risks, and current-truth owner. -->
-
-## Analysis
-
-<!-- Author prompt: keep sourced claims distinct from interpretation. -->
-
-### Claim-Source Matrix
+##### Claim-Source Matrix
 
 | Claim | Source | Verification state |
 | --- | --- | --- |
-| <!-- Author prompt: State one bounded claim. --> | <!-- Author prompt: Cite direct support. --> | <!-- Author prompt: Record verified, disputed, or unverified. --> |
+| <!-- 작성 규칙: State one bounded claim. --> | <!-- 작성 규칙: Cite direct support. --> | <!-- 작성 규칙: Record verified, disputed, or unverified. --> |
 
-### Findings
+##### Findings
+<!-- 작성 규칙: Answer the research questions from the claim-source matrix. -->
 
-<!-- Author prompt: Answer the research questions from the claim-source matrix. -->
+##### Alternatives
+<!-- 작성 규칙: State the alternatives the sources support and how they differ from the current state. -->
 
-### Alternatives
+#### Application and Limits
+##### Design Implications
+<!-- 작성 규칙: Name decision options and owners without promoting research to current policy or claiming an unobserved implementation. -->
 
-<!-- Author prompt: State the alternatives the sources support and how they differ from the current state. -->
+##### Unverified Conditions
+<!-- 작성 규칙: State missing, conflicting, or time-sensitive evidence. -->
 
-## Application and Limits
+###### Authority Boundary
+<!-- 작성 규칙: state what this reference can and cannot establish. -->
 
-### Design Implications
+## 적용과 확인
 
-<!-- Author prompt: Name decision options and owners without promoting research to current policy or claiming an unobserved implementation. -->
+### 적용 방법
 
-### Unverified Conditions
+<!-- 작성 규칙: 실제 사용 방법과 적용 대상을 설명한다. -->
 
-<!-- Author prompt: State missing, conflicting, or time-sensitive evidence. -->
+### 확인 기준
 
-#### Authority Boundary
+<!-- 작성 규칙: 이 문서 유형에 해당하는 확인 방법과 한계를 적는다. -->
 
-<!-- Author prompt: state what this reference can and cannot establish. -->
+## 관계와 출처
+
+### 관련 문서
+
+<!-- 작성 규칙: 현재 정본의 관계와 탐색 링크만 연결한다. 실제 의미 관계가 있으면 Relation에 requires/designs/implements/verifies/operates/defines/cites 중 하나를, Target에 현재 문서의 상대 Markdown 링크 하나를 적는다. 단순 탐색 링크는 표 밖에 둔다. -->
+
+| Relation | Target |
+| --- | --- |
+
+### 외부 근거
+
+<!-- 작성 규칙: 외부 근거가 있으면 출처와 채택 범위를 적고, 없으면 그 이유를 명시한다. -->

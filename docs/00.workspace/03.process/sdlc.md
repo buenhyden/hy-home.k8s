@@ -1,6 +1,6 @@
 ---
 title: "Software Development Lifecycle"
-version: "4.5.0"
+version: "5.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -9,9 +9,27 @@ updated: "2026-11-20"
 
 # Software Development Lifecycle
 
-## Purpose and Scope
+## 문서 개요
 
-### Objective
+### 목적과 독자
+
+Workers and reviewers use Software Development Lifecycle for the rules in its stated scope.
+
+### 책임과 적용 범위
+
+The policy's coverage is defined in [Purpose and Scope](#purpose-and-scope) and [Applies To](#applies-to).
+
+## 내용 계약
+
+### 입력과 전제
+
+Read the current request, owner and rule conditions before applying this policy.
+
+### 본문과 규칙
+
+#### Purpose and Scope
+
+##### Objective
 
 This document owns the human flow from durable requirements through
 architecture, Spec-driven implementation, operations, and historical recovery.
@@ -19,7 +37,7 @@ Authors, agents and reviewers consume it to choose the responsible document
 owner. It guarantees one owner per kind of knowledge; stage numbers express
 ownership and navigation rather than a one-way approval waterfall.
 
-### Applies To
+##### Applies To
 
 Work begins with repository evidence and a testable Requirement Package or a
 directly approved package-local work unit. Architecture Descriptions record
@@ -37,13 +55,13 @@ lineage, and Google SRE informs factual incidents and blameless postmortems.
 
 [Common Agent Governance](../../../.agents/README.md) is the common agent governance entry point.
 
-#### Exclusions
+###### Exclusions
 
 Provider and agent-roster authority is excluded and stated under Owner; if another subject is excluded, name it and its owner here.
 
-## Rules
+#### Rules
 
-### Requirements
+##### Requirements
 
 | Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
@@ -127,11 +145,11 @@ Provider and agent-roster authority is excluded and stated under Owner; if anoth
 | SDLC-R037 | required | active |
 | SDLC-R038 | required | active |
 
-#### Stage 04 slot
+###### Stage 04 slot
 
 `SDLC-R007`
 
-#### Ownership and placement
+###### Ownership and placement
 
 The meaning of each term below is owned by the
 [Repository Vocabulary](../../../.agents/knowledge/glossary.md); local Kubernetes
@@ -153,7 +171,7 @@ each artifact lives and the rules that govern it.
 | SDLC-R018 | Stage 05. |
 | SDLC-R019 | Task and Git own change evidence; Git owns source recovery. Stage 98 is unvalidated history. |
 
-#### Proportional transitions
+###### Proportional transitions
 
 | Rule ID | Entry and output | Approval and evidence | Failure or rollback |
 | --- | --- | --- | --- |
@@ -162,7 +180,7 @@ each artifact lives and the rules that govern it.
 | SDLC-R022 | Reviewed final bytes, resolved required checks, accepted criteria and Task handoff; scoped Git commit only when authorized | Local, index, hosted, provider, and live evidence remain distinct | Unresolved required checks block completion; missing external permission is DEFER |
 | SDLC-R023 | Stable operating knowledge or terminal work record | Promote only durable meaning; apply the Stage 99 lifecycle contract; recover removed documents from Git history | Keep failures factual; use Git recovery rather than a second active owner |
 
-#### Change kinds
+###### Change kinds
 
 `SDLC-R024`
 
@@ -187,17 +205,17 @@ need not create a Requirement, ADR, or a new Spec package merely to edit a file.
 An Issue can initiate work and a Project can display its progress without
 becoming a second execution record; the active Task alone records actual work.
 
-#### Cross-artifact conformance
+###### Cross-artifact conformance
 
 These rules apply to the Executable behavior and Governance, provider, Stage 99
 rows, and to an Architecture row once it is implemented; a small correction or
 document content change does not trigger them.
 
-#### Three axes
+###### Three axes
 
 `SDLC-R035`
 
-#### Responsibility layers
+###### Responsibility layers
 
 `SDLC-R036`
 
@@ -225,21 +243,21 @@ record of each half lists the rule IDs it owns, and the registry check refuses
 a rule ID with two owners. The A, I and T rows and every machine-read input
 stayed where they were.
 
-#### Work selection and done
+###### Work selection and done
 
 `SDLC-R037`
 
-### Exceptions
+##### Exceptions
 
 This policy defines no exception condition of its own; exceptions follow the approval and safety policy's operator approval route. If this policy needs its own, state it here.
 
-#### Approval and Review
+###### Approval and Review
 
 This policy defines no exception approval or review step of its own; the approval and safety policy's operator approval route applies. If it needs its own, state it here.
 
-## Enforcement
+#### Enforcement
 
-### Mechanisms
+##### Mechanisms
 
 Run the registry, Markdown profile (`scripts/validate-markdown-profiles.py`),
 link/owner, lifecycle (`scripts/validate-document-lifecycle.py`),
@@ -250,13 +268,13 @@ lifecycle catalog in the Stage 99 registry changes.
 
 The checks are owned by the [Quality Policy](../04.quality/quality.md), the [Git Policy](git.md) and the Document Profile Registry (docs/99.templates/registry.json).
 
-### Limits
+##### Limits
 
 Repository static results are kept separate from hosted, provider-runtime, remote or live evidence. Native provider configuration is not evidence of runtime enforcement (SDLC-R013), and remote GitHub Issue or Project state requires observation rather than being inferred (SDLC-R011).
 
-## Ownership
+#### Ownership
 
-### Owner
+##### Owner
 
 This flow selects the responsible document stage. Exact paths, profile IDs,
 frontmatter, sections, relationships, status classes, and lifecycle edges come
@@ -272,10 +290,30 @@ table under Requirements).
 - [Document Authoring Policy](document-authoring.md)
 - [Approval and Safety](../04.quality/approval-and-safety.md)
 
-#### Responsibilities
+###### Responsibilities
 
 The [Ownership and placement](#ownership-and-placement) table states the owner and placement rule of each artifact.
 
-### Review Triggers
+##### Review Triggers
 
 This policy changes as a governed-document change under the work lifecycle and the document lifecycle policy, with no adoption step of its own; if it needs one, state it here.
+
+## 적용과 확인
+
+### 적용 방법
+
+Apply the rule, enforcement and exception clauses in the payload together.
+
+### 확인 기준
+
+Check named enforcement on actual input and report its evidence level accurately.
+
+## 관계와 출처
+
+### 관련 문서
+
+The ownership and related documents in the payload link adjacent owners.
+
+### 외부 근거
+
+Repository decisions and cited sources support these rules; external sources alone grant no authority.

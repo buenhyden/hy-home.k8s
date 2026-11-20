@@ -1,17 +1,36 @@
 ---
 title: "Codex Native Adapter"
-version: "2.5.3"
+version: "3.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-20"
 ---
 
 # Codex Native Adapter
 
-## Service
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 README는 .codex의 사용·연결·검사 위치를 찾는 운영자와 기여자를 안내한다. 현재 역할은 [Service](#service)와 [Usage](#usage)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 .codex의 진입 경로를 유지한다. 이 경로의 파일과 경계는 [Purpose](#purpose), 사용 조건은 [Usage](#usage), 검사는 [Checks](#checks)가 설명한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+
+#### Service
+
+##### Purpose
 
 공통 정책, 역할 의미, 절차는 [공통 권한 원본](../.agents/README.md)에 있다.
 이 디렉터리는 Codex 문법, 지원 메모, native 연결만 소유한다.
@@ -46,20 +65,20 @@ updated: "2026-11-18"
   client가 문서화한 프로젝트 skill root인 `.agents/skills/`에 있다. 각 능력
   주장이 어떤 client 판본에서 관측되었는지는 [provider.md](provider.md)를 본다.
 
-### Interfaces
+##### Interfaces
 
 - [Common work lifecycle](../.agents/workflows/work-lifecycle.md)
 - [Approval and safety](../docs/00.workspace/04.quality/approval-and-safety.md)
 - [Quality](../docs/00.workspace/04.quality/quality.md)
 - [Model selection](../.agents/governance/model-selection.md)
 
-#### Security Boundary
+###### Security Boundary
 
 이 문서에는 secret, credential, 권한 경계만을 다루는 별도 내용이 없으며, 권한 관련 설명은 Purpose의 `config.toml`과 `rules/default.rules` 항목에 적혀 있다.
 
-## Usage
+#### Usage
 
-### Prerequisites
+##### Prerequisites
 
 공통 계약은 [roles/registry.json](../.agents/roles/registry.json)과 선택한
 정규 역할에서 고친다. [bindings.json](bindings.json)은 이 provider의 등급별
@@ -68,16 +87,16 @@ model, effort, native scope, 역할별 예외를 소유하고 중립 registry는
 상한의 제약을 받는다. 경로가 바뀌면 영향받는 참조를 함께 고친다. 정적 일치는
 model 접근, 역할 발견, 권한 강제를 증명하지 않는다. 생성기는 쓰지 않는다.
 
-### Selected Start
+##### Selected Start
 
 Codex 세션은 [provider baseline](CODEX.md)에서 시작해 선택된 공통 역할과
 그 역할에 필요한 절차를 적용한다. 공통 skill은 명시적으로만 호출되며 추가
 도구나 승인을 주지 않는다. 절차의 원본은 `.agents/skills/` 한 곳이다. 개인 로컬 설정과 memory는
 공통 정책이 아니며, 재사용할 맥락은 공유 workspace memory store에 둔다.
 
-## Checks
+#### Checks
 
-### Readiness
+##### Readiness
 
 `python3 scripts/validate-agent-governance.py --root .`는 registry, native
 문법, 정확한 역할·skill 참조, 링크 경계, 권한 일치를 검사한다. 선택된
@@ -85,10 +104,30 @@ affected, staged, 이름 있는 목적 검사가 각자 선언한 입력을 다�
 `full`/`ci` sweep과 일괄 unit discovery는 로컬 완료 조건이 아니다. 실제 native
 적재, 호출, hook 이벤트는 새 세션과 해당 승인이 필요한 별도 검사다.
 
-### Failure Handling
+##### Failure Handling
 
 이 문서는 운영 관측과 복구만을 다루는 내용을 따로 두지 않는다. 그런 내용을 두게 되면 여기에 적는다.
 
-#### Runbook Links
+###### Runbook Links
 
 이 문서는 runbook이나 운영 가이드 링크를 따로 두지 않는다. 연결할 운영 문서가 생기면 여기에 연결한다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

@@ -133,7 +133,7 @@ class NativeSkillEnvelopeTests(unittest.TestCase):
                 )
             },
         )
-        heading = "### Verified State\n"
+        heading = "##### Verified State\n"
         self.assertIn(heading, changed)
         changed = changed.replace(
             heading,

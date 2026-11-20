@@ -8,6 +8,7 @@ from types import SimpleNamespace
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from document_contracts import FormSection  # noqa: E402
+from tests.form_headings import common_shell  # noqa: E402
 from validation.repository.form_contracts import (  # noqa: E402
     canonical_form_content_errors,
     canonical_form_contract_errors,
@@ -19,6 +20,57 @@ from validation.repository.sample_app_contract import (  # noqa: E402
 
 
 class CanonicalFormContractTests(unittest.TestCase):
+    def test_common_shell_korean_guidance_is_checked_inside_role_payload(self):
+        form = pathlib.PurePosixPath(
+            "docs/99.templates/02.templates/example.template.md"
+        )
+        profile = SimpleNamespace(
+            form=SimpleNamespace(
+                sections=(
+                    FormSection(
+                        section_id="overview",
+                        title="Overview",
+                        level=2,
+                        parent_id=None,
+                        order=1,
+                        requiredness="required",
+                        condition="",
+                        empty_policy="omit_when_condition_false",
+                        link_only=False,
+                        children=(),
+                    ),
+                )
+            ),
+            body_contract=None,
+        )
+        source = "# Example\n" + "\n".join(
+            common_shell(
+                [
+                    "## Overview",
+                    "<!-- 작성 규칙: 현재 소유자와 책임을 설명한다. -->",
+                ]
+            )
+        )
+
+        def errors(value):
+            return canonical_form_content_errors(
+                {form: value}, [("common/example", form)], {"common/example": profile}
+            )
+
+        self.assertEqual(errors(source), [])
+        self.assertTrue(
+            any(
+                "non-author form comment" in item
+                for item in errors(source.replace("작성 규칙:", "임의 주석:"))
+            )
+        )
+        self.assertTrue(
+            any(
+                "useful Author prompt" in item
+                for item in errors(source.replace("현재 소유자와 책임을 설명한다.", ""))
+            )
+        )
+
     def test_ownership_rejects_missing_unowned_duplicate_and_noncanonical_forms(self):
         form = pathlib.PurePosixPath(
             "docs/99.templates/02.templates/93.common/example.template.md"

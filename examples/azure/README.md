@@ -1,16 +1,35 @@
 ---
 title: "Azure Executable Examples"
-version: "0.5.1"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 # Azure Executable Examples
 
-## Service
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 README는 examples/azure의 사용·연결·검사 위치를 찾는 운영자와 기여자를 안내한다. 현재 역할은 [Service](#service)와 [Usage](#usage)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 examples/azure의 진입 경로를 유지한다. 이 경로의 파일과 경계는 [Purpose](#purpose), 사용 조건은 [Usage](#usage), 검사는 [Checks](#checks)가 설명한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+
+#### Service
+
+##### Purpose
 
 | 경로 | 역할 | 권한 경계 |
 | --- | --- | --- |
@@ -23,7 +42,7 @@ updated: "2026-11-17"
 - REQ-0004 — 현재 플랫폼 요구사항 (`docs/01.requirements/README.md`)
 - AD-0007 — 현재 플랫폼 아키텍처 (`docs/02.architecture/01.descriptions/README.md`)
 
-#### Current authority transfer
+###### Current authority transfer
 
 원래의 REQ-0007 / AD-0010 program 계보는 역사적 맥락으로만 남는다.
 현재 플랫폼 요구사항과 아키텍처는 REQ-0004(`docs/01.requirements/README.md`)와
@@ -35,32 +54,32 @@ AD-0006(`docs/02.architecture/01.descriptions/README.md`)이 소유한다. packa
 Kubernetes 파일은 참조 구현이다. 활성 로컬 desired state가 아니며 현재의
 Azure 지원, 구독 준비 상태, 비용, provider 최신 설정을 증명하지도 않는다.
 
-### Interfaces
+##### Interfaces
 
 이 문서는 참조 자산의 경계만 다루며 별도의 외부 입출력 계약을 정의하지 않는다.
 
-#### Security Boundary
+###### Security Boundary
 
 보안 경계는 Usage > Prerequisites에 적혀 있다.
 
-## Usage
+#### Usage
 
-### Prerequisites
+##### Prerequisites
 
 Azure credential, 공개 승인을 받지 않은 구독 상태, 배포 출력, kubeconfig,
 토큰, 키, 인증서, secret 값은 커밋하지 않는다. 버전 제약은 각 Bicep·GitOps·
 Kubernetes 파일이 직접 소유한다. 매개변수는 검토된 인터페이스로 주입하고
 승인된 용도로 쓰기 전에 Azure 공식 지원 범위를 다시 확인한다.
 
-### Selected Start
+##### Selected Start
 
 이 자산은 provider 운영 절차를 정의하지 않는다. provider나 live cluster에
 손대기 전에 정확한 소스 diff, 현재 Azure 공식 지원 범위, credential 경계,
 비용, 롤백을 검토하고 사람의 승인을 받는다.
 
-## Checks
+#### Checks
 
-### Readiness
+##### Readiness
 
 먼저 구성 요소별 진입점과 저장소 정적 검사를 사용한다.
 
@@ -77,10 +96,30 @@ python3 scripts/qa.py full
 위 명령은 live 구독, AKS, Managed Identity, Key Vault, 네트워크, 비용, secret,
 provider 준비 상태를 증명하지 않는다.
 
-### Failure Handling
+##### Failure Handling
 
 이 문서는 참조 전용 예시를 다루며 live 환경을 변경하지 않으므로 관측과 복구 절차가 없다.
 
-#### Runbook Links
+###### Runbook Links
 
 이 문서는 참조 전용 예시를 다루므로 runbook 링크가 없다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

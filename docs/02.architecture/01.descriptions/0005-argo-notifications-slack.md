@@ -1,18 +1,36 @@
 ---
 title: "Argo Notifications Slack Architecture Description"
-version: "2.1.2"
+version: "3.0.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-20"
 artifact_id: "AD-0005"
 ---
 
 # Argo Notifications Slack Architecture Description
 
-## Context and Boundaries
+## 문서 개요
 
-### System Boundary
+### 목적과 독자
+
+This architecture description lets architects, GitOps implementers, and reviewers inspect the structural boundary for Argo Notifications Slack. The actual components and flow are under [Structure](#structure) and [Runtime Behavior](#runtime-behavior).
+
+### 책임과 적용 범위
+
+platform maintains the current architecture description. The owned and excluded system boundary is stated in [System Boundary](#system-boundary); constraints remain in [Constraints](#constraints).
+
+## 내용 계약
+
+### 입력과 전제
+
+Inputs and assumptions remain in the cited upstream requirements, boundaries, and payload sections.
+
+### 본문과 규칙
+
+#### Context and Boundaries
+
+##### System Boundary
 
 - **Owns**:
   - The `notifications.enabled: true` contract in the ArgoCD Helm values
@@ -28,17 +46,19 @@ artifact_id: "AD-0005"
   - Plaintext credential bootstrap
   - Integrating an external incident management platform
 
-#### Purpose and Readers
+###### Purpose and Readers
 
 This document defines the reference architecture and quality attributes of Slack notifications based on ArgoCD Notifications.
 The ArgoCD values, Notifications ConfigMap, and ExternalSecret already exist in the repository, so this AD is a backfill that turns the repo-backed execution contract into traceable architecture input.
 
-##### Current architecture summary
+<a id="current-architecture-summary"></a>
+
+**Current architecture summary**
 
 The Helm values enable the built-in ArgoCD Notifications controller in the `argocd` namespace. The ExternalSecret declares the OpenBao and ESO sync path into `argocd-notifications-secret`.
 The GitOps ConfigMap owns the notification templates, triggers, `service.slack` (token `$slack-token`), `defaultTriggers`, and the `subscriptions` block. The subscription declares delivery of on-health-degraded, on-sync-failed and on-deployed for all apps to `slack:hy-home-alerts`. The current application manifests declare no additional channel through the optional opt-in annotation. The design's delivery verification is covered under [Normal Flow](#normal-flow).
 
-#### Context
+###### Context
 
 - **Consumes**:
   - The External Secrets Operator and OpenBao (KV v2 `secret`, key `platform/notifications`, property `slack_token`) through the `vault-backend` Vault-API ClusterSecretStore ([ADR-0041](../02.decisions/0041-openbao-secret-backend.md))
@@ -46,9 +66,9 @@ The GitOps ConfigMap owns the notification templates, triggers, `service.slack` 
   - Rollouts events, sent by the Argo Rollouts controller's own notification engine with the `on-rollout-completed` and `on-rollout-aborted` triggers and templates defined in the Rollouts chart values, the same OpenBao credential through `argo-rollouts-notification-secret`, and the shared channel ([ADR-0054](../02.decisions/0054-platform-decision-current-state-amendment.md) clause 2)
   - Slack workspace token/channel permission
 
-### Constraints
+##### Constraints
 
-#### Agent architecture requirements
+###### Agent architecture requirements
 
 - **Model/Provider Strategy**: Agents may update templates and docs, but must not invent or expose Slack credentials.
 - **Tooling Boundary**: Agents must not run OpenBao writes or Slack bootstrap commands unless explicitly approved by a human.
@@ -56,9 +76,9 @@ The GitOps ConfigMap owns the notification templates, triggers, `service.slack` 
 - **Guardrail Boundary**: Rollouts chart notifications and ArgoCD Notifications must remain distinct in docs and specs.
 - **Latency / Cost Budget**: Not applicable.
 
-## Structure
+#### Structure
 
-### Building Blocks
+##### Building Blocks
 
 - ArgoCD Helm values are stored in `infrastructure/argocd/values-local.yaml`.
 - Notification templates and triggers are stored in `gitops/platform/argocd/argocd-notifications-cm.yaml`.
@@ -68,7 +88,7 @@ The current sources are the [Notifications ConfigMap](../../../gitops/platform/a
 the [ExternalSecret reference](../../../gitops/platform/argocd/argocd-notifications-secret.yaml).
 ArgoCD Notifications evaluates Applications only, so Rollouts events are configured in the Rollouts chart's `notifications` values and the [Rollouts notification ExternalSecret](../../../gitops/platform/eso/rollouts-notification-secret.yaml), not in this ConfigMap.
 
-### Interfaces
+##### Interfaces
 
 - **Key Entities / Flows**:
   - OpenBao KV v2 `secret/platform/notifications`, property `slack_token`.
@@ -91,9 +111,9 @@ ArgoCD Notifications evaluates Applications only, so Rollouts events are configu
 | Application annotation `notifications.argoproj.io/subscribe.<trigger>.slack` | Application owner | ArgoCD Notifications controller | [Notifications ConfigMap](../../../gitops/platform/argocd/argocd-notifications-cm.yaml) | not stated in this document |
 | Rollouts events `on-rollout-completed` and `on-rollout-aborted` | Argo Rollouts controller notification engine | Shared Slack channel | [ADR-0054](../02.decisions/0054-platform-decision-current-state-amendment.md) | not stated in this document |
 
-## Runtime Behavior
+#### Runtime Behavior
 
-### Normal Flow
+##### Normal Flow
 
 - **Declared Runtime / Platform**:
   - The ArgoCD release in `argocd` owns the Notifications controller deployment.
@@ -106,13 +126,13 @@ ArgoCD Notifications evaluates Applications only, so Rollouts events are configu
   - Static contract checks cover notification and secret wiring.
   - Controller and ExternalSecret readiness and Slack delivery remain unobserved in this description. The [operations runbook](../../05.operations/03.runbooks/0004-rollouts-notifications-headlamp-runbook.md) owns runtime verification of these states and the controller send or error logs.
 
-### Failure and Recovery
+##### Failure and Recovery
 
 No separate failure boundary is recorded in this description; the failure and recovery behavior it states is in [Scenarios](#scenarios).
 
-## Quality Scenarios
+#### Quality Scenarios
 
-### Scenarios
+##### Scenarios
 
 | Quality attribute | Stimulus | Environment | Response | Measure |
 | --- | --- | --- | --- | --- |
@@ -123,26 +143,26 @@ No separate failure boundary is recorded in this description; the failure and re
 | Observability | Slack delivery succeeds or fails | Controller logs and metrics | Operators see delivery and error state | Controller log shows send or error per event |
 | Operability | A Slack notification fails | Operator troubleshooting | Check OpenBao secret, then ExternalSecret, then controller log | The runbook lists the three checks in that order |
 
-### Trade-offs
+##### Trade-offs
 
 The shared-channel `subscriptions` block sends the common failure signals of every app with no per-app change, and app annotations only add optional channels. The Slack token travels only along the OpenBao, ESO and `argocd-notifications-secret` path, so delivery depends on that path, and the runbook checks it in that order.
 
-## Decisions and Adoption
+#### Decisions and Adoption
 
-### Decisions
+##### Decisions
 
 - **ADR**: [`../decisions/0012-argo-notifications-slack.md`](../02.decisions/0012-argo-notifications-slack.md)
 - **ADR**: [`../decisions/0054-platform-decision-current-state-amendment.md`](../02.decisions/0054-platform-decision-current-state-amendment.md) — current token, backend and subscription clauses
 
-#### Requirement Mapping
+###### Requirement Mapping
 
 - **Requirement**: [`../../01.requirements/0002-argo-notifications-slack.md`](../../01.requirements/0002-argo-notifications-slack.md)
 
-### Adoption Boundaries
+##### Adoption Boundaries
 
 - **Spec**: N/A — SPEC-0005 left the tree; Git history recovers it ([REQ-0002 Archived Lineage](../../01.requirements/0002-argo-notifications-slack.md#archived-lineage))
 
-### Lifecycle Traceability
+##### Lifecycle Traceability
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
@@ -157,3 +177,23 @@ The shared-channel `subscriptions` block sends the common failure signals of eve
 | N/A — [Acceptance criterion 03](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Human-approved live receipt evidence for sync failure notifications | [ADR 0012](../02.decisions/0012-argo-notifications-slack.md) |
 | N/A — [Acceptance criterion 04](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Human-approved live receipt evidence for health degraded notifications | [ADR 0012](../02.decisions/0012-argo-notifications-slack.md) |
 | N/A — [Acceptance criterion 05](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Human-approved live receipt evidence for Rollouts abort notifications sent by the Rollouts notification engine ([REQ-0002](../../01.requirements/0002-argo-notifications-slack.md)) | [ADR 0012](../02.decisions/0012-argo-notifications-slack.md) |
+
+## 적용과 확인
+
+### 적용 방법
+
+Apply the decisions and procedures in the role payload under its stated conditions.
+
+### 확인 기준
+
+Check the role payload acceptance or verification conditions and report observed limits.
+
+## 관계와 출처
+
+### 관련 문서
+
+Follow the current upstream and downstream links in the role payload.
+
+### 외부 근거
+
+External evidence, when used, remains attributed and bounded in the role payload.

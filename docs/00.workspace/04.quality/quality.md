@@ -1,6 +1,6 @@
 ---
 title: "Quality and Evidence Policy"
-version: "3.5.0"
+version: "4.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -9,14 +9,32 @@ updated: "2026-11-20"
 
 # Quality and Evidence Policy
 
-## Purpose and Scope
+## 문서 개요
 
-### Objective
+### 목적과 독자
+
+Workers and reviewers use Quality and Evidence Policy for the rules in its stated scope.
+
+### 책임과 적용 범위
+
+The policy's coverage is defined in [Purpose and Scope](#purpose-and-scope) and [Applies To](#applies-to).
+
+## 내용 계약
+
+### 입력과 전제
+
+Read the current request, owner and rule conditions before applying this policy.
+
+### 본문과 규칙
+
+#### Purpose and Scope
+
+##### Objective
 
 Report exactly what was checked, over which bytes and scope, and with which
 limitations. Passing a local command is not proof of provider or live behavior.
 
-### Applies To
+##### Applies To
 
 Current infrastructure work uses coverage of applicable validation contracts,
 not fictitious application coverage numbers. Where testable application code
@@ -26,13 +44,13 @@ Reviewers assess acceptance and regression coverage, not merely test counts.
 Provider projections preserve role and permission semantics while using native
 metadata; static parity never proves discovery, model resolution, or execution.
 
-#### Exclusions
+###### Exclusions
 
 This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
-## Rules
+#### Rules
 
-### Requirements
+##### Requirements
 
 | Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
@@ -150,7 +168,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | QUAL-R054 | required | active |
 | QUAL-R055 | required | active |
 
-#### Validation lane contract
+###### Validation lane contract
 
 `QUAL-R001`
 
@@ -160,7 +178,7 @@ content. Each invocation reports its own input and trust boundary. A repository
 link-target result does not establish external URL availability; record that
 as unobserved unless directly authorized and checked.
 
-#### Validation runner envelope
+###### Validation runner envelope
 
 `QUAL-R008`
 
@@ -177,7 +195,7 @@ through the [validation runner](../../../scripts/run-validation-lane.py), which
 owns the reviewed limit constants and treats timeout, pipe overflow or failure,
 or pipes held by descendants after the leader exits as `FAIL`.
 
-#### Result vocabulary
+###### Result vocabulary
 
 `QUAL-R009`
 
@@ -188,11 +206,11 @@ criterion. An unrelated PASS cannot hide a required unresolved result. The
 Task's Criterion Decisions table owns the single criterion verdict; check
 results, approval, integration and publication are distinct facts.
 
-#### Semantic review
+###### Semantic review
 
 `QUAL-R015`
 
-#### Agent evaluation evidence
+###### Agent evaluation evidence
 
 `QUAL-R024`
 
@@ -204,7 +222,7 @@ direct session evidence. Keeping evaluation evidence does not register a
 grader as a recurring QA gate. Admission requires a durable consumer, an
 owned failure rule and the validation registry's separate review.
 
-#### QA admission and retirement
+###### QA admission and retirement
 
 `QUAL-R025`
 
@@ -225,11 +243,11 @@ select by changed impact, then reuse only a narrowly proven result. Measure
 before claiming a cost or speed improvement. The selected registry contract,
 not a policy sentence, owns the exact gate list and per-check limits.
 
-#### Ordinary document selection
+###### Ordinary document selection
 
 `QUAL-R026`
 
-#### Delivery ownership
+###### Delivery ownership
 
 `QUAL-R027`
 
@@ -243,7 +261,7 @@ not a policy sentence, owns the exact gate list and per-check limits.
 | QUAL-R033 | Compare the integrated tree and history with checked inputs. Run only checks invalidated by a changed input; an unchanged merge candidate needs no repeat. Record the actual merge and any remote required-check result separately. |
 | QUAL-R034 | Resolve tools, actual resources, output, technical command limits and necessary native approval for applicable selected gates and named unit regressions, including continuing security guarantees. No session timebox or reserve approval is required. |
 
-#### Canonical completion sequence
+###### Canonical completion sequence
 
 `QUAL-R035`
 
@@ -252,7 +270,7 @@ reconstruct them with newline iteration or filtered display output. Preserve
 runner boundary failures and optional-tool deferrals rather than treating them
 as successful selected coverage.
 
-#### Handoff evidence contract
+###### Handoff evidence contract
 
 `QUAL-R042`
 
@@ -265,21 +283,21 @@ acting; a recorded snapshot says which state the evidence described, and a
 recorded boundary keeps a past authorization from being read as a standing
 one. Neither field grants authority, and a stale record never widens it.
 
-#### Supply-chain identity
+###### Supply-chain identity
 
 `QUAL-R051`
 
-### Exceptions
+##### Exceptions
 
 This policy defines no exception condition of its own; exceptions follow the approval and safety policy's operator approval route. If this policy needs its own, state it here.
 
-#### Approval and Review
+###### Approval and Review
 
 Approval and review conditions are stated under Requirements.
 
-## Enforcement
+#### Enforcement
 
-### Mechanisms
+##### Mechanisms
 
 Refresh this policy when evidence semantics change, not when a corpus count or
 implementation constant changes. Preserve the distinction between repository,
@@ -288,13 +306,13 @@ cannot silently advance a task to completion.
 
 - [Validation Routing Registry](../../../scripts/validation/registry.json)
 
-### Limits
+##### Limits
 
 Passing a local command is not proof of provider or live behavior, and a static workflow file cannot establish hosted execution or remote branch protection. A recorded response does not prove that a native skill loaded or a command ran, and formatters or deferred tools cannot silently advance a task to completion; repository, provider-runtime, hosted CI and live checks stay distinct.
 
-## Ownership
+#### Ownership
 
-### Owner
+##### Owner
 
 This policy owns lane, result, completion-order, and handoff meanings.
 The validation-surface contract selects executable checks; validators own
@@ -307,10 +325,30 @@ counts in prose.
 - [Git Policy](../03.process/git.md)
 - [Formatting and Linting Policy](formatting-and-linting.md)
 
-#### Responsibilities
+###### Responsibilities
 
 Responsibilities are stated under Owner and Requirements.
 
-### Review Triggers
+##### Review Triggers
 
 Change and adoption conditions are stated under Enforcement.
+
+## 적용과 확인
+
+### 적용 방법
+
+Apply the rule, enforcement and exception clauses in the payload together.
+
+### 확인 기준
+
+Check named enforcement on actual input and report its evidence level accurately.
+
+## 관계와 출처
+
+### 관련 문서
+
+The ownership and related documents in the payload link adjacent owners.
+
+### 외부 근거
+
+Repository decisions and cited sources support these rules; external sources alone grant no authority.

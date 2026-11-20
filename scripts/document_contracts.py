@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import copy
+import hashlib
 import json
 import os
 import re
@@ -28,6 +29,11 @@ from typing import (
 
 import yaml
 
+from common_document_contract import (
+    CommonDocumentError,
+    has_common_envelope,
+    payload_markdown,
+)
 from document_authority import (
     AuthorityError,
     REGISTRY_MAJOR,
@@ -86,6 +92,9 @@ TARGET_ROOTS = (
 REGISTRY_PATH = PurePosixPath("docs/99.templates/registry.json")
 PROFILE_SCHEMA_PATH = PurePosixPath(
     "docs/99.templates/01.contracts/document-profile.schema.json"
+)
+COMMON_DOCUMENT_CONTRACT_PATH = PurePosixPath(
+    "docs/99.templates/01.contracts/common-document-contract.json"
 )
 # Compatibility name for direct callers of ``validate_registry``.  The only
 # schema it may load is the root-registry profile schema.
@@ -699,7 +708,18 @@ def task_contract_issues(
     return tuple(issues)
 
 
-_TASK_CRITERION_LINK = re.compile(r"\[(VAL-[A-Z0-9-]+-[0-9]{3})\]\(([^()\s]+)\)")
+CRITERION_ID = re.compile(r"(?:VAL-[A-Z0-9-]+-[0-9]{3}|AC-(?!0000)[0-9]{4})\Z")
+_TASK_CRITERION_LINK = re.compile(
+    r"\[((?:VAL-[A-Z0-9-]+-[0-9]{3}|AC-(?!0000)[0-9]{4}))\]\(([^()\s]+)\)"
+)
+
+
+def is_criterion_id(value: str) -> bool:
+    """Accept new Spec-local AC display IDs and retained VAL meaning IDs."""
+
+    return isinstance(value, str) and CRITERION_ID.fullmatch(value) is not None
+
+
 _TASK_EVIDENCE_PLACEHOLDER = re.compile(
     r"(?i)^(?:tbd|todo|n/?a|pending|waiting|not recorded|not executed|"
     r"execution pending|named repository evidence|[-—])$"
@@ -796,8 +816,16 @@ def task_status(
         return value if isinstance(value, str) else ""
     contract = profile.body_contract
     binding = contract.task_execution if contract else None
+    if binding is None:
+        return ""
+    if has_common_envelope(text):
+        try:
+            text = payload_markdown(text, profile_id=profile.profile_id)
+        except CommonDocumentError:
+            # The document validator reports the malformed physical shell.
+            return ""
     states = _task_row_states(text, contract) if binding else None
-    if binding is None or not states or len(states) < 2:
+    if not states or len(states) < 2:
         return ""
     try:
         return derive_task_summary(states, binding)
@@ -1538,6 +1566,23 @@ class RelationshipContract:
 
 
 @dataclass(frozen=True)
+class CommonDocumentBinding:
+    """Reviewed local candidate pointer and explicit profile/semantic mappings."""
+
+    contract_id: str
+    version: str
+    stage: Literal["candidate"]
+    source: str
+    content_digest: str
+    workspace_subject: str
+    workspace_scope_artifact_ids: tuple[str, ...]
+    profile_kinds: Mapping[str, str]
+    excluded_profiles: tuple[str, ...]
+    unused_kinds: tuple[str, ...]
+    relation_kinds: tuple[str, ...]
+
+
+@dataclass(frozen=True)
 class Registry:
     schema_version: str
     profiles: tuple[DocumentProfile, ...]
@@ -1545,6 +1590,7 @@ class Registry:
     readme_navigation: ReadmeNavigation | None = None
     document_language: DocumentLanguage | None = None
     shared_contract: SharedContract | None = None
+    common_document_contract: CommonDocumentBinding | None = None
     common_forms: tuple[CommonForm, ...] = ()
     # A comparison-base registry from before SPEC-0209 has no such record.
     common_forms_record: CommonFormsRecord | None = None
@@ -2341,6 +2387,96 @@ def _registry_section_diagnostics(
     ]
 
 
+def _common_document_binding_diagnostics(
+    root: Path, raw_registry: Mapping[str, Any]
+) -> tuple[Diagnostic, ...]:
+    """Bind explicit local kinds and relation names to the exact copied core."""
+
+    binding = raw_registry.get("common_document_contract")
+    if not isinstance(binding, Mapping):
+        return (
+            _diagnostic(
+                "REGISTRY_COMMON_DOCUMENT",
+                expected="a common contract binding",
+                actual="missing",
+            ),
+        )
+    path = COMMON_DOCUMENT_CONTRACT_PATH
+    try:
+        contents = read_bounded_bytes(root / path, max_bytes=1024 * 1024)
+
+        def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+            value: dict[str, Any] = {}
+            for key, item in pairs:
+                if key in value:
+                    raise ValueError(f"duplicate common contract key {key}")
+                value[key] = item
+            return value
+
+        contract = json.loads(contents.decode("utf-8"), object_pairs_hook=unique_object)
+    except (BoundedInputError, UnicodeError, ValueError, OSError) as exc:
+        return (
+            _diagnostic(
+                "REGISTRY_COMMON_DOCUMENT",
+                path=path,
+                expected="a bounded unique-key local contract",
+                actual=str(exc)[:200],
+            ),
+        )
+    if not isinstance(contract, Mapping):
+        return (
+            _diagnostic(
+                "REGISTRY_COMMON_DOCUMENT",
+                path=path,
+                expected="a contract object",
+                actual=type(contract).__name__,
+            ),
+        )
+    source_profiles = {
+        profile["id"]
+        for profile in raw_registry["profiles"]
+        if profile["mode"] != "template"
+    }
+    excluded = set(binding["excluded_profiles"])
+    mapped = set(binding["profile_kinds"])
+    declared_kinds = set(contract.get("payload_profiles", {}))
+    used_kinds = set(binding["profile_kinds"].values())
+    faults = []
+    if binding["contract_id"] != contract.get("contract_id") or binding[
+        "version"
+    ] != contract.get("version"):
+        faults.append("contract identity/version mismatch")
+    if binding["content_digest"] != "sha256:" + hashlib.sha256(contents).hexdigest():
+        faults.append("content digest mismatch")
+    if binding["workspace_subject"] != "hy-home.k8s":
+        faults.append("workspace subject differs from local identity")
+    if (
+        contract.get("state") != "proposed-for-local-adoption"
+        or binding["stage"] != "candidate"
+    ):
+        faults.append("candidate binding cannot claim approved or adopted")
+    if mapped & excluded or mapped | excluded != source_profiles:
+        faults.append("source profiles need exactly one mapped or excluded kind")
+    if excluded != {"common/program-non-target"}:
+        faults.append("only the non-target program profile may be excluded")
+    if (
+        not used_kinds <= declared_kinds
+        or set(binding["unused_kinds"]) != declared_kinds - used_kinds
+    ):
+        faults.append("kind mapping or explicitly unused kinds differ from the core")
+    if binding["relation_kinds"] != contract.get("relation_kinds"):
+        faults.append("relation kinds differ from the core")
+    return tuple(
+        _diagnostic(
+            "REGISTRY_COMMON_DOCUMENT",
+            path=path,
+            expected="exact local common contract binding",
+            actual=fault,
+        )
+        for fault in faults
+    )
+
+
 def _terminal_semantic_diagnostics(
     root: Path,
     raw_registry: Mapping[str, Any],
@@ -2350,6 +2486,7 @@ def _terminal_semantic_diagnostics(
     """Validate relationships not expressible in the terminal JSON Schema."""
 
     diagnostics: list[Diagnostic] = []
+    diagnostics.extend(_common_document_binding_diagnostics(root, raw_registry))
     raw_profiles = raw_registry["profiles"]
     profiles_by_id = {profile["id"]: profile for profile in raw_profiles}
     raw_forms = {
@@ -4667,6 +4804,41 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
         )
     return Registry(
         schema_version=schema_version,
+        common_document_contract=(
+            CommonDocumentBinding(
+                **{
+                    **{
+                        key: value
+                        for key, value in raw["common_document_contract"].items()
+                        if key
+                        not in {
+                            "profile_kinds",
+                            "excluded_profiles",
+                            "unused_kinds",
+                            "relation_kinds",
+                            "workspace_scope_artifact_ids",
+                        }
+                    },
+                    "profile_kinds": MappingProxyType(
+                        dict(raw["common_document_contract"]["profile_kinds"])
+                    ),
+                    "excluded_profiles": tuple(
+                        raw["common_document_contract"]["excluded_profiles"]
+                    ),
+                    "unused_kinds": tuple(
+                        raw["common_document_contract"]["unused_kinds"]
+                    ),
+                    "relation_kinds": tuple(
+                        raw["common_document_contract"]["relation_kinds"]
+                    ),
+                    "workspace_scope_artifact_ids": tuple(
+                        raw["common_document_contract"]["workspace_scope_artifact_ids"]
+                    ),
+                }
+            )
+            if "common_document_contract" in raw
+            else None
+        ),
         shared_contract=(
             _shared_contract_from_mapping(raw["shared_contract"])
             if "shared_contract" in raw

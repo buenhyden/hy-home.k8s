@@ -24,6 +24,7 @@ sys.modules[SPEC.name] = PROFILES
 SPEC.loader.exec_module(PROFILES)
 
 from document_contracts import classify_path, load_registry  # noqa: E402
+from common_document_contract import payload_markdown  # noqa: E402
 
 RULE = PurePosixPath("docs/00.workspace/03.process/document-lifecycle.md")
 FOLDER_AGENTS = PurePosixPath("docs/AGENTS.md")
@@ -101,7 +102,9 @@ class FrontmatterNegativeTest(unittest.TestCase):
 
 class AuditFormColumnsTest(unittest.TestCase):
     def test_findings_table_has_the_finding_columns(self) -> None:
-        text = AUDIT_FORM.read_text(encoding="utf-8")
+        text = payload_markdown(
+            AUDIT_FORM.read_text(encoding="utf-8"), profile_id="reference/audit"
+        )
         # SPEC-0222: the local findings table sits under Conflicts and Gaps after
         # the core audit.findings table.
         section = text.split("### Conflicts and Gaps", 1)[1].split("\n## ", 1)[0]
@@ -116,7 +119,7 @@ class AuditFormColumnsTest(unittest.TestCase):
         self.assertEqual(headers[0][1][0], "Finding ID")
         index, columns = next(h for h in headers if h[1][0] == "ID")
         self.assertEqual(columns, AUDIT_COLUMNS)
-        self.assertEqual(lines[index + 2].count("Author prompt"), len(AUDIT_COLUMNS))
+        self.assertEqual(lines[index + 2].count("작성 규칙"), len(AUDIT_COLUMNS))
 
 
 if __name__ == "__main__":

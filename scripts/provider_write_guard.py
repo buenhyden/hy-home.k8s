@@ -62,7 +62,7 @@ SELECTOR_RELATIVE_PATH = "scripts/select-affected-surfaces.py"
 # SPEC-0207: the one MAJOR number of the Registry Schema Version this guard
 # accepts. Keep it equal to REGISTRY_MAJOR in scripts/document_authority.py; the
 # guard runs from the trusted checkout with a standard-library dependency only.
-DOC_REGISTRY_MAJOR = 21
+DOC_REGISTRY_MAJOR = 22
 _REGISTRY_RELEASE = re.compile(NUMERIC_VERSION_PATTERN)
 
 

@@ -1,17 +1,35 @@
 ---
 title: "Common Agent Governance"
-version: "2.6.2"
+version: "3.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 
 # Common Agent Governance
 
-## Service
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 README는 .agents의 사용·연결·검사 위치를 찾는 운영자와 기여자를 안내한다. 현재 역할은 [Service](#service)와 [Usage](#usage)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 .agents의 진입 경로를 유지한다. 이 경로의 파일과 경계는 [Purpose](#purpose), 사용 조건은 [Usage](#usage), 검사는 [Checks](#checks)가 설명한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Service
+
+##### Purpose
 
 이 디렉터리는 이 GitOps 작업 공간의 공통 정책, 역할, skill에 대한 유일한
 권한 원본이다. 파일은 명시적인 gateway나 native skill loader를 통해 읽히며,
@@ -29,7 +47,7 @@ updated: "2026-11-17"
 
 - [Repository documentation](../docs/README.md)
 
-#### Skill package
+###### Skill package
 
 package는 `SKILL.md`와 `agents/` sidecar를 담는다. `agents/openai.yaml`은 Codex의
 skill 정책이고, Claude의 명시 호출 정책은 `SKILL.md` frontmatter의
@@ -52,17 +70,17 @@ skill의 `scripts/` 아래 검사기를 선택할 수 있지만, 검사기를 �
 `*.template.md` 출력 양식이 포함될 수 있다. 공용 문서 profile과 template의
 권한은 여전히 Stage 99에 있으며 package asset이 이를 대신할 수 없다.
 
-### Interfaces
+##### Interfaces
 
 - Document profiles and templates (`docs/99.templates/README.md`)
 
-#### Security Boundary
+###### Security Boundary
 
 이 문서에는 secret, credential, 권한 경계만을 다루는 별도 내용이 없으며, skill이 권한을 주지 않는다는 설명은 Selected Start의 문단에 적혀 있다.
 
-## Usage
+#### Usage
 
-### Prerequisites
+##### Prerequisites
 
 provider별 차이와 native adapter는 [.claude/](../.claude/)와
 [.codex/](../.codex/)에 있다. 공통 역할, 권한 등급, skill, 인계의 의미는
@@ -83,7 +101,7 @@ gate 선택은 여전히 `scripts/validation/registry.json`이, 공용 검증 he
 판단 맥락은 `governance/context-and-memory.md`가 정한 공유
 workspace memory store에 둔다.
 
-### Selected Start
+##### Selected Start
 
 이 디렉터리를 사용하는 작업은 [work lifecycle](workflows/work-lifecycle.md),
 [agent execution](governance/agent-execution.md), `governance/`의 승인·안전
@@ -94,9 +112,9 @@ package를 명시 호출용으로 노출한다. skill은 쓰기, 전송, 배포,
 권한을 주지 않는다. 근거의 의미는 `governance/`의 quality 정책이, 바뀌는 gate
 명령과 한도는 실행 registry가 소유한다.
 
-## Checks
+#### Checks
 
-### Readiness
+##### Readiness
 
 역할, skill, 권한, native binding, routing 계약의 검증 명령은
 `python3 scripts/validate-agent-governance.py --root .`이다. 이것은
@@ -107,10 +125,30 @@ machinery를 바꾸거나 범위가 명시된 감사를 할 때는 자원 사전
 sweep은 완료 명령이 아니다. 역할 projection 생성기는 쓰이지 않는다. native
 발견, 호출, 권한, hook 전달은 새 세션에서 따로 얻는 근거다.
 
-### Failure Handling
+##### Failure Handling
 
 이 문서는 운영 관측과 복구만을 다루는 내용을 따로 두지 않는다. 그런 내용을 두게 되면 여기에 적는다.
 
-#### Runbook Links
+###### Runbook Links
 
 이 문서는 runbook이나 운영 가이드 링크를 따로 두지 않는다. 연결할 운영 문서가 생기면 여기에 연결한다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

@@ -1,16 +1,35 @@
 ---
 title: "policy"
-version: "0.5.2"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 # policy
 
-## Service
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 README는 policy의 사용·연결·검사 위치를 찾는 운영자와 기여자를 안내한다. 현재 역할은 [Service](#service)와 [Usage](#usage)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 policy의 진입 경로를 유지한다. 이 경로의 파일과 경계는 [Purpose](#purpose), 사용 조건은 [Usage](#usage), 검사는 [Checks](#checks)가 설명한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+
+#### Service
+
+##### Purpose
 
 `policy/`는 Kubernetes 매니페스트에 적용되는 **선언형 정책 규칙**의 소유
 경로다. 규칙은 Rego로 작성되어 Conftest로 평가된다. Conftest는 선택 도구가
@@ -40,23 +59,23 @@ updated: "2026-11-17"
 - [Infrastructure](../infrastructure/README.md)
 - [Scripts](../scripts/README.md)
 
-#### Audience
+###### Audience
 
 - Platform maintainers
 - Security reviewers
 - Quality engineers
 
-### Interfaces
+##### Interfaces
 
 - [Quality Policy](../docs/00.workspace/04.quality/quality.md)
 
-#### Security Boundary
+###### Security Boundary
 
 이 문서에는 secret, credential, 권한 경계만을 다루는 별도 내용이 없으며, 평문 Secret과 와일드카드 AppProject 권한을 거부하는 규칙은 Purpose의 규칙 표에 적혀 있다.
 
-## Usage
+#### Usage
 
-### Prerequisites
+##### Prerequisites
 
 - 규칙 본문은 이 폴더가 소유한다. 같은 판정을 다른 검증기에 중복 구현하지 않는다.
 - `scripts/validate-policy-gates.sh`는 Conftest 실행만 소유하고 규칙은 소유하지
@@ -70,20 +89,22 @@ updated: "2026-11-17"
   변경 이유가 모두 달라 한 폴더로 합치지 않는다. Vault 정책 경로의 계약은
   `scripts/validate-vault-eso-contracts.py`와 QA 실행 레지스트리가 소유한다.
 
-#### Scope
+###### Scope
 
-##### In Scope
+<a id="in-scope"></a>
+**In Scope**
 
 - 추적된 Kubernetes/ArgoCD 매니페스트에 대한 deny 규칙
 - 평문 Secret, 와일드카드 AppProject 권한, `CreateNamespace=true`, `latest` 이미지 태그 금지
 
-##### Out of Scope
+<a id="out-of-scope"></a>
+**Out of Scope**
 
 - 매니페스트 구조·필드 계약 — `k8s-manifests`, `gitops-structure` 검증기 소유
 - 비밀값 탐지와 baseline — `scripts/check-secret-handling.sh` 소유
 - live 클러스터 admission 제어. 이 규칙은 저장소 정적 검사이며 런타임 admission을 대체하지 않는다
 
-### Selected Start
+##### Selected Start
 
 - 규칙을 추가할 때는 위반 사례로 실패를 먼저 재현하고, 규칙 추가 후 통과를
   확인한다.
@@ -94,9 +115,9 @@ updated: "2026-11-17"
   없으면 검사는 SKIP이 아니라 FAIL이다.
 - 규칙 변경은 GitOps 매니페스트 전체에 영향을 주므로 변경 전 영향 범위를 확인한다.
 
-## Checks
+#### Checks
 
-### Readiness
+##### Readiness
 
 | 검증기 | 확인 대상 |
 | --- | --- |
@@ -113,10 +134,30 @@ python3 scripts/qa.py full
 PASS는 저장소 정적 증적이다. 클러스터에 실제로 admission 정책이 적용되어 있는지는
 증명하지 않는다.
 
-### Failure Handling
+##### Failure Handling
 
 이 문서는 운영 관측과 복구만을 다루는 내용을 따로 두지 않는다. 그런 내용을 두게 되면 여기에 적는다.
 
-#### Runbook Links
+###### Runbook Links
 
 이 문서는 runbook이나 운영 가이드 링크를 따로 두지 않는다. 연결할 운영 문서가 생기면 여기에 연결한다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

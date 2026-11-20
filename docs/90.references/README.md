@@ -1,16 +1,34 @@
 ---
 title: "90.references"
-version: "0.4.0"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 # 90.references
 
-## Responsibility
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 README는 docs/90.references에서 현재 소유 문서를 찾는 작성자와 검토자를 안내한다. 이 컬렉션의 목적은 [Purpose](#purpose)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 docs/90.references의 탐색 경로를 유지한다. 소유 파일은 [Paths](#paths), 진입 방법은 [Usage](#usage)에 연결하며 개별 문서의 계약은 해당 정본이 소유한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Responsibility
+
+##### Purpose
 
 > 감사, 외부 조사, 데이터 등 비권위 참고 자료를 관리한다.
 
@@ -19,9 +37,11 @@ updated: "2026-11-17"
 대체하지 않는다. 현재 실행 동작과 버전 값은 Stage 01/02 문서 및 실제
 매니페스트·설정·잠금 파일이 소유한다.
 
-#### Inputs and Outputs
+###### Inputs and Outputs
 
-##### Out of Scope
+<a id="out-of-scope"></a>
+
+**Out of Scope**
 
 - AI Agent governance, role, skill, provider, permission, runtime policy
 - 제품 요구사항, 현재 아키텍처, 구현 계약, 실행 Task 증거
@@ -37,13 +57,13 @@ Stage 98의 문서나 파일을 인용하거나 cross-link하지 않는다. 일�
 본문 복구는 Git history가 담당한다. 승인된 최종 전환 대상의 처분은
 [문서 수명주기 정책](../00.workspace/03.process/document-lifecycle.md#rules)을 따른다.
 
-### Excluded Responsibilities
+##### Excluded Responsibilities
 
 이 stage는 요구사항, 아키텍처, 구현 명세, 운영 절차, Agent 정책을 정의하거나 대체하지 않으며, 현재 실행 동작과 버전 값은 Stage 01/02 문서 및 실제 매니페스트·설정·잠금 파일이 소유한다. AI Agent governance, 운영 Guide·Policy·Runbook·Incident, 배포 승인, live mutation, secret-bearing procedure도 이 stage 밖에 있다. Stage 98의 문서나 파일은 인용하거나 cross-link하지 않는다.
 
-## Current Contents
+#### Current Contents
 
-### Paths
+##### Paths
 
 ```text
 docs/90.references/
@@ -69,9 +89,9 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
 책임을 안내한다. 관찰일·lifecycle·주장·coverage는 해당 보고서가 소유하며
 라우터는 이를 중복 관리하지 않는다.
 
-### Owners
+##### Owners
 
-#### In Scope
+###### In Scope
 
 | Category | Purpose | Required boundary |
 | --- | --- | --- |
@@ -79,9 +99,9 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
 | Research | 외부 공식 자료와 저장소 증거를 종합한 조사 | 출처, 확인일, freshness trigger, 추론 한계를 명시한다. |
 | Data | 독립적인 참고 가치가 있는 bounded dataset 또는 lookup material | 생성·수집 출처와 갱신 책임을 명시하고 실행 입력으로 승격하지 않는다. |
 
-## Usage
+#### Usage
 
-### Entry Points
+##### Entry Points
 
 1. 새 자료가 정책·요구·설계·절차·실행 증거를 정의하는지 확인하고, 그렇다면
    공통 거버넌스와 Stage 01/02/03/05의 canonical owner에 작성한다.
@@ -107,7 +127,7 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
    경로나 제목 앵커의 이동·삭제가 기존 참조에 영향을 주면 해당 대상을
    인용하는 문서의 링크도 검사한다.
 
-#### Upstream and Downstream
+###### Upstream and Downstream
 
 - [Docs Hub](../README.md)
 - [Requirements](../01.requirements/README.md)
@@ -116,11 +136,31 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
 - [Operations](../05.operations/README.md)
 - [Reference Maintenance Runbook](../00.workspace/06.maintenance/0011-reference-maintenance-runbook.md)
 
-#### Policy and Templates
+###### Policy and Templates
 
 - [Agent Governance Hub](../../.agents/README.md)
 - [Research Reference Template](../99.templates/02.templates/90.references/research.template.md)
 
-### Checks
+##### Checks
 
 전이와 종료: 해당 없음 — 이 stage README는 상태 전이나 종료 규칙을 따로 두지 않는다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

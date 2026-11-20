@@ -24,6 +24,7 @@ from typing import Any, Callable, Mapping, Sequence
 from urllib.parse import unquote
 
 from document_contracts import (
+    CRITERION_ID,
     ROOT_FILES,
     SCOPED_EXECUTION_APPROVAL_COMMAND,
     TARGET_ROOTS,
@@ -38,6 +39,7 @@ from document_contracts import (
     load_registry,
     read_repository_text,
     task_criterion_ids,
+    is_criterion_id,
     task_execution_issues,
     task_contract_issues,
     direct_parent,
@@ -84,6 +86,7 @@ COMPLETION_AUTHORITY_PATHS = (
     PurePosixPath("docs/99.templates/01.contracts/frontmatter.schema.json"),
 )
 OBJECT_ID = re.compile(r"[0-9a-f]{40}|[0-9a-f]{64}")
+CRITERION_TOKEN = CRITERION_ID.pattern.removesuffix(r"\Z")
 FIXED_GIT_ENVIRONMENT = {
     "GIT_AUTHOR_NAME": "Lifecycle Self Test",
     "GIT_AUTHOR_EMAIL": "lifecycle@example.invalid",
@@ -789,7 +792,10 @@ def _draft_requirement_basis(
         adapter._local_destination(spec, link)[1]
         for row in adapter._body_contract_rows(text, profile) or ()
         if criteria.intersection(
-            re.findall(r"\bVAL-[A-Z0-9-]+-[0-9]{3}\b", row.get(criterion_column, ""))
+            re.findall(
+                rf"(?<![\w-]){CRITERION_TOKEN}(?![\w-])",
+                row.get(criterion_column, ""),
+            )
         )
         for column in columns
         for link in adapter._extract_links(row.get(column, ""), definitions_text=text)
@@ -1692,7 +1698,7 @@ def _evidence_context(
                 return frozenset()
             return frozenset(
                 re.findall(
-                    r"(?<![\w-])VAL-[A-Z0-9-]+-[0-9]{3}(?![\w-])",
+                    rf"(?<![\w-]){CRITERION_TOKEN}(?![\w-])",
                     value,
                 )
             )
@@ -3676,7 +3682,7 @@ def _completion_document_diagnostics(
                 fail(spec_path, "COMPLETION-CRITERIA", "malformed criterion definition")
                 continue
             identifier = entry[0].strip()
-            if re.fullmatch(r"VAL-[A-Z0-9-]+-[0-9]{3}", identifier):
+            if is_criterion_id(identifier):
                 defined.append(identifier)
             elif not re.fullmatch(r"N/A — \S(?:.*\S)?", identifier):
                 fail(

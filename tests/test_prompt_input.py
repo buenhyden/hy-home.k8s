@@ -8,7 +8,7 @@ import unittest
 from unittest import mock
 from pathlib import Path
 
-from tests.form_headings import form_body
+from tests.form_headings import common_shell, form_body
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
@@ -57,12 +57,21 @@ def contract(command: str, subject: str = "Subject") -> str:
     return (
         FRONTMATTER
         + "# Sample Contract\n\n"
-        + "\n\n".join(form_body("prompt", sections))
+        + "\n\n".join(common_shell(form_body("prompt", sections)))
         + "\n"
     )
 
 
 class PromptInputBuilderTests(unittest.TestCase):
+    def test_current_contract_projects_inputs_and_refuses_a_broken_shell(self) -> None:
+        current = contract("git diff")
+        role = self.module.body(current)
+        self.assertIn("## Inputs\n", role)
+        self.assertNotIn("## 문서 개요\n", role)
+        with self.assertRaises(self.module.PromptInputError) as caught:
+            self.module.body(current.replace("## 문서 개요", "## Missing", 1))
+        self.assertEqual(caught.exception.code, "PROMPT-CONTRACT-ENVELOPE")
+
     def setUp(self) -> None:
         self.module = load_builder()
         self._directory = tempfile.TemporaryDirectory(prefix="prompt-input-")

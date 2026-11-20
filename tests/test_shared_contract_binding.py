@@ -113,7 +113,7 @@ class SharedContractBindingTests(unittest.TestCase):
             approval_ref=None,
         )
         for key in APPROVAL_FIELDS:
-            del raw["shared_contract"][key]
+            raw["shared_contract"].pop(key, None)
         candidate = validate_registry(ROOT, raw).shared_contract
         self.assertEqual(candidate.stage, "candidate")
         self.assertEqual(candidate.source_revision, "a" * 40)
@@ -144,6 +144,9 @@ class SharedContractBindingTests(unittest.TestCase):
             source_revision="a" * 40,
             approval_ref="reviewed-decision",
             version="3.0.0",
+            approved_by="operator",
+            approved_at="2026-11-12",
+            effective_from="2026-11-12",
         )
         self.assertEqual(validate_registry(ROOT, raw).shared_contract.stage, "adopted")
 
@@ -173,6 +176,10 @@ class SharedContractApprovalFieldsTests(unittest.TestCase):
     def candidate(self, **changes: object) -> dict:
         raw = copy.deepcopy(self.raw)
         raw["shared_contract"].update(changes)
+        if raw["shared_contract"]["stage"] in {"approved", "adopted"}:
+            raw["shared_contract"].setdefault("approved_by", "operator")
+            raw["shared_contract"].setdefault("approved_at", "2026-11-12")
+            raw["shared_contract"].setdefault("effective_from", "2026-11-12")
         return raw
 
     def rules(self, raw: dict) -> set[str]:
@@ -184,13 +191,13 @@ class SharedContractApprovalFieldsTests(unittest.TestCase):
 
     def test_repository_record_states_only_what_is_recorded(self) -> None:
         shared = self.raw["shared_contract"]
-        self.assertEqual(shared["stage"], "adopted")
+        self.assertEqual(shared["stage"], "candidate")
         for key in APPROVAL_FIELDS:
-            self.assertEqual(shared[key], "unverified")
+            self.assertNotIn(key, shared)
         # No record states scope, migration or rollback (W03-D05); the
         # consumed edition is the registry's own version.
         for key in ("scope", "migration", "rollback"):
-            self.assertEqual(shared[key], "unverified")
+            self.assertNotIn(key, shared)
         self.assertEqual(shared["consumer_version"], shared["version"])
         self.assertEqual(len(shared["extensions"]), 8)
         self.assertEqual(len(shared["extensions"]), len(EXTENSION_RECORDS))
@@ -216,7 +223,7 @@ class SharedContractApprovalFieldsTests(unittest.TestCase):
             ],
         )
         loaded = validate_registry(ROOT, self.raw).shared_contract
-        self.assertEqual(loaded.approved_by, "unverified")
+        self.assertIsNone(loaded.approved_by)
         self.assertEqual([item.name for item in loaded.extensions], names)
 
     def test_approved_and_adopted_require_every_approval_fact(self) -> None:
@@ -236,14 +243,16 @@ class SharedContractApprovalFieldsTests(unittest.TestCase):
             approval_ref=None,
         )
         for key in APPROVAL_FIELDS:
-            del raw["shared_contract"][key]
+            raw["shared_contract"].pop(key, None)
         self.assertEqual(self.rules(raw), set())
         raw["shared_contract"]["version"] = "3.1.0-draft.1"
         self.assertIn("REGISTRY_SCHEMA", self.rules(raw))
 
     def test_unverified_is_admitted_only_with_an_approval_ref(self) -> None:
         for stage in ("candidate", "approved", "adopted"):
-            raw = self.candidate(stage=stage, approval_ref=None)
+            raw = self.candidate(
+                stage=stage, approval_ref=None, approved_by="unverified"
+            )
             with self.subTest(stage=stage):
                 self.assertIn("REGISTRY_SCHEMA", self.rules(raw))
         for key in APPROVAL_FIELDS:
@@ -338,7 +347,7 @@ class SharedContractApprovalFieldsTests(unittest.TestCase):
         raw = copy.deepcopy(self.raw)
         shared = raw["shared_contract"]
         for key in APPROVAL_FIELDS:
-            del shared[key]
+            shared.pop(key, None)
         shared["extensions"] = [
             CONTRACTS.extension_name(item) for item in shared["extensions"]
         ]

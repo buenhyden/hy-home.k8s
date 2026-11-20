@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "6.2.1"
+version: "7.0.0"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -10,9 +10,27 @@ artifact_id: "REQ-0003"
 
 # Workspace Agent and Document Governance Requirements
 
-## Overview
+## 문서 개요
 
-### Problem and Outcome
+### 목적과 독자
+
+This requirement package lets maintainers, architects, implementers, and reviewers decide which Workspace Agent and Document Governance behaviors and acceptance conditions are required. The source problem and stakeholders are under [Overview](#overview).
+
+### 책임과 적용 범위
+
+platform maintains the requirement authority. Included and excluded behavior is bounded by [In Scope](#in-scope) and [Constraints and Exclusions](#constraints-and-exclusions); implementation detail belongs to downstream owners.
+
+## 내용 계약
+
+### 입력과 전제
+
+Inputs and assumptions remain in the cited upstream requirements, boundaries, and payload sections.
+
+### 본문과 규칙
+
+#### Overview
+
+##### Problem and Outcome
 
 This package states the user requirements for agent execution and document governance; the operator approved it on 2026-11-05 as current requirement authority. The
 [common role registry](../../.agents/roles/registry.json) owns the machine truth of roles and skills,
@@ -29,15 +47,15 @@ and to resume a reviewable change safely.
 Copying policy, machine contracts, and execution history into several documents splits the boundary between current support and unfinished work.
 A static declaration must not be mistaken for runtime evidence, and past program counts must not be used as current admission criteria.
 
-### Stakeholders
+##### Stakeholders
 
 - Maintainer: manages owners without duplication and changes that can be recovered.
 - Agent operator and implementer: work within the approval, stop, and handoff boundaries.
 - Reviewer and quality engineer: review contracts, failure meaning, and evidence depth with their roles kept separate.
 
-## Scope
+#### Scope
 
-### In Scope
+##### In Scope
 
 - A worker finds the role, skill, and approval owner in the current Registry and execution policy.
 - A failed task stops and resumes safely after a checkpoint without sensitive data and a bounded retry.
@@ -50,7 +68,7 @@ The removed shared progress ledger and the past proposal's `agentSystems`/`evide
 claimed as current implementation or restored as a new parallel registry; the work residue ledger is neither claimed as the removed ledger nor a parallel registry. FR-0025's ongoing obligations are validated at their current owners.
 The external v14.2 execution package is evidence only; the clauses below conflicted with accepted requirements and were not adopted; on 2026-11-12 the user decided that the current v14.7 requirements prevail, so the review clause is adopted through SPEC-0162, generated reverse traceability in place of hand-written back-links through SPEC-0164, and renumbering as display numbers only is recorded in SPEC-0161; the single machine ledger for unfinished, adoption and survey state (FR-0019, FR-0022) agrees with v14.7 and is adopted through SPEC-0185 and W03-H30 package 2. SPEC-0161 stays the workspace's residue owner until W11 and exits with its exit commit at W11 once the work residue ledger is empty; it is the single deliberate exception to the exit of a finished package with its final change.
 
-### Constraints and Exclusions
+##### Constraints and Exclusions
 
 The relevant owners update concrete provider/model availability and authentication evidence. A static file is not runtime discovery.
 This document does not separately pin the number of roles or providers, retry constants, or validator argv.
@@ -68,16 +86,16 @@ It follows the current boundaries of [ADR-0030](../00.workspace/02.architecture/
   controls. W08 owns that target and its verification.
 - ADR-0036 and `scripts/validation/registry.json` own the current governance location and the QA/CD boundary. Earlier ADRs are summarized in the AD-0006 [Archived Lineage](../00.workspace/02.architecture/01.descriptions/0006-workspace-agent-governance-platform.md#archived-lineage).
 
-#### Agent execution and approval requirements
+###### Agent execution and approval requirements
 
 - **Allowed Actions**: Inspect current owners, edit approved repository scope, and run non-destructive local validation.
 - **Disallowed Actions**: Read secret values, invent runtime evidence, restore obsolete governance owners, or mutate external/live systems without approval.
 - **Human-in-the-loop Requirement**: Obtain approval for destructive Git, external actions, provider authentication, deployment, or secret handling.
 - **Evaluation Expectation**: Preserve the risk-classed checklist review and owner acceptance, stable-snapshot validation results, failure limitations, and package-local unfinished ownership with the residue pointer in the work residue ledger.
 
-## Requirements
+#### Requirements
 
-### Functional Requirements
+##### Functional Requirements
 
 Acceptance criteria are abbreviated `AC##` in the `Acceptance` column.
 
@@ -115,10 +133,10 @@ Acceptance criteria are abbreviated `AC##` in the `Acceptance` column.
 | REQ-0003-FR-0030 | CI/QA/validation scripts, invoked or discovered tests, and `.github/` surfaces must be traced to active consumers, unique rules, triggers, permissions and current repository purpose. Proven one-off, legacy, deprecated, duplicate, conflicting or excessive execution is retired only after ongoing coverage transfers, callers and registration are removed, dedicated helpers/fixtures/tests lose their consumers, and necessary results remain at the existing evidence owner. Distinct security, document and GitOps failure meanings stay covered. Small changes must not trigger broad repeat work at later delivery stages. | Serves retirement of CI/QA scripts, tests and `.github/` surfaces only after consumer and coverage transfer (SPEC-0140 left the tree; Git history recovers it) (AD-0006 Lifecycle Traceability). | AC14: no proven one-off caller remains. | must |
 | REQ-0003-FR-0031 | Skill evaluation must retain the same task and conditions, actual outputs without and with the Skill, scoring criteria, scores and one representative aggregate owner. Scores must identify evidence granularity, trial count, result signals, grader and criterion IDs, partial-score rationale and human-calibration state. Only actual evaluation cycles update outputs, scores and aggregates; an aggregate requires its task, complete paired outputs and score. Preserve original observed bytes and distinguish incomplete evidence from measured results. Representative evaluations establish only their declared scope, not the full Skill roster, native selection, command execution, approval or runtime enforcement. Retiring a recurring grader must preserve this evidence capacity and its canonical forms without making grading a recurring repository QA requirement. | Serves paired Skill observations and one aggregate owner, with Stage 99 form and separate runtime authority (AD-0006 Lifecycle Traceability). | AC10: evaluation forms keep paired evidence. | must |
 | REQ-0003-FR-0032 | A single Repository Vocabulary must own the meaning of shared governance terms under stable term IDs, each naming the policy that owns its rules; policies own operating rules and must not redefine those terms. | P03 restores `.agents/knowledge/glossary.md` as the common term owner and keeps local Kubernetes meanings in `docs/00.workspace/01.project/glossary.md`. Existing term identities and valid definitions are preserved; policies retain their operating rules. ADR-0058's admission of a meaning-only vocabulary remains applicable. | Knowledge validator PASS on both vocabularies, including unique term IDs across owners; common IDs match the adopted contract. | must |
-| REQ-0003-IF-0001 | A migration must deliver the current owner switch, forward links written once by the citing document with the reverse view derived from them, and cleanup of stale claims and orphan consumers in the same review unit. | Serves atomic owner/consumer migration with single-write links and a derived reverse view (AD-0006 Lifecycle Traceability). | AC12: the migration review unit leaves no stale claim. | must |
-| REQ-0003-IF-0002 | An external role catalog is only the provenance of an idea, never admission or policy authority. | Serves external catalog provenance without policy or permission authority (AD-0006 Lifecycle Traceability). | No external catalog is cited as admission authority. | must |
+| REQ-0003-IF-0001 | A migration must deliver the current owner switch, forward links written once by the citing document with the reverse view derived from them, and cleanup of stale claims and orphan consumers in the same review unit. | Serves atomic owner/consumer migration with single-write links and a derived reverse view (AD-0006 Lifecycle Traceability).; interface_refs: REQ-0003-FR-0015, REQ-0003-FR-0024 | AC12: the migration review unit leaves no stale claim. | must |
+| REQ-0003-IF-0002 | An external role catalog is only the provenance of an idea, never admission or policy authority. | Serves external catalog provenance without policy or permission authority (AD-0006 Lifecycle Traceability).; interface_refs: REQ-0003-FR-0025, REQ-0003-NFR-0001 | No external catalog is cited as admission authority. | must |
 
-### Quality Requirements
+##### Quality Requirements
 
 | Requirement ID | Statement | Rationale | Acceptance | Priority |
 | --- | --- | --- | --- | --- |
@@ -127,17 +145,17 @@ Acceptance criteria are abbreviated `AC##` in the `Acceptance` column.
 | REQ-0003-NFR-0003 | Document form and QA/release decisions must trace a dated official primary source to its exact claim, applicable scope, local decision and validation evidence. An external standard is guidance or convention until the repository's current owner adopts a rule; it never establishes certification or remote state. | Serves primary-source traceability with repository conventions labeled separately (AD-0006 Lifecycle Traceability). | Source citations name date, claim and scope. | must |
 | REQ-0003-NFR-0004 | A discovered baseline defect is handled without weakening the contract, and a false-positive verdict, an environment limit, or an unresolved failure must not be hidden as success. | Serves explicit baseline-failure and environment-limit reporting (AD-0006 Lifecycle Traceability). | Review finds no hidden failure or weakened gate. | must |
 
-## Traceability
+#### Traceability
 
-### Sources
+##### Sources
 
 SPEC-0152 completed the current manual disposition policy change; its exact completed source and recovery proof are in [Archived Lineage](#archived-lineage). Earlier completed packages, including SPEC-0151 and SPEC-0150, are summarized there and recovered from Git history. The W00–W11 roadmap as recorded at that time is in `git show 4033d38e:docs/03.specs/0152-manual-document-disposition-policy/plan.md` under `Deferred Roadmap`; the current Task and residue ledger record subsequent progress and open work. SPEC-0153 corrected the separately observed broad-history ADR and Task validation failures; its Task criteria were accepted on 2026-11-11, and its completed source and recovery proof are in [Archived Lineage](#archived-lineage). It does not revise SPEC-0152's completed evidence. SPEC-0154, SPEC-0155 and SPEC-0158 completed the W00 survey of that roadmap, and SPEC-0156 and SPEC-0157 completed W01; all five left the tree after the user accepted their criteria and authorized their exit on 2026-11-11, and their summaries and recovery proof are in [Archived Lineage](#archived-lineage). Later stages read their tables from Git history: the requirement crosswalk, Conflict Dispositions and Stage Handoffs with `git show a6f44976:docs/03.specs/0154-requirement-owner-crosswalk/tasks/tsk-0001-requirement-owner-crosswalk.md`; the designated-source, legacy lineage and New Handoffs tables with `git show a6f44976:docs/03.specs/0155-designated-source-applicability/tasks/tsk-0001-designated-source-applicability.md`; and the USER22 links, primary writers and OPEN dispositions with `git show a6f44976:docs/03.specs/0158-w00-obligation-closure/tasks/tsk-0001-w00-obligation-closure.md`. The W01 rejected clauses stay in Scope and Non-goals, and the shared-edition rule stays in the document lifecycle policy. SPEC-0159 completed W02, adding the staged `LIFECYCLE-PACKAGE-EXIT` check under accepted ADR-0057, and SPEC-0160 completed W03, adding front-matter rule tests, audit-form finding columns and owner pointers; both left the tree after the user accepted their criteria and authorized their exit on 2026-11-11, and their summaries and recovery proof are in [Archived Lineage](#archived-lineage). The W03 Q-03 comparison of the package's unapproved 19-role candidate table with the current profiles is read with `git show 5456022f:docs/03.specs/0160-document-form-gaps/tasks/tsk-0001-document-form-gaps.md`; no candidate form was adopted. On 2026-11-18 the operator accepted [ADR-0063](../00.workspace/02.architecture/02.decisions/0063-affected-pr-gitops-validation.md) and directed the REQ-0003-FR-0017 amendment (CI-SCOPE) on the basis of the implemented workflow and the observed aggregate runs; that amendment makes the affected pull request checks a current requirement and leaves their binding mechanism to that decision and AD-0006. A hosted run in which a CI lock or GitOps check is selected and executes is still unobserved and belongs to the first pull request that changes those inputs.
 
-#### Unfinished execution and original lineage
+###### Unfinished execution and original lineage
 
 Withdrawn, completed and superseded packages through SPEC-0140 were deleted. Git history recovers each from the commit its Archived Lineage row names (default `git show 69445fca:<path>`), and the [Archived Lineage](#archived-lineage) table summarizes them. Their retired designs are not current authority, and withdrawn work is not declared complete. REQ-0005, REQ-0006 and REQ-0008 were merged into this document; the [Reviewed member-ID transfer](#reviewed-member-id-transfer) table maps their member IDs. Custom CRD schema, generated output and live observations remain explicit DEFER under the owners in [REQ-0004](./0004-current-local-gitops-platform.md), which co-owns the platform-specific obligations.
 
-#### Reviewed member-ID transfer
+###### Reviewed member-ID transfer
 
 The table below records the succession of current meaning. Earlier member IDs are historical identifiers of the original decisions and program and are not reassigned.
 
@@ -211,14 +229,14 @@ The table below records the succession of current meaning. Earlier member IDs ar
 - Current integration: none. SPEC-0140 left the tree; Git history recovers it.
 - Original decision bodies remain in the [decision log](../02.architecture/02.decisions/README.md); recovery is by Git history (`git show <commit>:<path>`), with summaries in [Archived Lineage](#archived-lineage).
 
-### Verification Links
+##### Verification Links
 
 No downstream link is listed here: the architecture description or Spec that owns each member cites it in its own requirement column, `scripts/document-backlinks.py` derives the reverse view and the `REQUIREMENT-COVERAGE` check of `scripts/validate-links-and-owners.py` refuses a member that no document cites.
 
 - REQ-0003-FR-0032: the [common vocabulary](../../.agents/knowledge/glossary.md) owns meanings; AD-0006 describes their owner boundary. [ADR-0058](../00.workspace/02.architecture/02.decisions/0058-repository-vocabulary-in-knowledge-surface.md) admits the vocabulary; proposed [ADR-0065](../00.workspace/02.architecture/02.decisions/0065-shared-vocabulary-and-workspace-ownership.md) records the split implemented under the separate P03 authorization.
 - Acceptance criterion 13: the release decision is [ADR-0048](../00.workspace/02.architecture/02.decisions/0048-local-qa-and-semver-release-ownership.md) and the release-preparation procedure is [RUN-0012](../00.workspace/03.process/0012-main-release-preparation-runbook.md).
 
-#### Acceptance Conditions
+###### Acceptance Conditions
 
 Each member of the Lifecycle Traceability below is judged by the validation of its linked Architecture and implementation owner.
 The current role/skill projection, document routes, identity, and lifecycle, consumer ownership, the bounded loop, and
@@ -240,11 +258,11 @@ are not reported as PASS without their observation, and each limitation has an o
 - **Acceptance criterion 13**: A main release-preparation PR supplies a reviewed `CHANGELOG.md` entry and one SemVer tag/Release producer; development pushes create none, existing SHA tags are preserved, duplicate notifications do not move a tag, and failed checks do not publish.
 - **Acceptance criterion 14**: The active script, test and `.github/` graph has no proven one-off or duplicate execution after consumer succession, while distinct security, document and repository-purpose checks remain covered. Issues express requests, the Spec contract, Task execution and Project a view without copied or bidirectionally overwritten state.
 
-#### Verification Method
+###### Verification Method
 
 No separate verification method is stated: each requirement is verified by the evidence named in its `Acceptance` cell, and the acceptance-criterion column of `Lifecycle Traceability` states the acceptance condition of every member.
 
-### Lifecycle Traceability
+##### Lifecycle Traceability
 
 | Requirement ID | Acceptance criterion |
 | --- | --- |
@@ -301,7 +319,7 @@ No separate verification method is stated: each requirement is verified by the e
 | N/A — Acceptance criterion 13 remains acceptance-only | Canonical main changelog and one SemVer tag/Release producer pass local refusal checks; publication is observed separately. |
 | N/A — Acceptance criterion 14 remains acceptance-only | Proven obsolete callers are retired after ongoing coverage transfer; Issues, Spec, Task and Project retain distinct ownership. |
 
-### Archived Lineage
+##### Archived Lineage
 
 This record covers the SPEC-0140 removal from `docs/98.archive/` and
 `docs/03.specs/`, later package exits, and historical deletions recorded by
@@ -1075,3 +1093,23 @@ This is local retained-ref recovery proof before disposition, not remote or host
 - `49f7a6f2e9d1f54c52f57eb5f19c15063fcb13f1:docs/03.specs/0222-t99-common-core-conformance/tasks/tsk-0001-t99-common-core-conformance.md` — blob/source OID `76c00436e757501ae8f0cef67d05f08f6675ed0f`; SHA-256 `69e743414e1cbccef0cddac4da6663c27398a6e945dd26a9cdccea1a2ef47b17` (62328 bytes).
 
 This is local retained-ref recovery proof before disposition, not remote or hosted evidence. The closure commit is itself checked by `LIFECYCLE-PACKAGE-EXIT`. A newly discovered consumer or hold defers the affected disposition.
+
+## 적용과 확인
+
+### 적용 방법
+
+Apply the decisions and procedures in the role payload under its stated conditions.
+
+### 확인 기준
+
+Check the role payload acceptance or verification conditions and report observed limits.
+
+## 관계와 출처
+
+### 관련 문서
+
+Follow the current upstream and downstream links in the role payload.
+
+### 외부 근거
+
+External evidence, when used, remains attributed and bounded in the role payload.

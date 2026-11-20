@@ -581,6 +581,31 @@ def _assert_template_source_parity(registry: Registry) -> None:
         source = profiles.get(source_id)
         if source is None:
             raise AssertionError(f"{profile_id}: unknown source profile {source_id}")
+        if source.mode == "native" and profile.template.suffix == ".md":
+            wrapper_keys = ("title", "version", "type", "status", "owner", "updated")
+            if (
+                profile.frontmatter.mode != "required"
+                or profile.frontmatter.required != wrapper_keys
+                or profile.frontmatter.allowed != wrapper_keys
+                or profile.frontmatter.order != wrapper_keys
+                or (
+                    profile.profile_class,
+                    profile.body_contract,
+                    profile.document_role,
+                    profile.form,
+                )
+                != (
+                    source.profile_class,
+                    source.body_contract,
+                    source.document_role,
+                    source.form,
+                )
+            ):
+                raise AssertionError(
+                    f"{profile_id}: native template wrapper/source contract differs from {source_id}"
+                )
+            checked.add(profile_id)
+            continue
         source_frontmatter = source.frontmatter
         for omitted in TEMPLATE_OMITTED_KEYS:
             if (

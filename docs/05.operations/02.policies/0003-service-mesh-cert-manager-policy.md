@@ -1,25 +1,43 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.5.3"
+version: "2.0.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-20"
 artifact_id: "POL-0003"
 ---
 
 # Service Mesh & cert-manager Operations Policy
 
-## Purpose and Scope
+## 문서 개요
 
-### Objective
+### 목적과 독자
+
+이 정책은 Service Mesh & cert-manager Operations Policy의 운영 조건을 적용할 플랫폼 운영자와 변경 검토자를 위한 규칙이다. 정책 목표는 [Objective](#objective)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 이 운영 정책을 유지한다. 적용 대상은 [Applies To](#applies-to), 규칙과 집행 조건은 [Rules](#rules) 및 [Enforcement](#enforcement)가 소유한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Purpose and Scope
+
+##### Objective
 
 이 문서는 cert-manager(TLS 자동화), Istio(서비스메시), Kiali(메시 관측) 운영 통제 기준을 정의한다.
 플랫폼 확장 컴포넌트의 보안 정책, 갱신 제약, 허용/금지 작업을 명시한다.
 클러스터 UI(Headlamp) 통제는 [POL-0004](./0004-rollouts-notifications-headlamp-policy.md),
 k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitops-operations-policy.md)이 소유한다.
 
-### Applies To
+##### Applies To
 
 - cert-manager + mkcert ClusterIssuer(`mkcert-ca-issuer`)
 - Istio(istiod) + sidecar 주입 정책
@@ -29,13 +47,13 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 - **Agents**: 문서/운영 자동화 에이전트
 - **Environments**: Linux server local cluster
 
-#### Exclusions
+###### Exclusions
 
 이 정책은 범위에서 제외한다고 따로 표시한 항목을 Applies To에 두지 않으며, 금지 작업은 위 Requirements의 Disallowed 항목에 적혀 있다.
 
-## Rules
+#### Rules
 
-### Requirements
+##### Requirements
 
 | Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
@@ -103,7 +121,7 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 | MESH-R029 | required | active |
 | MESH-R030 | required | active |
 
-#### TLS / cert-manager
+###### TLS / cert-manager
 
 - `MESH-R001`
 - `MESH-R002`
@@ -115,7 +133,7 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 - `MESH-R008`
 - `MESH-R009`
 
-#### Istio / Service Mesh
+###### Istio / Service Mesh
 
 - `MESH-R010`
 - `MESH-R011`
@@ -127,7 +145,7 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 - `MESH-R017`
 - `MESH-R018`
 
-#### Kiali / Observability
+###### Kiali / Observability
 
 - `MESH-R019`
 - `MESH-R020`
@@ -139,13 +157,13 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 - `MESH-R026`
 - `MESH-R027`
 
-#### CI Governance
+###### CI Governance
 
 - `MESH-R028`
 - `MESH-R029`
 - `MESH-R030`
 
-### Exceptions
+##### Exceptions
 
 - rootCA 재발급 시 `mkcert-root-ca` Secret 재주입 후 cert-manager controller 재시작 허용.
 - Istio istiod CrashLoop가 관측되어 requests 변경이 필요한 경우 Platform Owner가
@@ -155,13 +173,13 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
   [POL-0001의 live 예외](./0001-k8s-gitops-operations-policy.md#exceptions)가
   필요한 실행은 운영자에게 넘기고 실제 조정 결과를 별도 증거로 기록한다.
 
-#### Approval and Review
+###### Approval and Review
 
 예외 승인은 위 Exceptions의 Platform Owner 검토와 POL-0001의 live 예외 승인을 따른다.
 
-## Enforcement
+#### Enforcement
 
-### Mechanisms
+##### Mechanisms
 
 - endpoint와 TLS 경계 계약 검증 증적을 남긴다.
 - cert-manager/Istio/Kiali 변경 후 관련 GitOps manifest와 runbook의 계약 값이 일치하는지 확인한다.
@@ -175,13 +193,13 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 
 - **Runbook**: [`../runbooks/0003-platform-expansion-bootstrap-runbook.md`](../03.runbooks/0003-platform-expansion-bootstrap-runbook.md)
 
-### Limits
+##### Limits
 
 이 정책의 현재 구성 검사는 CA, TLS, 외부 Kiali 경로의 복구 시간이나 실제 연결 성공을 증명하지 않는다. 그 경로들의 측정 기준은 REQ-0004의 Secret TLS 복구와 외부 인터페이스 시나리오가 소유한다.
 
-## Ownership
+#### Ownership
 
-### Owner
+##### Owner
 
 - **Architecture**: [AD-0007](../../02.architecture/01.descriptions/0007-current-local-gitops-platform.md)
 - **ADR-0006**: [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/02.decisions/0006-cert-manager-mkcert-ca-issuer.md)
@@ -190,18 +208,38 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/02.decisions/0014-current-local-gitops-platform-contract.md)
 - **Platform Policy**: [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md)
 
-#### Responsibilities
+###### Responsibilities
 
 책임 주체는 아래 Lifecycle Traceability 표의 Control owner 열에 적혀 있다.
 
-### Review Triggers
+##### Review Triggers
 
 변경 검토 시점은 위 Enforcement의 컴포넌트 버전 변경 및 ADR 변경 항목을 따른다.
 
-### Lifecycle Traceability
+##### Lifecycle Traceability
 
 - **Current control review**: SPEC-0106 (left the tree; Git history recovers it)의 과거 review는 이 정책을 istiod source와 비교했다. 원래 promotion 승인이나 live 도입 증적이 아니다.
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
 | N/A — cert-manager, Istio, and Kiali controls derive from accepted architecture and current operations evidence, but no eligible upstream document is available to link as the promoting owner | Platform Owner for component and namespace controls | ClusterIssuer and CA-secret contract, namespace injection rules, Istio sync waves, and Kiali egress limits |
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.

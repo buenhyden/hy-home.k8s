@@ -1,58 +1,82 @@
 ---
 title: "05.operations"
-version: "0.7.0"
+version: "1.0.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 # 05.operations
 
-## Responsibility
+## 문서 개요
 
-### Purpose
+### 목적과 독자
+
+이 README는 docs/05.operations에서 현재 소유 문서를 찾는 작성자와 검토자를 안내한다. 이 컬렉션의 목적은 [Purpose](#purpose)에 기록한다.
+
+### 책임과 적용 범위
+
+platform은 docs/05.operations의 탐색 경로를 유지한다. 소유 파일은 [Paths](#paths), 진입 방법은 [Usage](#usage)에 연결하며 개별 문서의 계약은 해당 정본이 소유한다.
+
+## 내용 계약
+
+### 입력과 전제
+
+입력과 전제는 아래 역할별 본문의 해당 절에 기록한다.
+
+### 본문과 규칙
+
+#### Responsibility
+
+##### Purpose
 
 > 안정 상태 운영 지식, 정책, 런북, 사고 기록을 분류하는 operations stage다.
 
 `05.operations/`는 안정 상태 운영 지식, 운영 정책, 실행 런북, 사고 기록을 묶는 운영 허브다.
 안내 문서는 `guides/`, 정책은 `policies/`, 절차는 `runbooks/`, 사고와 회고는 `incidents/`에 둔다.
 
-#### Stage Readers
+###### Stage Readers
 
 - GitOps Operators
 - Platform Engineers
 - Incident Responders
 
-#### Inputs and Outputs
+###### Inputs and Outputs
 
-##### In Scope
+<a id="in-scope"></a>
+
+**In Scope**
 
 - 사용자/개발자/운영자 대상 안정 상태 안내
 - 운영 정책, 표준, 예외 처리 기준
 - 순서가 중요한 반복 절차와 복구 런북
 - Incident Record와 Postmortem
 
-##### Out of Scope
+<a id="out-of-scope"></a>
+
+**Out of Scope**
 
 - 요구사항 원문
 - 아키텍처 결정 기록
 - 기능 구현 상세 명세
 - 임시 scratch 로그
 
-##### Release Evidence Boundary
+<a id="release-evidence-boundary"></a>
+
+**Release Evidence Boundary**
 
 반복 가능한 발행 절차는 Runbook `RUN-0012`에 둔다.
 개별 발행의 로컬 변경과 검증은 해당 Task와 Git에 기록하고, 발행 이력은
 [CHANGELOG](../../CHANGELOG.md)에 남긴다. 태그, GitHub Release, hosted CI,
 provider/runtime, 실제 운영 검증은 각각 관측한 결과를 링크한다.
 
-### Excluded Responsibilities
+##### Excluded Responsibilities
 
 이 stage는 요구사항 원문, 아키텍처 결정 기록, 기능 구현 상세 명세, 임시 scratch 로그를 소유하지 않는다. guides, policies, runbooks, incidents는 각자 맡는 일을 섞지 않으며, 개별 발행의 로컬 변경과 검증은 해당 Task와 Git에, 발행 이력은 `CHANGELOG`에 남는다.
 
-## Current Contents
+#### Current Contents
 
-### Paths
+##### Paths
 
 ```text
 05.operations/
@@ -74,7 +98,7 @@ provider/runtime, 실제 운영 검증은 각각 관측한 결과를 링크한�
 | [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
 | [CLAUDE.md](./CLAUDE.md) | Claude가 이 stage의 `AGENTS.md`를 불러오게 하는 한 줄 `@AGENTS.md` import |
 
-#### Operations Folder Roles
+###### Operations Folder Roles
 
 `05.operations`는 운영 지식을 한곳에 모으되, 문서가 맡는 일을 섞지 않는다.
 
@@ -83,9 +107,9 @@ provider/runtime, 실제 운영 검증은 각각 관측한 결과를 링크한�
 - `runbooks/`: 정해진 순서로 실행하고, 검증하고, 실패 시 복구하는 절차다.
 - `incidents/`: 실제 사고의 사실 기록과 postmortem을 보관한다.
 
-### Owners
+##### Owners
 
-#### Operations Routing Matrix
+###### Operations Routing Matrix
 
 | 필요 상황                                   | 사용할 위치                                                                  | 시작 템플릿                                                      |
 | ------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------- |
@@ -95,7 +119,7 @@ provider/runtime, 실제 운영 검증은 각각 관측한 결과를 링크한�
 | 실제 사고 사실, 타임라인을 기록해야 함      | [incidents](./04.incidents/README.md)                                           | [incident.template.md](../99.templates/02.templates/05.operations/incident.template.md)     |
 | 사고 후 원인과 재발 방지를 분석해야 함      | [incidents README](./04.incidents/README.md)에서 postmortem 경로 생성 조건 확인 | [postmortem.template.md](../99.templates/02.templates/05.operations/postmortem.template.md) |
 
-#### Operations Mutation Boundary
+###### Operations Mutation Boundary
 
 운영 문서는 `kubectl apply/patch`, `argocd app sync`, `vault kv put`,
 `vault policy write`, `helm upgrade/install`, `docker network connect`,
@@ -127,16 +151,16 @@ repository quality validator의 command boundary 규칙이며, 해당 변경에
 [Approval and Safety](../00.workspace/04.quality/approval-and-safety.md)가 소유한다.
 marker는 실행 권한을 부여하지 않는다.
 
-## Usage
+#### Usage
 
-### Entry Points
+##### Entry Points
 
 1. 안정 상태 설명은 `guides/`, 준수해야 할 경계는 `policies/`, 실행 절차는 `runbooks/`, 사고 기록은 `incidents/`로 분리한다.
 2. 사고가 없으면 `incidents/`는 README만 유지하고, 첫 사고 기록이 생길 때만 `incidents/<year>/inc-####-<slug>/` 폴더를 만든다. Incident와 Postmortem은 같은 폴더에서 각각 `incident.md`와 `postmortem.md`를 사용한다.
 3. live cluster mutation 예시는 승인 조건, bootstrap-only 예외, break-glass 문맥 없이 추가하지 않는다.
 4. 운영 문서가 현재 `infrastructure/bootstrap-local.sh`, `gitops/platform/external-services`, 정적 검증 계약과 충돌하지 않게 유지한다.
 
-#### Relative Link Rules
+###### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/05.operations/`다.
 
@@ -144,14 +168,14 @@ marker는 실행 권한을 부여하지 않는다.
 - upstream docs stage는 `../01.requirements/`, `../02.architecture/`, `../03.specs/`로 연결한다.
 - 운영 목표 상태와 정적 검사의 원본은 [GitOps 선언](../../gitops/), [인프라 설정](../../infrastructure/), [검사 도구](../../scripts/)처럼 repository root 기준으로 연결한다. 실제 운영 검증 결과는 해당 Task나 운영 기록으로 연결한다.
 
-#### Language Boundary
+###### Language Boundary
 
 운영 문서는 사람이 읽고 실행하는 문서이므로 한국어를 기본으로 한다. 다만
 tool/prompt contract, hook/validator contract 같은 기계 계약 섹션은 영어로 둔다. live
 cluster, OpenBao, secret, ArgoCD 같은 고위험 명령의 실행 경계는 언어와
 무관하게 위 Operations Mutation Boundary를 따른다.
 
-#### Upstream and Downstream
+###### Upstream and Downstream
 
 - [Guides README](./01.guides/README.md)
 - [Policies README](./02.policies/README.md)
@@ -159,13 +183,33 @@ cluster, OpenBao, secret, ArgoCD 같은 고위험 명령의 실행 경계는 언
 - [Incidents README](./04.incidents/README.md)
 - [Reference Maintenance Runbook](../00.workspace/06.maintenance/0011-reference-maintenance-runbook.md)
 
-#### Policy and Templates
+###### Policy and Templates
 
 - [Document Stage Routing](../00.workspace/03.process/document-authoring.md)
 - [Templates README](../99.templates/README.md)
 - [Local Agent Registry](../../.agents/roles/registry.json)
 - [Approval Boundaries](../00.workspace/04.quality/approval-and-safety.md)
 
-### Checks
+##### Checks
 
 1. 현재 구현과 충돌하거나 소유 문서와 중복되는 운영 문서는 활성 소비자를 현재 Policy/Runbook으로 전환한 뒤 [Document Lifecycle Policy](../00.workspace/03.process/document-lifecycle.md)에 따라 처분한다. 대체 Guide·Policy·Runbook이 `supersedes`에 선행 문서의 ID를 기록한다. 수명주기 검사기는 그 관계에서 후속 문서를 찾아 현재 소유자를 확인한다.
+
+## 적용과 확인
+
+### 적용 방법
+
+아래 역할별 본문에 기록된 사용 조건과 절차를 적용한다.
+
+### 확인 기준
+
+아래 역할별 본문의 검증·확인 조건과 그 한계에 따른다.
+
+## 관계와 출처
+
+### 관련 문서
+
+관련 문서와 정본 링크는 아래 역할별 본문에서 확인한다.
+
+### 외부 근거
+
+외부 근거가 사용된 경우 아래 역할별 본문의 출처와 적용 범위에서 확인한다.
