@@ -1,6 +1,6 @@
 ---
 title: "Current Documentation and SDLC Reconciliation Task"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -101,6 +101,22 @@ as EVD-009. The repaired 54-path candidate passed the same selected quick
 command as EVD-010, before this Task receipt and the remaining runbook/residue
 handoff edits. The P00 individual routing in SPEC-0223 is reused; no parallel
 residue list or mandatory whole-corpus snapshot is added.
+The final 56-path source index included the RUN-0011 follow-up and SPEC-0223
+Task/ledger disposition; its installed staged and message hooks passed, then
+committed as `43d5ee6f`. The receiving current owners are the SDLC flow,
+REQ-0003, POL-0004, RUN-0011 and document-authoring rules named in the Plan's
+five promotion rows. Their corrected content and selected checks establish
+the P05 static handoff. This later Task-only outcome receipt is outside that
+56-path checked index and needs its own review; it does not change Spec or
+Plan bytes.
+Risk is high because `.secrets.baseline` is a protected metadata path under
+QUAL-R016. Independent code reviewer `/root/p05_review` and security auditor
+`/root/p05_security_review` checked scope, requirements, owners, consumers,
+old accepted records, removed checks, secrets and recovery with no remaining
+BLOCK/FIX. The seven baseline digest additions cover reviewed public-data
+false positives only; the change adds no permission, trigger or protected
+operation. Temporary preflight logs and inventory are one-time artifacts to
+remove after final delivery; the input package remains through P17.
 
 ##### Blockers and Decisions
 
@@ -109,16 +125,21 @@ owner, now recorded at the canonical [Stage 05 Owners](../../../05.operations/RE
 Naming that owner is not approval for a break-glass operation. P04
 common-edition adoption and this P05 criterion acceptance
 remain pending user decisions. EVD-010 resolves EVD-008 for the repaired
-candidate; final staged/hosted delivery still requires its own checked input.
+candidate; at that point final staged and hosted delivery still required their
+own checked inputs.
 The four focused fixture cases in EVD-009 alone did not clear EVD-008.
-Later P06/P07/P14 defects
-retain their owners.
+Later P06/P07/P14 defects retain their owners.
+The final source index passed its staged checks and local commit hooks in
+EVD-011. At this pre-push local receipt, hosted PR and user criterion verdicts
+are not recorded; final Task-only checks and hosted observations belong to
+the final PR artifact and handoff. Neither source commit nor selected static
+checks supply those verdicts.
 
 ##### Lifecycle Traceability
 
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
-| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria) | NOT_RUN | P05 current-owner corrections and selected checks pending |
+| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria) | PASS | P05 current-owner corrections, EVD-010 selected quick and EVD-011 final source-index staged/message checks; hosted delivery and five criterion decisions remain separate |
 
 #### Verification Evidence
 
@@ -136,6 +157,8 @@ retain their owners.
 | EVD-008 | [AC-0002](../spec.md#criteria), [AC-0005](../spec.md#criteria) | WORK-001 | automated | First P05 51-path working-tree candidate on trusted HEAD `9952c9bbb28aa05c590586bf0b76056153a2f96a`, before Plan and fixture repairs | Pinned Python 3.12.3, selected quick QA and its source-snapshot guard | `/home/hyunyoun/.venvs/hyhome-validation/bin/python scripts/qa.py quick` | 1 | FAIL | 16 selected leaves: document-contract-tests had four fixture failures and document-lifecycle found Plan constraint/promotion defects. The outer source guard also rejected a run-time index metadata change; all 51 source file hashes, HEAD and logical index were equal afterward, but the prior raw index bytes were not captured, so its cause is not asserted. Aggregate PASS was not claimed; root log `quick-authorized.log` in task-owned temporary preflight | true | none |
 | EVD-009 | [AC-0005](../spec.md#criteria) | WORK-001 | automated | Four fixture assertions that failed on the first P05 candidate, then corrected for the 22.1.0 registry and current lower boundary | Pinned Python 3.12.3 and existing unittest | `/home/hyunyoun/.venvs/hyhome-validation/bin/python -m unittest tests.test_common_form_tree.RepositoryRegistryTests.test_repository_registry_binds_clear_roles tests.test_semver_versions.MissingVersionTests.test_a_contract_without_a_version_fails_the_registry_schema tests.test_semver_versions.RegistryComparisonTests.test_a_lowered_registry_schema_version_is_refused tests.test_policy_rule_ids.RegistryRecordTests.test_the_schema_names_the_key_and_the_current_major` | 0 | PASS | Same four selected cases: RED four FAIL in 0.538s, then GREEN four PASS in 0.812s. This focused result does not resolve the EVD-008 aggregate, Plan or source-guard failures; a later same-command quick PASS is required | false | none |
 | EVD-010 | [AC-0002](../spec.md#criteria), [AC-0005](../spec.md#criteria) | WORK-001 | automated | Repaired 54-path staged/working-tree P05 candidate on trusted HEAD `a749924c`, before this Task receipt and final residue/runbook edits | Pinned Python 3.12.3, selected quick QA with source-snapshot guard | `/home/hyunyoun/.venvs/hyhome-validation/bin/python scripts/qa.py quick` | 0 | PASS | All 16 selected purpose leaves PASS, no FAIL; source guard compared HEAD/ref/merge head, raw index, refs and file bytes before/after with no changed component. Exact root log `quick2.log` and before/after inputs in task-owned temporary preflight. Same command, work unit and criteria as EVD-008; local selected QA only, not the later staged/hosted result | true | EVD-008 |
+| EVD-011 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria) | WORK-001 | automated | Exact 56-path final P05 source index committed as `43d5ee6f`, including RUN-0011 follow-up and SPEC-0223 Task/ledger; excludes this later Task-only receipt | Installed staged and message hooks with pinned validation environment | `git commit` invoking `python3 scripts/qa.py staged`, Commitizen and generated-message checks | 0 | PASS | Selected staged QA and both commit-message checks PASS with no hook bypass. Clean worktree observed after the source commit. This checks the 56-path index only; it is not hosted PR execution, native operation or user criterion acceptance | false | none |
+| EVD-012 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | WORK-001 | review | Final P05 source diff, including reviewed public-digest metadata and RUN-0011 follow-up | Independent code and security review; actual owner and consumer reads | Scoped source, authority, secret and evidence review | none | PASS | Reviewers reported no remaining BLOCK/FIX on the P05 source correction; public digest metadata was limited to reviewed false positives. Their finding is review evidence, not a security or native-runtime guarantee. This Task-only receipt follows the reviewed source index | false | none |
 
 ##### Resolution Links
 
@@ -158,8 +181,10 @@ matching PASS row on the same command, work unit and criteria.
 
 ##### Remaining Conditions
 
-P05 implementation, required selected checks, hosted delivery and user
-criterion acceptance remain to be observed. P04 adoption and P06–P17
+P05 source implementation and selected local checks passed on the exact
+56-path committed index. At this pre-push snapshot, final Task-only checks
+and hosted observations belong to the final PR artifact and handoff; five
+user criterion decisions remain pending. P04 adoption and P06–P17
 runtime/cutover work do not close through this Task.
 
 #### Handoff
