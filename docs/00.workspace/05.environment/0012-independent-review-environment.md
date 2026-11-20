@@ -1,8 +1,8 @@
 ---
 title: "독립 검토 읽기 전용 환경 가이드"
-version: "0.1.0"
+version: "0.1.1"
 type: "operation/guide"
-status: "draft"
+status: "in-review"
 owner: "platform"
 updated: "2026-11-20"
 artifact_id: "GDE-0012"
