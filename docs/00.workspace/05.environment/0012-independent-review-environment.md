@@ -1,8 +1,8 @@
 ---
 title: "독립 검토 읽기 전용 환경 가이드"
-version: "0.1.1"
+version: "1.0.0"
 type: "operation/guide"
-status: "in-review"
+status: "active"
 owner: "platform"
 updated: "2026-11-20"
 artifact_id: "GDE-0012"
@@ -23,9 +23,7 @@ artifact_id: "GDE-0012"
 [Quality Policy](../04.quality/quality.md), 보호 행위는
 [agent approval and safety](../../../.agents/governance/approval-and-safety.md),
 native 설정과 사실은 [Codex](../../../.codex/provider.md)·[Claude](../../../.claude/provider.md)
-note가 소유한다. 원 Desktop 경로의 실패와 재개 조건은 현행
-[SPEC-0223 Task](../../03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md)에
-있다. P06의 새 Spec·Task는 이 최초 draft 기록 이후 게시된다.
+note가 소유한다. 실제 결과는 [P06 Task](../../03.specs/0228-independent-review-boundary/01.tasks/tsk-0001-independent-review-boundary.md)에 남긴다.
 
 ## 내용 계약
 
@@ -53,7 +51,7 @@ Docker socket과 production endpoint는 검토 입력이 아니다.
 
 ###### Boundaries
 
-[Quality Policy](../04.quality/quality.md)의 판단·문맥·권한
+[P06 Spec](../../03.specs/0228-independent-review-boundary/spec.md)의 판단·문맥·권한
 독립성을 모두 확인한다. 별도 role 이름, 설정 파일, 합성 fixture, hook
 호출이나 OS preflight 하나만으로 실제 모델 검토를 주장하지 않는다.
 CLI 성공은 이전 Desktop→SSH workspace-write/null-profile 실패를 고치지
@@ -107,8 +105,9 @@ network false가 있었다. 같은 경계로 실제 모델을 실행할 때는
 거절, 외부 가짜 sentinel 은닉, socket 생성 거절을 모델이 호출한 도구에서
 확인했다. 한 하위 검토자의 `apply_patch`도 read-only sandbox와 승인
 설정 때문에 거절됐지만 그 하위 검토자의 등록 role/model binding은
-노출되지 않아 확인됐다고 쓰지 않는다. 해당 실행의 상세 증거는 후속
-P06 Task가 게시될 때 연결한다. 원 Desktop 경로의 실패는 유지된다.
+노출되지 않아 확인됐다고 쓰지 않는다. 실제 review는 별도
+[Task](../../03.specs/0228-independent-review-boundary/01.tasks/tsk-0001-independent-review-boundary.md)에
+기록한다. 원 Desktop 경로의 실패는 유지된다.
 
 다음은 그 Codex 경로에서 사용한 flag 집합이다. 실행자는 각 변수를
 현재 설치 binary와 task-owned 절대경로로 채우고, 임시 packet이
@@ -160,8 +159,8 @@ timeout --kill-after=5s 595s "$CLAUDE_BIN" -p --restricted --safe-mode \
 
 `--max-turns`는 설치된 CLI의 실제 파서와 print 경로에서 확인하고
 사용한다. 선택된 모델은 현재 계정에서 허용된 것으로 한정한다. 실제
-Claude 결과와 비용은 후속 P06 Task의 Results에 남기며 이 절차
-문서의 status로 표현하지 않는다.
+Claude 결과와 비용은 [Task Results](../../03.specs/0228-independent-review-boundary/01.tasks/tsk-0001-independent-review-boundary.md#results)에
+남기며 이 절차 문서의 status로 표현하지 않는다.
 두 예시의 595초 실행과 최장 5초 강제 종료는 합계 600초 이내의
 로컬 호출 제한이다. 이 제한만으로 다른 프로세스의 악의적인 탈출이나
 P12 작업자 격리를 증명하지 않는다.
@@ -197,7 +196,7 @@ workspace-write/null-profile은 아직 읽기 전용 증거가 아니다.
 
 | Promoted owner | Audience outcome | Operating surface |
 | --- | --- | --- |
-| [SPEC-0223 Task](../../03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md) | 최초 draft 시점에 원 Desktop 경로의 실패와 재개 조건을 확인한다. 후속 P06 Task가 별도 실행 결과를 받는다. | 이 checkout의 Codex·Claude 검토 경로와 P07 환경 인계 |
+| [SPEC-0228 Task](../../03.specs/0228-independent-review-boundary/01.tasks/tsk-0001-independent-review-boundary.md) | 실행자와 운영자가 선택한 경로의 실제 권한·검토 결과·한계를 따로 확인한다. | 이 checkout의 Codex·Claude 검토 경로와 P07 환경 인계 |
 
 ## 적용과 확인
 
@@ -217,7 +216,7 @@ profile 값은 설치 판본에서 실제 지원되는 표면을 확인한 뒤 �
 
 | Relation | Target |
 | --- | --- |
-| cites | [SPEC-0223 Task](../../03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md) |
+| operates | [P06 Spec](../../03.specs/0228-independent-review-boundary/spec.md) |
 | cites | [Quality policy](../04.quality/quality.md) |
 
 ### 외부 근거

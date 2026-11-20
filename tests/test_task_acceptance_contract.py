@@ -333,6 +333,16 @@ class SpecPlanAuthorityTests(unittest.TestCase):
             lines[current] = lines[current].replace(old, new, 1)
             return texts | {task: "".join(lines)}
 
+        self.assertNotIn(
+            "LIFECYCLE-CREATE",
+            rules(
+                candidate_texts=changed_task(
+                    '"approval_ref":"synthetic-chat-approval"',
+                    '"approval_ref":"user-message:sha256:' + "a" * 64 + '"',
+                )
+            ),
+        )
+
         adverse_rows = {
             "wrong actor": changed_task('"actor":"user"', '"actor":"agent"'),
             "empty approval ref": changed_task(
@@ -384,6 +394,26 @@ class SpecPlanAuthorityTests(unittest.TestCase):
                     if line.startswith("| EVD-004 |")
                 ).replace("| EVD-004 |", "| EVD-005 |", 1)
             },
+        } | {
+            f"nonhuman approval ref {ref}": changed_task(
+                '"approval_ref":"synthetic-chat-approval"',
+                f'"approval_ref":"{ref}"',
+            )
+            for ref in (
+                "a" * 40,
+                "sha1:" + "a" * 40,
+                "sha256:" + "a" * 64,
+                "HEAD",
+                "HEAD~1",
+                "HEAD^",
+                "PASS",
+                "[x]",
+                "QA PASS",
+                "reviewer verdict PASS",
+                "code-reviewer",
+                "architect",
+                "supervisor",
+            )
         }
         for label, candidate in adverse_rows.items():
             with self.subTest(label=label):

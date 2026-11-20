@@ -45,11 +45,15 @@
     {
       "id": "R147-17",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W07",
-      "resume_condition": "At the next provider note edit or at RUNTIME-CLOSE",
+      "resume_condition": "P06 provider notes now separate static projection, the observed Codex CLI reviewer route and the still-failed Desktop→SSH path. Other native AGENTS/hook loading remains AGENT-04 for P08/P16 rather than an open-ended R147-17 rerun",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md",
+        "evidence": "EVD-043"
       }
     },
     {
@@ -215,11 +219,15 @@
     {
       "id": "W07-H03",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W07",
-      "resume_condition": "In P06 independent review, exercise approval and receipt rejection cases on the current validator; successful QA, hashes and role names cannot grant approval or integration",
+      "resume_condition": "Current validator and both approval consumers reject bare role/hash/QA/verdict references and missing human receipt in focused P06 tests. Human actor authenticity remains the operator's policy boundary",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md",
+        "evidence": "EVD-043"
       }
     },
     {
@@ -227,7 +235,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W07",
-      "resume_condition": "In P06, after Desktop host permission fields or client fix are available, rerun the actual Desktop-over-SSH read-only reviewer write-denial case; EVD-163 and EVD-167 remain failures until then",
+      "resume_condition": "The original Desktop→SSH path remains failed and excluded from current high-risk review. If selected again, after Desktop host permission fields or client repair are available, rerun its own actual write-denial probe; separate CLI success does not close EVD-163/167",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }

@@ -252,7 +252,15 @@ class CommonDocumentProjectionTests(unittest.TestCase):
         ids = original["common_document_contract"]["workspace_scope_artifact_ids"]
         self.assertEqual(
             set(ids),
-            {"REQ-0003", "SPEC-0226", "SPEC-0227", "AD-0006", "GDE-0011"},
+            {
+                "REQ-0003",
+                "SPEC-0226",
+                "SPEC-0227",
+                "SPEC-0228",
+                "AD-0006",
+                "GDE-0011",
+                "GDE-0012",
+            },
         )
         for replacement in ("REQ-0999", "SPEC-0226"):
             with self.subTest(replacement=replacement):

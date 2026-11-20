@@ -1268,6 +1268,59 @@ def _receipt_object(value: str, keys: frozenset[str]) -> dict[str, object] | Non
     return parsed if isinstance(parsed, dict) and parsed.keys() == keys else None
 
 
+def _approval_ref_shape_valid(value: object) -> bool:
+    """Reject recognized Git/object, result and role-only shapes.
+
+    This does not authenticate the actual user interaction or revocation.
+    """
+    if not isinstance(value, str) or not value or value != value.strip():
+        return False
+    reference = value.casefold()
+    if (
+        reference
+        in {
+            "none",
+            "pending",
+            "tbd",
+            "todo",
+            "head",
+            "main",
+            "master",
+            "pass",
+            "fail",
+            "success",
+            "approved",
+            "accepted",
+            "checked",
+            "true",
+            "yes",
+            "[x]",
+            "[ ]",
+        }
+        or "{{" in value
+        or "}}" in value
+        or reference.startswith("refs/")
+    ):
+        return False
+    if re.fullmatch(r"(?:(?:sha(?:1|256)?|commit):?)?[0-9a-f]{7,64}", reference):
+        return False
+    if re.fullmatch(r"head(?:[~^][0-9]*)+", reference):
+        return False
+    if re.fullmatch(
+        r"(?:qa|ci|tests?|review(?:er)?(?: verdict)?)\s*[:=-]?\s*"
+        r"(?:pass|passed|success|approved|accepted)",
+        reference,
+    ):
+        return False
+    if re.fullmatch(
+        r"(?:role[: ]+)?(?:[a-z][a-z0-9-]*-)?"
+        r"(?:reviewer|auditor|engineer|writer|steward|implementer|responder|curator|researcher|evaluator|supervisor|architect)",
+        reference,
+    ):
+        return False
+    return True
+
+
 def _scoped_execution_approval(
     rows: Sequence[Mapping[str, str]],
     scope: Sequence[str | None],
@@ -1303,14 +1356,9 @@ def _scoped_execution_approval(
     )
     if receipt is None:
         return False
-    ref = receipt.get("approval_ref")
     return bool(
         all(receipt[key] == value for key, value in expected.items())
-        and isinstance(ref, str)
-        and ref == ref.strip()
-        and ref.casefold() not in {"", "none", "pending", "tbd", "todo"}
-        and "{{" not in ref
-        and "}}" not in ref
+        and _approval_ref_shape_valid(receipt.get("approval_ref"))
     )
 
 
@@ -1412,14 +1460,9 @@ def _new_approval_receipts(
     )
     if review_input != {"spec_sha256": spec_hash, "plan_sha256": plan_hash}:
         return False
-    approval_ref = approval_input["approval_ref"]
     return bool(
         approval_input["actor"] == "user"
-        and isinstance(approval_ref, str)
-        and approval_ref.strip() == approval_ref
-        and approval_ref.casefold() not in {"", "none", "pending", "tbd", "todo"}
-        and "{{" not in approval_ref
-        and "}}" not in approval_ref
+        and _approval_ref_shape_valid(approval_input["approval_ref"])
         and approval_input["review_ref"] == review_id
         and approval_input["scope"] == [spec_id, plan_id]
         and approval_input["reviewed_spec_sha256"] == spec_hash

@@ -1739,10 +1739,38 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         def evidence(number, facts):
             return f"| EVD-{number:03d} | VAL-P02-001 | WORK-001 | observation | {json.dumps(facts)} | none | Scoped execution approval | none | PASS | Fixture | true | none |\n"
 
+        for command in ("python3 scripts/qa.py quick", "Independent semantic review"):
+            with self.subTest(command=command):
+                observed = (
+                    f"| EVD-001 | VAL-P02-001 | WORK-001 | review | "
+                    f"{json.dumps({'spec_sha256': receipt['reviewed_spec_sha256'], 'plan_sha256': receipt['reviewed_plan_sha256']})} "
+                    f"| code-reviewer | {command} | 0 | PASS | Fixture | true | none |\n"
+                )
+                self.assertIn(
+                    "TASK-PARENT-APPROVAL",
+                    self.rules(
+                        base=base,
+                        proposed={**base, self.task: task + header + observed},
+                    ),
+                )
+
         authorized = task + header + evidence(1, receipt)
         approved = {**base, self.task: authorized}
         self.assertNotIn(
             "TASK-PARENT-APPROVAL", self.rules(base=base, proposed=approved)
+        )
+        interaction_ref = "user-message:sha256:" + "a" * 64
+        self.assertNotIn(
+            "TASK-PARENT-APPROVAL",
+            self.rules(
+                base=base,
+                proposed={
+                    **base,
+                    self.task: task
+                    + header
+                    + evidence(1, {**receipt, "approval_ref": interaction_ref}),
+                },
+            ),
         )
         for update in (
             {self.spec: spec + "A different request scope.\n"},
@@ -1762,6 +1790,24 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             {self.task: authorized + evidence(2, {**receipt, "validity": "expired"})},
             {self.task: authorized + evidence(2, {**receipt, "revocation": "revoked"})},
             {self.task: authorized + evidence(2, {**receipt, "actor": "agent"})},
+            *(
+                {self.task: authorized + evidence(2, {**receipt, "approval_ref": ref})}
+                for ref in (
+                    "a" * 40,
+                    "sha1:" + "a" * 40,
+                    "sha256:" + "a" * 64,
+                    "HEAD",
+                    "HEAD~1",
+                    "HEAD^",
+                    "PASS",
+                    "[x]",
+                    "QA PASS",
+                    "reviewer verdict PASS",
+                    "code-reviewer",
+                    "architect",
+                    "supervisor",
+                )
+            ),
         ):
             with self.subTest(update=update):
                 self.assertIn(
