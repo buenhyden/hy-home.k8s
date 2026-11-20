@@ -1,6 +1,6 @@
 ---
 title: "Common Document Contract Task"
-version: "0.2.0"
+version: "0.2.1"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -96,14 +96,15 @@ EVD-013; its corrected leaf passed as EVD-017. The broader `qa.py quick`
 first failed four gates as EVD-018, and the corrected 216-path candidate
 passed all 21 gates as EVD-020. The first actual source commit was blocked by
 the staged style leaf (EVD-023); the table spacing and explicit-anchor boundary
-were repaired and focused checks passed (EVD-024). The final staged hook and
-hosted PR checks for the full document transition remain unobserved. A second
-source commit attempt exposed that style reads the trusted HEAD configuration,
-so the anchor rule and its guard were delivered first through PR 337
-(EVD-025–EVD-027). The remaining P04 source still needs its own staged hook
-and hosted checks. EVD-003 confirms that historical evidence and native provider
-assets were preserved in the observed candidate. No earlier completed stream
-is re-executed here.
+were repaired and focused checks passed (EVD-024). A second source commit
+attempt exposed that style reads the trusted HEAD configuration, so the anchor
+rule and its guard were delivered first through PR 337 (EVD-025–EVD-027).
+The remaining P04 source then committed with active staged QA and both message
+hooks passing (EVD-028), and PR 338 was open at this receipt capture (EVD-029).
+Hosted checks and merge for that PR must be read at the current head; this
+receipt's own commit and hooks follow this record. EVD-003 confirms that
+historical evidence and native provider assets were preserved in the observed
+candidate. No earlier completed stream is re-executed here.
 
 ##### Blockers and Decisions
 
@@ -116,7 +117,7 @@ exact scope and continue independent work.
 
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
-| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria), [AC-0007](../spec.md#criteria) | PASS | Local document suite EVD-017 and 216-path quick QA EVD-020 passed; focused repair EVD-024 and foundation PR 337 EVD-026–EVD-027 passed; remaining full-source staged and hosted checks NOT_RUN, user criterion acceptance pending |
+| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria), [AC-0007](../spec.md#criteria) | PASS | Local document suite EVD-017 and 216-path quick QA EVD-020 passed; focused repair EVD-024, foundation PR 337 EVD-026–EVD-027 and source commit staged QA EVD-028 passed; PR 338 hosted checks and merge remain to be observed at the latest head; user criterion acceptance pending |
 
 #### Verification Evidence
 
@@ -151,6 +152,10 @@ exact scope and continue independent work.
 | EVD-025 | [AC-0006](../spec.md#criteria), [AC-0007](../spec.md#criteria) | WORK-001 | automated | Second attempted full P04 source commit after EVD-024, before the anchor rule was present in trusted HEAD | Active pre-commit staged QA and selected-style using trusted HEAD configuration | `git commit -m "refactor: apply the common document template contract"` | 1 | FAIL | 14 staged gates: 13 PASS, selected-style FAIL. The checker intentionally read the old trusted HEAD Markdownlint rule; the staged rule alone could not permit the migrated anchors. Actual hook log `/tmp/p04-preflight-vcqm92m5/commit-final.log`; no full-source commit created and no gate bypass | false | none |
 | EVD-026 | [AC-0006](../spec.md#criteria), [AC-0007](../spec.md#criteria) | WORK-001 | review | Foundation change only: Markdownlint anchor rule, narrow link-validator guard and persistent regression; full P04 document migration remained in the worktree | Actual canonical-index hooks, GitHub PR 337 and hosted CI run 44654873562 | Commit `52285762a1c45e23367db52a2e6ced2c09ee75db`; [PR 337](https://github.com/buenhyden/hy-home.k8s/pull/337); merge `64b83b1c008d69243e9b36250125bc0bcf43e6b4` | 0 | PASS | Foundation exact-index 51 tests PASS in 26.172s; ordinary commit passed staged QA and both message hooks. Hosted ci-summary and style-pr SUCCESS, nine selected purpose leaves PASS, none FAIL; merge tree matched checked source. The preserved full P04 worktree files were verified after merge. This is delivery of the foundation, not of the remaining document transition | false | none |
 | EVD-027 | [AC-0006](../spec.md#criteria), [AC-0007](../spec.md#criteria) | WORK-001 | automated | Remaining 218-file P04 candidate before this Task receipt update, with foundation commit `52285762` as trusted HEAD before PR 337 merged; the later merge `64b83b1c` has the same foundation tree | Existing selected-style validator using trusted HEAD and pinned Markdownlint; selected paths in `/tmp/p04-preflight-vcqm92m5/final-paths.json` | `/home/hyunyoun/.venvs/hyhome-validation/bin/python scripts/validate-selected-style.py --root . --config .pre-commit-config.yaml --markdown-config .markdownlint-cli2.yaml --ruff-config .ruff.toml` with one `--include-path=<path>` argument for each of the 218 saved selected paths | 0 | PASS | `STYLE-PASS: checked 218 regular selected files` in `/tmp/p04-preflight-vcqm92m5/style-trusted-foundation.log`; same style failure condition as EVD-025 cleared under the checked foundation configuration. This run predates the merge and this Task receipt, so final staged hook and hosted checks of the remaining source are still pending | false | none |
+| EVD-028 | [AC-0006](../spec.md#criteria), [AC-0007](../spec.md#criteria) | WORK-001 | automated | Actual canonical index of 216 remaining P04 source files after foundation merge `64b83b1c`; ordinary implementation commit `1873c250e545a4eba07da54f4c004465e9c43e40` | Active pre-commit staged QA and both commit-message hooks | `git commit -m "refactor: apply the common document template contract"`; push of implementation head | 0 | PASS | Actual `/tmp/p04-preflight-vcqm92m5/commit-source.log`: staged QA and both message hooks PASS; commit `1873c250e545a4eba07da54f4c004465e9c43e40` created and pushed. This is source-commit validation; EVD-020 is the earlier 216-path quick run, not a rerun after this receipt. This receipt's own commit and hosted checks are later observations | true | none |
+| EVD-029 | [AC-0006](../spec.md#criteria), [AC-0007](../spec.md#criteria) | WORK-001 | review | Source PR 338 at receipt capture, head `1873c250e545a4eba07da54f4c004465e9c43e40` | GitHub PR and current-head checks view | [PR 338](https://github.com/buenhyden/hy-home.k8s/pull/338); [current checks](https://github.com/buenhyden/hy-home.k8s/pull/338/checks) | 0 | NOT_RUN | PR open; hosted CI was running and neither its final result nor merge was observed at receipt capture. Read the current PR head and checks after this receipt is pushed; report actual final delivery separately without predicting it here | false | none |
+| EVD-030 | [AC-0007](../spec.md#criteria) | WORK-001 | automated | First ordinary commit attempt for this Task's delivery receipt after source commit `1873c250` | Active staged QA and detect-secrets hook | `git commit -m "docs: record P04 implementation delivery evidence"` | 1 | FAIL | Staged QA's detect-secrets leaf rejected three high-entropy SHA-256 strings in unchanged EVD-007/EVD-008 evidence; no receipt commit was created. Actual hook log `/tmp/p04-preflight-vcqm92m5/commit-receipt.log`. The finding was investigated before a scoped baseline change | false | none |
+| EVD-031 | [AC-0007](../spec.md#criteria) | WORK-001 | review | The three EVD-007/EVD-008 values are public Spec/Plan file digests and a request-revision binding, not credentials | Security review, pinned detect-secrets 1.5.0 and active commit hooks | Narrow three-entry `.secrets.baseline` update; metadata commit `35e405cda0b249a068ee7869c58c3af2a5623eb3`; manual detect-secrets check on this same Task blob | 0 | PASS | Only the three exact false-positive hashes were added to the baseline; prior configuration and findings were preserved. Metadata commit passed active staged QA and both message hooks (`/tmp/p04-preflight-vcqm92m5/commit-integrity-baseline.log`). This Task blob remained `0db82840` and manual pinned detect-secrets PASS is in `/tmp/p04-preflight-vcqm92m5/secrets-receipt-final.log`. The final receipt commit and hosted checks remain later observations | false | none |
 
 ##### Resolution Links
 
@@ -168,8 +173,13 @@ and link validator passed the focused checks in EVD-024; the ordinary commit
 was blocked again in EVD-025 because style uses trusted HEAD configuration.
 The foundation in EVD-026 supplied that rule through a checked merge, and
 EVD-027 observed the same selected style boundary passing for the remaining
-candidate. The full source commit and its staged hook still need an observed
-successful run.
+candidate. EVD-028 records the later full source commit and its successful
+staged hooks. EVD-023 and EVD-025 remain true historical failure observations;
+EVD-029 records the PR before a final hosted result was observed.
+EVD-030 is the receipt commit's detect-secrets diagnostic. EVD-031 records
+review of its three public digests, the narrow baseline correction and a
+passing check on the same Task blob; neither row predicts this receipt's later
+commit or hosted result.
 
 #### Acceptance Decision
 
@@ -187,10 +197,12 @@ successful run.
 
 ##### Remaining Conditions
 
-The P04 source change and focused repair are implemented locally; foundation
-PR 337 is merged. Final staged QA and hosted PR checks for the remaining source,
-common-contract adoption and user criterion acceptance are pending. No test,
-status or merge supplies criterion acceptance automatically.
+The P04 source change and focused repair are committed and pushed as EVD-028;
+foundation PR 337 is merged. At this receipt capture PR 338 is open with
+hosted checks running. Its latest-head checks, merge result, this receipt's
+own commit hooks, common-contract adoption and user criterion acceptance
+require separate observation or decision. No test, status or merge supplies
+criterion acceptance automatically.
 
 #### Handoff
 
@@ -202,17 +214,19 @@ candidate places the common meaning in the Stage 99
 and its [registry](../../../99.templates/registry.json), with authoring and
 quality instructions in their existing policy documents. The 216-path local
 quick candidate and later focused repair have passing checks. PR 337 delivered
-the anchor-rule foundation; the remaining contract and forms need their final
-staged and hosted results. Contract adoption and user criterion acceptance
-remain separate and pending.
+the anchor-rule foundation; EVD-028 records the subsequent source commit and
+successful staged hooks. PR 338 hosts that source, with checks and merge to be
+read at its latest head. This receipt's own hooks run after this record.
+Contract adoption and user criterion acceptance remain separate and pending.
 
 ##### Next Owner
 
-The Stage 99, producer, reader and QA owners finish delivery of the remaining
-P04 source under this Task and report its hosted PR result. The already merged
-foundation needs no repeat. P05-DOCS-SDLC.md is the next prompt once P00–P04
-delivery is verified. Its input package stays until P17; do not run it
-automatically.
+The Stage 99, producer, reader and QA owners read [PR 338](https://github.com/buenhyden/hy-home.k8s/pull/338)
+and its [current-head checks](https://github.com/buenhyden/hy-home.k8s/pull/338/checks),
+then report actual final hosted and merge results. The already merged
+foundation needs no repeat. P05-DOCS-SDLC.md is the next prompt only after
+P00–P04 delivery is verified, including required PR 338 checks and merge. Its
+input package stays until P17; do not run it automatically.
 
 ## 적용과 확인
 
