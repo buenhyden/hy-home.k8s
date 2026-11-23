@@ -230,6 +230,35 @@ class CommonDocumentProjectionTests(unittest.TestCase):
                 with self.assertRaises(CommonDocumentError):
                     relation_rows(text)
 
+    def test_section_rules_cover_exactly_the_common_subsections(self) -> None:
+        rules = COMMON.section_rules()
+        expected = [child for _, children in COMMON._headings() for child in children]
+        self.assertEqual(list(rules), expected)
+        self.assertTrue(all(isinstance(v, str) and v.strip() for v in rules.values()))
+        contract = dict(COMMON._core_contract())
+        for broken in (
+            {k: v for k, v in rules.items() if k != "외부 근거"},
+            rules | {"추가 절": "x"},
+            rules | {"외부 근거": " "},
+        ):
+            with self.subTest(keys=len(broken)):
+                with mock.patch.object(
+                    COMMON,
+                    "_core_contract",
+                    return_value=contract | {"section_rules": broken},
+                ):
+                    with self.assertRaises(CommonDocumentError):
+                        COMMON.section_rules()
+
+    def test_local_contract_pins_edition_1_1_0_as_a_candidate(self) -> None:
+        contract = COMMON._core_contract()
+        self.assertEqual(contract["version"], "1.1.0")
+        self.assertEqual(contract["state"], "proposed-for-local-adoption")
+        binding = json.loads((ROOT / "docs/99.templates/registry.json").read_text())[
+            "common_document_contract"
+        ]
+        self.assertEqual((binding["version"], binding["stage"]), ("1.1.0", "candidate"))
+
     def test_registry_binding_rejects_unknown_kind_and_digest_drift(self) -> None:
         original = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
         for mutation in ("kind", "digest"):

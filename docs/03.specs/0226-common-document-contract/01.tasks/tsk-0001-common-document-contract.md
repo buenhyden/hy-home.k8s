@@ -61,6 +61,13 @@ current user's P04 execution request; the user did not approve the authored
 Spec/Plan text or accept the criteria through that request.
 The [document authoring policy](../../../00.workspace/03.process/document-authoring.md)
 and [Stage 99](../../../99.templates/README.md) own present form rules.
+On 2026-11-24 the operator entered `prompts/R02-CONTRACT.md` from package
+`workspace_governance_remediation_1_2_0_20261123` (`package_version: 1.2.0`)
+at `main@1d43a9e1`, continuing this Task with a bounded repair: adopt the
+common contract's 1.1.0 `section_rules` and connect them to the generator,
+the registry check and Stage 99 guidance. The local `state` and binding
+`stage` stay candidate; the R02 request is no contract adoption or criterion
+acceptance.
 
 - **Allowed Paths**: current Stage 99 contract, registry, forms and actual
   document consumers; `scripts/` parser, generator and validators; focused
@@ -156,6 +163,10 @@ exact scope and continue independent work.
 | EVD-029 | [AC-0006](../spec.md#criteria), [AC-0007](../spec.md#criteria) | WORK-001 | review | Source PR 338 at receipt capture, head `1873c250e545a4eba07da54f4c004465e9c43e40` | GitHub PR and current-head checks view | [PR 338](https://github.com/buenhyden/hy-home.k8s/pull/338); [current checks](https://github.com/buenhyden/hy-home.k8s/pull/338/checks) | 0 | NOT_RUN | PR open; hosted CI was running and neither its final result nor merge was observed at receipt capture. Read the current PR head and checks after this receipt is pushed; report actual final delivery separately without predicting it here | false | none |
 | EVD-030 | [AC-0007](../spec.md#criteria) | WORK-001 | automated | First ordinary commit attempt for this Task's delivery receipt after source commit `1873c250` | Active staged QA and detect-secrets hook | `git commit -m "docs: record P04 implementation delivery evidence"` | 1 | FAIL | Staged QA's detect-secrets leaf rejected three high-entropy SHA-256 strings in unchanged EVD-007/EVD-008 evidence; no receipt commit was created. Actual hook log `/tmp/p04-preflight-vcqm92m5/commit-receipt.log`. The finding was investigated before a scoped baseline change | false | none |
 | EVD-031 | [AC-0007](../spec.md#criteria) | WORK-001 | review | The three EVD-007/EVD-008 values are public Spec/Plan file digests and a request-revision binding, not credentials | Security review, pinned detect-secrets 1.5.0 and active commit hooks | Narrow three-entry `.secrets.baseline` update; metadata commit `35e405cda0b249a068ee7869c58c3af2a5623eb3`; manual detect-secrets check on this same Task blob | 0 | PASS | Only the three exact false-positive hashes were added to the baseline; prior configuration and findings were preserved. Metadata commit passed active staged QA and both message hooks (`/tmp/p04-preflight-vcqm92m5/commit-integrity-baseline.log`). This Task blob remained `0db82840` and manual pinned detect-secrets PASS is in `/tmp/p04-preflight-vcqm92m5/secrets-receipt-final.log`. The final receipt commit and hosted checks remain later observations | false | none |
+| EVD-032 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | {"actor":"user","approval_ref":"Current human R02-CONTRACT.md execution request of 2026-11-24 in this conversation, package workspace_governance_remediation_1_2_0_20261123; bounded implementation, verification and commit/push/PR/merge","scope":["SPEC-0226","SPEC-0226-PLAN-0001","SPEC-0226-TSK-0001"],"reviewed_spec_sha256":"063902591eb80a65e62a4bdbb69f4f97477e283383bae257bc902be3011c9b89","reviewed_plan_sha256":"0e8c3085ee03b66e2d606705a22fe9246a79e81b26ba0604ba11d47f3d50e821","request_revision":"3bf1b77e561adba1769b0899a5114ef4388b4191082ea3d9a2463fa166e47d11","validity":"confirmed","revocation":"none"} | Current trusted R02 request; request revision is the validator-defined digest of this Task's scope and work items; unchanged draft parent hashes | Scoped execution approval | none | PASS | Binds the R02 repair to this Task only; no Spec or Plan approval, contract adoption or criterion acceptance follows | true | none |
+| EVD-033 | [AC-0003](../spec.md#criteria) | WORK-001 | observation | Local `common-document-contract.json` 1.1.0 and the R02 package contract | Python `json` canonical form (sorted keys, compact separators, UTF-8) excluding only the local `state` | Normalized digest comparison | 0 | PASS | Shared-meaning digest `9ad009d45041a01fc63b2f32e41b70d9491fd4611df255d60736b3c62dadcc14` is identical for both. The local file differs only in `state` (`proposed-for-local-adoption` versus the package's `designed-for-local-adoption`). Raw byte digest of the local file is recorded in the registry binding, version 1.1.0, stage `candidate` | true | none |
+| EVD-034 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | automated | Working tree of `claude/r02-common-contract` | Pinned validation Python; Ruff | New contract, edition and generator assertions first, then `python3 -m unittest tests.test_common_document_contract tests.test_document_generator`; `scripts/validate-document-contract-registry.py --root . --mode strict` | 0 | PASS | Before the change `section_rules()` was missing, the edition read 1.0.0 and generated documents carried no shared rule. After it the contract tests passed 20/20, the generator tests 37/37 (round trip equals the form after removing only the shared-rule comments) and the strict registry check passed 347 paths | true | none |
+| EVD-035 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0007](../spec.md#criteria) | WORK-001 | automated | Same R02 source candidate after the contract, generator, registry check and tests changed | Pinned validation Python | `python3 scripts/run-contract-tests.py --root . --suite document` | 0 | PASS | 1231/1231 document contract regressions passed in 537.6 s locally, so the 1.1.0 edition, registry pin and generator output stay consistent with the current corpus readers. Hosted checks remain a separate observation | true | none |
 
 ##### Resolution Links
 
@@ -202,7 +213,10 @@ foundation PR 337 is merged. At this receipt capture PR 338 is open with
 hosted checks running. Its latest-head checks, merge result, this receipt's
 own commit hooks, common-contract adoption and user criterion acceptance
 require separate observation or decision. No test, status or merge supplies
-criterion acceptance automatically.
+criterion acceptance automatically. The R02 repair (EVD-032–EVD-035) adopts
+the 1.1.0 `section_rules` as a local candidate edition; its hosted checks and
+merge, any change of the local adoption state and the operator's criterion
+decisions remain separate.
 
 #### Handoff
 
@@ -226,7 +240,9 @@ and its [current-head checks](https://github.com/buenhyden/hy-home.k8s/pull/338/
 then report actual final hosted and merge results. The already merged
 foundation needs no repeat. P05-DOCS-SDLC.md is the next prompt only after
 P00–P04 delivery is verified, including required PR 338 checks and merge. Its
-input package stays until P17; do not run it automatically.
+input package stays until P17; do not run it automatically. After R02, the
+operator decides whether the local candidate becomes the adopted edition, and
+the package input that follows R02 is `prompts/P08-NATIVE-BRIEF.md`.
 
 ## 적용과 확인
 

@@ -422,7 +422,13 @@ Registry의 `frontmatter_keys`가, YAML과 JSON Schema dialect는 `frontmatter_d
 작성 안내는 `<!-- 작성 규칙: ... -->` 주석을 사용한다. 이 주석은 빈 form의
 작성 단계에서만 사용하며 완료된 작성 문서에는 남기지 않는다. 공통 외피와
 역할별 본문·표의 규칙은 [common document contract](./01.contracts/common-document-contract.json),
-Registry의 profile·form·TemplateDefinition이 나누어 소유한다. `관련 문서`의
+Registry의 profile·form·TemplateDefinition이 나누어 소유한다. 공통 계약
+1.1.0의 `section_rules`는 공통 H3 여덟 절 각각의 목적과 금지 내용을 한 번만
+정의한다. 문서 생성기는 새 문서의 각 공통 H3 아래에 그 규칙을
+`<!-- 공통 규칙: ... -->` 주석으로 넣고, Registry 검사는 규칙이 공통 H3를 순서대로
+빠짐없이 덮는지 확인한다. 이 주석도 작성 안내이므로 완료된 문서에는 남기지 않는다.
+계약의 `state`와 binding의 `stage`는 이 저장소의 실제 채택 상태(후보)를 나타낸다.
+`관련 문서`의
 선택적인 `Relation | Target` 표는 실제 의미 관계에 한해 사용하며 relation은
 `requires`, `designs`, `implements`, `verifies`, `operates`, `defines`, `cites` 중
 하나이고 target은 단일 Markdown 링크다. 단순 탐색 링크는 표 밖에 둔다.

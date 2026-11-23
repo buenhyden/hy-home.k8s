@@ -229,6 +229,9 @@ def snapshot(root: Path) -> list[tuple[str, str, bytes]]:
     return sorted(found)
 
 
+import common_document_contract as COMMON_CONTRACT  # noqa: E402
+
+
 class TreeCase(unittest.TestCase):
     """A fresh fixture tree for each test, with a registry that already loads."""
 
@@ -308,6 +311,12 @@ class RoundTripTests(TreeCase):
         self.assertRegex(rendered, r"## 문서 개요\n\s*### 목적과 독자")
         self.assertRegex(rendered, r"## 내용 계약\n\s*### 입력과 전제")
         self.assertIn("### 본문과 규칙\n", rendered)
+        rules = COMMON_CONTRACT.section_rules()
+        for heading, rule in rules.items():
+            with self.subTest(heading=heading):
+                self.assertIn(
+                    f"### {heading}\n\n<!-- 공통 규칙: {rule} -->\n", rendered
+                )
 
     def test_four_native_markdown_forms_extract_payload_only(self) -> None:
         for profile_id in (
@@ -362,7 +371,17 @@ class RoundTripTests(TreeCase):
                 for name, value in markers.items():
                     if value is not None:
                         expected = expected.replace("{{" + name + "}}", value)
-                self.assertEqual(text, expected)
+                # The generator adds only the shared rule under each common H3.
+                self.assertEqual(
+                    re.sub(r"\n<!-- 공통 규칙: [^\n]* -->\n", "", text), expected
+                )
+                self.assertEqual(
+                    text.count("<!-- 공통 규칙: "),
+                    sum(
+                        f"\n### {heading}\n" in expected
+                        for heading in COMMON_CONTRACT.section_rules()
+                    ),
+                )
                 for name in SHARED_MARKERS:
                     self.assertNotIn("{{" + name + "}}", text)
 
