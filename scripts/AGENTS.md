@@ -37,7 +37,7 @@ Canonical sources are the documents linked or named in the opening paragraph and
 
 #### Local Obligations
 
-1. Register every new gate in `validation/registry.json` with its surface, lanes and fallback, and add its regression module to a suite in `run-contract-tests.py`.
+1. Register every new gate in `validation/registry.json` with its surface, lanes and fallback, and add its regression module to one suite file under `validation/contract-suites/`, which `run-contract-tests.py` reads.
 2. Make the smallest change, show a failing case for changed behavior and then the passing result, and never weaken a gate or a test to finish.
 3. Keep no compatibility branch for an older format, generation or pinned historical commit, and no check of a finished one-time transition; delete them with their tests.
 4. Bound every subprocess, file read and output; keep the existing bounded helpers.

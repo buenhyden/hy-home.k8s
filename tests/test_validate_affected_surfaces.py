@@ -6,6 +6,7 @@ import copy
 import importlib.util
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -319,6 +320,112 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                 self.assertIn(gates[0], affected["validators"])
                 self.assertNotIn(gates[0], staged["validators"])
                 self.assertIn(gates[0], self.contract["profiles"]["pull-request"])
+
+    def test_suite_registration_selects_its_suite_and_engine_selects_all(self) -> None:
+        spec = importlib.util.spec_from_file_location(
+            "run_contract_tests", ROOT / "scripts/run-contract-tests.py"
+        )
+        runner = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(runner)
+        suite_gate = {
+            row["argv"][row["argv"].index("--suite") + 1]: row["id"]
+            for row in self.contract["validators"]
+            if row["argv"][1:2] == ["scripts/run-contract-tests.py"]
+        }
+        self.assertEqual(sorted(suite_gate), sorted(runner.SUITES))
+        engine = self.validator.select_paths(
+            self.contract, ["scripts/run-contract-tests.py"], "affected", ROOT
+        )["validators"]
+        for suite, gate in suite_gate.items():
+            with self.subTest(suite=suite):
+                path = f"scripts/validation/contract-suites/{suite}.json"
+                selected = self.validator.select_paths(
+                    self.contract, [path], "affected", ROOT
+                )["validators"]
+                self.assertIn(gate, selected)
+                self.assertIn("validation-routing-tests", selected)
+                others = set(suite_gate.values()) - {gate, "validation-routing-tests"}
+                self.assertFalse(others & set(selected), selected)
+                # A change to the shared engine still reruns every suite.
+                self.assertIn(gate, engine)
+
+    def test_suite_registration_rejects_malformed_module_lists(self) -> None:
+        spec = importlib.util.spec_from_file_location(
+            "run_contract_tests", ROOT / "scripts/run-contract-tests.py"
+        )
+        runner = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(runner)
+        for body in (
+            "[]",
+            '["tests.test_a", "tests.test_a"]',
+            '["tests/test_a.py"]',
+            '{"tests.test_a": 1}',
+        ):
+            with self.subTest(body=body), tempfile.TemporaryDirectory() as folder:
+                (Path(folder) / "bad.json").write_text(body, encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "bad.json"):
+                    runner.load_suites(Path(folder))
+        with tempfile.TemporaryDirectory() as folder:
+            with self.assertRaisesRegex(ValueError, "no contract suite"):
+                runner.load_suites(Path(folder))
+
+    def test_general_workspace_guide_skips_the_full_document_regression(self) -> None:
+        leaf = {
+            "document-contract-registry",
+            "document-lifecycle",
+            "links-and-owners",
+            "markdown-profiles",
+        }
+        for path in (
+            "docs/00.workspace/05.environment/0013-selective-execution-environment.md",
+            "docs/00.workspace/06.maintenance/0011-reference-maintenance-runbook.md",
+            "docs/00.workspace/05.environment/0099-future-guide.md",
+        ):
+            with self.subTest(general=path):
+                selected = set(
+                    self.validator.select_paths(
+                        self.contract, [path], "affected", ROOT
+                    )["validators"]
+                )
+                self.assertTrue(leaf <= selected, selected)
+                self.assertNotIn("document-contract-tests", selected)
+        # Policy owners, the workspace architecture and documents the document
+        # suite reads by name keep the full document regression.
+        for path in (
+            "docs/00.workspace/04.quality/quality.md",
+            "docs/00.workspace/03.process/document-lifecycle.md",
+            "docs/00.workspace/02.architecture/01.descriptions/0006-workspace-agent-governance-platform.md",
+            ".agents/governance/agent-execution.md",
+            ".agents/workflows/work-lifecycle.md",
+        ):
+            with self.subTest(consumer=path):
+                selected = self.validator.select_paths(
+                    self.contract, [path], "affected", ROOT
+                )["validators"]
+                self.assertIn("document-contract-tests", selected)
+
+    def test_guides_named_by_the_document_suite_keep_its_regression(self) -> None:
+        spec = importlib.util.spec_from_file_location(
+            "run_contract_tests", ROOT / "scripts/run-contract-tests.py"
+        )
+        runner = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(runner)
+        named = set()
+        for module in runner.SUITES["document"]:
+            text = (ROOT / f"{module.replace('.', '/')}.py").read_text(encoding="utf-8")
+            named.update(
+                re.findall(
+                    r"docs/00\.workspace/[0-9a-z.]+/[0-9]{4}-[a-z0-9-]+\.md", text
+                )
+            )
+        self.assertTrue(named)
+        for path in sorted(named):
+            if (ROOT / path).is_file():
+                with self.subTest(path=path):
+                    selected = self.validator.select_paths(
+                        self.contract, [path], "affected", ROOT
+                    )["validators"]
+                    self.assertIn("document-contract-tests", selected)
 
     def test_root_changelog_uses_document_surface(self) -> None:
         self.assertEqual(

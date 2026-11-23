@@ -1,0 +1,4 @@
+[
+  "tests.test_release",
+  "tests.test_commit_contracts"
+]

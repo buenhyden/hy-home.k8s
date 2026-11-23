@@ -1,0 +1,10 @@
+[
+  "tests.test_prompt_input",
+  "tests.test_k8s_pre_edit_hook",
+  "tests.test_repository_quality_rules",
+  "tests.test_repository_form_contracts",
+  "tests.test_current_executable_references",
+  "tests.test_workspace_boundary",
+  "tests.test_validate_knowledge_surface",
+  "tests.test_document_backlinks"
+]

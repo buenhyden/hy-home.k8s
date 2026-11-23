@@ -240,6 +240,11 @@
       "name": "work-residue-ledger-tests",
       "path": "tests/test_work_residue_ledger.py",
       "expectedSurface": "work-residue-implementation"
+    },
+    {
+      "name": "contract-suite-registration",
+      "path": "scripts/validation/contract-suites/test-cluster.json",
+      "expectedSurface": "contract-suite-test-cluster"
     }
   ],
   "selectionCases": [

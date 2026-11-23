@@ -1,0 +1,10 @@
+[
+  "tests.test_check_secret_handling",
+  "tests.test_validate_k8s_manifests",
+  "tests.test_validate_gitops_change_set",
+  "tests.test_validate_vault_eso_contracts",
+  "tests.test_platform_assurance",
+  "tests.test_platform_ingress",
+  "tests.test_infrastructure_tempfiles",
+  "tests.test_external_service_contracts"
+]

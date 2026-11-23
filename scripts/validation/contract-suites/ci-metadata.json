@@ -1,0 +1,5 @@
+[
+  "tests.test_validate_ci_python_contract",
+  "tests.test_validate_github_actions_security",
+  "tests.test_ci_branch_metadata"
+]

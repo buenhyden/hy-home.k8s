@@ -1,0 +1,6 @@
+[
+  "tests.test_agent_governance",
+  "tests.test_validate_agent_registry",
+  "tests.test_validate_agent_harness_contract",
+  "tests.test_validate_agent_core"
+]
