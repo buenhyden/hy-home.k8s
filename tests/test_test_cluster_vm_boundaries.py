@@ -1110,6 +1110,25 @@ class VmBoundaryTest(unittest.TestCase):
             )
         )
 
+    def test_a_probe_pod_that_never_gets_ready_reports_its_state(self):
+        environment = importlib.import_module("test_cluster_environment")
+
+        def run(command, **_kwargs):
+            if command[:2] == ["kubectl", "wait"]:
+                raise RuntimeError("timed out waiting for the condition")
+            if command[:3] == ["kubectl", "get", "pod"]:
+                return (
+                    "Pending Unschedulable:0/1 nodes are available ContainerCreating:"
+                )
+            return ""
+
+        with self.assertRaises(ValueError) as raised:
+            environment.selected_namespace_probe(
+                run, "selected", 49152, "synthetic-nonce", "p07vm001"
+            )
+        self.assertIn("timed out", str(raised.exception))
+        self.assertIn("Unschedulable", str(raised.exception))
+
     def test_selected_probe_refuses_success_when_owned_policy_cleanup_fails(self):
         environment = importlib.import_module("test_cluster_environment")
         calls = []
