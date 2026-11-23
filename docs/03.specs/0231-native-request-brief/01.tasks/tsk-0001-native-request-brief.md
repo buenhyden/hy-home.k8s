@@ -92,7 +92,7 @@ later changes pass; the display is not repeated.
 
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
-| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | DEFER | Program regressions pass (EVD-004, EVD-005); Claude refused and normal cases observed (EVD-006, EVD-007); Codex unobserved (EVD-008) |
+| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | PASS | Program regressions pass (EVD-004, EVD-005); Claude refused and normal cases observed (EVD-006, EVD-007); Codex unobserved (EVD-008); hosted EVD-009, EVD-011; accepted by the user |
 
 #### Verification Evidence
 
@@ -110,6 +110,10 @@ later changes pass; the display is not repeated.
 | EVD-008 | [AC-0003](../spec.md#criteria) | WORK-001 | observation | One `codex exec` probe asking for an `apply_patch` write of `p08-probe.txt`; 2026-11-23T22:16Z; the new `user_prompt_submit` entry is not yet trusted in `/hooks` | Codex CLI 0.171.0, `workspace-write` sandbox | `codex exec --sandbox workspace-write "<probe>"` | 1 | DEFER | Unobserved: the account usage limit stopped the turn before any tool call (limit resets 2026-11-27). Only the trusted ponytail plugin's prompt hook ran; no Codex receipt and no probe file were created | true | none |
 | EVD-009 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria) | WORK-001 | automated | PR #348 head `9eb842ef077148d3a685bb6fe7668e5c4187ca24` | GitHub Actions CI run 45279867140 and its `style-pr` job; GitGuardian | `gh pr checks 348` | 0 | PASS | ci-summary, style-pr, GitGuardian, label and greeting passed; merge state CLEAN | true | none |
 | EVD-010 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Same Claude session; a background task-completion notification arrived with no user message, 2026-11-23T22:4xZ | Claude Code (installed 2.1.331), tracked project settings | `UserPromptSubmit` intake on the notification turn | 0 | PASS | The client fired `UserPromptSubmit` for the notification, so intake started generation 2 (`c7c15fcfaea52160`) and the earlier brief became stale; the model showed and recorded a new brief before the next change | true | none |
+| EVD-011 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria) | WORK-001 | observation | Pull request #348, head `fa40581f`, merged as `256d2b22` | GitHub Actions CI run 45280848291; GitGuardian | Hosted pull request checks | 0 | PASS | ci-summary, style-pr, label and GitGuardian passed on the final head; merged without bypass | true | none |
+| EVD-012 | [AC-0001](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Session transcript entries for the first admitted change of generations 1 and 2 (2026-11-23T22:14:00Z, 22:30:07Z) | Claude Code (installed 2.1.331) session transcript | Read of the transcript `attachment` entries | 0 | PASS | Each first admitted change produced a `hook_system_message` entry carrying the brief, separate from the model's `hook_additional_context`; the user did not recall seeing it, so the on-screen sight stays unconfirmed and a re-check was offered on generation 3 | true | none |
+| EVD-013 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Generation 3 (`49d94733dc6f2d4a`) recorded on `main`, then a new branch created before the first change; 2026-11-23T22:5xZ | Claude Code (installed 2.1.331), tracked project settings | Structured `Edit` of this Task on the new branch | 2 | PASS | Refused case observed: the guard refused with `BRIEF-STALE` because the branch changed since the request. A branch must be created before the brief is recorded | true | none |
+| EVD-014 | [AC-0001](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Same generation 3 after switching back to the request's branch `main` | Claude Code (installed 2.1.331), tracked project settings | Same structured `Edit` of this Task on `main` | 0 | PASS | The edit was admitted with the brief in the hook output; the uncommitted change then moved to the work branch | true | none |
 
 ##### Resolution Links
 
@@ -127,16 +131,21 @@ brief although the user sent nothing.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0002](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | accepted | EVD-004, EVD-005, EVD-007, EVD-011, EVD-012, EVD-014 | User message of 2026-11-24 in this session accepting the SPEC-0231 criteria | user | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | accepted | EVD-004, EVD-005, EVD-006, EVD-010, EVD-011, EVD-013 | User message of 2026-11-24 in this session accepting the SPEC-0231 criteria | user | platform | none |
 | [AC-0003](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
 
 ##### Remaining Conditions
 
-The user's confirmation that the Claude `systemMessage` was visible, the
-Codex observation after the user trusts the new `user_prompt_submit` entry
-in `/hooks` and the Codex quota returns (EVD-008), and the operator's
-criterion decisions remain. Hosted checks passed (EVD-009).
+Staged QA passed in the commit hooks and hosted checks passed (EVD-009,
+EVD-011). On 2026-11-24 the user accepted the three criteria, AC-0003 with
+Codex recorded as unobserved. AC-0001 and AC-0002 are recorded as accepted.
+AC-0003 stays pending because a criterion cannot be accepted while its
+required evidence EVD-008 is open. A later PASS of the same Codex probe,
+after the user trusts the new `user_prompt_submit` entry in `/hooks` and the
+Codex quota returns (2026-11-27), resolves it; the user's AC-0003 decision
+is then recorded and the Task completes. The user's on-screen sight of the
+`systemMessage` stays unconfirmed (EVD-012).
 
 #### Handoff
 
@@ -147,8 +156,9 @@ entry directly; their native claims follow the observations recorded here.
 
 ##### Next Owner
 
-The platform owner completes the native observations in this Task. The next
-package input is `prompts/P09-MEMORY.md`; this Task does not run it.
+Delivery and criterion acceptance are complete. The platform owner runs the
+Codex probe of EVD-008 once it can run and records the resolving row. The next package input is
+`prompts/P09-MEMORY.md`; this Task does not run it.
 
 ## 적용과 확인
 

@@ -269,7 +269,7 @@ def up_host(
         "cluster",
         ordered,
         {
-            "cpu": 2,
+            "cpu": VM.VM_CPUS,
             "memory_mib": 4096,
             "disk_mib": 4096,
             "seconds": VM.VM_SECONDS,

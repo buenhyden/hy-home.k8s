@@ -24,7 +24,10 @@ from typing import Any
 
 APP_LIMIT = 4
 HOST_BUDGET = {"cpu": 4, "memory_mib": 8192, "disk_mib": 8192, "instances": 2}
-RUN_BUDGET = {"cpu": 2, "memory_mib": 4096, "disk_mib": 4096, "instances": 1}
+# One bounded VM run gets 3 CPUs: on 2 the guest k3s start failed at a
+# different step each run (SPEC-0229 EVD-075); the operator chose 3 of the
+# 4-CPU host budget, leaving 1 for the controller worker.
+RUN_BUDGET = {"cpu": 3, "memory_mib": 4096, "disk_mib": 4096, "instances": 1}
 # Clusters run only inside the bounded VM (the host route is refused), whose
 # run the operator raised to 1200 s; native runs keep 600 s.
 SECONDS_LIMIT = {"cluster": 1200, "native": 600}

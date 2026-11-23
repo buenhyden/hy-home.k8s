@@ -128,7 +128,7 @@ class VmContractTest(unittest.TestCase):
                         "deadline": int(time.time()) + 300,
                         "host_cgroup_proof": {
                             "unit": "hyk8s-test-p07vm001-vm",
-                            "cpu_max": "200000 100000",
+                            "cpu_max": "300000 100000",
                             "memory_max": str(4 * 1024**3),
                             "memory_swap_max": "0",
                         },
@@ -158,7 +158,7 @@ class VmContractTest(unittest.TestCase):
         data = {
             "/proc/self/cgroup": f"0::{group}\n",
             "/proc/123456/cgroup": f"0::{group}\n",
-            f"/sys/fs/cgroup{group}/cpu.max": "200000 100000\n",
+            f"/sys/fs/cgroup{group}/cpu.max": "300000 100000\n",
             f"/sys/fs/cgroup{group}/memory.max": str(4 * 1024**3) + "\n",
             f"/sys/fs/cgroup{group}/memory.swap.max": "0\n",
         }
@@ -245,7 +245,7 @@ class VmContractTest(unittest.TestCase):
             profile = environment.verified_guest_profile(capsule)
         self.assertEqual(
             (profile["cpu"], profile["memory_mib"], profile["disk_mib"]),
-            (2, 1536, 1024),
+            (3, 1536, 1024),
         )
         self.assertEqual(profile["server_memory"], "1536m")
         self.assertTrue(1 <= profile["seconds"] <= 300)
@@ -578,7 +578,7 @@ class VmContractTest(unittest.TestCase):
         self.assertEqual(vm.unit_name("p07vm001"), "hyk8s-test-p07vm001-vm")
         for required in (
             "--user",
-            "CPUQuota=200%",
+            "CPUQuota=300%",
             "MemoryMax=4G",
             "MemorySwapMax=0",
             "RuntimeMaxSec=",
@@ -685,7 +685,7 @@ class VmContractTest(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, text)
         self.assertIn("-m 3072", text)
-        self.assertIn("-smp 2", text)
+        self.assertIn("-smp 3", text)
 
     def test_provision_metadata_forward_spawns_one_relay_per_connection(self):
         # A guestfwd chardev carries one stream; cloud-init opens several.
@@ -923,7 +923,7 @@ class VmContractTest(unittest.TestCase):
                 "cluster",
                 ["selected"],
                 {
-                    "cpu": 2,
+                    "cpu": 3,
                     "memory_mib": 4096,
                     "disk_mib": 4096,
                     "seconds": vm_module().VM_SECONDS,
@@ -963,7 +963,7 @@ class VmContractTest(unittest.TestCase):
                 "cluster",
                 ["selected"],
                 {
-                    "cpu": 2,
+                    "cpu": 3,
                     "memory_mib": 4096,
                     "disk_mib": 4096,
                     "seconds": vm_module().VM_SECONDS,
@@ -1005,7 +1005,7 @@ class VmContractTest(unittest.TestCase):
                 "cluster",
                 ["selected"],
                 {
-                    "cpu": 2,
+                    "cpu": 3,
                     "memory_mib": 4096,
                     "disk_mib": 4096,
                     "seconds": vm_module().VM_SECONDS,

@@ -22,7 +22,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
 
-from environment_admission import Admission, _private_dir, _process_start
+from environment_admission import RUN_BUDGET, Admission, _private_dir, _process_start
 from test_cluster_environment import _user_bus
 import test_cluster_environment as CLUSTER_ENV
 import test_cluster_vm_transport as TRANSPORT
@@ -34,6 +34,8 @@ GUEST_MEMORY_MIB = 3072
 # One bounded VM run, operator-raised from 600 s on 2026-11-24: provisioning,
 # restricted reboot and k3s on 2 CPUs did not fit in 600 s (SPEC-0229 EVD-073).
 VM_SECONDS = 1200
+VM_CPUS = RUN_BUDGET["cpu"]
+VM_CPU_MAX = f"{VM_CPUS * 100000} 100000"
 SOURCE_URL = "https://cloud-images.ubuntu.com/minimal/releases/noble/release-20261105/ubuntu-24.04-minimal-cloudimg-amd64.img"
 SOURCE_SHA256 = "406630c08b5e545fcc7209854b129d47e3af822db128c9f19336593b5a2d3fe0"
 OVMF_CODE = Path("/usr/share/OVMF/OVMF_CODE_4M.fd")
@@ -217,7 +219,7 @@ def qemu_command(
         "-cpu",
         "host" if kvm else "qemu64",
         "-smp",
-        "2",
+        str(VM_CPUS),
         "-m",
         str(GUEST_MEMORY_MIB),
         "-uuid",
@@ -262,7 +264,7 @@ def unit_command(
         "--user",
         "--collect",
         f"--unit={unit_name(run_id)}",
-        "--property=CPUQuota=200%",
+        f"--property=CPUQuota={VM_CPUS * 100}%",
         "--property=MemoryMax=4G",
         "--property=MemorySwapMax=0",
         f"--property=RuntimeMaxSec={remaining}",
@@ -316,7 +318,7 @@ def guest_disk_proof(capsule: Path, *, sysroot: Path = Path("/")) -> dict[str, A
             or devices != {"vda"}
             or sectors * 512 != RAW_BYTES
             or data["disk_bytes"] != RAW_BYTES
-            or host["cpu_max"] != "200000 100000"
+            or host["cpu_max"] != VM_CPU_MAX
             or host["memory_max"] != str(4 * 1024**3)
             or host["memory_swap_max"] != "0"
             or host["unit"] != unit_name(data["run_id"])
@@ -537,7 +539,7 @@ class VmRun:
                 or lease["closure"] != sorted(set(owner["apps"]))
                 or lease["budget"]
                 != {
-                    "cpu": 2,
+                    "cpu": VM_CPUS,
                     "memory_mib": 4096,
                     "disk_mib": 4096,
                     "seconds": VM_SECONDS,
@@ -903,7 +905,7 @@ class VmRun:
             cpu = (group / "cpu.max").read_text().strip()
             memory = (group / "memory.max").read_text().strip()
             swap = (group / "memory.swap.max").read_text().strip()
-            if cpu != "200000 100000" or memory != str(4 * 1024**3) or swap != "0":
+            if cpu != VM_CPU_MAX or memory != str(4 * 1024**3) or swap != "0":
                 raise ValueError("parent cgroup limits differ")
             return own, cpu, memory, swap
         except (OSError, ValueError, IndexError) as exc:
