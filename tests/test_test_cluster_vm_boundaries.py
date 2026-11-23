@@ -155,7 +155,7 @@ class VmBoundaryTest(unittest.TestCase):
                     "cluster",
                     ["selected"],
                     {
-                        "cpu": 2,
+                        "cpu": 3,
                         "memory_mib": 4096,
                         "disk_mib": 4096,
                         "seconds": vm_module().VM_SECONDS,
@@ -398,8 +398,14 @@ class VmBoundaryTest(unittest.TestCase):
 
     def test_verified_vm_down_releases_only_bound_preparation_child(self):
         vm = vm_module()
-        admission_type = importlib.import_module("environment_admission").Admission
-        with tempfile.TemporaryDirectory(prefix="p07-vm-child-lease-") as temporary:
+        admission_module = importlib.import_module("environment_admission")
+        admission_type = admission_module.Admission
+        # A VM run (cluster 3 + preparation 1) fills the 4-CPU host; one extra
+        # fixture CPU lets an unrelated worker coexist for this release check.
+        with (
+            mock.patch.dict(admission_module.HOST_BUDGET, cpu=5),
+            tempfile.TemporaryDirectory(prefix="p07-vm-child-lease-") as temporary,
+        ):
             root = Path(temporary)
             subprocess.run(
                 ["/usr/bin/git", "init", "--quiet", str(root)],
@@ -413,7 +419,7 @@ class VmBoundaryTest(unittest.TestCase):
                 "cluster",
                 ["selected"],
                 {
-                    "cpu": 2,
+                    "cpu": 3,
                     "memory_mib": 4096,
                     "disk_mib": 4096,
                     "seconds": 60,
@@ -658,9 +664,9 @@ class VmBoundaryTest(unittest.TestCase):
             "hunter2",
             fake_secret,
             fake_github,
-            "BEGIN PRIVATE KEY",
+            "BEGIN PRIVATE KEY",  # pragma: allowlist secret
             "\x1b",
-        ):  # pragma: allowlist secret
+        ):
             self.assertNotIn(sensitive, diagnostic)
         self.assertIn("ssh failed", diagnostic)
         self.assertLessEqual(len(diagnostic), 200)
@@ -891,7 +897,7 @@ class VmBoundaryTest(unittest.TestCase):
                 run_id = "p07vm001"
                 deadline = int(time.time()) + 60
                 budget = {
-                    "cpu": 2 if case != "underbudget" else 1,
+                    "cpu": 3 if case != "underbudget" else 1,
                     "memory_mib": 4096,
                     "disk_mib": 4096,
                     "seconds": vm_module().VM_SECONDS,

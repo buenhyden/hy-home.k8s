@@ -372,7 +372,7 @@ class TestClusterTest(unittest.TestCase):
                 )
             if command[:2] == ["docker", "inspect"]:
                 if any("NanoCpus" in item for item in command):
-                    return "2000000000"
+                    return "3000000000"
                 return json.dumps({network: {}})
             if command[:3] == ["docker", "network", "ls"]:
                 return "\n".join(sorted(networks))
@@ -416,7 +416,7 @@ class TestClusterTest(unittest.TestCase):
             i for i, command in enumerate(calls) if command[:2] == ["kubectl", "apply"]
         )
         self.assertTrue(
-            any(c[:3] == ["docker", "update", "--cpus=2"] for c in calls[:first_apply])
+            any(c[:3] == ["docker", "update", "--cpus=3"] for c in calls[:first_apply])
         )
         self.assertTrue(
             any(

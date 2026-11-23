@@ -167,6 +167,9 @@ exact scope and continue independent work.
 | EVD-033 | [AC-0003](../spec.md#criteria) | WORK-001 | observation | Local `common-document-contract.json` 1.1.0 and the R02 package contract | Python `json` canonical form (sorted keys, compact separators, UTF-8) excluding only the local `state` | Normalized digest comparison | 0 | PASS | Shared-meaning digest `9ad009d45041a01fc63b2f32e41b70d9491fd4611df255d60736b3c62dadcc14` is identical for both. The local file differs only in `state` (`proposed-for-local-adoption` versus the package's `designed-for-local-adoption`). Raw byte digest of the local file is recorded in the registry binding, version 1.1.0, stage `candidate` | true | none |
 | EVD-034 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | automated | Working tree of `claude/r02-common-contract` | Pinned validation Python; Ruff | New contract, edition and generator assertions first, then `python3 -m unittest tests.test_common_document_contract tests.test_document_generator`; `scripts/validate-document-contract-registry.py --root . --mode strict` | 0 | PASS | Before the change `section_rules()` was missing, the edition read 1.0.0 and generated documents carried no shared rule. After it the contract tests passed 20/20, the generator tests 37/37 (round trip equals the form after removing only the shared-rule comments) and the strict registry check passed 347 paths | true | none |
 | EVD-035 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0007](../spec.md#criteria) | WORK-001 | automated | Same R02 source candidate after the contract, generator, registry check and tests changed | Pinned validation Python | `python3 scripts/run-contract-tests.py --root . --suite document` | 0 | PASS | 1231/1231 document contract regressions passed in 537.6 s locally, so the 1.1.0 edition, registry pin and generator output stay consistent with the current corpus readers. Hosted checks remain a separate observation | true | none |
+| EVD-036 | [AC-0006](../spec.md#criteria), [AC-0007](../spec.md#criteria) | WORK-001 | observation | Pull request #338, final head `87228b5f`, merged as `1e71cef5` | GitHub Actions CI run 44659695681; GitGuardian | Hosted pull request checks | 0 | PASS | The final-head CI and Labeler runs succeeded and the pull request merged; this reports the result EVD-029 could not observe at receipt capture | true | none |
+| EVD-037 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0007](../spec.md#criteria) | WORK-001 | observation | Pull request #347 (R02), final head `51d305d4`, merged as `210587c2` | GitHub Actions CI run 45216796699; GitGuardian | Hosted pull request checks | 0 | PASS | CI, Labeler and Greeting succeeded on the final head and the pull request merged | true | none |
+| EVD-038 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria), [AC-0007](../spec.md#criteria) | WORK-001 | automated | Current `main` at `256d2b22` (after P08), 2026-11-23T22:48:36Z to 22:58:49Z | Pinned validation venv | `scripts/validate-document-contract-registry.py --root . --mode strict`; `python -m unittest tests.test_common_document_contract tests.test_document_generator`; `scripts/run-contract-tests.py --root . --suite document` | 0 | PASS | Re-check before the operator's decision: registry 350 paths, contract and generator tests 57/57, document suite 1231/1231 (4 skipped). The 1.1.0 edition stays a local candidate | true | none |
 
 ##### Resolution Links
 
@@ -198,25 +201,23 @@ commit or hosted result.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0002](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0003](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0004](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0005](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0006](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0007](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | accepted | EVD-008, EVD-038 | User message of 2026-11-24 in this session accepting the SPEC-0226 criteria after the EVD-038 re-check | user | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | accepted | EVD-008, EVD-032, EVD-034, EVD-035, EVD-037, EVD-038 | User message of 2026-11-24 in this session accepting the SPEC-0226 criteria after the EVD-038 re-check | user | platform | none |
+| [AC-0003](../spec.md#criteria) | accept | accepted | EVD-008, EVD-032, EVD-033, EVD-034, EVD-035, EVD-037, EVD-038 | User message of 2026-11-24 in this session accepting the SPEC-0226 criteria after the EVD-038 re-check | user | platform | none |
+| [AC-0004](../spec.md#criteria) | accept | accepted | EVD-008, EVD-038 | User message of 2026-11-24 in this session accepting the SPEC-0226 criteria after the EVD-038 re-check | user | platform | none |
+| [AC-0005](../spec.md#criteria) | accept | accepted | EVD-008, EVD-038 | User message of 2026-11-24 in this session accepting the SPEC-0226 criteria after the EVD-038 re-check | user | platform | none |
+| [AC-0006](../spec.md#criteria) | accept | accepted | EVD-008, EVD-028, EVD-036, EVD-038 | User message of 2026-11-24 in this session accepting the SPEC-0226 criteria after the EVD-038 re-check | user | platform | none |
+| [AC-0007](../spec.md#criteria) | accept | accepted | EVD-008, EVD-017, EVD-020, EVD-028, EVD-035, EVD-036, EVD-037, EVD-038 | User message of 2026-11-24 in this session accepting the SPEC-0226 criteria after the EVD-038 re-check | user | platform | none |
 
 ##### Remaining Conditions
 
-The P04 source change and focused repair are committed and pushed as EVD-028;
-foundation PR 337 is merged. At this receipt capture PR 338 is open with
-hosted checks running. Its latest-head checks, merge result, this receipt's
-own commit hooks, common-contract adoption and user criterion acceptance
-require separate observation or decision. No test, status or merge supplies
-criterion acceptance automatically. The R02 repair (EVD-032–EVD-035) adopts
-the 1.1.0 `section_rules` as a local candidate edition; its hosted checks and
-merge, any change of the local adoption state and the operator's criterion
-decisions remain separate.
+None remains for the criteria: PR 338 and PR 347 passed their hosted checks
+and merged (EVD-036, EVD-037), the current `main` re-check passed (EVD-038)
+and the user accepted AC-0001 to AC-0007 on 2026-11-24. Whether the local
+1.1.0 candidate becomes the adopted edition stays a separate operator
+decision; no criterion depends on it. The Task stays in progress until the
+package exit records the Plan's promotion receipt and Archived Lineage in a
+separate later change.
 
 #### Handoff
 
@@ -235,14 +236,9 @@ Contract adoption and user criterion acceptance remain separate and pending.
 
 ##### Next Owner
 
-The Stage 99, producer, reader and QA owners read [PR 338](https://github.com/buenhyden/hy-home.k8s/pull/338)
-and its [current-head checks](https://github.com/buenhyden/hy-home.k8s/pull/338/checks),
-then report actual final hosted and merge results. The already merged
-foundation needs no repeat. P05-DOCS-SDLC.md is the next prompt only after
-P00–P04 delivery is verified, including required PR 338 checks and merge. Its
-input package stays until P17; do not run it automatically. After R02, the
-operator decides whether the local candidate becomes the adopted edition, and
-the package input that follows R02 is `prompts/P08-NATIVE-BRIEF.md`.
+Delivery and criterion acceptance are complete. The operator decides the
+adoption state of the local 1.1.0 candidate; the platform owner performs the
+package exit in a later change.
 
 ## 적용과 확인
 

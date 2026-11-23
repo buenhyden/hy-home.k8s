@@ -24,7 +24,7 @@ from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Any
 
-from environment_admission import _process_start
+from environment_admission import RUN_BUDGET, _process_start
 
 LABEL = "hy-home.k8s/run"
 NETWORK_PREFIX = "hyk8s-owned-"
@@ -795,12 +795,12 @@ def verify_node_network(run: Callable[..., str], cluster: str, network: str) -> 
 
 def enforce_node_cpu(run: Callable[..., str], cluster: str) -> None:
     node = f"k3d-{cluster}-server-0"
-    run(["docker", "update", "--cpus=2", node])
+    run(["docker", "update", f"--cpus={RUN_BUDGET['cpu']}", node])
     output = run(
         ["docker", "inspect", node, "--format", "{{json .HostConfig.NanoCpus}}"]
     )
     try:
-        if json.loads(output) != 2_000_000_000:
+        if json.loads(output) != RUN_BUDGET["cpu"] * 1_000_000_000:
             raise ValueError("node CPU cap differs")
     except (TypeError, ValueError) as exc:
         raise ValueError("CLUSTER_CPU_LIMIT: node CPU cap is unverified") from exc
@@ -843,7 +843,7 @@ def verified_guest_profile(capsule: Path) -> dict[str, Any]:
     ):
         raise VmError("VM_PROOF: owned boundary endpoint is unverified")
     return {
-        "cpu": 2,
+        "cpu": RUN_BUDGET["cpu"],
         "memory_mib": 1536,
         "disk_mib": 1024,
         "seconds": max(1, int(remaining)),
