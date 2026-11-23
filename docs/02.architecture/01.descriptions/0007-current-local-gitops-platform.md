@@ -1,6 +1,6 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "3.1.0"
+version: "3.2.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -204,6 +204,55 @@ This AD inherits AD-0010's boundaries for platform validation, interfaces, examp
 | Platform verification | [Validation Registry](../../../scripts/validation/registry.json), [platform assurance](../../../scripts/validation/platform/assurance.py), [static contract checks](../../../scripts/validate-infrastructure-contracts.sh) | Affected-path and exact-index staged selection compose syntax, structure, policy and product checks with the offline render/schema purpose gate. Per-target evidence identifies depth, tool/version, fallback and result; the runner owns the execution lane. Live observation remains separate. |
 | Cloud examples | [AWS](../../../examples/aws/README.md), [Azure](../../../examples/azure/README.md) | Terraform/Bicep format/validate/lint/build; provider credentials, apply, or deploy need separate approval |
 | Local browser/service transport | [k8s router](../../../infrastructure/k3d/k3d-cluster.yaml), [apex redirects](../../../gitops/platform/ingress-routes/), [external service interfaces](../../../gitops/platform/external-services/) | Check the dedicated k8s router (ADR-0043) and the local-only transport exceptions without widening an exception into a general security allowance |
+
+The selective test boundary in [SPEC-0229](../../03.specs/0229-selective-environment/spec.md)
+keeps [the existing k3d runner](../../../scripts/test_cluster.py), its selected
+Application dependency closure, loopback API and dedicated kubeconfig.
+[Shared admission](../../../scripts/environment_admission.py) atomically reserves
+the active component union and CPU, memory and logical disk budgets across
+direct runs and [dispatchers](../../../scripts/work_parallel.py) on the same
+account and host, including independent clones and linked worktrees. A Git
+checkout separates edits; it establishes no operating-system sandbox.
+
+For direct host execution, the
+[environment adapter](../../../scripts/test_cluster_environment.py) configures
+an owned internal Docker network with isolated gateway mode and IPv6 disabled,
+checks the node's sole network attachment, and applies node CPU/memory controls
+and namespace quotas at their respective boundaries. An owned expiry timer
+precedes resource creation and targets the exact run and lease; cleanup retains
+the reservation until owned resource absence is verified. These declarations
+do not establish observed LAN denial or successful expiry. Product policies
+remain additive, so an extra NetworkPolicy cannot cancel their production LAN
+allow rules.
+
+Disk reservation is not disk enforcement: the host Docker 29 probe accepted a
+32 MiB writable-layer setting but successfully wrote 40 MiB. Direct host product
+workload startup therefore remains blocked. The existing runner's optional
+[VM route](../../../scripts/test_cluster_vm.py) uses QEMU TCG with a fixed
+4080 MiB RAW disk inside the run's 4 GiB file budget. The same host admission
+reserves the selected closure and VM resources; a separate preparation lease
+accounts for the downloaded source image while it coexists with the RAW disk.
+The user service declares CPU and memory caps, disabled swap, and one
+600-second deadline covering preparation, boot and restricted reboot.
+
+[Guest transport](../../../scripts/test_cluster_vm_transport.py) retains the
+complete Application declaration inventory and copies only selected public
+source dependencies and the runner. It initializes a fresh guest Git repository
+and binds the input digest without copying host credentials or Git history.
+Provisioning downloads precede product runtime; the adapter then stops the guest
+and reboots with `restrict=on`, IPv6 disabled, metadata forwarding removed and
+only loopback SSH access. Guest commands reuse the dedicated kubeconfig runner
+with a bounded guest profile. VM boot, guest disk exhaustion, selected readiness,
+LAN denial and cleanup remain unobserved; these source controls do not establish
+product readiness. The prior W09-H02 egress failure stays open until controlled
+allowed and denied paths pass under the selected namespace's actual policies.
+The
+[environment guide](../../00.workspace/05.environment/0013-selective-execution-environment.md)
+owns procedures and native route selection; the
+[P07 Task](../../03.specs/0229-selective-environment/01.tasks/tsk-0001-selective-environment.md)
+owns exact inputs, runtime results and acceptance. These product controls do
+not close the original Desktop reviewer failure or the worker isolation
+failure assigned to P12.
 
 Each product validator owns its own area: Kubernetes GVKs, the k8s router contract, GitOps
 structure, policy, and the Vault/ESO source and secret boundary. A missing tool, malformed
@@ -412,7 +461,7 @@ ADR links identify durable decisions; a Spec that left the tree does not own the
 | [REQ-0004-FR-0005](../../01.requirements/0004-current-local-gitops-platform.md) | Source inventory and resumed-change semantic ownership | N/A — Spec 0047 left the tree; Git history recovers it |
 | [REQ-0004-FR-0006](../../01.requirements/0004-current-local-gitops-platform.md) | Source inventory and resumed-change semantic ownership | N/A — Spec 0047 left the tree; Git history recovers it |
 | [REQ-0004-FR-0007](../../01.requirements/0004-current-local-gitops-platform.md) | Single routing owner with GitHub-native projections | N/A — Spec 0048 left the tree; Git history recovers it |
-| [REQ-0004-FR-0008](../../01.requirements/0004-current-local-gitops-platform.md) | Composed per-target validation depths with explicit tool, fallback, execution lane and result; static and live evidence stay distinct | N/A — SPEC-0104 left the tree; Git history recovers it |
+| [REQ-0004-FR-0008](../../01.requirements/0004-current-local-gitops-platform.md) | Composed per-target validation depths with explicit tool, fallback, execution lane and result, plus selective test-environment boundaries; static, configured and live evidence stay distinct | [SPEC-0229](../../03.specs/0229-selective-environment/spec.md) owns the scoped environment change; N/A — SPEC-0104 left the tree; Git history recovers it |
 | [REQ-0004-FR-0009](../../01.requirements/0004-current-local-gitops-platform.md) | Example-adjacent native validation without cloud deployment | N/A — Spec 0050 left the tree; Git history recovers it |
 | [REQ-0004-FR-0010](../../01.requirements/0004-current-local-gitops-platform.md) | Fail-closed resource and ingress reference integrity with explicit chart/operator declaration boundaries and preserved policy/secret checks | [ADR-0043](../02.decisions/0043-dedicated-k8s-ingress-router.md) |
 | [REQ-0004-FR-0011](../../01.requirements/0004-current-local-gitops-platform.md) | Ordered review and rollback boundaries for local platform integration | N/A — Spec 0051 left the tree; Git history recovers it |

@@ -99,6 +99,7 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ├── 0226-common-document-contract/
 ├── 0227-docs-sdlc-reconciliation/
 ├── 0228-independent-review-boundary/
+├── 0229-selective-environment/
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── README.md
@@ -115,6 +116,7 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 | [SPEC-0226 Common Document Contract](./0226-common-document-contract/) | P04 공통 외피·유형별 내용·metadata·관계 의미를 Stage 99와 실제 생산자·검증기에 연결하는 변경 package다. |
 | [SPEC-0227 Current Documentation and SDLC Reconciliation](./0227-docs-sdlc-reconciliation/) | P05 현행 문서 소유자·SDLC 권위·운영 잔여를 정합화하는 변경 package다. |
 | [SPEC-0228 Independent Review and Read-Only Boundary](./0228-independent-review-boundary/) | P06 위험별 독립 검토, 결과 증거 재사용 및 실제 읽기 전용 실행 경계를 보완하는 변경 package다. |
+| [SPEC-0229 Selective Validation Environment](./0229-selective-environment/) | P07 선택형 k3d 환경, 여러 실행의 합산 자원 제한과 생산 LAN 격리 경계를 다루는 변경 package다. |
 | [work-residue-ledger.json](./work-residue-ledger.json) | 열린 인계·충돌·채택·조사 잔여 항목을 포인터로만 담는 work residue ledger다. 실행 상태, 증거, 수용은 담지 않고 Task가 소유한다. 종결된 항목은 그 Task가 속한 package의 종료 commit까지 삭제한다. |
 | [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시다. |
 | [CLAUDE.md](./CLAUDE.md) | Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다. |

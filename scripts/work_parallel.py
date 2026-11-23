@@ -29,14 +29,17 @@ import argparse
 import fcntl
 import graphlib
 import hashlib
+import importlib
 import importlib.util
 import json
+import math
 import os
 import re
 import resource
 import secrets
 import shutil
 import signal
+import stat
 import subprocess
 import sys
 import tempfile
@@ -84,6 +87,9 @@ def _load(name: str, file: str):
 
 
 CLUSTER = _load("_work_parallel_test_cluster", "test_cluster.py")
+ADMISSION = importlib.import_module("environment_admission")
+WORKER_DISK_MIB = 1024
+INTEGRATION_MEMORY_MIB = 512
 
 
 class ParallelError(ValueError):
@@ -409,7 +415,7 @@ def _limit_output() -> None:
     resource.setrlimit(resource.RLIMIT_FSIZE, (OUTPUT_LIMIT, OUTPUT_LIMIT))
 
 
-def _prepare_child() -> None:
+def _prepare_child(admission=None, reservation=None) -> None:
     """Bound output and clear an inherited signal mask so cancel reaches the child.
 
     A caller such as `qa.py` may run with SIGINT and SIGTERM blocked; a worker
@@ -417,6 +423,8 @@ def _prepare_child() -> None:
     """
     _limit_output()
     signal.pthread_sigmask(signal.SIG_SETMASK, set())
+    if admission is not None and reservation is not None:
+        admission.write_child_receipt(reservation)
 
 
 def _available_mb() -> int:
@@ -433,9 +441,9 @@ def _live_members(pgid: int) -> bool:
     child subreaper (such as the validation runner) keeps. Only the public
     `/proc/<pid>/stat` state and group fields are read.
     """
-    for stat in Path("/proc").glob("[0-9]*/stat"):
+    for stat_path in Path("/proc").glob("[0-9]*/stat"):
         try:
-            fields = stat.read_text().rsplit(")", 1)[1].split()
+            fields = stat_path.read_text().rsplit(")", 1)[1].split()
         except (OSError, IndexError):
             continue
         if len(fields) > 2 and fields[2] == str(pgid) and fields[0] not in ("Z", "X"):
@@ -490,8 +498,15 @@ def brief_preflight(root: Path, brief: Path, current: Path):
 
 
 class _Run:
-    def __init__(self, root, plan, runtime, preflight, cancel, brief_revision, poll):
+    def __init__(
+        self, root, plan, runtime, preflight, cancel, brief_revision, poll, admission
+    ):
         self.root = Path(root).resolve()
+        self.admission = admission or ADMISSION.Admission(self.root)
+        if self.admission.root != self.root:
+            raise _fail(
+                "ENV_BINDING", "admission workspace does not match dispatcher root"
+            )
         self.plan = plan
         self.preflight = preflight
         self.cancel = cancel or threading.Event()
@@ -523,6 +538,8 @@ class _Run:
         }
         self.running: dict[str, dict[str, Any]] = {}
         self.checking: subprocess.Popen | None = None
+        self.unreleased = False
+        self.release_error: str | None = None
         self.pids: list[int] = []
         self.timing = {"setup": 0.0, "workers": 0.0, "integration_seconds": 0.0}
         self.memory = _available_mb() // 2
@@ -559,6 +576,28 @@ class _Run:
             "HYK8S_PARALLEL_BASE": self.base,
             **extra,
         }
+
+    def release(self, token: str) -> None:
+        try:
+            self.admission.release(
+                token, lambda row: _owned_process_absent(self.admission, row, self.id)
+            )
+        except (ADMISSION.AdmissionError, OSError) as exc:
+            self.unreleased = True
+            self.release_error = str(exc)
+            raise
+
+    def mark_started(self, token: str, proc: subprocess.Popen) -> None:
+        try:
+            receipt = self.admission.child_receipt_path(token).read_bytes()
+            pid, start, pgid, uid = map(int, receipt.split())
+        except (OSError, ValueError) as exc:
+            raise _fail(
+                "ENV_STATE", f"child process receipt is unavailable: {exc}"
+            ) from exc
+        if len(receipt) > 128 or (pid, pgid, uid) != (proc.pid, proc.pid, os.geteuid()):
+            raise _fail("ENV_STATE", "child process receipt does not match the spawn")
+        self.admission.mark_started(token, proc.pid, start)
 
     def conflicts(self, unit) -> bool:
         if len(self.running) >= self.plan["max_workers"]:
@@ -620,13 +659,29 @@ class _Run:
         rec["attempts"] += 1
         begin = time.monotonic()
         clone = self.dir / f"clone-{uid}-{rec['attempts']}"
+        reservation = None
+        proc = None
         try:
+            reservation = self.admission.reserve(
+                self.id,
+                "worker",
+                unit["closure"],
+                {
+                    "cpu": 1,
+                    "memory_mib": unit["memory_mb"],
+                    "disk_mib": WORKER_DISK_MIB,
+                    "seconds": math.ceil(unit["timeout"]),
+                    "instances": 0,
+                },
+                {"unit": uid, "attempt": rec["attempts"], "clone": str(clone)},
+            )
             clone, tree = self.clone(clone.name[6:], self.upstream(uid))
             self.timing["setup"] += time.monotonic() - begin
             env = self.env(
                 HYK8S_PARALLEL_UNIT=uid,
                 HYK8S_PARALLEL_ATTEMPT=str(rec["attempts"]),
                 HYK8S_PARALLEL_TOKENS=json.dumps(tokens, sort_keys=True),
+                HYK8S_ENV_TOKEN=reservation,
             )
             meta = _git_meta(clone)  # the baseline, before the worker can run
             with (self.dir / f"{uid}-{rec['attempts']}.log").open("wb") as log:
@@ -638,13 +693,44 @@ class _Run:
                     stdout=log,
                     stderr=subprocess.STDOUT,
                     start_new_session=True,
-                    preexec_fn=_prepare_child,
+                    preexec_fn=lambda: _prepare_child(self.admission, reservation),
                 )
-        except (ParallelError, OSError, ValueError, subprocess.SubprocessError) as exc:
-            self.leases.release(tokens)
-            _remove(self.dir, clone)
-            code = exc if isinstance(exc, ParallelError) else f"PARALLEL_EXEC: {exc}"
-            rec.update(state="failed", reason=str(code))
+            self.mark_started(reservation, proc)
+        except (
+            ParallelError,
+            ADMISSION.AdmissionError,
+            OSError,
+            ValueError,
+            subprocess.SubprocessError,
+        ) as exc:
+            if proc is not None:
+                _kill_group(proc.pid, proc)
+                try:
+                    proc.wait(timeout=GRACE)
+                except subprocess.TimeoutExpired:
+                    pass
+            released = reservation is None
+            if reservation is not None:
+                try:
+                    self.release(reservation)
+                    released = True
+                except (ADMISSION.AdmissionError, OSError):
+                    pass
+            if released:
+                self.leases.release(tokens)
+            if released:
+                _remove(self.dir, clone)
+            code = (
+                exc
+                if isinstance(exc, (ParallelError, ADMISSION.AdmissionError))
+                else f"PARALLEL_EXEC: {exc}"
+            )
+            rec.update(
+                state="refused"
+                if isinstance(exc, ADMISSION.AdmissionError) and reservation is None
+                else "failed",
+                reason=str(code),
+            )
             return
         self.pids.append(proc.pid)
         rec["started"] = self.now()
@@ -654,6 +740,7 @@ class _Run:
             "tree": tree,
             "meta": meta,
             "tokens": tokens,
+            "reservation": reservation,
             "begin": time.monotonic(),
             "deadline": time.monotonic() + unit["timeout"],
         }
@@ -662,7 +749,10 @@ class _Run:
     def stop(self, uid: str) -> dict[str, Any]:
         work = self.running.pop(uid)
         _kill_group(work["proc"].pid, work["proc"])
-        work["proc"].wait(timeout=GRACE)
+        try:
+            work["proc"].wait(timeout=GRACE)
+        except subprocess.TimeoutExpired:
+            pass  # verified absence, below, decides whether the lease can release
         self.timing["workers"] += time.monotonic() - work["begin"]
         self.rec[uid]["finished"] = self.now()
         return work
@@ -685,8 +775,13 @@ class _Run:
             else:
                 rec.update(state="expired" if code is None else "failed", reason=reason)
         finally:
-            self.leases.release(work["tokens"])
-            _remove(self.dir, work["clone"])
+            try:
+                self.release(work["reservation"])
+            except (ADMISSION.AdmissionError, OSError) as exc:
+                rec.update(state="failed", reason=str(exc))
+            else:
+                self.leases.release(work["tokens"])
+                _remove(self.dir, work["clone"])
 
     def promote(self, uid: str, work: dict[str, Any]) -> None:
         unit, rec = self.units[uid], self.rec[uid]
@@ -777,7 +872,23 @@ class _Run:
             return {"state": "SKIPPED", "returncode": None}, None
         begin = time.monotonic()
         path = None
+        reservation = None
+        proc = None
+        released = False
         try:
+            reservation = self.admission.reserve(
+                self.id,
+                "integration",
+                [],
+                {
+                    "cpu": 1,
+                    "memory_mib": INTEGRATION_MEMORY_MIB,
+                    "disk_mib": WORKER_DISK_MIB,
+                    "seconds": MAX_TIMEOUT,
+                    "instances": 0,
+                },
+                {"unit": "integration", "clone": str(self.dir / "clone-integration")},
+            )
             path, _ = self.clone("integration", [])
             for uid in promoted:
                 patch = self.dir / f"{uid}.patch"
@@ -822,17 +933,20 @@ class _Run:
                 _git(path, "diff", "--cached", "--binary", self.base, binary=True)
             )
             with (self.dir / "integration.log").open("wb") as log:
-                self.checking = subprocess.Popen(
+                proc = subprocess.Popen(
                     self.plan["integration_check"],
                     cwd=path,
-                    env=self.env(HYK8S_PARALLEL_UNIT="integration"),
+                    env=self.env(
+                        HYK8S_PARALLEL_UNIT="integration", HYK8S_ENV_TOKEN=reservation
+                    ),
                     stdin=subprocess.DEVNULL,
                     stdout=log,
                     stderr=subprocess.STDOUT,
                     start_new_session=True,
-                    preexec_fn=_prepare_child,
+                    preexec_fn=lambda: _prepare_child(self.admission, reservation),
                 )
-            proc = self.checking
+            self.checking = proc
+            self.mark_started(reservation, proc)
             self.pids.append(proc.pid)
             self._save()
             deadline = time.monotonic() + MAX_TIMEOUT
@@ -849,10 +963,30 @@ class _Run:
                 return {"state": "CANCELLED", "returncode": None}, None
             state = "PASS" if code == 0 else "FAIL"
             return {"state": state, "returncode": code}, str(candidate)
-        except (ParallelError, OSError, ValueError, subprocess.SubprocessError) as exc:
+        except (
+            ParallelError,
+            ADMISSION.AdmissionError,
+            OSError,
+            ValueError,
+            subprocess.SubprocessError,
+        ) as exc:
             return {"state": "ERROR", "reason": str(exc)}, None
         finally:
-            if path is not None:
+            if proc is not None:
+                _kill_group(proc.pid, proc)
+                try:
+                    proc.wait(timeout=GRACE)
+                except subprocess.TimeoutExpired:
+                    pass
+                self.checking = None
+                self._save()
+            if reservation is not None:
+                try:
+                    self.release(reservation)
+                    released = True
+                except (ADMISSION.AdmissionError, OSError):
+                    pass
+            if path is not None and (reservation is None or released):
                 _remove(self.dir, path)
             self.timing["integration_seconds"] = round(time.monotonic() - begin, 3)
 
@@ -863,9 +997,14 @@ class _Run:
         finally:
             for uid in list(self.running):
                 work = self.stop(uid)
-                self.leases.release(work["tokens"])
-                _remove(self.dir, work["clone"])
-                self.rec[uid].update(state="cancelled", reason="PARALLEL_CANCELLED")
+                try:
+                    self.release(work["reservation"])
+                except (ADMISSION.AdmissionError, OSError) as exc:
+                    self.rec[uid].update(state="failed", reason=str(exc))
+                else:
+                    self.leases.release(work["tokens"])
+                    _remove(self.dir, work["clone"])
+                    self.rec[uid].update(state="cancelled", reason="PARALLEL_CANCELLED")
             if not finished:
                 for rec in self.rec.values():
                     if rec["state"] == "pending":
@@ -875,7 +1014,16 @@ class _Run:
             integration, candidate = self.integrate()
         else:
             integration, candidate = {"state": "SKIPPED", "returncode": None}, None
-        if not finished or integration["state"] == "CANCELLED":
+        if self.unreleased:
+            integration = {
+                "state": "ERROR",
+                "reason": self.release_error
+                or "ENV_STATE: owned resource absence is unverified",
+            }
+            candidate = None
+        if self.unreleased:
+            state = "failed"
+        elif not finished or integration["state"] == "CANCELLED":
             state = "cancelled"
         elif integration["state"] == "PASS" and all(
             r["state"] == "promoted" for r in self.rec.values()
@@ -899,7 +1047,8 @@ class _Run:
             },
         }
         (self.dir / "report.json").write_text(json.dumps(report, indent=2))
-        (self.dir / "state.json").unlink(missing_ok=True)
+        if not self.unreleased:
+            (self.dir / "state.json").unlink(missing_ok=True)
         self.alive.close()
         return report
 
@@ -914,6 +1063,7 @@ def run(
     cancel: threading.Event | None = None,
     brief_revision: str = "",
     poll: float = 0.02,
+    admission=None,
 ) -> dict[str, Any]:
     root = Path(root).resolve()
     if closure is None:
@@ -923,33 +1073,74 @@ def run(
 
     checked = load_plan(plan, closure=closure)
     return _Run(
-        root, checked, runtime, preflight, cancel, brief_revision, poll
+        root, checked, runtime, preflight, cancel, brief_revision, poll, admission
     ).execute()
 
 
-def _environ(pid: int) -> bytes:
-    try:
-        return Path(f"/proc/{pid}/environ").read_bytes()
-    except OSError:
-        return b""
-
-
-def _group_alive(pid: int) -> bool:
+def _group_alive(pid: int) -> bool | None:
     try:
         os.killpg(pid, 0)
-    except (ProcessLookupError, PermissionError):  # gone, or another user's
+    except ProcessLookupError:
         return False
+    except PermissionError:
+        return None
     return _live_members(pid)
 
 
-def sweep(runtime: Path) -> list[str]:
-    """Reclaim workers and clones whose dispatcher is gone; return the run IDs.
+def _owned_process_absent(
+    admission, row: dict[str, Any], run_id: str, *, kill: bool = False
+) -> bool | None:
+    """Verify a reserved child's receipt and group before releasing its lease."""
+    if (
+        row["run_id"] != run_id
+        or row["workspace_id"] != admission.workspace_id
+        or row["binding_id"] != admission.binding_id
+        or row["kind"] not in {"worker", "integration"}
+    ):
+        return None
+    try:
+        descriptor = os.open(
+            admission.child_receipt_path(row["token"]), os.O_RDONLY | os.O_NOFOLLOW
+        )
+    except FileNotFoundError:
+        return True if row["pid"] is None else None
+    except OSError:
+        return None
+    try:
+        metadata = os.fstat(descriptor)
+        if metadata.st_uid != os.geteuid() or not stat.S_ISREG(metadata.st_mode):
+            return None
+        raw = os.read(descriptor, 128)
+    finally:
+        os.close(descriptor)
+    parts = raw.split()
+    if len(raw) >= 128 or len(parts) != 4 or any(not part.isdigit() for part in parts):
+        return None
+    pid, start_ticks, pgid, uid = (int(part) for part in parts)
+    if uid != os.geteuid() or pid <= 0 or pgid != pid or start_ticks <= 0:
+        return None
+    if row["pid"] is not None and (row["pid"], row["start_ticks"]) != (
+        pid,
+        start_ticks,
+    ):
+        return None
+    active = _group_alive(pgid)
+    if active is None:
+        return None
+    current_start = ADMISSION._process_start(pid)
+    if active and current_start not in (None, start_ticks):
+        return None  # PID was reused; the current group is not this child.
+    if active and current_start is None and Path(f"/proc/{pid}").exists():
+        return None  # a present but unreadable leader cannot establish identity
+    if active and kill:
+        _kill_group(pgid)
+        active = _group_alive(pgid)
+    return active is False
 
-    A run is dead when its `dispatcher.lock` can be locked. A worker group is
-    killed when its leader still carries the run marker, or when the leader is
-    gone but the group lives on: Linux does not reuse a PID while it still names
-    a process group, so that group is still the worker's.
-    """
+
+def sweep(runtime: Path, *, root: Path | None = None, admission=None) -> list[str]:
+    """Reclaim a dead dispatcher's owned groups and clones using persisted receipts."""
+    admission = admission or ADMISSION.Admission(root or Path.cwd())
     cleaned = []
     for run_dir in sorted(Path(runtime).glob("*/")):
         if not RUN.fullmatch(run_dir.name):
@@ -964,18 +1155,30 @@ def sweep(runtime: Path) -> list[str]:
                     state = json.loads(handle.read(STATE_LIMIT))
                 if state.get("run") != run_dir.name:
                     continue
-                marker = f"HYK8S_PARALLEL_RUN={run_dir.name}".encode()
-                for worker in state["workers"]:
-                    pid = int(worker["pid"])
-                    environ = _environ(pid)
-                    if marker in environ.split(b"\0") or (
-                        not environ and _group_alive(pid)
-                    ):
-                        _kill_group(pid)
-        except (OSError, ValueError, KeyError, TypeError):
+                rows = admission.active_for_run(run_dir.name)
+                if not rows and any(
+                    _group_alive(int(worker["pid"])) is not False
+                    for worker in state.get("workers", [])
+                ):
+                    continue  # a live or unknown group has no ownership receipt
+                if any(
+                    row["workspace_id"] != admission.workspace_id
+                    or row["binding_id"] != admission.binding_id
+                    for row in rows
+                ):
+                    continue
+                for row in rows:
+                    admission.release(
+                        row["token"],
+                        lambda current: _owned_process_absent(
+                            admission, current, run_dir.name, kill=True
+                        ),
+                    )
+        except (ADMISSION.AdmissionError, OSError, ValueError, KeyError, TypeError):
             continue  # gone, being swept, or unreadable: leave it for a person
         shutil.rmtree(run_dir, ignore_errors=True)
-        cleaned.append(run_dir.name)
+        if not run_dir.exists():
+            cleaned.append(run_dir.name)
     return cleaned
 
 
@@ -997,7 +1200,7 @@ def main(argv: list[str] | None = None) -> int:
     signal.pthread_sigmask(signal.SIG_UNBLOCK, {signal.SIGINT, signal.SIGTERM})
     try:
         if args.command == "sweep":
-            print(json.dumps({"cleaned": sweep(runtime)}))
+            print(json.dumps({"cleaned": sweep(runtime, root=args.root)}))
             return 0
         with args.plan.open("rb") as handle:
             plan = json.loads(handle.read(STATE_LIMIT))

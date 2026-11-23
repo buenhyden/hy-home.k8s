@@ -68,6 +68,13 @@ SUITES = {
         "selected_style",
         "validate_selected_nonstyle",
     ),
+    "test-cluster": _modules(
+        "test_cluster",
+        "test_cluster_lifecycle",
+        "test_cluster_durability",
+        "test_cluster_vm",
+        "test_cluster_vm_boundaries",
+    ),
     # Whole-tree invariants over every test and script, selected by each of them.
     "tooling-ownership": _modules("validation_tooling_ownership"),
     "qa-runner": _modules("qa_runner"),
