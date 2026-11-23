@@ -101,9 +101,14 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `workspace_memory.py` | Claude와 Codex 세션이 공유하는 workspace memory 저장소. memory는 결정 맥락일 뿐 Task 상태나 증거가 아니다. |
 | `session_capture.py` | 이 workspace의 Claude·Codex 세션 수명주기 hook과 transcript cursor scan으로 위치·구조만 기록하는 로컬 세션 수집기. 본문은 복사하지 않으며 memory나 Task 증거가 아니다. |
 | `session_analysis.py` | 세션 수집 기록을 Asia/Seoul 날짜별로 결정론적으로 집계해 개선 후보를 만드는 예약 분석. lease·재시도·취소·따라잡기를 갖추며, 후보는 검토 뒤에만 memory 후보나 Task 참조가 된다. |
-| `test_cluster.py` | 이 workspace가 소유한 일회성 k3d 시험 클러스터에 선택한 GitOps 앱 closure만 올리고, 소유가 입증된 클러스터만 지우는 진입점. 전체·와일드카드·root 선택과, 운영자 승인을 `--authority`로 이름 붙이지 않은 `up`은 거부한다. |
+| `test_cluster.py` | 선택한 GitOps 앱 closure를 이 workspace 소유의 일회성 k3d 시험 클러스터에 올리고, 소유가 입증된 자원만 지우는 CLI 진입점. 전체·와일드카드·root 선택과, 운영자 승인을 `--authority`로 이름 붙이지 않은 `up`은 거부한다. `up`은 생성 전에 공용 자원을 예약하며, 제품 디스크 제한이 필요한 선택은 검증된 VM capsule을 요구한다. `--vm`은 아래 VM 보조 모듈로 연결한다. |
+| `environment_admission.py` | 클러스터와 병렬 작업자가 함께 쓰는 계정 범위 CPU·메모리·디스크 예약 및 소유 확인 후 해제 저장소. 예약은 실제 프로세스나 컨테이너의 물리적 자원 격리를 입증하지 않는다. |
+| `test_cluster_environment.py` | 선택형 클러스터의 소유 네트워크·만료 타이머·노드 CPU 설정, VM capsule 검증과 선택한 namespace의 네트워크 probe를 담당하는 보조 모듈. 직접 host k3d 실행의 제품 디스크 제한은 검증된 capsule 없이 거부한다. |
+| `test_cluster_vm.py` | `test_cluster.py --vm` 경로의 소유 VM 이미지·디스크 준비, 게스트 시작·검증·정리와 guest 제품 실행을 담당하는 보조 모듈. 실제 VM 실행과 자원 격리의 인수 근거는 별도로 확인한다. |
+| `test_cluster_vm_lifecycle.py` | `--vm` 호스트 경로의 예약, 소유 VM 시작·종료, 실패 정리와 소유 확인 후 lease 해제를 조정하는 보조 모듈. |
+| `test_cluster_vm_transport.py` | VM의 크기·시간 제한을 둔 공용 이미지 수신, 공개 입력 전송과 네트워크 probe를 담당하는 보조 모듈. |
 | `work_forecast.py` | 작업 시작 전에 P30/P50/P80 예측을 도구 시계로 고정하고, 시작·결과를 한 번씩 기록한 뒤 유형·시간기준·단위별 coverage와 pinball 손실을 N과 함께 보고하는 로컬 저장소. 수정은 새 revision이며, 취소·실패는 censored로 따로 센다. 예측은 승인·기한·timeout이 아니다. |
-| `work_parallel.py` | 계획의 work unit을 입력·출력·의존성·공유 자원과 함께 받아, 겹치지 않는 unit만 각자의 clone에서 동시에 실행하고 통합 clone에서 통합 검사를 다시 실행하는 dispatcher. 잠금마다 fencing generation을 두어 만료·취소된 시도의 결과를 거부하고, 소유 경로 밖 변경을 거부하며, 동시 서비스 합집합을 `test_cluster.py` 한도로 묶는다. 결과는 `candidate.patch`이며 원본 checkout은 쓰지 않는다. `sweep`은 죽은 dispatcher가 남긴 worker와 clone을 정리한다. clone은 파일 분리일 뿐 sandbox가 아니다. |
+| `work_parallel.py` | 계획의 work unit을 입력·출력·의존성·공유 자원과 함께 받아, 겹치지 않는 unit만 각자의 clone에서 동시에 실행하고 통합 clone에서 통합 검사를 다시 실행하는 dispatcher. 잠금마다 fencing generation을 두어 만료·취소된 시도의 결과를 거부하고, 소유 경로 밖 변경을 거부하며, 동시 서비스 합집합을 `test_cluster.py` 한도로 묶는다. worker와 통합 실행은 clone 생성 전에 공용 자원을 예약하고, 소유 프로세스의 부재를 확인한 뒤 예약을 해제한다. 결과는 `candidate.patch`이며 원본 checkout은 쓰지 않는다. `sweep`은 죽은 dispatcher가 남긴 worker와 clone을 정리한다. clone은 파일 분리일 뿐 sandbox가 아니다. |
 | `review_delta.py` | 검토한 commit 이후의 변경을 판정한다. 기존 Task의 사실형 Evidence 행 추가와 필요한 `version`·`updated` 교체만 `EVIDENCE_ONLY`로 분류한다. 새 Task, 잔여 원장 변경, 승인·수용·요구 추가, 기존 행 수정, mode 변경·symlink·gitlink·이력 재작성은 `REREVIEW`다. 이 도구는 제한된 형식의 증거를 보수적으로 분류하며, 자연어의 모든 의미를 증명하지 않는다. 전이 영향과 불명확한 의미는 검토자가 판정한다(QUAL-R054). |
 
 ###### Platform and supply-chain owners

@@ -113,7 +113,11 @@
       "id": "test-cluster-regressions",
       "argv": [
         "python3",
-        "tests/test_test_cluster.py"
+        "scripts/run-contract-tests.py",
+        "--root",
+        ".",
+        "--suite",
+        "test-cluster"
       ],
       "lanes": [
         "affected"
@@ -1940,6 +1944,103 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "test-cluster-environment-implementation",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/test_cluster_environment.py"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "agent-governance",
+        "repository-quality",
+        "secret-handling",
+        "tooling-ownership-tests",
+        "test-cluster-regressions"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Test cluster environment changes require direct cluster behavior regressions and script safety checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "test-cluster-vm-implementation",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/test_cluster_vm.py"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/test_cluster_vm_lifecycle.py"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "agent-governance",
+        "repository-quality",
+        "secret-handling",
+        "tooling-ownership-tests",
+        "test-cluster-regressions"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Selected VM environment changes require direct cluster behavior regressions and script safety checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "test-cluster-vm-transport-implementation",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/test_cluster_vm_transport.py"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "agent-governance",
+        "repository-quality",
+        "secret-handling",
+        "tooling-ownership-tests",
+        "test-cluster-regressions"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Selected VM transport changes require direct cluster behavior regressions and script safety checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "environment-admission-implementation",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/environment_admission.py"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "agent-governance",
+        "repository-quality",
+        "secret-handling",
+        "tooling-ownership-tests",
+        "test-cluster-regressions",
+        "work-parallel-regressions"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Shared environment admission changes require both cluster and dispatcher behavior regressions."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "work-forecast-implementation",
       "routes": [
         {
@@ -2080,6 +2181,14 @@
         {
           "kind": "exact",
           "value": "tests/test_test_cluster.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_test_cluster_lifecycle.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_test_cluster_durability.py"
         }
       ],
       "validators": [
@@ -2093,6 +2202,50 @@
       "fallback": {
         "status": "FAIL",
         "reason": "Test cluster changes require direct behavior regressions and script safety checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "test-cluster-vm-tests",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "tests/test_test_cluster_vm.py"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "agent-governance",
+        "repository-quality",
+        "tooling-ownership-tests",
+        "test-cluster-regressions"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Selected VM regression changes require the existing cluster test gate."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "test-cluster-vm-boundaries-tests",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "tests/test_test_cluster_vm_boundaries.py"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "agent-governance",
+        "repository-quality",
+        "tooling-ownership-tests",
+        "test-cluster-regressions"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Selected VM boundary regression changes require the existing cluster test gate."
       },
       "evidenceLane": "repo-static"
     },
@@ -2474,6 +2627,7 @@
         "policy-gates",
         "repository-quality",
         "secret-handling",
+        "test-cluster-regressions",
         "tooling-ownership-tests",
         "validation-routing-tests"
       ],
@@ -2573,7 +2727,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)(?:README|AGENTS|CLAUDE)\\.md$)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|common_document_contract\\.py|frontmatter_yaml\\.py|semver_grammar\\.py|document-generator\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|release\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle|execution-brief|pr-metadata|ci-python-contract)\\.py)$)(?!scripts/validate-agent-governance\\.py$)(?!scripts/(?:validate-work-residue-ledger|work-residue-ledger)\\.py$)(?!scripts/workspace_memory\\.py$)(?!scripts/session_capture\\.py$)(?!scripts/session_analysis\\.py$)(?!scripts/test_cluster\\.py$)(?!scripts/work_forecast\\.py$)(?!scripts/work_parallel\\.py$)(?!scripts/review_delta\\.py$)(?!scripts/githooks/(?:pre-commit|commit-msg|pre-push|chained-hook\\.sh)$)(?!scripts/(?:check-secret-handling|render-platform-chart-kinds|validate-(?:gitops-structure|infrastructure-contracts|k8s-manifests|policy-gates))\\.sh$)(?!scripts/validate-(?:gitops-change-set|vault-eso-contracts)\\.py$)(?!scripts/validation/platform/)(?!scripts/(?:commit-message-exceptions|prompt-input|provider_write_guard|validate-selected-nonstyle)\\.py$)(?!scripts/validation/(?:current_executable_references|repository/(?:form_contracts|sample_app_contract))\\.py$)(?!scripts/(?:run-contract-tests|run-validation-lane|select-affected-surfaces|validate-affected-surfaces|validate-selected-style|validate-workspace-boundary|validate-knowledge-surface)\\.py$)(?!scripts/validation/repository/(?:bounded_io|quality)\\.py$)(?!scripts/validate-github-actions-security\\.py$)scripts/.*$"
+          "value": "^(?!.*(?:^|/)(?:README|AGENTS|CLAUDE)\\.md$)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|common_document_contract\\.py|frontmatter_yaml\\.py|semver_grammar\\.py|document-generator\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|release\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle|execution-brief|pr-metadata|ci-python-contract)\\.py)$)(?!scripts/validate-agent-governance\\.py$)(?!scripts/(?:validate-work-residue-ledger|work-residue-ledger)\\.py$)(?!scripts/workspace_memory\\.py$)(?!scripts/session_capture\\.py$)(?!scripts/session_analysis\\.py$)(?!scripts/test_cluster\\.py$)(?!scripts/environment_admission\\.py$)(?!scripts/test_cluster_environment\\.py$)(?!scripts/test_cluster_vm\\.py$)(?!scripts/test_cluster_vm_lifecycle\\.py$)(?!scripts/test_cluster_vm_transport\\.py$)(?!scripts/work_forecast\\.py$)(?!scripts/work_parallel\\.py$)(?!scripts/review_delta\\.py$)(?!scripts/githooks/(?:pre-commit|commit-msg|pre-push|chained-hook\\.sh)$)(?!scripts/(?:check-secret-handling|render-platform-chart-kinds|validate-(?:gitops-structure|infrastructure-contracts|k8s-manifests|policy-gates))\\.sh$)(?!scripts/validate-(?:gitops-change-set|vault-eso-contracts)\\.py$)(?!scripts/validation/platform/)(?!scripts/(?:commit-message-exceptions|prompt-input|provider_write_guard|validate-selected-nonstyle)\\.py$)(?!scripts/validation/(?:current_executable_references|repository/(?:form_contracts|sample_app_contract))\\.py$)(?!scripts/(?:run-contract-tests|run-validation-lane|select-affected-surfaces|validate-affected-surfaces|validate-selected-style|validate-workspace-boundary|validate-knowledge-surface)\\.py$)(?!scripts/validation/repository/(?:bounded_io|quality)\\.py$)(?!scripts/validate-github-actions-security\\.py$)scripts/.*$"
         }
       ],
       "validators": [

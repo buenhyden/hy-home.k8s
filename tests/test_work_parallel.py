@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import hashlib
+import importlib
 import importlib.util
 import json
+import multiprocessing
 import os
 import signal
 import subprocess
@@ -14,8 +16,10 @@ import threading
 import time
 import unittest
 from pathlib import Path
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
 PY = sys.executable
 
 
@@ -51,6 +55,32 @@ def allow(unit) -> None:
     return None
 
 
+def orphan_dispatcher(root, plan, runtime, admission_state):
+    admission = importlib.import_module("environment_admission").Admission(
+        root, state_dir=admission_state
+    )
+    PARALLEL.run(root, plan, runtime=runtime, preflight=allow, admission=admission)
+
+
+def competing_reservation(root, state, run_id, closure, barrier, results):
+    module = importlib.import_module("environment_admission")
+    admission = module.Admission(root, state_dir=state)
+    barrier.wait(timeout=10)
+    budget = {
+        "cpu": 1,
+        "memory_mib": 512,
+        "disk_mib": 512,
+        "seconds": 60,
+        "instances": 0,
+    }
+    try:
+        token = admission.reserve(run_id, "worker", closure, budget, {"owner": run_id})
+    except module.AdmissionError as exc:
+        results.put(("denied", str(exc)))
+    else:
+        results.put(("admitted", token))
+
+
 class Fixture(unittest.TestCase):
     def setUp(self) -> None:
         temporary = tempfile.TemporaryDirectory(prefix="work-parallel-")
@@ -58,6 +88,7 @@ class Fixture(unittest.TestCase):
         self.root = Path(temporary.name).resolve() / "repo"
         self.root.mkdir()
         self.runtime = self.root.parent / "runtime"
+        self.admission_state = self.root.parent / "admission-state"
         self.git("init", "--quiet", "--initial-branch=main")
         (self.root / "docs").mkdir()
         (self.root / "docs" / "a.md").write_text("a\n")
@@ -151,6 +182,12 @@ class Fixture(unittest.TestCase):
 
     def run_plan(self, plan, **kwargs):
         kwargs.setdefault("preflight", allow)
+        kwargs.setdefault(
+            "admission",
+            importlib.import_module("environment_admission").Admission(
+                self.root, state_dir=self.admission_state
+            ),
+        )
         return PARALLEL.run(self.root, plan, runtime=self.runtime, **kwargs)
 
     def assertRefused(self, code: str, call, *args, **kwargs) -> None:
@@ -217,7 +254,300 @@ class PlanTest(Fixture):
         )
 
 
+class AdmissionCapacityTest(Fixture):
+    def test_cluster_receipt_retains_live_or_ambiguous_child_and_cancels_gate_on_release(
+        self,
+    ):
+        module = importlib.import_module("environment_admission")
+        environment = importlib.import_module("test_cluster_environment")
+        admission = module.Admission(self.root, state_dir=self.admission_state)
+        token = admission.reserve(
+            "cluster1",
+            "cluster",
+            ["selected"],
+            {
+                "cpu": 1,
+                "memory_mib": 512,
+                "disk_mib": 512,
+                "seconds": 60,
+                "instances": 1,
+            },
+            {"cluster": "hyk8s-test-cluster1"},
+        )
+        gate, receipt = admission._gate(token), admission.child_receipt_path(token)
+        self.assertEqual(gate.read_bytes(), b"active\n")
+        self.assertFalse(environment.create_inflight(admission, token))
+        receipt.write_text("malformed")
+        receipt.chmod(0o600)
+        self.assertTrue(environment.create_inflight(admission, token))
+        receipt.write_text(f"12345 77 12345 {os.geteuid()}\n")
+        with mock.patch.object(environment, "_process_start", return_value=77):
+            self.assertTrue(environment.create_inflight(admission, token))
+        with (
+            mock.patch.object(environment, "_process_start", return_value=None),
+            mock.patch.object(environment.os, "killpg", side_effect=PermissionError),
+        ):
+            self.assertTrue(environment.create_inflight(admission, token))
+        with (
+            mock.patch.object(environment, "_process_start", return_value=None),
+            mock.patch.object(environment.os, "killpg", side_effect=ProcessLookupError),
+        ):
+            self.assertFalse(environment.create_inflight(admission, token))
+            admission.release(
+                token,
+                lambda row: not environment.create_inflight(admission, row["token"]),
+            )
+        self.assertFalse(gate.exists())
+        self.assertFalse(receipt.exists())
+
+    def test_private_ledger_rejects_symlink_and_public_database(self):
+        module = importlib.import_module("environment_admission")
+        state = self.root.parent / "private-ledger"
+        state.mkdir(mode=0o700)
+        alias = self.root.parent / "ledger-alias"
+        alias.symlink_to(state, target_is_directory=True)
+        with self.assertRaisesRegex(module.AdmissionError, "ENV_STATE"):
+            module.Admission(self.root, state_dir=alias)
+        admission = module.Admission(self.root, state_dir=state)
+        admission.db.chmod(0o644)
+        with self.assertRaisesRegex(module.AdmissionError, "ENV_STATE"):
+            module.Admission(self.root, state_dir=state)
+
+    def test_invalid_request_is_refused_without_creating_a_lease(self):
+        module = importlib.import_module("environment_admission")
+        admission = module.Admission(self.root, state_dir=self.admission_state)
+        budget = {
+            "cpu": 1,
+            "memory_mib": 512,
+            "disk_mib": 512,
+            "seconds": 60,
+            "instances": 0,
+        }
+        cases = (
+            ("../escape", ["safe"], budget, "ENV_BINDING"),
+            ("safe0001", ["all*"], budget, "ENV_BINDING"),
+            ("safe0001", ["safe"], budget | {"cpu": True}, "ENV_LIMIT"),
+            ("safe0001", ["safe"], budget | {"seconds": 0}, "ENV_LIMIT"),
+        )
+        for run_id, closure, requested, code in cases:
+            with self.subTest(run_id=run_id, closure=closure, requested=requested):
+                with self.assertRaisesRegex(module.AdmissionError, code):
+                    admission.reserve(run_id, "worker", closure, requested, {})
+        self.assertEqual(admission.active_for_run("safe0001"), [])
+
+    def test_missing_process_gate_keeps_the_reservation(self):
+        module = importlib.import_module("environment_admission")
+        admission = module.Admission(self.root, state_dir=self.admission_state)
+        token = admission.reserve(
+            "gate0001",
+            "worker",
+            ["safe"],
+            {
+                "cpu": 1,
+                "memory_mib": 512,
+                "disk_mib": 512,
+                "seconds": 60,
+                "instances": 0,
+            },
+            {"owner": "fixture"},
+        )
+        (self.admission_state / f"{token}.gate").unlink()
+        with self.assertRaisesRegex(module.AdmissionError, "ENV_STATE"):
+            admission.release(token, lambda _: True)
+        self.assertEqual(admission.active_for_run("gate0001")[0]["token"], token)
+
+    def test_cluster_run_id_cannot_be_reused_while_another_binding_is_active(self):
+        other = self.root.parent / "other-cluster-repo"
+        subprocess.run(
+            ["/usr/bin/git", "init", "--quiet", str(other)],
+            check=True,
+            capture_output=True,
+            timeout=10,
+        )
+        module = importlib.import_module("environment_admission")
+        state = self.root.parent / "cluster-id-ledger"
+        first = module.Admission(self.root, state_dir=state)
+        second = module.Admission(other, state_dir=state)
+        budget = {
+            "cpu": 1,
+            "memory_mib": 512,
+            "disk_mib": 512,
+            "seconds": 60,
+            "instances": 1,
+        }
+        token = first.reserve("same0001", "cluster", ["a"], budget, {"owner": "first"})
+        with self.assertRaisesRegex(module.AdmissionError, "ENV_BINDING"):
+            second.reserve("same0001", "cluster", ["a"], budget, {"owner": "second"})
+        self.assertEqual(first.active_for_run("same0001")[0]["token"], token)
+
+    def test_two_processes_in_distinct_repositories_compete_atomically(self):
+        other = self.root.parent / "other-repo"
+        subprocess.run(
+            ["/usr/bin/git", "init", "--quiet", str(other)],
+            check=True,
+            capture_output=True,
+            timeout=10,
+        )
+        context = multiprocessing.get_context("fork")
+        barrier, results = context.Barrier(3), context.Queue()
+        state = self.root.parent / "atomic-ledger"
+        competitors = [
+            context.Process(
+                target=competing_reservation,
+                args=(root, state, run_id, closure, barrier, results),
+            )
+            for root, run_id, closure in (
+                (self.root, "first001", ["a", "b", "c"]),
+                (other, "second01", ["d", "e"]),
+            )
+        ]
+        try:
+            for process in competitors:
+                process.start()
+            barrier.wait(timeout=10)
+            outcomes = [results.get(timeout=10) for _ in competitors]
+            for process in competitors:
+                process.join(timeout=10)
+            self.assertTrue(all(process.exitcode == 0 for process in competitors))
+            self.assertEqual(
+                sorted(status for status, _ in outcomes), ["admitted", "denied"]
+            )
+            self.assertIn(
+                "ENV_LIMIT",
+                next(detail for status, detail in outcomes if status == "denied"),
+            )
+        finally:
+            for process in competitors:
+                if process.is_alive():
+                    process.terminate()
+                process.join(timeout=5)
+
+    def test_account_headroom_counts_existing_reservations(self):
+        module = importlib.import_module("environment_admission")
+        available_disk = mock.Mock(f_bavail=7 * 1024 * 1024, f_frsize=1024)
+        for dimension in ("memory_mib", "disk_mib"):
+            with self.subTest(dimension=dimension):
+                state = self.root.parent / f"ledger-{dimension}"
+                first = module.Admission(self.root, state_dir=state)
+                second = module.Admission(self.root, state_dir=state)
+                budget = {
+                    "cpu": 1,
+                    "memory_mib": 512,
+                    "disk_mib": 512,
+                    "seconds": 60,
+                    "instances": 0,
+                }
+                budget[dimension] = 4096
+                with (
+                    mock.patch.object(
+                        module, "_available_memory_mib", return_value=7168
+                    ),
+                    mock.patch.object(
+                        module.os, "statvfs", return_value=available_disk
+                    ),
+                ):
+                    first.reserve(
+                        "first001", "worker", ["same"], budget, {"owner": "first"}
+                    )
+                    with self.assertRaisesRegex(module.AdmissionError, "ENV_LIMIT"):
+                        second.reserve(
+                            "second01", "worker", ["same"], budget, {"owner": "second"}
+                        )
+
+
 class DispatchTest(Fixture):
+    def test_integration_refusal_does_not_execute_the_check(self):
+        module = importlib.import_module("environment_admission")
+        admission = module.Admission(self.root, state_dir=self.admission_state)
+        original = admission.reserve
+        marker = self.root.parent / "integration-should-not-run"
+
+        def reserve(run_id, kind, closure, budget, intent):
+            if kind == "integration":
+                raise module.AdmissionError("ENV_LIMIT: fixture headroom")
+            return original(run_id, kind, closure, budget, intent)
+
+        with mock.patch.object(admission, "reserve", side_effect=reserve):
+            report = self.run_plan(
+                self.plan(
+                    self.unit("a", write("docs/a.md", "A\n"), ["docs/a.md"]),
+                    check=[
+                        PY,
+                        "-c",
+                        f"from pathlib import Path;Path({str(marker)!r}).touch()",
+                    ],
+                ),
+                admission=admission,
+            )
+        self.assertEqual(report["units"]["a"]["state"], "promoted")
+        self.assertEqual(report["integration"]["state"], "ERROR")
+        self.assertIn("ENV_LIMIT", report["integration"]["reason"])
+        self.assertFalse(marker.exists())
+
+    def test_separate_dispatchers_cannot_exceed_the_shared_service_union(self):
+        admission_type = importlib.import_module("environment_admission").Admission
+        ledger = self.root.parent / "shared-admission"
+        closures = {"x": ["x", "n1", "n2"], "y": ["y", "n3"]}
+
+        def closure(selected):
+            return sorted({name for app in selected for name in closures[app]})
+
+        first = self.plan(
+            self.unit(
+                "first", write("docs/a.md", "A\n", 3.0), ["docs/a.md"], services=["x"]
+            )
+        )
+        second = self.plan(
+            self.unit(
+                "second", write("docs/b.md", "B\n"), ["docs/b.md"], services=["y"]
+            )
+        )
+        outcome = {}
+
+        def first_dispatcher():
+            try:
+                outcome["first"] = self.run_plan(
+                    first, closure=closure, admission=admission_type(self.root, ledger)
+                )
+            except Exception as exc:
+                outcome["first_error"] = exc
+
+        worker = threading.Thread(target=first_dispatcher)
+        worker.start()
+        deadline = time.monotonic() + 10
+        active = False
+        while time.monotonic() < deadline:
+            for state_file in self.runtime.glob("*/state.json"):
+                state = json.loads(state_file.read_text())
+                if state.get("workers"):
+                    active = True
+                    break
+            if active or not worker.is_alive():
+                break
+            time.sleep(0.02)
+        self.assertTrue(active, outcome)
+        try:
+            outcome["second"] = self.run_plan(
+                second, closure=closure, admission=admission_type(self.root, ledger)
+            )
+        except Exception as exc:
+            outcome["second_error"] = exc
+        worker.join(timeout=10)
+        self.assertFalse(worker.is_alive(), outcome)
+        self.assertNotIn("first_error", outcome)
+        if "second_error" in outcome:
+            self.assertRegex(
+                str(outcome["second_error"]), "ENV_LIMIT|PARALLEL_ADMISSION"
+            )
+        else:
+            second_unit = outcome["second"]["units"]["second"]
+            if second_unit["state"] == "promoted":
+                first_unit = outcome["first"]["units"]["first"]
+                self.assertFalse(self.overlap(first_unit, second_unit))
+            else:
+                self.assertEqual(second_unit["state"], "refused")
+                self.assertRegex(second_unit["reason"], "ENV_LIMIT|PARALLEL_ADMISSION")
+
     def test_independent_units_run_together_and_integrate(self):
         report = self.run_plan(
             self.plan(
@@ -389,6 +719,61 @@ class DispatchTest(Fixture):
 
 
 class LeaseTest(Fixture):
+    def test_dispatcher_cannot_release_another_runs_pre_spawn_lease(self):
+        admission_type = importlib.import_module("environment_admission").Admission
+        admission = admission_type(self.root, state_dir=self.admission_state)
+        other = "bbbbbbbb"
+        token = admission.reserve(
+            other,
+            "worker",
+            ["selected"],
+            {
+                "cpu": 1,
+                "memory_mib": 512,
+                "disk_mib": 512,
+                "seconds": 60,
+                "instances": 0,
+            },
+            {"worker": "synthetic"},
+        )
+        owner = mock.Mock(
+            id="aaaaaaaa", admission=admission, unreleased=False, release_error=None
+        )
+        with self.assertRaisesRegex(Exception, "ENV_STATE"):
+            PARALLEL._Run.release(owner, token)
+        self.assertEqual(
+            [row["token"] for row in admission.active_for_run(other)], [token]
+        )
+
+    def test_sweep_rechecks_actual_lease_after_stale_token_prefetch(self):
+        admission_type = importlib.import_module("environment_admission").Admission
+        admission = admission_type(self.root, state_dir=self.admission_state)
+        other, stale = "bbbbbbbb", "aaaaaaaa"
+        token = admission.reserve(
+            other,
+            "worker",
+            ["selected"],
+            {
+                "cpu": 1,
+                "memory_mib": 512,
+                "disk_mib": 512,
+                "seconds": 60,
+                "instances": 0,
+            },
+            {"worker": "synthetic"},
+        )
+        directory = self.runtime / stale
+        directory.mkdir(parents=True)
+        (directory / "dispatcher.lock").touch()
+        (directory / "state.json").write_text(json.dumps({"run": stale, "workers": []}))
+        prefetched = admission.active_for_run(other)[0] | {"run_id": stale}
+        with mock.patch.object(admission, "active_for_run", return_value=[prefetched]):
+            self.assertEqual(PARALLEL.sweep(self.runtime, admission=admission), [])
+        self.assertTrue(directory.exists())
+        self.assertEqual(
+            [row["token"] for row in admission.active_for_run(other)], [token]
+        )
+
     def test_fencing_rejects_a_stale_holder(self):
         locks = self.runtime / "locks"
         first = PARALLEL.Leases(locks)
@@ -455,39 +840,20 @@ class CancelTest(Fixture):
         self.assertNoResidue(report)
 
     def test_sweep_cleans_up_after_a_killed_dispatcher(self):
-        plan_file = self.root.parent / "plan.json"
         pidfile = self.root.parent / "orphan.pid"
-        brief, current = self.brief_files(["docs/a.md"])
-        plan_file.write_text(
-            json.dumps(
-                self.plan(
-                    self.unit(
-                        "a",
-                        ["sh", "-c", f"sleep 60 & echo $! > '{pidfile}'; sleep 1"],
-                        ["docs/a.md"],
-                    )
-                )
+        admission_state = self.root.parent / "admission-state"
+        plan = self.plan(
+            self.unit(
+                "a",
+                ["sh", "-c", f"sleep 60 & echo $! > '{pidfile}'; sleep 1"],
+                ["docs/a.md"],
             )
         )
-        dispatcher = subprocess.Popen(
-            [
-                PY,
-                str(ROOT / "scripts" / "work_parallel.py"),
-                "run",
-                "--root",
-                str(self.root),
-                "--runtime",
-                str(self.runtime),
-                "--plan",
-                str(plan_file),
-                "--brief",
-                str(brief),
-                "--current-request",
-                str(current),
-            ],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+        dispatcher = multiprocessing.get_context("fork").Process(
+            target=orphan_dispatcher,
+            args=(self.root, plan, self.runtime, admission_state),
         )
+        dispatcher.start()
         deadline = time.monotonic() + 15
         state = None
         while time.monotonic() < deadline:
@@ -498,17 +864,65 @@ class CancelTest(Fixture):
                     break
             time.sleep(0.05)
         self.assertTrue(state and state["workers"], state)
-        dispatcher.send_signal(signal.SIGKILL)
-        dispatcher.wait(timeout=5)
+        dispatcher.kill()
+        dispatcher.join(timeout=5)
         # The group leader exits after 1 s; its child keeps running as the orphan.
         self.assertTrue(wait_dead(state["workers"][0]["pid"]))
         orphan = int(pidfile.read_text())
         self.assertFalse(wait_dead(orphan, 0.3))
-        cleaned = PARALLEL.sweep(self.runtime)
+        admission = importlib.import_module("environment_admission").Admission(
+            self.root, state_dir=admission_state
+        )
+        cleaned = PARALLEL.sweep(self.runtime, admission=admission)
         self.assertEqual(cleaned, [state["run"]])
         self.assertTrue(wait_dead(orphan))
         self.assertFalse((self.runtime / state["run"]).exists())
-        self.assertEqual(PARALLEL.sweep(self.runtime), [])
+        self.assertEqual(PARALLEL.sweep(self.runtime, admission=admission), [])
+
+    def test_sweep_recovers_a_child_started_before_dispatcher_state_was_saved(self):
+        run_id = "0123abcd"
+        run_dir = self.runtime / run_id
+        run_dir.mkdir(parents=True)
+        (run_dir / "state.json").write_text(
+            json.dumps({"run": run_id, "dispatcher": 999999999, "workers": []})
+        )
+        admission = importlib.import_module("environment_admission").Admission(
+            self.root, state_dir=self.admission_state
+        )
+        token = admission.reserve(
+            run_id,
+            "worker",
+            ["fixture-service"],
+            {
+                "cpu": 1,
+                "memory_mib": 512,
+                "disk_mib": 512,
+                "seconds": 60,
+                "instances": 0,
+            },
+            {"unit": "fixture"},
+        )
+        child = subprocess.Popen(
+            [PY, "-c", "import time; time.sleep(60)"],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            start_new_session=True,
+            preexec_fn=lambda: admission.write_child_receipt(token),
+        )
+        try:
+            self.assertEqual(admission.active_for_run(run_id)[0]["pid"], None)
+            self.assertTrue(admission.child_receipt_path(token).exists())
+            self.assertEqual(
+                PARALLEL.sweep(self.runtime, admission=admission), [run_id]
+            )
+            self.assertTrue(wait_dead(child.pid))
+            self.assertEqual(admission.active_for_run(run_id), [])
+            self.assertFalse(run_dir.exists())
+        finally:
+            if child.poll() is None:
+                os.killpg(child.pid, signal.SIGKILL)
+            child.wait(timeout=5)
 
 
 class BriefTest(Fixture):
@@ -721,14 +1135,19 @@ class ReviewTest(Fixture):
         )
         import fcntl
 
+        admission = importlib.import_module("environment_admission").Admission(
+            self.root, state_dir=self.admission_state
+        )
         with (live / "dispatcher.lock").open("w") as held:
             fcntl.flock(held, fcntl.LOCK_EX)
             bad = self.runtime / "badbad00"
             bad.mkdir()
             (bad / "state.json").write_text("{not json")
-            self.assertEqual(PARALLEL.sweep(self.runtime), [])
+            self.assertEqual(PARALLEL.sweep(self.runtime, admission=admission), [])
             self.assertTrue(live.exists())
-        self.assertEqual(PARALLEL.sweep(self.runtime), ["0123abcd"])
+        self.assertEqual(
+            PARALLEL.sweep(self.runtime, admission=admission), ["0123abcd"]
+        )
         self.assertTrue(bad.exists())
 
 
