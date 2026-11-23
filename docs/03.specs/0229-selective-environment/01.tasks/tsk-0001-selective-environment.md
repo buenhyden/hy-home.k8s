@@ -372,7 +372,16 @@ first repair. It then failed because cloud-init 26.2 counts the deprecated
 `nocloud-net` datasource name as a recoverable error, so `cloud-init status
 --wait` exits 2. Owned cleanup passed (EVD-058). The seed now uses
 `ds=nocloud` (EVD-059), not a weaker exit-code check. The `/dev/kvm` ACL was
-absent again after the run (EVD-060), and D07's one retry is spent.
+absent again after the run (EVD-060), and D07's one retry is spent. The
+operator then authorized exactly one more bounded run and reapplied the ACL.
+Run `p07vm003` (EVD-061) passed provisioning, cloud-init status and the
+restricted reboot, then failed at the in-guest selected `up`: guest-side
+shared admission demands the full cluster disk reservation plus a 1024 MiB
+margin from a guest whose whole disk is 4080 MiB. This is a design defect in
+how admission applies inside the bounded VM, whose own disk is already the hard
+cap; changing it alters admission semantics and needs a further authorized
+run, so it is handed off rather than repaired here. Owned cleanup passed
+(EVD-062).
 
 ### 본문과 규칙
 
@@ -446,7 +455,7 @@ decision or evidence of technical implementation.
 
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
-| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria) | FAIL | First VM run failed before guest SSH (EVD-053); the KVM retry confirmed that repair but failed at `cloud-init status` exit 2 from the deprecated datasource name (EVD-057). Both cleanups passed (EVD-054, EVD-058); the seed repair has synthetic PASS (EVD-059). A further run needs renewed KVM access and new operator authorization (EVD-060). Guest ENOSPC, LAN probes and readiness remain unobserved; six operator criterion decisions remain pending |
+| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria) | FAIL | Three actual VM runs failed at successively later steps: before guest SSH (EVD-053), at `cloud-init status` (EVD-057) and at in-guest admission disk reservation after the restricted reboot (EVD-061); the first two causes are repaired and confirmed by the next run. All three cleanups passed (EVD-054, EVD-058, EVD-062). Recorded LAN deny, guest ENOSPC and selected readiness remain unobserved; six operator criterion decisions remain pending |
 
 #### Verification Evidence
 
@@ -514,6 +523,8 @@ decision or evidence of technical implementation.
 | EVD-058 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Exact run `p07vm002` after EVD-057 | `test_cluster.py down`; user systemd; `test_cluster.py status`; `pgrep -a qemu-system` | `python3 scripts/test_cluster.py --root . down p07vm002` | 0 | PASS | `down` deleted `hyk8s-test-p07vm002-vm`; no `hyk8s*` unit remained, `.workspace-test` was empty, `status` returned `[]` and no QEMU process existed. Owned cleanup only | true | none |
 | EVD-059 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | WORK-001 | automated | Working-tree repair of the provisioning SMBIOS seed in `scripts/test_cluster_vm.py` and its regression in `tests/test_test_cluster_vm.py` | Pinned validation Python; Ruff | Extended relay command test first, then `scripts/run-contract-tests.py --root . --suite test-cluster`; `ruff check scripts tests` | 0 | PASS | The extended test failed on `ds=nocloud-net`; after changing the seed to `ds=nocloud;s=http://10.0.2.100/` the suite passed 126/126 and Ruff passed. Synthetic only; EVD-057 stays open until an actual run | true | none |
 | EVD-060 | [AC-0002](../spec.md#criteria) | WORK-001 | observation | Host `/dev/kvm` after EVD-058, about four minutes after EVD-057 observed the ACL | `getfacl /dev/kvm`; read and write `os.access` on `/dev/kvm` as UID 1000 | `getfacl /dev/kvm; python3 -c "import os; print(os.access(...))"` | 0 | DEFER | The user ACL was no longer present (`user::rw-` only) and access was `False`; the cause of the removal was not observed. The D07 single post-repair retry was spent by EVD-057, so any further VM run needs both renewed KVM access and a new operator authorization | true | none |
+| EVD-061 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | WORK-001 | observation | One additional run `p07vm003` authorized by the operator beyond D07's spent retry, at `05a536a7fa0fad0b2c2895400c21026d5d653fc4`, same closure and 600-second bound; started 2026-11-23T12:12:22Z after `/dev/kvm` ACL and access `True` were observed | Claude Code root executor; QEMU 8.2.2 `accel=kvm`, owned unit `hyk8s-test-p07vm003-vm`, guest serial in the unit journal | `python3 scripts/test_cluster.py --root . up --vm --run-id p07vm003 --authority P07-bounded-VM platform-network-policies` | 2 | FAIL | Failed after 264 seconds at the last controller step, the in-guest selected `up`: `ENV_LIMIT: insufficient currently available host disk`. Cloud-init finished in 44.7 seconds with the `nocloud` seed and `status --wait` passed (EVD-057 cause repaired in fact); the journal shows the guest powered off and booted a second time. The restricted SSH probe, capsule transfer and guest ENOSPC check precede that step and each raises on failure, so they completed, but their individual results were not recorded, so LAN deny and ENOSPC are not separately evidenced here. Cause: the guest re-runs shared admission, which reserves the cluster disk budget plus a 1024 MiB margin from the guest root filesystem, while the whole guest disk is 4080 MiB with Docker and images already installed. No k3d cluster or product workload started | true | none |
+| EVD-062 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Exact run `p07vm003` after EVD-061 | `test_cluster.py down`; user systemd; `test_cluster.py status`; `pgrep -a qemu-system` | `python3 scripts/test_cluster.py --root . down p07vm003` | 0 | PASS | `down` deleted `hyk8s-test-p07vm003-vm`; no `hyk8s*` unit remained, `.workspace-test` was empty, `status` returned `[]` and no QEMU process existed. Owned cleanup only | true | none |
 
 ##### Resolution Links
 
@@ -558,7 +569,9 @@ records the unmet KVM precondition for that retry. EVD-057 is the actual
 retry: it confirms the metadata-forward repair in fact but fails on a
 distinct datasource-name cause, so neither EVD-053 nor EVD-057 is resolved.
 EVD-058 records owned cleanup, EVD-059 the synthetic repair and EVD-060 the
-missing KVM access afterwards.
+missing KVM access afterwards. EVD-061 confirms the EVD-059 repair in fact
+but fails on the guest-side admission disk reservation; EVD-053, EVD-057 and
+EVD-061 all stay unresolved FAILs, and EVD-062 records only owned cleanup.
 Historical W09-H02 and W07-H05 stay under their original Task and ledger
 owner.
 
@@ -579,12 +592,11 @@ owner.
 
 Draft review, current scoped R008 receipt, source implementation, focused
 repository checks and both source-review blockers now have matching evidence.
-Hosted PR checks and Git delivery remain pending. Two actual VM runs failed:
-EVD-053 before guest SSH and EVD-057 at `cloud-init status` after boot,
-metadata and SSH succeeded; both owned cleanups passed. The datasource-name
-repair (EVD-059) has no actual run yet: D07's single retry is spent and
-`/dev/kvm` access is absent again (EVD-060). Guest ENOSPC, controlled LAN
-allow/deny probes and selected readiness remain unobserved.
+Three actual VM runs failed (EVD-053, EVD-057, EVD-061), each later than the
+one before; all owned cleanups passed. The open cause is guest-side admission
+reserving host-sized disk inside a 4080 MiB guest (EVD-061). Recorded guest
+ENOSPC, controlled LAN allow/deny probes and selected readiness remain
+unobserved; the operator-authorized run budget for this P07 resume is spent.
 All six operator criterion decisions remain pending; no criterion acceptance
 is inferred from implementation, review, tests or merge.
 
@@ -597,14 +609,16 @@ or verified. Environment guide publication follows its own lifecycle.
 
 ##### Next Owner
 
-The operator decides whether to authorize one more bounded run beyond D07's
-spent single retry and restores `/dev/kvm` read/write for UID 1000, preferably
-in a form that persists across device permission resets. The environment
-owner then runs one repaired run with the original 600-second and resource
-limits and records boot, guest ENOSPC, LAN deny, selected readiness and owned
-cleanup against EVD-053 and EVD-057. A failure is recorded as FAIL with its
-cause, not retried in a loop. Then the operator records the six criterion
-decisions separately.
+The environment owner designs how shared admission applies inside the bounded
+VM (for example, a guest-local disk reservation derived from the capsule's
+fixed disk instead of the host run budget and margin), with a focused failing
+regression, and records each restricted probe and ENOSPC result in the owner
+state. The operator then authorizes one more bounded run and restores
+`/dev/kvm` read/write for UID 1000, preferably in a form that persists across
+device permission resets. That run keeps the 600-second and resource limits
+and records boot, guest ENOSPC, LAN deny, selected readiness and owned cleanup
+against EVD-061. A failure is recorded as FAIL with its cause, not retried in
+a loop. Then the operator records the six criterion decisions separately.
 Only after those P07 gates does the next package input remain
 `prompts/P08-NATIVE-BRIEF.md`; this Task does not execute P08.
 
