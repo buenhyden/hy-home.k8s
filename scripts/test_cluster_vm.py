@@ -196,16 +196,23 @@ def qemu_command(
         raise VmError("VM_LIMIT: invalid metadata port")
     nic = f"user,id=n0,ipv6=off,hostfwd=tcp:127.0.0.1:{ssh_port}-:22"
     if provisioning:
-        nic += f",guestfwd=tcp:10.0.2.100:80-tcp:127.0.0.1:{metadata_port}"
+        # A chardev guestfwd carries one stream; NoCloud fetches several files.
+        parts = [sys.executable, str(Path(TRANSPORT.__file__).resolve())]
+        if any(re.search(r"[^A-Za-z0-9_./+-]", part) for part in parts):
+            raise VmError("VM_LIMIT: metadata relay path is not option-safe")
+        nic += (
+            f",guestfwd=tcp:10.0.2.100:80-cmd:{' '.join(parts)} relay {metadata_port}"
+        )
     else:
         nic += ",restrict=on"
+    kvm = os.access("/dev/kvm", os.R_OK | os.W_OK)
     command = [
         "qemu-system-x86_64",
         "-nodefaults",
         "-machine",
-        "q35,accel=tcg",
+        "q35,accel=kvm" if kvm else "q35,accel=tcg",
         "-cpu",
-        "qemu64",
+        "host" if kvm else "qemu64",
         "-smp",
         "2",
         "-m",
@@ -217,7 +224,7 @@ def qemu_command(
         "-monitor",
         "none",
         "-serial",
-        "null",
+        "stdio",
         "-drive",
         f"if=pflash,format=raw,readonly=on,file={OVMF_CODE}",
         "-drive",
@@ -230,7 +237,7 @@ def qemu_command(
         "virtio-net-pci,netdev=n0",
     ]
     if provisioning:
-        command += ["-smbios", "type=1,serial=ds=nocloud-net;s=http://10.0.2.100/"]
+        command += ["-smbios", "type=1,serial=ds=nocloud;s=http://10.0.2.100/"]
     return command
 
 
@@ -260,6 +267,9 @@ def unit_command(
         "--property=SendSIGKILL=yes",
         "--property=LimitCORE=0",
         "--property=KillMode=control-group",
+        # Guest serial reaches this unit's journal, capped per run.
+        "--property=LogRateLimitIntervalSec=600",
+        "--property=LogRateLimitBurst=2000",
         sys.executable,
         str(Path(__file__).resolve()),
         "controller",
@@ -749,11 +759,7 @@ class VmRun:
         )
         try:
             process = subprocess.Popen(
-                command,
-                stdin=subprocess.DEVNULL,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-                close_fds=True,
+                command, stdin=subprocess.DEVNULL, close_fds=True
             )
         except OSError as exc:
             raise VmError("VM_STEP: bounded QEMU process failed to start") from exc
