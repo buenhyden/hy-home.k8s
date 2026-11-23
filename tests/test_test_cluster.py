@@ -102,6 +102,81 @@ class StepDiagnosticTest(unittest.TestCase):
         self.assertLessEqual(len(message), 260)
 
 
+class K3sStartDiagnosticTest(unittest.TestCase):
+    def test_failed_create_reports_the_k3s_fatal_message_first(self):
+        stderr = (
+            "\x1b[31mERRO\x1b[0m[0197] Failed Cluster Start: Failed to start server\n"
+            'time="2026-11-23T12:58:00Z" level=fatal msg="no default routes found"\n'
+            "\x1b[31mFATA\x1b[0m[0197] Cluster creation FAILED\n"
+        )
+        failed = subprocess.CompletedProcess(["k3d"], 1, stdout="", stderr=stderr)
+        with mock.patch.object(CLUSTER.subprocess, "run", return_value=failed):
+            with self.assertRaises(CLUSTER.ClusterError) as caught:
+                CLUSTER._run(["k3d", "cluster", "create", "x"])
+        self.assertIn("k3s fatal: no default routes found", str(caught.exception))
+
+    def test_vm_server_gets_a_gatewayless_default_route_script(self):
+        environment = importlib.import_module("test_cluster_environment")
+        with tempfile.TemporaryDirectory() as folder:
+            script = environment.write_route_script(Path(folder))
+            text = script.read_text(encoding="utf-8")
+            self.assertTrue(script.stat().st_mode & 0o100)
+        self.assertIn("ip route add default dev eth0", text)
+        self.assertNotIn(" via ", text)
+        command = environment.create_command(
+            "hyk8s-test-abc12345",
+            "abc12345",
+            40222,
+            "hyk8s-owned-abc12345",
+            route_script=str(script),
+        )
+        self.assertIn(
+            f"{script}:/bin/k3d-entrypoint-route.sh:ro@server:0",
+            command,
+        )
+        self.assertNotIn(
+            "/bin/k3d-entrypoint-route.sh",
+            " ".join(
+                environment.create_command(
+                    "hyk8s-test-abc12345", "abc12345", 40222, "hyk8s-owned-abc12345"
+                )
+            ),
+        )
+
+
+class ConcurrentExpiryTest(unittest.TestCase):
+    def test_expiry_after_a_finished_owned_cleanup_reports_absent(self):
+        record = {"environment_kind": "vm", "run_id": "abc12345"}
+        states = iter([record, None])
+        admission = mock.Mock()
+        admission.active_for_run.return_value = []
+        with (
+            mock.patch.object(
+                CLUSTER, "_read_state", side_effect=lambda *_: next(states)
+            ),
+            mock.patch.object(CLUSTER.CLUSTER_ENV, "vm_expiry_due", return_value=True),
+            mock.patch.object(CLUSTER, "down", side_effect=FileNotFoundError("gone")),
+        ):
+            result = CLUSTER.expire(
+                Path("."), "abc12345", "a" * 32, admission=admission
+            )
+        self.assertEqual(result, {"absent": "abc12345"})
+
+    def test_expiry_race_with_a_remaining_lease_still_fails(self):
+        record = {"environment_kind": "vm", "run_id": "abc12345"}
+        admission = mock.Mock()
+        admission.active_for_run.return_value = [{"token": "a" * 32}]
+        lifecycle = importlib.import_module("test_cluster_vm_lifecycle")
+        with (
+            mock.patch.object(CLUSTER, "_read_state", return_value=record),
+            mock.patch.object(CLUSTER.CLUSTER_ENV, "vm_expiry_due", return_value=True),
+            mock.patch.object(CLUSTER, "down", side_effect=FileNotFoundError("gone")),
+            mock.patch.object(lifecycle, "recover_vm_intents", return_value=[]),
+            self.assertRaises(FileNotFoundError),
+        ):
+            CLUSTER.expire(Path("."), "abc12345", "a" * 32, admission=admission)
+
+
 class TestClusterTest(unittest.TestCase):
     def setUp(self) -> None:
         temporary = tempfile.TemporaryDirectory(prefix="test-cluster-")
@@ -875,38 +950,23 @@ class AdmissionTest(unittest.TestCase):
 
 
 class IsolatedNetworkTest(unittest.TestCase):
-    def test_owned_network_requires_internal_isolated_gateway_and_exact_label(self):
+    def test_owned_network_requires_internal_gateway_and_exact_label(self):
         environment = importlib.import_module("test_cluster_environment")
         command = environment.create_network_command("hyk8s-owned-abc12345", "abc12345")
         self.assertIn("--internal", command)
-        self.assertIn("com.docker.network.bridge.gateway_mode_ipv4=isolated", command)
         self.assertIn("hy-home.k8s/run=abc12345", command)
-        for internal, gateway, ipv6 in (
-            (False, "isolated", False),
-            (True, "nat", False),
-            (True, "isolated", True),
-        ):
-            network = {
-                "Name": "hyk8s-owned-abc12345",
-                "Driver": "bridge",
-                "Internal": internal,
-                "EnableIPv6": ipv6,
-                "Options": {"com.docker.network.bridge.gateway_mode_ipv4": gateway},
-                "Labels": {"hy-home.k8s/run": "abc12345"},
-            }
-            with self.subTest(internal=internal, gateway=gateway, ipv6=ipv6):
-                with self.assertRaisesRegex(ValueError, "CLUSTER_NETWORK"):
-                    environment.verify_network(
-                        lambda command: json.dumps(network),
-                        "hyk8s-owned-abc12345",
-                        "abc12345",
-                    )
+        # The guest reaches the API through the bridge address, so the bridge
+        # keeps its gateway; --internal still blocks forwarding off the bridge.
+        self.assertNotIn(
+            "com.docker.network.bridge.gateway_mode_ipv4=isolated", command
+        )
+        self.assertIn("--gateway", command)
         valid = {
             "Name": "hyk8s-owned-abc12345",
             "Driver": "bridge",
             "Internal": True,
             "EnableIPv6": False,
-            "Options": {"com.docker.network.bridge.gateway_mode_ipv4": "isolated"},
+            "Options": {},
             "Labels": {"hy-home.k8s/run": "abc12345"},
             "IPAM": {"Config": [{"Subnet": "172.30.0.0/24", "Gateway": "172.30.0.1"}]},
         }
@@ -920,22 +980,70 @@ class IsolatedNetworkTest(unittest.TestCase):
             "hyk8s-owned-abc12345",
             "abc12345",
         )
-        # k3d resolves its host IP from the network gateway; an isolated
-        # network without an explicit gateway fails cluster creation.
-        self.assertIn("--gateway", command)
-        without_gateway = valid | {"IPAM": {"Config": [{"Subnet": "172.28.0.0/16"}]}}
-        with self.assertRaisesRegex(ValueError, "CLUSTER_NETWORK.*172.28.0.0/16"):
-            environment.verify_network(
-                lambda command: json.dumps(without_gateway),
-                "hyk8s-owned-abc12345",
-                "abc12345",
-            )
+        for name, changed in (
+            ("not internal", {"Internal": False}),
+            ("ipv6", {"EnableIPv6": True}),
+            ("other label", {"Labels": {"hy-home.k8s/run": "other123"}}),
+            ("no gateway", {"IPAM": {"Config": [{"Subnet": "172.28.0.0/16"}]}}),
+        ):
+            with (
+                self.subTest(name),
+                self.assertRaisesRegex(ValueError, "CLUSTER_NETWORK"),
+            ):
+                environment.verify_network(
+                    lambda command, c=changed: json.dumps(valid | c),
+                    "hyk8s-owned-abc12345",
+                    "abc12345",
+                )
         with self.assertRaisesRegex(ValueError, "CLUSTER_NETWORK"):
             environment.verify_node_network(
                 lambda command: json.dumps({"hyk8s-owned-abc12345": {}, "bridge": {}}),
                 "hyk8s-test-abc12345",
                 "hyk8s-owned-abc12345",
             )
+
+    def test_guest_api_path_uses_owned_node_address_and_publishes_nothing(self):
+        environment = importlib.import_module("test_cluster_environment")
+        attached = {"hyk8s-owned-abc12345": {"IPAddress": "172.30.0.3"}}
+        self.assertEqual(
+            environment.node_address(
+                lambda command: json.dumps(attached),
+                "hyk8s-test-abc12345",
+                "hyk8s-owned-abc12345",
+            ),
+            "172.30.0.3",
+        )
+        for address in ("10.0.2.15", "", "172.30.0.1"):
+            with self.subTest(address=address):
+                with self.assertRaisesRegex(ValueError, "CLUSTER_NETWORK"):
+                    environment.node_address(
+                        lambda command, a=address: json.dumps(
+                            {"hyk8s-owned-abc12345": {"IPAddress": a}}
+                        ),
+                        "hyk8s-test-abc12345",
+                        "hyk8s-owned-abc12345",
+                    )
+        CLUSTER._verify_unpublished("hyk8s-test-abc12345", lambda command: "")
+        with self.assertRaisesRegex(CLUSTER.ClusterError, "CLUSTER_EXPOSED"):
+            CLUSTER._verify_unpublished(
+                "hyk8s-test-abc12345", lambda command: "6443/tcp -> 0.0.0.0:6443\n"
+            )
+        kubeconfig = (
+            "clusters:\n- cluster:\n    certificate-authority-data: x\n"
+            "    server: https://0.0.0.0:40222\n  name: k3d-x\n"
+        )
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "kubeconfig"
+            CLUSTER._write_kubeconfig(
+                "x",
+                path,
+                {},
+                lambda command, **_: kubeconfig,
+                server="https://172.30.0.3:6443",
+            )
+            written = path.read_text(encoding="utf-8")
+        self.assertIn("    server: https://172.30.0.3:6443\n", written)
+        self.assertNotIn("0.0.0.0", written)
 
 
 if __name__ == "__main__":

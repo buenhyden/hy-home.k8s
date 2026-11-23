@@ -31,6 +31,9 @@ MIB = 1024 * 1024
 RAW_BYTES = 4080 * MIB
 SOURCE_LIMIT = 512 * MIB
 GUEST_MEMORY_MIB = 3072
+# One bounded VM run, operator-raised from 600 s on 2026-11-24: provisioning,
+# restricted reboot and k3s on 2 CPUs did not fit in 600 s (SPEC-0229 EVD-073).
+VM_SECONDS = 1200
 SOURCE_URL = "https://cloud-images.ubuntu.com/minimal/releases/noble/release-20261105/ubuntu-24.04-minimal-cloudimg-amd64.img"
 SOURCE_SHA256 = "406630c08b5e545fcc7209854b129d47e3af822db128c9f19336593b5a2d3fe0"
 OVMF_CODE = Path("/usr/share/OVMF/OVMF_CODE_4M.fd")
@@ -53,7 +56,7 @@ def _safe_detail(stderr: str | None) -> str:
     line = re.sub(
         r"\b(?:sk-[A-Za-z0-9_-]{8,}|gh[pousr]_[A-Za-z0-9_]{8,})\b", "[redacted]", line
     )
-    return line[:160]
+    return line[:400]
 
 
 @dataclass(frozen=True)
@@ -251,7 +254,7 @@ def unit_command(
         or deadline_epoch <= int(time.time())
     ):
         raise VmError("VM_OWNERSHIP: invalid unit binding or deadline")
-    remaining = min(600, math.floor(deadline_epoch - time.time())) - 5
+    remaining = min(VM_SECONDS, math.floor(deadline_epoch - time.time())) - 5
     if remaining < 1:
         raise VmError("VM_LIMIT: insufficient original deadline for bounded VM stop")
     return [
@@ -422,9 +425,11 @@ class VmRun:
     ) -> None:
         if (
             type(deadline_epoch) is not int
-            or not 0 < deadline_epoch - time.time() <= 600
+            or not 0 < deadline_epoch - time.time() <= VM_SECONDS
         ):
-            raise VmError("VM_LIMIT: one VM deadline must be within 600 seconds")
+            raise VmError(
+                f"VM_LIMIT: one VM deadline must be within {VM_SECONDS} seconds"
+            )
         if apps is not None and (
             not isinstance(apps, list)
             or any(
@@ -535,13 +540,13 @@ class VmRun:
                     "cpu": 2,
                     "memory_mib": 4096,
                     "disk_mib": 4096,
-                    "seconds": 600,
+                    "seconds": VM_SECONDS,
                     "instances": 1,
                 }
                 or intent.get("unit") != unit_name(self.run_id)
                 or intent.get("vm_dir") != str(self.paths.directory)
                 or intent.get("deadline") != owner["deadline"]
-                or not 0 < owner["deadline"] - lease["created_at"] <= 600
+                or not 0 < owner["deadline"] - lease["created_at"] <= VM_SECONDS
             ):
                 raise ValueError("lease and owner differ")
         except (OSError, ValueError, KeyError, StopIteration, TypeError) as exc:
@@ -816,7 +821,7 @@ class VmRun:
     def _remaining(deadline_epoch: int) -> int:
         remaining = int(deadline_epoch - time.time())
         if remaining <= 0:
-            raise VmError("VM_LIMIT: original 600-second deadline expired")
+            raise VmError("VM_LIMIT: original VM deadline expired")
         return remaining
 
     @staticmethod
@@ -1048,7 +1053,15 @@ class VmRun:
         finally:
             self._stop_dummy()
 
+    def _phase(self, name: str) -> None:
+        """Record elapsed seconds per phase so a slow run shows where time went."""
+        owner = self._owner()
+        phases = dict(owner.get("phases") or {})
+        phases[name] = round(time.monotonic() - self._started, 1)
+        self._save_owner(owner | {"phases": phases})
+
     def _controller_body(self, deadline_epoch: int) -> None:
+        self._started = time.monotonic()
         admission = Admission(self.root)
         prep = admission.reserve(
             self.run_id,
@@ -1076,6 +1089,7 @@ class VmRun:
                     and not any(self.paths.directory.glob("disk.*.tmp"))
                 ),
             )
+        self._phase("image")
         public_key = self._key()
         self._record_files()
         ssh_port = self._free_port()
@@ -1083,6 +1097,7 @@ class VmRun:
         self._require_parent_lease()
         self._boot_qemu(ssh_port, provisioning=True, metadata_port=metadata_port)
         self._wait_ssh(ssh_port, deadline_epoch)
+        self._phase("provision_ssh")
         provision_probe = self._probe_phase(
             ssh_port, restricted=False, deadline_epoch=deadline_epoch
         )
@@ -1147,6 +1162,7 @@ class VmRun:
             ) from exc
         self.reboot_restricted(ssh_port, deadline_epoch)
         self._wait_ssh(ssh_port, deadline_epoch)
+        self._phase("restricted_ssh")
         restricted_probe = self._probe_phase(
             ssh_port, restricted=True, deadline_epoch=deadline_epoch
         )
@@ -1158,6 +1174,7 @@ class VmRun:
         self._save_owner(
             self._owner() | {"guest_enospc": {"enospc": True, "free_mib": free_mib}}
         )
+        self._phase("enospc")
         selected = self._owner().get("apps")
         if not isinstance(selected, list) or not selected:
             raise VmError("VM_INPUT: selected Application closure is unavailable")
@@ -1178,6 +1195,7 @@ class VmRun:
             *selected,
         ]
         result = json.loads(self._ssh(ssh_port, guest, deadline_epoch))
+        self._phase("guest_up")
         if not isinstance(result, dict) or result.get("status") != "up":
             raise VmError("VM_READY: selected guest cluster did not become ready")
         selected_probe = result.get("network_probe")
@@ -1226,7 +1244,7 @@ def main(argv: list[str] | None = None) -> int:
     except (VmError, OSError, ValueError) as exc:
         try:
             owned._save_owner(
-                owned._owner() | {"status": "failed", "failure": str(exc)[:160]}
+                owned._owner() | {"status": "failed", "failure": str(exc)[:400]}
             )
         except VmError:
             pass

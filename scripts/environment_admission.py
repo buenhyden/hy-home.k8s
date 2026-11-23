@@ -25,6 +25,9 @@ from typing import Any
 APP_LIMIT = 4
 HOST_BUDGET = {"cpu": 4, "memory_mib": 8192, "disk_mib": 8192, "instances": 2}
 RUN_BUDGET = {"cpu": 2, "memory_mib": 4096, "disk_mib": 4096, "instances": 1}
+# Clusters run only inside the bounded VM (the host route is refused), whose
+# run the operator raised to 1200 s; native runs keep 600 s.
+SECONDS_LIMIT = {"cluster": 1200, "native": 600}
 BUDGET_KEYS = frozenset({*HOST_BUDGET, "seconds"})
 ID = re.compile(r"[a-z0-9][a-z0-9-]{0,63}\Z")
 TOKEN = re.compile(r"[0-9a-f]{32}\Z")
@@ -237,9 +240,9 @@ class Admission:
             raise _fail(
                 "ENV_LIMIT", "resource budget must contain positive integer values"
             )
-        if any(budget[k] > RUN_BUDGET[k] for k in RUN_BUDGET) or budget["seconds"] > (
-            600 if kind in {"cluster", "native"} else 86400
-        ):
+        if any(budget[k] > RUN_BUDGET[k] for k in RUN_BUDGET) or budget[
+            "seconds"
+        ] > SECONDS_LIMIT.get(kind, 86400):
             raise _fail("ENV_LIMIT", "per-run resource budget exceeded")
         if (kind == "cluster") != (budget["instances"] == 1):
             raise _fail("ENV_LIMIT", "cluster instance reservation does not match kind")
