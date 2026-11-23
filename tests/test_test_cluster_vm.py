@@ -667,6 +667,9 @@ class VmContractTest(unittest.TestCase):
         self.assertIn("test_cluster_vm_transport.py relay 40223", setup)
         self.assertNotIn("-tcp:127.0.0.1:40223", setup)
         self.assertIn("-serial stdio", setup)
+        # The deprecated `nocloud-net` name makes `cloud-init status` exit 2.
+        self.assertIn("serial=ds=nocloud;s=http://10.0.2.100/", setup)
+        self.assertNotIn("nocloud-net", setup)
 
     def test_accelerator_uses_kvm_only_when_device_is_accessible(self):
         vm = vm_module()

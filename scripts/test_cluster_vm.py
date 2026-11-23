@@ -237,7 +237,7 @@ def qemu_command(
         "virtio-net-pci,netdev=n0",
     ]
     if provisioning:
-        command += ["-smbios", "type=1,serial=ds=nocloud-net;s=http://10.0.2.100/"]
+        command += ["-smbios", "type=1,serial=ds=nocloud;s=http://10.0.2.100/"]
     return command
 
 

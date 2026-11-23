@@ -364,7 +364,15 @@ when `/dev/kvm` is readable and writable (TCG otherwise), and sends guest
 serial output to the owned unit journal under a 2000-line per-run rate limit
 instead of discarding it (EVD-055). Two later reads after the operator
 reported running the ACL command still showed no user ACL and no access, so
-the single post-repair retry was not started; it is not spent on TCG.
+the single post-repair retry was not started; it is not spent on TCG. The
+operator then applied the ACL from a separate terminal, because `sudo` needs
+a password there. With KVM the single retry `p07vm002` (EVD-057) booted the
+guest, fetched metadata through the relay and reached SSH, confirming the
+first repair. It then failed because cloud-init 26.2 counts the deprecated
+`nocloud-net` datasource name as a recoverable error, so `cloud-init status
+--wait` exits 2. Owned cleanup passed (EVD-058). The seed now uses
+`ds=nocloud` (EVD-059), not a weaker exit-code check. The `/dev/kvm` ACL was
+absent again after the run (EVD-060), and D07's one retry is spent.
 
 ### 본문과 규칙
 
@@ -438,7 +446,7 @@ decision or evidence of technical implementation.
 
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
-| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria) | FAIL | The actual bounded VM run failed before guest SSH (EVD-053) with owned cleanup PASS (EVD-054); the metadata-forward repair has synthetic PASS (EVD-055), and its single KVM retry waits for the operator's `/dev/kvm` grant (EVD-056). Guest ENOSPC, LAN probes and readiness remain unobserved; six operator criterion decisions remain pending |
+| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria) | FAIL | First VM run failed before guest SSH (EVD-053); the KVM retry confirmed that repair but failed at `cloud-init status` exit 2 from the deprecated datasource name (EVD-057). Both cleanups passed (EVD-054, EVD-058); the seed repair has synthetic PASS (EVD-059). A further run needs renewed KVM access and new operator authorization (EVD-060). Guest ENOSPC, LAN probes and readiness remain unobserved; six operator criterion decisions remain pending |
 
 #### Verification Evidence
 
@@ -502,6 +510,10 @@ decision or evidence of technical implementation.
 | EVD-054 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Exact token `0beca2f5…` expiry timer and service for `p07vm001` after EVD-053 | User systemd journal; `test_cluster.py status`; `/proc` reads of recorded controller PID 3019703 and QEMU PID 3026077 | `test_cluster.py expire p07vm001 <token>` via the owned timer at 2026-11-23T11:40:30Z | 0 | PASS | Expiry deleted `hyk8s-test-p07vm001-vm`; timer and service collected; `.workspace-test` empty; `status` returned `[]`; both recorded processes absent. The private admission database was not read directly in this check. Owned cleanup only; it does not resolve EVD-053 or EVD-007 | true | none |
 | EVD-055 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | WORK-001 | automated | Working-tree repair of `scripts/test_cluster_vm.py`, `scripts/test_cluster_vm_transport.py` and `tests/test_test_cluster_vm.py` on `main@fe700f835ec18392e857a476e58a62f6a1110656` | Pinned `/home/hyunyoun/.venvs/hyhome-validation/bin/python`; Ruff | Three new tests first, then `scripts/run-contract-tests.py --root . --suite test-cluster`; `ruff check scripts tests`; `ruff format --check` on changed files | 0 | PASS | Before the repair the three new tests failed (single `tcp:` chardev guestfwd, fixed TCG, missing relay). After it the suite passed 126/126 across five modules: per-connection `cmd:` relay served three sequential NoCloud requests, KVM is selected only with device access and TCG otherwise, serial reaches the owned unit journal. Synthetic evidence only; it does not prove guest boot, ENOSPC, LAN deny or readiness, and EVD-053 stays open until an actual retry | true | none |
 | EVD-056 | [AC-0002](../spec.md#criteria) | WORK-001 | observation | Host `/dev/kvm` after the operator twice reported running `sudo setfacl -m u:hyunyoun:rw /dev/kvm` | `getfacl /dev/kvm`; read and write `os.access` on `/dev/kvm` as UID 1000 | `getfacl /dev/kvm; python3 -c "import os; print(os.access(...))"` | 0 | DEFER | Both reads showed only `user::rw-` and access `False`; the operator-granted KVM precondition for the single post-repair VM retry is unmet, so no VM was started. Not a runtime PASS or FAIL | true | none |
+| EVD-057 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | WORK-001 | observation | Single post-repair run `p07vm002` at `d13ae6cdade3aca9b0b421e89f6a9788c24d63c6`, same closure and 600-second bound; started 2026-11-23T12:00:39Z after the operator's `/dev/kvm` ACL was observed (`user:hyunyoun:rw-`, access `True`) | Claude Code root executor; QEMU 8.2.2 `accel=kvm`, owned unit `hyk8s-test-p07vm002-vm`, guest serial in the unit journal | `python3 scripts/test_cluster.py --root . up --vm --run-id p07vm002 --authority P07-bounded-VM platform-network-policies` | 2 | FAIL | Failed after 84 seconds with `VM_STEP: ssh exit 2` at `cloud-init status --wait`, which printed `status: done`. The guest booted, cloud-init read `DataSourceNoCloudNet [seed=dmi,http://10.0.2.100/]` through the per-connection relay, installed `docker.io` and finished in 52.9 seconds, and guest SSH answered, so the EVD-053 metadata-forward cause is confirmed repaired. The journal shows the cause of exit 2: cloud-init 26.2 reports the `nocloud-net` datasource name as DEPRECATED, a recoverable error. Restricted reboot, guest ENOSPC, LAN deny and selected readiness were not reached | true | none |
+| EVD-058 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Exact run `p07vm002` after EVD-057 | `test_cluster.py down`; user systemd; `test_cluster.py status`; `pgrep -a qemu-system` | `python3 scripts/test_cluster.py --root . down p07vm002` | 0 | PASS | `down` deleted `hyk8s-test-p07vm002-vm`; no `hyk8s*` unit remained, `.workspace-test` was empty, `status` returned `[]` and no QEMU process existed. Owned cleanup only | true | none |
+| EVD-059 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | WORK-001 | automated | Working-tree repair of the provisioning SMBIOS seed in `scripts/test_cluster_vm.py` and its regression in `tests/test_test_cluster_vm.py` | Pinned validation Python; Ruff | Extended relay command test first, then `scripts/run-contract-tests.py --root . --suite test-cluster`; `ruff check scripts tests` | 0 | PASS | The extended test failed on `ds=nocloud-net`; after changing the seed to `ds=nocloud;s=http://10.0.2.100/` the suite passed 126/126 and Ruff passed. Synthetic only; EVD-057 stays open until an actual run | true | none |
+| EVD-060 | [AC-0002](../spec.md#criteria) | WORK-001 | observation | Host `/dev/kvm` after EVD-058, about four minutes after EVD-057 observed the ACL | `getfacl /dev/kvm`; read and write `os.access` on `/dev/kvm` as UID 1000 | `getfacl /dev/kvm; python3 -c "import os; print(os.access(...))"` | 0 | DEFER | The user ACL was no longer present (`user::rw-` only) and access was `False`; the cause of the removal was not observed. The D07 single post-repair retry was spent by EVD-057, so any further VM run needs both renewed KVM access and a new operator authorization | true | none |
 
 ##### Resolution Links
 
@@ -542,7 +554,11 @@ execution; EVD-053 then actually ran the same route and failed, which supersedes
 that deferral in fact without resolving it, and EVD-054 records only the owned
 expiry cleanup. EVD-055's synthetic repair
 PASS does not resolve EVD-053; only a matching actual retry can. EVD-056
-records the unmet KVM precondition for that retry.
+records the unmet KVM precondition for that retry. EVD-057 is the actual
+retry: it confirms the metadata-forward repair in fact but fails on a
+distinct datasource-name cause, so neither EVD-053 nor EVD-057 is resolved.
+EVD-058 records owned cleanup, EVD-059 the synthetic repair and EVD-060 the
+missing KVM access afterwards.
 Historical W09-H02 and W07-H05 stay under their original Task and ledger
 owner.
 
@@ -563,11 +579,12 @@ owner.
 
 Draft review, current scoped R008 receipt, source implementation, focused
 repository checks and both source-review blockers now have matching evidence.
-Hosted PR checks and Git delivery remain pending. The actual VM run failed
-before guest SSH (EVD-053) and its owned cleanup passed (EVD-054). The
-metadata-forward repair (EVD-055) still needs its single actual retry, which
-waits for operator-granted `/dev/kvm` access (EVD-056). Guest ENOSPC,
-controlled LAN allow/deny probes and selected readiness remain unobserved.
+Hosted PR checks and Git delivery remain pending. Two actual VM runs failed:
+EVD-053 before guest SSH and EVD-057 at `cloud-init status` after boot,
+metadata and SSH succeeded; both owned cleanups passed. The datasource-name
+repair (EVD-059) has no actual run yet: D07's single retry is spent and
+`/dev/kvm` access is absent again (EVD-060). Guest ENOSPC, controlled LAN
+allow/deny probes and selected readiness remain unobserved.
 All six operator criterion decisions remain pending; no criterion acceptance
 is inferred from implementation, review, tests or merge.
 
@@ -580,14 +597,14 @@ or verified. Environment guide publication follows its own lifecycle.
 
 ##### Next Owner
 
-The operator first grants `/dev/kvm` read/write to UID 1000 (for example
-`sudo setfacl -m u:hyunyoun:rw /dev/kvm`, removed with
-`sudo setfacl -x u:hyunyoun /dev/kvm`). The environment owner then runs the
-single repaired `p07vm001` retry with the original 600-second and resource
+The operator decides whether to authorize one more bounded run beyond D07's
+spent single retry and restores `/dev/kvm` read/write for UID 1000, preferably
+in a form that persists across device permission resets. The environment
+owner then runs one repaired run with the original 600-second and resource
 limits and records boot, guest ENOSPC, LAN deny, selected readiness and owned
-cleanup against EVD-053. A failure is recorded as FAIL with its cause, not
-retried in a loop. Then the operator records the six criterion decisions
-separately.
+cleanup against EVD-053 and EVD-057. A failure is recorded as FAIL with its
+cause, not retried in a loop. Then the operator records the six criterion
+decisions separately.
 Only after those P07 gates does the next package input remain
 `prompts/P08-NATIVE-BRIEF.md`; this Task does not execute P08.
 
