@@ -104,6 +104,7 @@ is open.
 | EVD-004 | [AC-0003](../spec.md#criteria) | WORK-001 | automated | Selection on `main@0c2b98e4` registry versus the working-tree registry for the same paths; PR341 leaf times from run 45105112715 | `select_paths` of `scripts/validate-affected-surfaces.py`, lane `affected` | In-process selection comparison | 0 | PASS | PR341 file set with registration as data: 23 validators, about 673 s, to 15, about 94 s. One general guide: 8, about 446 s, to 7, about 49 s. One suite registration: 13, about 595 s, to 4, about 13 s. Engine change: 13 to 14 validators (adds the omitted `test-cluster` suite). Estimates use one hosted sample, not p95 | true | none |
 | EVD-005 | [AC-0003](../spec.md#criteria) | WORK-001 | automated | Same host, current tree | Pinned validation Python | `python3 scripts/run-contract-tests.py --root . --suite document`; `qa.py quick` with one blank line added to `0013-selective-execution-environment.md` in a temporary worktree of `main` | 0 | PASS | The document suite alone took 544.3 s locally. `qa.py quick` on that guide change took 618.2 s with the `main` registry (8 gates including `document-contract-tests`) and 131.9 s with the new registry copied in, which also selected the registry's own routing checks because the registry itself differed there. The temporary worktree was restored and removed | true | none |
 | EVD-006 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria) | WORK-001 | automated | Reverted mutations of `scripts/validation/contract-suites/test-cluster.json` and `docs/00.workspace/05.environment/0013-selective-execution-environment.md` | Pinned validation Python; validators the new routes select | `run-contract-tests.py` validation-routing and test-cluster suites; `validate-links-and-owners.py` and `validate-markdown-profiles.py` with `--change-scope` | 0 | PASS | An unknown module fails the test-cluster suite load, which the suite file selects; a module registered twice fails validation-routing. A broken link fails `links-and-owners` (`LINK-BROKEN`); a renamed required heading fails `markdown-profiles` (`BODY-COMMON-ENVELOPE`) and `links-and-owners`. Both files were restored byte for byte | true | none |
+| EVD-007 | [AC-0003](../spec.md#criteria) | WORK-001 | automated | Temporary worktree at commit `c2cd6b3d` with one blank line added to `0013-selective-execution-environment.md` | Pinned validation Python, same host as EVD-005 | `python3 scripts/qa.py quick` | 0 | PASS | 7 gates selected without `document-contract-tests`, all PASS, in 87.9 s, against 618.2 s for the same guide change on the `main` registry in EVD-005. Single local sample. The worktree file was restored and the worktree removed | true | none |
 
 ##### Resolution Links
 
@@ -122,8 +123,9 @@ runs before the change and are not separate evidence rows.
 
 ##### Remaining Conditions
 
-Staged QA, a guide-only timing on the committed registry, hosted pull
-request checks and the operator's three criterion decisions remain.
+Staged QA passed in the commit hook of `c2cd6b3d` and the guide-only timing
+is EVD-007. Hosted pull request checks and the operator's three criterion
+decisions remain.
 
 #### Handoff
 
