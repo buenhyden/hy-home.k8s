@@ -114,6 +114,7 @@ later changes pass; the display is not repeated.
 | EVD-012 | [AC-0001](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Session transcript entries for the first admitted change of generations 1 and 2 (2026-11-23T22:14:00Z, 22:30:07Z) | Claude Code (installed 2.1.331) session transcript | Read of the transcript `attachment` entries | 0 | PASS | Each first admitted change produced a `hook_system_message` entry carrying the brief, separate from the model's `hook_additional_context`; the user did not recall seeing it, so the on-screen sight stays unconfirmed and a re-check was offered on generation 3 | true | none |
 | EVD-013 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Generation 3 (`49d94733dc6f2d4a`) recorded on `main`, then a new branch created before the first change; 2026-11-23T22:5xZ | Claude Code (installed 2.1.331), tracked project settings | Structured `Edit` of this Task on the new branch | 2 | PASS | Refused case observed: the guard refused with `BRIEF-STALE` because the branch changed since the request. A branch must be created before the brief is recorded | true | none |
 | EVD-014 | [AC-0001](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Same generation 3 after switching back to the request's branch `main` | Claude Code (installed 2.1.331), tracked project settings | Same structured `Edit` of this Task on `main` | 0 | PASS | The edit was admitted with the brief in the hook output; the uncommitted change then moved to the work branch | true | none |
+| EVD-015 | [AC-0001](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | The user's message of 2026-11-24 after generation 3, quoting what the terminal showed | Claude Code (installed 2.1.331), interactive terminal | User report of the first admitted change's display | 0 | PASS | The user saw `PreToolUse:Edit says: Brief for request 49d94733dc6f2d4a (generation 3, claude):` on screen, confirming the hook's `systemMessage` reaches the user. The report quotes the header line only, so whether the remaining brief lines are shown in full or collapsed is unconfirmed | true | none |
 
 ##### Resolution Links
 
@@ -131,7 +132,7 @@ brief although the user sent nothing.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | accept | accepted | EVD-004, EVD-005, EVD-007, EVD-011, EVD-012, EVD-014 | User message of 2026-11-24 in this session accepting the SPEC-0231 criteria | user | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | accepted | EVD-004, EVD-005, EVD-007, EVD-011, EVD-012, EVD-014, EVD-015 | User message of 2026-11-24 in this session accepting the SPEC-0231 criteria | user | platform | none |
 | [AC-0002](../spec.md#criteria) | accept | accepted | EVD-004, EVD-005, EVD-006, EVD-010, EVD-011, EVD-013 | User message of 2026-11-24 in this session accepting the SPEC-0231 criteria | user | platform | none |
 | [AC-0003](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
 
@@ -144,8 +145,9 @@ AC-0003 stays pending because a criterion cannot be accepted while its
 required evidence EVD-008 is open. A later PASS of the same Codex probe,
 after the user trusts the new `user_prompt_submit` entry in `/hooks` and the
 Codex quota returns (2026-11-27), resolves it; the user's AC-0003 decision
-is then recorded and the Task completes. The user's on-screen sight of the
-`systemMessage` stays unconfirmed (EVD-012).
+is then recorded and the Task completes. The user confirmed seeing the
+brief's `systemMessage` header on screen (EVD-015); whether its remaining
+lines are shown in full is unconfirmed.
 
 #### Handoff
 
