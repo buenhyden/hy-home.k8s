@@ -78,6 +78,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `document_contracts.py`, `validate-document-contract-registry.py`, `validate-markdown-profiles.py` | route·profile 분류와 작성된 Markdown의 의미 검증. affected·staged의 변경 경로가 본문 검사 대상을 정하며, 현재 문서의 metadata·identity 검사와 English-only 파일 검사는 유지한다. 생산자·reader helper 변경은 Registry의 문서 검사 owner로 연결한다. |
 | `document_authority.py`, `validate-links-and-owners.py` | 현재 owner와 문서 간 관계의 의미 검증. 링크 검사 한 실행의 context가 Registry와 문서 inventory를 보유해 같은 입력의 재조회에 쓰인다. |
 | `document_lifecycle.py`, `validate-document-lifecycle.py` | registry가 분류한 lifecycle과 staged index 전이 |
+| `request_brief.py` | provider `UserPromptSubmit` 요청 접수, 모델이 표시한 브리핑 기록, 쓰기 guard의 첫 변경 허용을 현재 요청·workspace·branch·정책 digest에 결합하는 로컬 상태 도구 (SPEC-0231) |
 | `validate-execution-brief.py` | 작업자 인계·재개·상태 변경 직전 현재 요청과 브리핑의 대응 및 범위를 확인하는 명시적 읽기 전용 진입점 |
 | `document_language.py` | 문서의 언어를 판정하는 순수 규칙 |
 | `validate-knowledge-surface.py` | knowledge owner 포인터, Repository Vocabulary 용어 표와 제한된 관찰 출처 검증 |

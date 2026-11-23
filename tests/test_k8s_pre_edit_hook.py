@@ -25,6 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import document_authority as AUTHORITY  # noqa: E402
+import request_brief as BRIEF  # noqa: E402
 
 HOOK_PATH = ROOT / ".claude/hooks/k8s-pre-edit.sh"
 GUARD_PATH = ROOT / "scripts/provider_write_guard.py"
@@ -34,12 +35,42 @@ SELECTOR_RELATIVE_PATH = "scripts/select-affected-surfaces.py"
 SAMPLE_DOCUMENT = "docs/01.requirements/README.md"
 
 
+# The path and trust tests run for an admitted request (SPEC-0231): each call
+# carries a fixture session whose receipt is admitted for its repository,
+# unless the caller supplies its own receipt directory.
+_BRIEF_STATE = tempfile.TemporaryDirectory(prefix="pre-edit-brief-")
+FIXTURE_SESSION = "fixture-session"
+
+
+def admitted(payload: str, root: Path, provider: str, env: dict) -> str:
+    if BRIEF.STATE_ENV in env:
+        return payload
+    env[BRIEF.STATE_ENV] = _BRIEF_STATE.name
+    try:
+        data = json.loads(payload)
+    except ValueError:
+        return payload
+    if not isinstance(data, dict):
+        return payload
+    data.setdefault("session_id", FIXTURE_SESSION)
+    directory = Path(_BRIEF_STATE.name)
+    directory.chmod(0o700)
+    receipt = {
+        "state": "admitted",
+        "workspace": BRIEF.workspace(str(root)),
+        "turn": data.get("turn_id"),
+    }
+    BRIEF._save(BRIEF._path(directory, provider, data["session_id"]), receipt)
+    return json.dumps(data)
+
+
 def run_hook(payload: str, project_dir: Path, environment: dict | None = None):
     """Invoke the production hook with one raw JSON payload on stdin."""
     env = dict(os.environ)
     env["CLAUDE_PROJECT_DIR"] = str(project_dir)
     if environment:
         env.update(environment)
+    payload = admitted(payload, project_dir, "claude", env)
     return subprocess.run(
         ("bash", str(HOOK_PATH)),
         input=payload,
@@ -57,6 +88,7 @@ def run_codex_adapter(payload: str, cwd: Path, environment: dict | None = None):
     }
     if environment:
         env.update(environment)
+    payload = admitted(payload, cwd, "codex", env)
     return subprocess.run(
         ("bash", str(CODEX_ADAPTER_PATH)),
         input=payload,
@@ -75,6 +107,7 @@ def run_hook_without_project_dir(payload: str, cwd: Path):
         for key, value in os.environ.items()
         if key not in ("CLAUDE_PROJECT_DIR", "CLAUDE_TOOL_INPUT_FILE_PATH")
     }
+    payload = admitted(payload, cwd, "claude", env)
     return subprocess.run(
         ("bash", str(HOOK_PATH)),
         input=payload,
@@ -154,6 +187,7 @@ def setUpModule():
 
 
 def tearDownModule():
+    _BRIEF_STATE.cleanup()
     if _LINKED_FIXTURE is not None:
         _LINKED_FIXTURE.cleanup()
 
@@ -437,6 +471,8 @@ class PreEditGitDegradationTest(unittest.TestCase):
         self.assertIn("HOOK-PATH-ROOT", result.stderr)
 
     def test_project_dir_path_still_resolves_when_git_fails(self):
+        """The path resolves from the project directory; the request brief
+        then fails closed because the workspace cannot be confirmed."""
         with tempfile.TemporaryDirectory() as directory:
             result = run_hook(
                 scalar_payload(str(ROOT / SAMPLE_DOCUMENT)),
@@ -444,7 +480,9 @@ class PreEditGitDegradationTest(unittest.TestCase):
                 self.failing_git_environment(directory),
             )
 
-        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertNotIn("HOOK-PATH-ROOT", result.stderr)
+        self.assertIn("BRIEF-", result.stderr)
 
     def test_git_probes_are_bounded_by_an_explicit_timeout(self):
         guard_text = GUARD_PATH.read_text(encoding="utf-8")
@@ -625,12 +663,14 @@ class ProviderAdapterOwnershipTest(unittest.TestCase):
             )
         self.assertEqual(blocked.returncode, 2, blocked.stderr)
         self.assertIn("[FAIL]", blocked.stderr)
+        env = dict(os.environ)
         inside = subprocess.run(
             ("/bin/sh", "-c", command),
-            input=payload,
+            input=admitted(payload, ROOT, "codex", env),
             capture_output=True,
             text=True,
             cwd=str(ROOT),
+            env=env,
             timeout=60,
         )
         self.assertEqual(inside.returncode, 0, inside.stderr)
@@ -1033,8 +1073,11 @@ class FailClosedGuardTests(unittest.TestCase):
     def test_a_selector_rejection_reason_reaches_stderr(self):
         guard = self.load_guard()
         guard.run_surface_selector = lambda root: "SURFACE-PATH-UNMATCHED"
+        env: dict = {}
+        payload = admitted(scalar_payload(SAMPLE_DOCUMENT), ROOT, "codex", env)
         with (
-            mock.patch("sys.stdin", io.StringIO(scalar_payload(SAMPLE_DOCUMENT))),
+            mock.patch.dict(os.environ, env),
+            mock.patch("sys.stdin", io.StringIO(payload)),
             mock.patch("sys.stderr", new_callable=io.StringIO) as stderr,
             mock.patch("sys.stdout", new_callable=io.StringIO),
         ):
@@ -1115,9 +1158,18 @@ class FolderAgentRulesTests(unittest.TestCase):
         self.assertIn(self.CHAIN_MARKERS[1], context)
         self.assertNotIn(self.CHAIN_MARKERS[0], context)
 
-    def test_without_a_session_every_call_supplies_the_chain(self):
-        self.assertIn(self.CHAIN_MARKERS[1], self.call(None))
-        self.assertIn(self.CHAIN_MARKERS[1], self.call(None))
+    def test_a_change_without_a_session_is_refused(self):
+        """SPEC-0231: no session means no request receipt, so no change."""
+        with tempfile.TemporaryDirectory() as empty:
+            result = run_hook(
+                json.dumps(
+                    {"tool_name": "Edit", "tool_input": {"file_path": self.TARGET}}
+                ),
+                ROOT,
+                {"TMPDIR": self.state.name, BRIEF.STATE_ENV: empty},
+            )
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("BRIEF-MISSING", result.stderr)
 
     def test_state_or_session_failure_never_blocks(self):
         self.call("session-f")
@@ -1165,6 +1217,98 @@ class FolderAgentRulesTests(unittest.TestCase):
 
     def test_root_level_target_supplies_no_folder_file(self):
         self.assertNotIn("AGENTS.md`", self.call("session-e", "CHANGELOG.md"))
+
+
+class RequestBriefAdmissionTest(unittest.TestCase):
+    """SPEC-0231: a detected change needs the current request's shown brief."""
+
+    BRIEF = {
+        "goal": "Edit the sample document",
+        "scope": [SAMPLE_DOCUMENT],
+        "keep": [],
+        "change": ["one line"],
+        "questions": [],
+        "checks": ["links"],
+    }
+
+    def setUp(self):
+        self.state = tempfile.TemporaryDirectory(prefix="brief-admission-")
+        self.environment = {BRIEF.STATE_ENV: self.state.name}
+        self.root = main_checkout()
+
+    def tearDown(self):
+        self.state.cleanup()
+
+    def intake(self, provider, turn=None):
+        payload = {"session_id": "s1", "prompt": "edit the sample"}
+        if turn:
+            payload["turn_id"] = turn
+        with mock.patch.dict(os.environ, self.environment):
+            return BRIEF.intake(payload, provider, str(self.root))
+
+    def record(self, receipt):
+        with mock.patch.dict(os.environ, self.environment):
+            BRIEF.record(receipt["request_id"], self.BRIEF, str(self.root))
+
+    def write(self, provider="claude", turn=None):
+        if provider == "claude":
+            data = {
+                "session_id": "s1",
+                "tool_name": "Write",
+                "tool_input": {"file_path": SAMPLE_DOCUMENT},
+            }
+            return run_hook(json.dumps(data), self.root, self.environment)
+        data = {
+            "session_id": "s1",
+            "turn_id": turn,
+            "tool_name": "apply_patch",
+            "tool_input": {
+                "command": "*** Begin Patch\n*** Update File: "
+                f"{SAMPLE_DOCUMENT}\n@@\n-a\n+b\n*** End Patch"
+            },
+        }
+        return run_codex_adapter(json.dumps(data), self.root, self.environment)
+
+    def test_read_only_call_needs_no_brief(self):
+        data = {
+            "session_id": "s1",
+            "tool_name": "Bash",
+            "tool_input": {"command": "git status --short"},
+        }
+        result = run_hook(json.dumps(data), self.root, self.environment)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_change_without_a_received_request_is_refused(self):
+        result = self.write()
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("BRIEF-MISSING", result.stderr)
+
+    def test_change_before_the_brief_is_recorded_is_refused(self):
+        self.intake("claude")
+        result = self.write()
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("BRIEF-NOT-SHOWN", result.stderr)
+
+    def test_first_admitted_change_shows_the_brief_to_the_user_once(self):
+        receipt = self.intake("claude")
+        self.record(receipt)
+        first = self.write()
+        self.assertEqual(first.returncode, 0, first.stderr)
+        message = json.loads(first.stdout)["systemMessage"]
+        self.assertIn(receipt["request_id"], message)
+        self.assertIn("Edit the sample document", message)
+        second = self.write()
+        self.assertEqual(second.returncode, 0, second.stderr)
+        self.assertNotIn(receipt["request_id"], second.stdout)
+
+    def test_codex_change_of_another_turn_is_refused(self):
+        receipt = self.intake("codex", turn="t1")
+        self.record(receipt)
+        refused = self.write("codex", turn="t2")
+        self.assertEqual(refused.returncode, 2)
+        self.assertIn("BRIEF-STALE", refused.stderr)
+        admitted_result = self.write("codex", turn="t1")
+        self.assertEqual(admitted_result.returncode, 0, admitted_result.stderr)
 
 
 if __name__ == "__main__":

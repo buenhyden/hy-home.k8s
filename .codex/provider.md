@@ -227,6 +227,19 @@ team document, not a special automatic entry filename.
   user configuration. Only the pre-tool entry was trusted. The repository
   never edits that user configuration, so Codex capture starts after the
   user's review, and its delivery stays unobserved until then.
+- `hooks.json` also registers `.codex/hooks/request-intake.sh` on
+  `UserPromptSubmit` (SPEC-0231). It forwards the payload to
+  `scripts/request_brief.py intake`, which keeps a digest of the prompt, the
+  turn, the workspace, its branch and a policy digest, never the prompt text,
+  and returns model context asking for a brief. Model context is not a user
+  display: the model shows the brief in its reply and records it, and the
+  shared write guard refuses a change it detects until then, binding the
+  change to the same turn. On the first admitted change the guard sends the
+  recorded brief through the user-only `systemMessage`. Like every project
+  hook, the entry runs only after the user trusts it in the `/hooks` review;
+  until then the guard refuses detected changes for a missing receipt.
+  Whether the installed client shows that message is a separate observation
+  recorded in the SPEC-0231 Task.
 - Use the shared workspace memory store from
   [context and memory](../.agents/governance/context-and-memory.md) instead of
   native memory, and re-observe repository/task state on resume. Shared context and safety rules live in policies, not this note.
