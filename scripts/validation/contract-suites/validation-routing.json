@@ -1,0 +1,8 @@
+[
+  "tests.test_validate_affected_surfaces",
+  "tests.test_validation_profiles",
+  "tests.test_run_validation_lane",
+  "tests.test_validation_bounded_io",
+  "tests.test_selected_style",
+  "tests.test_validate_selected_nonstyle"
+]

@@ -3,114 +3,53 @@
 
 Each registered gate runs one suite, so a test module runs when its product or
 its own file changes instead of waiting for a blanket unit run that no lane
-executes. A suite is a table row here plus one registry validator; the
-affected-surface tests require every test module to belong to exactly one gate.
+executes. A suite is one file under `validation/contract-suites/` plus one
+registry validator; the affected-surface tests require every test module to
+belong to exactly one gate.
 """
 
 from __future__ import annotations
 
 import argparse
+import json
+import re
 import sys
 import unittest
 from pathlib import Path
 
 
-def _modules(*names: str) -> tuple[str, ...]:
-    return tuple(f"tests.test_{name}" for name in names)
+SUITE_DIR = Path(__file__).resolve().parent / "validation/contract-suites"
+SUITE_LIMIT = 64 * 1024
+MODULE = re.compile(r"tests\.test_[a-z0-9_]+\Z")
 
 
-SUITES = {
-    "document": _modules(
-        "document_lifecycle_cumulative_history",
-        "document_lifecycle_completion",
-        "task_execution_contract",
-        "task_acceptance_contract",
-        "task_acceptance_boundaries",
-        "operations_section_contract",
-        "operations_lineage_contract",
-        "shared_contract_binding",
-        "document_frontmatter_negatives",
-        "document_scope_selection",
-        "task_summary_derivation",
-        "evaluation_document_profiles",
-        "readme_navigation",
-        "reference_pack_routes",
-        "native_skill_envelope",
-        "markdown_render_cache",
-        "json_schema_validation",
-        "common_agents_document_routes",
-        "document_terminal_contract",
-        "common_form_tree",
-        "common_document_contract",
-        "document_envelope",
-        "frontmatter_key_contract",
-        "frontmatter_yaml",
-        "document_language",
-        "documentation_link_boundary",
-        "semver_grammar",
-        "registry_schema_version",
-        "semver_versions",
-        "work_residue_ledger",
-        "document_generator",
-        "relationship_contract",
-        "policy_rule_ids",
-    ),
-    "document-lifecycle": _modules(
-        "document_artifact_identity",
-        "document_lifecycle_package_exit",
-        "policy_rule_history",
-    ),
-    "validation-routing": _modules(
-        "validate_affected_surfaces",
-        "validation_profiles",
-        "run_validation_lane",
-        "validation_bounded_io",
-        "selected_style",
-        "validate_selected_nonstyle",
-    ),
-    "test-cluster": _modules(
-        "test_cluster",
-        "test_cluster_lifecycle",
-        "test_cluster_durability",
-        "test_cluster_vm",
-        "test_cluster_vm_boundaries",
-    ),
-    # Whole-tree invariants over every test and script, selected by each of them.
-    "tooling-ownership": _modules("validation_tooling_ownership"),
-    "qa-runner": _modules("qa_runner"),
-    "ci-metadata": _modules(
-        "validate_ci_python_contract",
-        "validate_github_actions_security",
-        "ci_branch_metadata",
-    ),
-    "release": _modules("release", "commit_contracts"),
-    "agent-governance": _modules(
-        "agent_governance",
-        "validate_agent_registry",
-        "validate_agent_harness_contract",
-        "validate_agent_core",
-    ),
-    "tooling": _modules(
-        "prompt_input",
-        "k8s_pre_edit_hook",
-        "repository_quality_rules",
-        "repository_form_contracts",
-        "current_executable_references",
-        "workspace_boundary",
-        "validate_knowledge_surface",
-        "document_backlinks",
-    ),
-    "cluster-gate": _modules(
-        "check_secret_handling",
-        "validate_k8s_manifests",
-        "validate_gitops_change_set",
-        "validate_vault_eso_contracts",
-        "platform_assurance",
-        "platform_ingress",
-        "infrastructure_tempfiles",
-        "external_service_contracts",
-    ),
-}
+def load_suites(directory: Path = SUITE_DIR) -> dict[str, tuple[str, ...]]:
+    """Read each suite's module list from its own registration file.
+
+    Registration data lives outside this engine so that adding a module to one
+    suite selects that suite and the registration checks, not every suite.
+    """
+    suites: dict[str, tuple[str, ...]] = {}
+    for path in sorted(directory.glob("*.json")):
+        if path.is_symlink() or path.stat().st_size > SUITE_LIMIT:
+            raise ValueError(f"{path.name}: suite registration is not a bounded file")
+        modules = json.loads(path.read_text(encoding="utf-8"))
+        if (
+            not isinstance(modules, list)
+            or not modules
+            or len(set(modules)) != len(modules)
+            or not all(isinstance(m, str) and MODULE.fullmatch(m) for m in modules)
+        ):
+            raise ValueError(
+                f"{path.name}: suite must list unique tests.test_* modules"
+            )
+        suites[path.stem] = tuple(modules)
+    if not suites:
+        raise ValueError("no contract suite is registered")
+    return suites
+
+
+SUITES = load_suites()
 
 
 def main() -> int:

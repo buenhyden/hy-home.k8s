@@ -1062,7 +1062,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?:\\.agents/(?:README\\.md|governance/.*|workflows/.*|knowledge/.*|prompts/.*)|docs/00\\.workspace/(?!(?:.*/)?(?:AGENTS|CLAUDE)\\.md$).*)$"
+          "value": "^(?!docs/00\\.workspace/(?:03\\.process|04\\.quality|05\\.environment|06\\.maintenance)/(?!0010-ci-cd-qa-reference-guide\\.md$|0011-local-validation-environment\\.md$|0012-main-release-preparation-runbook\\.md$)[0-9]{4}-[^/]+\\.md$)(?!.*(?:^|/)README\\.md$)(?:\\.agents/(?:README\\.md|governance/.*|workflows/.*|knowledge/.*|prompts/.*)|docs/00\\.workspace/(?!(?:.*/)?(?:AGENTS|CLAUDE)\\.md$).*)$"
         }
       ],
       "validators": [
@@ -1079,6 +1079,30 @@
       "fallback": {
         "status": "FAIL",
         "reason": "Common governance changes require governance validation."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "governance-guides",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/00\\.workspace/(?:03\\.process|04\\.quality|05\\.environment|06\\.maintenance)/(?!0010-ci-cd-qa-reference-guide\\.md$|0011-local-validation-environment\\.md$|0012-main-release-preparation-runbook\\.md$)[0-9]{4}-[^/]+\\.md$"
+        }
+      ],
+      "validators": [
+        "agent-governance",
+        "document-contract-registry",
+        "document-lifecycle",
+        "knowledge-surface",
+        "links-and-owners",
+        "markdown-profiles",
+        "repository-quality"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "A numbered workspace guide needs its own document, lifecycle, link and owner checks; the document contract regression runs when a contract, parser or a document it reads by name changes."
       },
       "evidenceLane": "repo-static"
     },
@@ -2711,6 +2735,7 @@
         "qa-runner-tests",
         "release-tests",
         "repository-quality",
+        "test-cluster-regressions",
         "tooling-ownership-tests",
         "tooling-tests",
         "validation-routing-tests"
@@ -2723,11 +2748,241 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "contract-suite-agent-governance",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/validation/contract-suites/agent-governance.json"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "agent-governance-tests",
+        "repository-quality",
+        "validation-routing-tests"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Changing the agent-governance suite registration reruns that suite and the registration checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "contract-suite-ci-metadata",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/validation/contract-suites/ci-metadata.json"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "ci-metadata-tests",
+        "repository-quality",
+        "validation-routing-tests"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Changing the ci-metadata suite registration reruns that suite and the registration checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "contract-suite-cluster-gate",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/validation/contract-suites/cluster-gate.json"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "cluster-gate-tests",
+        "repository-quality",
+        "validation-routing-tests"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Changing the cluster-gate suite registration reruns that suite and the registration checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "contract-suite-document",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/validation/contract-suites/document.json"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "document-contract-tests",
+        "repository-quality",
+        "validation-routing-tests"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Changing the document suite registration reruns that suite and the registration checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "contract-suite-document-lifecycle",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/validation/contract-suites/document-lifecycle.json"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "document-lifecycle-tests",
+        "repository-quality",
+        "validation-routing-tests"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Changing the document-lifecycle suite registration reruns that suite and the registration checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "contract-suite-qa-runner",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/validation/contract-suites/qa-runner.json"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "qa-runner-tests",
+        "repository-quality",
+        "validation-routing-tests"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Changing the qa-runner suite registration reruns that suite and the registration checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "contract-suite-release",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/validation/contract-suites/release.json"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "release-tests",
+        "repository-quality",
+        "validation-routing-tests"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Changing the release suite registration reruns that suite and the registration checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "contract-suite-test-cluster",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/validation/contract-suites/test-cluster.json"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "repository-quality",
+        "test-cluster-regressions",
+        "validation-routing-tests"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Changing the test-cluster suite registration reruns that suite and the registration checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "contract-suite-tooling",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/validation/contract-suites/tooling.json"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "repository-quality",
+        "tooling-tests",
+        "validation-routing-tests"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Changing the tooling suite registration reruns that suite and the registration checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "contract-suite-tooling-ownership",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/validation/contract-suites/tooling-ownership.json"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "repository-quality",
+        "tooling-ownership-tests",
+        "validation-routing-tests"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Changing the tooling-ownership suite registration reruns that suite and the registration checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "contract-suite-validation-routing",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/validation/contract-suites/validation-routing.json"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "repository-quality",
+        "validation-routing-tests"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Changing the validation-routing suite registration reruns that suite and the registration checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "scripts",
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)(?:README|AGENTS|CLAUDE)\\.md$)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|common_document_contract\\.py|frontmatter_yaml\\.py|semver_grammar\\.py|document-generator\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|release\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle|execution-brief|pr-metadata|ci-python-contract)\\.py)$)(?!scripts/validate-agent-governance\\.py$)(?!scripts/(?:validate-work-residue-ledger|work-residue-ledger)\\.py$)(?!scripts/workspace_memory\\.py$)(?!scripts/session_capture\\.py$)(?!scripts/session_analysis\\.py$)(?!scripts/test_cluster\\.py$)(?!scripts/environment_admission\\.py$)(?!scripts/test_cluster_environment\\.py$)(?!scripts/test_cluster_vm\\.py$)(?!scripts/test_cluster_vm_lifecycle\\.py$)(?!scripts/test_cluster_vm_transport\\.py$)(?!scripts/work_forecast\\.py$)(?!scripts/work_parallel\\.py$)(?!scripts/review_delta\\.py$)(?!scripts/githooks/(?:pre-commit|commit-msg|pre-push|chained-hook\\.sh)$)(?!scripts/(?:check-secret-handling|render-platform-chart-kinds|validate-(?:gitops-structure|infrastructure-contracts|k8s-manifests|policy-gates))\\.sh$)(?!scripts/validate-(?:gitops-change-set|vault-eso-contracts)\\.py$)(?!scripts/validation/platform/)(?!scripts/(?:commit-message-exceptions|prompt-input|provider_write_guard|validate-selected-nonstyle)\\.py$)(?!scripts/validation/(?:current_executable_references|repository/(?:form_contracts|sample_app_contract))\\.py$)(?!scripts/(?:run-contract-tests|run-validation-lane|select-affected-surfaces|validate-affected-surfaces|validate-selected-style|validate-workspace-boundary|validate-knowledge-surface)\\.py$)(?!scripts/validation/repository/(?:bounded_io|quality)\\.py$)(?!scripts/validate-github-actions-security\\.py$)scripts/.*$"
+          "value": "^(?!.*(?:^|/)(?:README|AGENTS|CLAUDE)\\.md$)(?!scripts/validation/contract-suites/)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|common_document_contract\\.py|frontmatter_yaml\\.py|semver_grammar\\.py|document-generator\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|release\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle|execution-brief|pr-metadata|ci-python-contract)\\.py)$)(?!scripts/validate-agent-governance\\.py$)(?!scripts/(?:validate-work-residue-ledger|work-residue-ledger)\\.py$)(?!scripts/workspace_memory\\.py$)(?!scripts/session_capture\\.py$)(?!scripts/session_analysis\\.py$)(?!scripts/test_cluster\\.py$)(?!scripts/environment_admission\\.py$)(?!scripts/test_cluster_environment\\.py$)(?!scripts/test_cluster_vm\\.py$)(?!scripts/test_cluster_vm_lifecycle\\.py$)(?!scripts/test_cluster_vm_transport\\.py$)(?!scripts/work_forecast\\.py$)(?!scripts/work_parallel\\.py$)(?!scripts/review_delta\\.py$)(?!scripts/githooks/(?:pre-commit|commit-msg|pre-push|chained-hook\\.sh)$)(?!scripts/(?:check-secret-handling|render-platform-chart-kinds|validate-(?:gitops-structure|infrastructure-contracts|k8s-manifests|policy-gates))\\.sh$)(?!scripts/validate-(?:gitops-change-set|vault-eso-contracts)\\.py$)(?!scripts/validation/platform/)(?!scripts/(?:commit-message-exceptions|prompt-input|provider_write_guard|validate-selected-nonstyle)\\.py$)(?!scripts/validation/(?:current_executable_references|repository/(?:form_contracts|sample_app_contract))\\.py$)(?!scripts/(?:run-contract-tests|run-validation-lane|select-affected-surfaces|validate-affected-surfaces|validate-selected-style|validate-workspace-boundary|validate-knowledge-surface)\\.py$)(?!scripts/validation/repository/(?:bounded_io|quality)\\.py$)(?!scripts/validate-github-actions-security\\.py$)scripts/.*$"
         }
       ],
       "validators": [

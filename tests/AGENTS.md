@@ -36,7 +36,7 @@ Canonical sources are the documents linked or named in the opening paragraph and
 
 #### Local Obligations
 
-1. Every `tests/test_*.py` module belongs to exactly one suite in `scripts/run-contract-tests.py` or has its own registry command.
+1. Every `tests/test_*.py` module belongs to exactly one suite file in `scripts/validation/contract-suites/` or has its own registry command.
 2. Build fixtures synthetically; do not read pinned historical commits or deleted documents.
 3. Delete a test whose only subject is removed behavior; rewrite, do not weaken, a test of a current contract.
 4. Tests never reach a live cluster, provider or credential.

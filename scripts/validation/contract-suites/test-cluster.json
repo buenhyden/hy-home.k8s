@@ -1,0 +1,7 @@
+[
+  "tests.test_test_cluster",
+  "tests.test_test_cluster_lifecycle",
+  "tests.test_test_cluster_durability",
+  "tests.test_test_cluster_vm",
+  "tests.test_test_cluster_vm_boundaries"
+]

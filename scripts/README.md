@@ -87,7 +87,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `work-residue-ledger.py` | ledger를 종류·상태·소유자로 걸러 한 항목당 한 줄로 출력하는 탐색 도구(gate 아님, 파일을 쓰지 않는다) |
 | `json_schema_validation.py` | production validator가 함께 쓰는 오프라인 JSON Schema 로딩 |
 | `frontmatter_yaml.py` | 거버넌스 문서와 native 에이전트 frontmatter 다섯 loader가 함께 쓰는 YAML 1.2 loader(`ruamel.yaml`, 중복 key·directive·anchor·alias·explicit tag·merge key·복수 문서 거부, timestamp는 text로 유지) |
-| `run-contract-tests.py` | 이름 있는 suite 하나의 계약 회귀를 그 suite의 목적 gate로 실행한다. suite별 모듈 목록은 이 파일이 소유하며, 각 gate는 Registry에서 `--suite`로 suite 하나를 지정한다. 긴 blanket unit discovery의 간접 `coveredBy`를 현재 완료 조건으로 삼지 않는다. |
+| `run-contract-tests.py` | 이름 있는 suite 하나의 계약 회귀를 그 suite의 목적 gate로 실행한다. suite별 모듈 목록은 `validation/contract-suites/<suite>.json` 파일 하나가 소유하며, 그 파일의 변경은 해당 suite와 등록 검사만 선택한다. 이 실행기 자체의 변경은 모든 suite를 선택한다. 각 gate는 Registry에서 `--suite`로 suite 하나를 지정한다. 긴 blanket unit discovery의 간접 `coveredBy`를 현재 완료 조건으로 삼지 않는다. |
 
 `docs/98.archive/`는 검증 대상이 아니다. 문서 검사는 그 경로를 inventory에서
 제외하고, 변경 시에는 secret 검사만 실행한다. 이 경로를 가리키는 링크도 검사하지 않는다.
