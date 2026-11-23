@@ -8,9 +8,12 @@ import io
 import json
 import os
 import re
+import select
 import shlex
 import shutil
+import socket
 import stat
+import sys
 import subprocess
 import tarfile
 import threading
@@ -25,6 +28,28 @@ import test_cluster_environment as ENV
 MIB = 1024 * 1024
 SOURCE_LIMIT = 512 * MIB
 SOURCE_URL = "https://cloud-images.ubuntu.com/minimal/releases/noble/release-20261105/ubuntu-24.04-minimal-cloudimg-amd64.img"
+
+
+def relay(port: int, *, fd: int = 0, limit: int = MIB, seconds: int = 30) -> int:
+    """Join one QEMU guestfwd connection (fd 0) to the owned metadata port."""
+    guest = socket.socket(fileno=os.dup(fd))
+    with guest, socket.create_connection(("127.0.0.1", port), timeout=5) as host:
+        peer = {guest: host, host: guest}
+        open_ends, moved = set(peer), 0
+        deadline = time.monotonic() + seconds
+        while open_ends and moved <= limit and time.monotonic() < deadline:
+            for source in select.select(list(open_ends), [], [], 1)[0]:
+                data = source.recv(65536)
+                moved += len(data)
+                if data:
+                    peer[source].sendall(data)
+                    continue
+                open_ends.discard(source)
+                try:
+                    peer[source].shutdown(socket.SHUT_WR)
+                except OSError:
+                    pass
+    return 0
 
 
 class BoundedHTTPServer(http.server.HTTPServer):
@@ -426,3 +451,10 @@ def probe_phase(
         return ssh(vm, ssh_port, ["python3", "-c", script], deadline).strip()
 
     return ENV.probe_boundary(local_get, guest_get, nonce, restricted=restricted)
+
+
+if __name__ == "__main__":
+    # QEMU guestfwd `cmd:` entry: `relay <loopback metadata port>`.
+    if len(sys.argv) != 3 or sys.argv[1] != "relay" or not sys.argv[2].isdigit():
+        raise SystemExit(2)
+    raise SystemExit(relay(int(sys.argv[2])))

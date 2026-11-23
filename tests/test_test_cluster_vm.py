@@ -649,6 +649,87 @@ class VmContractTest(unittest.TestCase):
         self.assertIn("-m 3072", text)
         self.assertIn("-smp 2", text)
 
+    def test_provision_metadata_forward_spawns_one_relay_per_connection(self):
+        # A guestfwd chardev carries one stream; cloud-init opens several.
+        vm = vm_module()
+        with tempfile.TemporaryDirectory(prefix="p07-vm-guestfwd-") as temporary:
+            paths = vm.paths_for(Path(temporary), "p07vm001")
+            setup = " ".join(
+                vm.qemu_command(
+                    paths,
+                    "00000000-0000-4000-8000-000000000001",
+                    40222,
+                    provisioning=True,
+                    metadata_port=40223,
+                )
+            )
+        self.assertIn("guestfwd=tcp:10.0.2.100:80-cmd:", setup)
+        self.assertIn("test_cluster_vm_transport.py relay 40223", setup)
+        self.assertNotIn("-tcp:127.0.0.1:40223", setup)
+        self.assertIn("-serial stdio", setup)
+
+    def test_accelerator_uses_kvm_only_when_device_is_accessible(self):
+        vm = vm_module()
+        with tempfile.TemporaryDirectory(prefix="p07-vm-accel-") as temporary:
+            paths = vm.paths_for(Path(temporary), "p07vm001")
+            built = {}
+            for allowed in (True, False):
+                with mock.patch.object(vm.os, "access", return_value=allowed):
+                    built[allowed] = " ".join(
+                        vm.qemu_command(
+                            paths,
+                            "00000000-0000-4000-8000-000000000001",
+                            40222,
+                            provisioning=False,
+                        )
+                    )
+        self.assertIn("q35,accel=kvm -cpu host", built[True])
+        self.assertIn("q35,accel=tcg -cpu qemu64", built[False])
+
+    def test_metadata_relay_serves_each_guest_connection_separately(self):
+        import socket
+        import threading
+
+        transport = importlib.import_module("test_cluster_vm_transport")
+        payloads = []
+
+        class Handler(transport.http.server.BaseHTTPRequestHandler):
+            def do_GET(self):
+                body = self.path.encode()
+                self.send_response(200)
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def log_message(self, *_args):
+                return
+
+        server = transport.BoundedHTTPServer(("127.0.0.1", 0), Handler)
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        try:
+            for path in ("/meta-data", "/user-data", "/vendor-data"):
+                guest, relay_end = socket.socketpair()
+                worker = threading.Thread(
+                    target=transport.relay,
+                    args=(server.server_port,),
+                    kwargs={"fd": relay_end.fileno()},
+                )
+                worker.start()
+                guest.sendall(f"GET {path} HTTP/1.0\r\n\r\n".encode())
+                guest.settimeout(5)
+                data = b""
+                while chunk := guest.recv(4096):
+                    data += chunk
+                guest.close()
+                worker.join(5)
+                self.assertFalse(worker.is_alive())
+                relay_end.close()
+                payloads.append(data.rsplit(b"\r\n\r\n", 1)[-1])
+        finally:
+            server.shutdown()
+            server.server_close()
+        self.assertEqual(payloads, [b"/meta-data", b"/user-data", b"/vendor-data"])
+
     def test_image_digest_backing_and_oversized_virtual_disk_fail_before_conversion(
         self,
     ):
