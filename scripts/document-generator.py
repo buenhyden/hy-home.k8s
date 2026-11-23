@@ -41,7 +41,9 @@ from document_lifecycle import (  # noqa: E402
 from frontmatter_yaml import FrontmatterError, load_frontmatter  # noqa: E402
 from common_document_contract import (  # noqa: E402
     CommonDocumentError,
+    _semantic_headings,
     payload_markdown,
+    section_rules,
 )
 
 SHARED = ("TITLE", "OWNER", "UPDATED", "ARTIFACT_ID", "PARENT_ID")
@@ -264,6 +266,18 @@ def _identity_refusal(
         raise Refusal("GENERATOR-IDENTITY", found[0].observed_transition)
 
 
+def _with_section_rules(text: str) -> str:
+    """Put the shared rule of each common H3 under it, outside code fences."""
+    try:
+        rules = section_rules()
+    except CommonDocumentError as error:
+        raise Refusal("GENERATOR-PROFILE", str(error)) from error
+    for level, name, _start, end in reversed(_semantic_headings(text)):
+        if level == 3 and name in rules:
+            text = f"{text[:end]}\n<!-- 공통 규칙: {rules[name]} -->\n{text[end:]}"
+    return text
+
+
 def generate(
     root: Path,
     profile_id: str,
@@ -338,6 +352,7 @@ def generate(
 
     if SHARED_MARKER.search(text):
         raise Refusal("GENERATOR-OUTPUT", "a shared marker has no value")
+    text = _with_section_rules(text)
     _frontmatter(text)
     try:
         findings = check.validate_document_text(

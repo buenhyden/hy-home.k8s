@@ -112,6 +112,24 @@ def _headings() -> tuple[tuple[str, tuple[str, ...]], ...]:
     return result
 
 
+def section_rules() -> dict[str, str]:
+    """Return the shared purpose and limit of each common H3, in shell order."""
+    order = [child for _, children in _headings() for child in children]
+    try:
+        rules = _core_contract()["section_rules"]
+        if (
+            not isinstance(rules, Mapping)
+            or list(rules) != order
+            or not all(
+                isinstance(rule, str) and rule.strip() for rule in rules.values()
+            )
+        ):
+            raise ValueError("section rules must cover each common H3 once, in order")
+    except (KeyError, ValueError) as exc:
+        raise CommonDocumentError(f"common section rules unavailable: {exc}") from exc
+    return dict(rules)
+
+
 def _semantic_headings(text: str) -> list[tuple[int, str, int, int]]:
     """Return ATX headings outside fenced code, with character offsets."""
 

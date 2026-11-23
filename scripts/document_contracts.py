@@ -2466,6 +2466,16 @@ def _common_document_binding_diagnostics(
         faults.append("kind mapping or explicitly unused kinds differ from the core")
     if binding["relation_kinds"] != contract.get("relation_kinds"):
         faults.append("relation kinds differ from the core")
+    headings = contract.get("headings")
+    rules = contract.get("section_rules")
+    if (
+        not isinstance(headings, Mapping)
+        or not isinstance(rules, Mapping)
+        or list(rules)
+        != [child for children in headings.values() for child in children]
+        or not all(isinstance(rule, str) and rule.strip() for rule in rules.values())
+    ):
+        faults.append("section rules must cover each common H3 once, in order")
     return tuple(
         _diagnostic(
             "REGISTRY_COMMON_DOCUMENT",
