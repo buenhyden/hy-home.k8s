@@ -108,13 +108,18 @@ later changes pass; the display is not repeated.
 | EVD-006 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | This Claude Code session before any intake (hook registered after the session's first prompt); 2026-11-23T16:58Z | Claude Code 2.1.330, tracked project settings | Structured `Edit` of `scripts/request_brief.py` | 2 | PASS | Refused case observed: the client ran the guard and refused with `BRIEF-MISSING: no request was received for this session`; the receipt directory held only its lock | true | none |
 | EVD-007 | [AC-0001](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Next user prompt in the same session; receipt request `032de488005e3d39`, generation 1, received 2026-11-23T22:13:36Z, recorded 22:13:53Z, admitted 22:14:00Z | Claude Code (installed 2.1.331 at observation), tracked project settings | `UserPromptSubmit` intake; `python3 scripts/request_brief.py record --request 032de488005e3d39`; first structured `Edit` | 0 | PASS | Normal case observed: the model received the intake context, showed the brief in its reply, recorded it (`BRIEF-RECORDED`), and the first edit was admitted with the brief in the hook output, which the guard sends as `systemMessage` and `additionalContext`; later edits passed without a second display. The user's sight of the `systemMessage` is not yet confirmed | true | none |
 | EVD-008 | [AC-0003](../spec.md#criteria) | WORK-001 | observation | One `codex exec` probe asking for an `apply_patch` write of `p08-probe.txt`; 2026-11-23T22:16Z; the new `user_prompt_submit` entry is not yet trusted in `/hooks` | Codex CLI 0.171.0, `workspace-write` sandbox | `codex exec --sandbox workspace-write "<probe>"` | 1 | DEFER | Unobserved: the account usage limit stopped the turn before any tool call (limit resets 2026-11-27). Only the trusted ponytail plugin's prompt hook ran; no Codex receipt and no probe file were created | true | none |
+| EVD-009 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria) | WORK-001 | automated | PR #348 head `9eb842ef077148d3a685bb6fe7668e5c4187ca24` | GitHub Actions CI run 45279867140 and its `style-pr` job; GitGuardian | `gh pr checks 348` | 0 | PASS | ci-summary, style-pr, GitGuardian, label and greeting passed; merge state CLEAN | true | none |
+| EVD-010 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Same Claude session; a background task-completion notification arrived with no user message, 2026-11-23T22:4xZ | Claude Code (installed 2.1.331), tracked project settings | `UserPromptSubmit` intake on the notification turn | 0 | PASS | The client fired `UserPromptSubmit` for the notification, so intake started generation 2 (`c7c15fcfaea52160`) and the earlier brief became stale; the model showed and recorded a new brief before the next change | true | none |
 
 ##### Resolution Links
 
 EVD-002 and EVD-003 were planned failing-first results, not required
 failures; EVD-004 and EVD-005 show the passing state. EVD-007 is the normal
 case following the refusal in EVD-006. EVD-008 is open: the Codex normal and refused cases need the user's
-`/hooks` trust of the new entry and an available Codex quota.
+`/hooks` trust of the new entry and an available Codex quota. EVD-010 is a
+residual: Claude Code also fires `UserPromptSubmit` for a background-task
+notification, so such a turn starts a new generation and asks for a fresh
+brief although the user sent nothing.
 
 #### Acceptance Decision
 
@@ -130,8 +135,8 @@ case following the refusal in EVD-006. EVD-008 is open: the Codex normal and ref
 
 The user's confirmation that the Claude `systemMessage` was visible, the
 Codex observation after the user trusts the new `user_prompt_submit` entry
-in `/hooks` and the Codex quota returns (EVD-008), hosted checks and the
-operator's criterion decisions remain.
+in `/hooks` and the Codex quota returns (EVD-008), and the operator's
+criterion decisions remain. Hosted checks passed (EVD-009).
 
 #### Handoff
 
