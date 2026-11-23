@@ -663,6 +663,15 @@ class ClusterLifecycleTest(unittest.TestCase):
             mock.patch.object(
                 self.cluster.CLUSTER_ENV, "creator_gone", return_value=True
             ),
+            mock.patch.object(
+                self.cluster.CLUSTER_ENV,
+                "vm_unit_state",
+                return_value={
+                    "LoadState": "loaded",
+                    "ActiveState": "active",
+                    "MainPID": "99999999",
+                },
+            ),
             mock.patch.object(self.vm, "VmRun") as owned_type,
             mock.patch.object(self.cluster, "list_clusters", return_value=[]),
             mock.patch.object(self.cluster, "labelled_runs", return_value={}),
