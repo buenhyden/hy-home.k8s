@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import errno
 import http.server
 import importlib
@@ -689,8 +690,10 @@ class VmBoundaryTest(unittest.TestCase):
 
             def guest(_port, argv, _deadline):
                 self.assertIn("python3", argv)
-                exec(argv[-1], {})
-                return ""
+                printed = io.StringIO()
+                with contextlib.redirect_stdout(printed):
+                    exec(argv[-1], {})
+                return printed.getvalue()
 
             with (
                 mock.patch.object(owned, "_ssh", side_effect=guest),
@@ -698,7 +701,8 @@ class VmBoundaryTest(unittest.TestCase):
                 mock.patch.object(os, "posix_fallocate", side_effect=allocate),
                 mock.patch.object(tempfile, "mkstemp", side_effect=temp_file),
             ):
-                owned._guest_enospc(40222, int(time.time()) + 60)
+                free_mib = owned._guest_enospc(40222, int(time.time()) + 60)
+        self.assertEqual(free_mib, 400)
         self.assertTrue(requests)
         self.assertGreater(requests[0], total)
 

@@ -381,7 +381,20 @@ margin from a guest whose whole disk is 4080 MiB. This is a design defect in
 how admission applies inside the bounded VM, whose own disk is already the hard
 cap; changing it alters admission semantics and needs a further authorized
 run, so it is handed off rather than repaired here. Owned cleanup passed
-(EVD-062).
+(EVD-062). EVD-063 corrects that explanation: the guest already reserves its
+own 1024 MiB plus 128 MiB, and the real cause was too little free guest disk.
+After the operator asked for the remaining causes to be resolved, four more
+KVM runs each passed one more step. Cleaning apt caches gave 1577 MiB free and
+the guest ENOSPC check passed (EVD-064, EVD-065), so the supported VM route
+enforces the disk cap while EVD-007's Docker route stays a recorded FAIL; the restricted guest could not reach the
+host-side endpoint (EVD-066). k3d then needed a recorded gateway on the
+isolated network (EVD-067), the gateway check had to tolerate guest Docker
+fields (EVD-068), and finally the k3s server did not start within k3d's
+180-second wait (EVD-069). All owned cleanups passed (EVD-070) and the repairs
+have synthetic PASS (EVD-071). `/dev/kvm` carries udev's `uaccess` tag, so
+systemd-logind removes manual ACLs on this seatless host; the operator's
+`kvm` group membership is persistent but reaches the user systemd manager that
+starts VM units only after its next restart or a host reboot.
 
 ### 본문과 규칙
 
@@ -455,7 +468,7 @@ decision or evidence of technical implementation.
 
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
-| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria) | FAIL | Three actual VM runs failed at successively later steps: before guest SSH (EVD-053), at `cloud-init status` (EVD-057) and at in-guest admission disk reservation after the restricted reboot (EVD-061); the first two causes are repaired and confirmed by the next run. All three cleanups passed (EVD-054, EVD-058, EVD-062). Recorded LAN deny, guest ENOSPC and selected readiness remain unobserved; six operator criterion decisions remain pending |
+| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria) | FAIL | Seven actual VM runs each failed at a later step; the latest (EVD-069) creates the k3d server but k3s does not start within 180 seconds. The VM disk cap is enforced (EVD-065; EVD-007's Docker route stays FAIL) and restricted VM egress is denied (EVD-066); all owned cleanups passed. Selected readiness, the namespace probe pod and W09-H02 remain open; six operator criterion decisions remain pending |
 
 #### Verification Evidence
 
@@ -525,6 +538,15 @@ decision or evidence of technical implementation.
 | EVD-060 | [AC-0002](../spec.md#criteria) | WORK-001 | observation | Host `/dev/kvm` after EVD-058, about four minutes after EVD-057 observed the ACL | `getfacl /dev/kvm`; read and write `os.access` on `/dev/kvm` as UID 1000 | `getfacl /dev/kvm; python3 -c "import os; print(os.access(...))"` | 0 | DEFER | The user ACL was no longer present (`user::rw-` only) and access was `False`; the cause of the removal was not observed. The D07 single post-repair retry was spent by EVD-057, so any further VM run needs both renewed KVM access and a new operator authorization | true | none |
 | EVD-061 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | WORK-001 | observation | One additional run `p07vm003` authorized by the operator beyond D07's spent retry, at `05a536a7fa0fad0b2c2895400c21026d5d653fc4`, same closure and 600-second bound; started 2026-11-23T12:12:22Z after `/dev/kvm` ACL and access `True` were observed | Claude Code root executor; QEMU 8.2.2 `accel=kvm`, owned unit `hyk8s-test-p07vm003-vm`, guest serial in the unit journal | `python3 scripts/test_cluster.py --root . up --vm --run-id p07vm003 --authority P07-bounded-VM platform-network-policies` | 2 | FAIL | Failed after 264 seconds at the last controller step, the in-guest selected `up`: `ENV_LIMIT: insufficient currently available host disk`. Cloud-init finished in 44.7 seconds with the `nocloud` seed and `status --wait` passed (EVD-057 cause repaired in fact); the journal shows the guest powered off and booted a second time. The restricted SSH probe, capsule transfer and guest ENOSPC check precede that step and each raises on failure, so they completed, but their individual results were not recorded, so LAN deny and ENOSPC are not separately evidenced here. Cause: the guest re-runs shared admission, which reserves the cluster disk budget plus a 1024 MiB margin from the guest root filesystem, while the whole guest disk is 4080 MiB with Docker and images already installed. No k3d cluster or product workload started | true | none |
 | EVD-062 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Exact run `p07vm003` after EVD-061 | `test_cluster.py down`; user systemd; `test_cluster.py status`; `pgrep -a qemu-system` | `python3 scripts/test_cluster.py --root . down p07vm003` | 0 | PASS | `down` deleted `hyk8s-test-p07vm003-vm`; no `hyk8s*` unit remained, `.workspace-test` was empty, `status` returned `[]` and no QEMU process existed. Owned cleanup only | true | none |
+| EVD-063 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | WORK-001 | review | EVD-061 cause text against `verified_guest_profile` in `scripts/test_cluster_environment.py` | Root operator source read | none | none | PASS | Correction of EVD-061's cause: the guest admission reserves the guest profile, 1024 MiB disk plus a 128 MiB margin, not the host run budget plus 1024 MiB. The actual cause was guest free space below 1152 MiB at the selected `up`. EVD-061's observed failure stands; only its explanation is corrected here | true | none |
+| EVD-064 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | WORK-001 | observation | Run `p07vm004`, 2026-11-23T12:25:49Z, `main@4d4d56a7` plus working-tree repair that cleans apt caches before shutdown and records each boundary result in owner state | Claude Code root executor; QEMU 8.2.2 `accel=kvm` after the operator re-applied the `/dev/kvm` ACL and access `True` was read | `python3 scripts/test_cluster.py --root . up --vm --run-id p07vm004 --authority P07-bounded-VM platform-network-policies` | 2 | FAIL | Reached the in-guest `k3d cluster create`, which rolled back after 17 seconds; only the k3d FATA summary was surfaced. Owner state recorded `provision_probe` guest reachable as designed, `restricted_probe` `guest_restricted=true`, and `guest_enospc` `enospc=true, free_mib=1577`, so the guest admission reservation passed | true | none |
+| EVD-065 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Guest ENOSPC step of `p07vm004` and again `p07vm005` inside the fixed 4080 MiB raw VM disk | Same KVM VM route; guest `posix_fallocate` larger than the whole filesystem | `_guest_enospc` through the owned SSH session | 0 | PASS | Both runs recorded `enospc=true` with 1577 MiB free before the request and free space restored afterwards: the per-run disk cap is enforced by the bounded VM disk. This is the supported hard-disk boundary used instead of the failed Docker `storage-opt` route; the host k3d route stays refused without it. It is a different route and command from EVD-007, so it does not resolve that Docker-route FAIL | true | none |
+| EVD-066 | [AC-0004](../spec.md#criteria) | WORK-001 | observation | Restricted-phase probe of `p07vm004` and `p07vm005` after the guest rebooted on the `restrict=on` NIC | Owned host dummy endpoint with nonce; guest HTTP attempt to `10.0.2.2:<owned port>` | `probe_phase(restricted=True)` | 0 | PASS | `local_live=true` and `guest_restricted=true` in both runs: the restricted VM cannot reach the host-side endpoint while the endpoint is live. This is VM-level egress isolation only; the selected-namespace probe pod in W09-H02 was not reached, so W09-H02 stays open | true | none |
+| EVD-067 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | WORK-001 | observation | Run `p07vm005`, 2026-11-23T12:34:01Z, with the k3d diagnostic now carrying the first `ERRO` line | Claude Code root executor; QEMU 8.2.2 `accel=kvm` after the operator re-applied the `/dev/kvm` ACL and access `True` was read | Same `up --vm` command with run ID `p07vm005` | 2 | FAIL | `k3d cluster create: ERRO[0017] failed to gather environment information used for cluster creation: failed to get host IP`. A disposable host probe of two owned no-container networks (both removed by name and label) showed an isolated `--internal` network records no IPAM gateway unless `--subnet/--gateway` are given, which k3d needs for its host-IP lookup | true | none |
+| EVD-068 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | WORK-001 | observation | Run `p07vm006`, 2026-11-23T12:45:44Z, with the owned network created with a fixed explicit subnet and gateway | Claude Code root executor; QEMU 8.2.2 `accel=kvm` after the operator re-applied the `/dev/kvm` ACL and access `True` was read | Same `up --vm` command with run ID `p07vm006` | 2 | FAIL | `CLUSTER_NETWORK: isolated owned network is unverified`: the new exact IPAM equality rejected the guest Docker 29.1.3 output. The check now compares only the single config's subnet and gateway and reports the observed value | true | none |
+| EVD-069 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | WORK-001 | observation | Run `p07vm007`, 2026-11-23T12:53:30Z, after the IPAM check repair | Claude Code root executor; QEMU 8.2.2 `accel=kvm` after the operator re-applied the `/dev/kvm` ACL and access `True` was read | Same `up --vm` command with run ID `p07vm007` | 2 | FAIL | Network verification passed and k3d created the server container, then `ERRO[0197] Failed Cluster Start: Failed to start server k3d-hyk8s-test-991f8c2a-server-0` within k3d's 180-second wait; the cause after the node name was cut by the 160-character VM diagnostic bound. Selected readiness, the namespace probe pod and product workload were not reached | true | none |
+| EVD-070 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Runs `p07vm004`–`p07vm007` after each failure | `test_cluster.py down` for 004 and 005; the failure path's own owned cleanup for 006 and 007; user systemd; `status`; `pgrep -a qemu-system` | `python3 scripts/test_cluster.py --root . down <run>` where state remained | 0 | PASS | Each exact unit was deleted and its expiry timer stopped; no `hyk8s*` unit, `.workspace-test` entry, status row or QEMU process remained after any run. Owned cleanup only | true | none |
+| EVD-071 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0006](../spec.md#criteria) | WORK-001 | automated | Working-tree repairs on `main@4d4d56a7`: boundary results and apt cleanup in `scripts/test_cluster_vm.py`, first k3d `ERRO` line in `scripts/test_cluster.py`, explicit owned subnet/gateway and tolerant IPAM check in `scripts/test_cluster_environment.py`, with their tests | Pinned validation Python; Ruff | Each new or extended test first, then `scripts/run-contract-tests.py --root . --suite test-cluster`; `ruff check scripts tests` | 0 | PASS | Every new assertion failed before its repair; the suite then passed 127/127 across five modules and Ruff passed. Synthetic only; EVD-069 stays an open FAIL | true | none |
 
 ##### Resolution Links
 
@@ -572,6 +594,10 @@ EVD-058 records owned cleanup, EVD-059 the synthetic repair and EVD-060 the
 missing KVM access afterwards. EVD-061 confirms the EVD-059 repair in fact
 but fails on the guest-side admission disk reservation; EVD-053, EVD-057 and
 EVD-061 all stay unresolved FAILs, and EVD-062 records only owned cleanup.
+EVD-063 corrects EVD-061's explanation. EVD-065 is an actual enforced VM
+disk cap on a different route; EVD-007 stays the unresolved Docker-route FAIL. EVD-064, EVD-067, EVD-068 and EVD-069 are later
+FAILs; EVD-069 is the open runtime blocker. EVD-066 is VM-level isolation only
+and does not close W09-H02.
 Historical W09-H02 and W07-H05 stay under their original Task and ledger
 owner.
 
@@ -592,11 +618,13 @@ owner.
 
 Draft review, current scoped R008 receipt, source implementation, focused
 repository checks and both source-review blockers now have matching evidence.
-Three actual VM runs failed (EVD-053, EVD-057, EVD-061), each later than the
-one before; all owned cleanups passed. The open cause is guest-side admission
-reserving host-sized disk inside a 4080 MiB guest (EVD-061). Recorded guest
-ENOSPC, controlled LAN allow/deny probes and selected readiness remain
-unobserved; the operator-authorized run budget for this P07 resume is spent.
+Seven actual VM runs failed, each later than the one before; all owned
+cleanups passed. Confirmed: VM boot, NoCloud provisioning, restricted reboot,
+guest ENOSPC on the fixed VM disk (EVD-065; the Docker route of EVD-007
+stays an unsupported FAIL) and restricted
+VM egress denial (EVD-066). Open: the k3s server start inside the guest
+(EVD-069), then selected readiness, the selected-namespace probe pod and
+W09-H02.
 All six operator criterion decisions remain pending; no criterion acceptance
 is inferred from implementation, review, tests or merge.
 
@@ -609,16 +637,16 @@ or verified. Environment guide publication follows its own lifecycle.
 
 ##### Next Owner
 
-The environment owner designs how shared admission applies inside the bounded
-VM (for example, a guest-local disk reservation derived from the capsule's
-fixed disk instead of the host run budget and margin), with a focused failing
-regression, and records each restricted probe and ENOSPC result in the owner
-state. The operator then authorizes one more bounded run and restores
-`/dev/kvm` read/write for UID 1000, preferably in a form that persists across
-device permission resets. That run keeps the 600-second and resource limits
-and records boot, guest ENOSPC, LAN deny, selected readiness and owned cleanup
-against EVD-061. A failure is recorded as FAIL with its cause, not retried in
-a loop. Then the operator records the six criterion decisions separately.
+The environment owner first surfaces the full k3s start failure: capture
+the server container's last log lines on a failed `k3d cluster create` and
+widen the bounded VM diagnostic so the cause is recorded, with a focused
+failing regression. Likely areas are k3s system images that are absent in the
+restricted guest and the 1536 MiB server memory cap; neither is confirmed.
+After the host reboots, the user systemd manager carries the `kvm` group and
+the per-run ACL step is no longer needed. Each further run keeps the
+600-second and resource limits, records its result against EVD-069, and stops
+on a repeated cause instead of looping. Then the operator records the six
+criterion decisions separately.
 Only after those P07 gates does the next package input remain
 `prompts/P08-NATIVE-BRIEF.md`; this Task does not execute P08.
 

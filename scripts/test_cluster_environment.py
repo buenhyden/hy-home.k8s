@@ -28,6 +28,10 @@ from environment_admission import _process_start
 LABEL = "hy-home.k8s/run"
 NETWORK_PREFIX = "hyk8s-owned-"
 ISOLATED_GATEWAY = "com.docker.network.bridge.gateway_mode_ipv4"
+# k3d reads its host IP from the network gateway. Isolated mode assigns no
+# bridge address, so this recorded gateway stays unreachable from the nodes.
+# One owned network exists per bounded VM guest, so a fixed subnet is enough.
+OWNED_SUBNET, OWNED_GATEWAY = "172.30.0.0/24", "172.30.0.1"
 WORKLOAD_KINDS = frozenset(
     {"Pod", "Deployment", "StatefulSet", "DaemonSet", "Job", "CronJob", "ReplicaSet"}
 )
@@ -670,6 +674,10 @@ def create_network_command(name: str, run_id: str) -> list[str]:
         "--driver",
         "bridge",
         "--internal",
+        "--subnet",
+        OWNED_SUBNET,
+        "--gateway",
+        OWNED_GATEWAY,
         "--opt",
         f"{ISOLATED_GATEWAY}=isolated",
         "--label",
@@ -695,8 +703,10 @@ def network_names(run: Callable[..., str], run_id: str) -> set[str]:
 
 def verify_network(run: Callable[..., str], name: str, run_id: str) -> None:
     output = run(["docker", "network", "inspect", name, "--format", "{{json .}}"])
+    ipam = None
     try:
         data = json.loads(output)
+        ipam = data.get("IPAM", {}).get("Config")
         if (
             data.get("Name") != name
             or data.get("Driver") != "bridge"
@@ -704,11 +714,16 @@ def verify_network(run: Callable[..., str], name: str, run_id: str) -> None:
             or data.get("EnableIPv6") is not False
             or data.get("Options", {}).get(ISOLATED_GATEWAY) != "isolated"
             or data.get("Labels", {}).get(LABEL) != run_id
+            or not isinstance(ipam, list)
+            or len(ipam) != 1
+            or ipam[0].get("Subnet") != OWNED_SUBNET
+            or ipam[0].get("Gateway") != OWNED_GATEWAY
         ):
             raise ValueError("network isolation or ownership differs")
     except (TypeError, ValueError, AttributeError) as exc:
+        observed = json.dumps(ipam, sort_keys=True)[:120]
         raise ValueError(
-            "CLUSTER_NETWORK: isolated owned network is unverified"
+            f"CLUSTER_NETWORK: isolated owned network is unverified (ipam={observed})"
         ) from exc
 
 

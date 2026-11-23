@@ -1257,7 +1257,7 @@ class VmContractTest(unittest.TestCase):
                     "_copy_binary": None,
                     "_capsule": {},
                     "_send_capsule": None,
-                    "_guest_enospc": None,
+                    "_guest_enospc": 900,
                 }.items():
                     patches.enter_context(
                         mock.patch.object(owned, name, return_value=result)
@@ -1295,8 +1295,11 @@ class VmContractTest(unittest.TestCase):
                     mock.patch.object(
                         owned,
                         "_probe_phase",
-                        side_effect=lambda *_, **kw: steps.append(
-                            "restricted" if kw.get("restricted") else "provision"
+                        side_effect=lambda *_, **kw: (
+                            steps.append(
+                                "restricted" if kw.get("restricted") else "provision"
+                            )
+                            or {"restricted": kw.get("restricted")}
                         ),
                         create=True,
                     )
@@ -1325,6 +1328,19 @@ class VmContractTest(unittest.TestCase):
             owner = json.loads((owned.paths.directory / "owner.json").read_text())
             self.assertEqual(owner["status"], "ready")
             self.assertTrue(owner["network_probe"]["owned_host_denied"])
+            # Each boundary result is kept, not only the final readiness.
+            self.assertEqual(owner["restricted_probe"], {"restricted": True})
+            self.assertEqual(owner["provision_probe"], {"restricted": False})
+            self.assertEqual(owner["guest_enospc"], {"enospc": True, "free_mib": 900})
+            clean = next(
+                i
+                for i, argv in enumerate(guest_commands)
+                if "apt-get clean" in " ".join(argv)
+            )
+            shutdown = next(
+                i for i, argv in enumerate(guest_commands) if "shutdown" in argv
+            )
+            self.assertLess(clean, shutdown)
             selected_up = next(
                 argv
                 for argv in guest_commands
