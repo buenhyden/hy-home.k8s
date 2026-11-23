@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import contextlib
 import fcntl
+import ipaddress
 import json
 import os
 import platform
@@ -27,10 +28,10 @@ from environment_admission import _process_start
 
 LABEL = "hy-home.k8s/run"
 NETWORK_PREFIX = "hyk8s-owned-"
-ISOLATED_GATEWAY = "com.docker.network.bridge.gateway_mode_ipv4"
-# k3d reads its host IP from the network gateway. Isolated mode assigns no
-# bridge address, so this recorded gateway stays unreachable from the nodes.
-# One owned network exists per bounded VM guest, so a fixed subnet is enough.
+# k3d reads its host IP from the network gateway, and the guest reaches the
+# API through that bridge address; --internal blocks forwarding off the bridge
+# and the restricted VM NIC blocks the LAN. Only the bounded VM route creates
+# this network, one per guest, so a fixed subnet is enough.
 OWNED_SUBNET, OWNED_GATEWAY = "172.30.0.0/24", "172.30.0.1"
 WORKLOAD_KINDS = frozenset(
     {"Pod", "Deployment", "StatefulSet", "DaemonSet", "Job", "CronJob", "ReplicaSet"}
@@ -612,6 +613,25 @@ def labelled_runs(run: Callable[..., str]) -> dict[str, str]:
     return labels
 
 
+ROUTE_SCRIPT = """#!/bin/sh
+# k3s chooses its node IP from the default route, which the owned isolated
+# network does not provide. A device route without a gateway names eth0 for
+# that choice and reaches nothing the isolated bridge did not already reach.
+ip route show default | grep -q . || ip route add default dev eth0
+"""
+
+
+def write_route_script(state: Path) -> Path:
+    """Write the run-owned k3d entrypoint hook that gives k3s a default route."""
+    path = state / "k3d-entrypoint-route.sh"
+    descriptor = os.open(
+        path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o755
+    )
+    with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
+        stream.write(ROUTE_SCRIPT)
+    return path
+
+
 def create_command(
     name: str,
     run_id: str,
@@ -619,6 +639,7 @@ def create_command(
     network: str,
     server_memory: str = "4g",
     pause_tar: str | None = None,
+    route_script: str | None = None,
 ) -> list[str]:
     command = [
         "k3d",
@@ -656,6 +677,11 @@ def create_command(
             "--volume",
             f"{pause_tar}:/var/lib/rancher/k3s/agent/images/pause.tar:ro@server:0",
         ]
+    if route_script is not None:
+        command += [
+            "--volume",
+            f"{route_script}:/bin/k3d-entrypoint-route.sh:ro@server:0",
+        ]
     return command + ["--wait", "--timeout", "180s"]
 
 
@@ -678,8 +704,6 @@ def create_network_command(name: str, run_id: str) -> list[str]:
         OWNED_SUBNET,
         "--gateway",
         OWNED_GATEWAY,
-        "--opt",
-        f"{ISOLATED_GATEWAY}=isolated",
         "--label",
         f"{LABEL}={run_id}",
         name,
@@ -712,7 +736,6 @@ def verify_network(run: Callable[..., str], name: str, run_id: str) -> None:
             or data.get("Driver") != "bridge"
             or data.get("Internal") is not True
             or data.get("EnableIPv6") is not False
-            or data.get("Options", {}).get(ISOLATED_GATEWAY) != "isolated"
             or data.get("Labels", {}).get(LABEL) != run_id
             or not isinstance(ipam, list)
             or len(ipam) != 1
@@ -725,6 +748,29 @@ def verify_network(run: Callable[..., str], name: str, run_id: str) -> None:
         raise ValueError(
             f"CLUSTER_NETWORK: isolated owned network is unverified (ipam={observed})"
         ) from exc
+
+
+def node_address(run: Callable[..., str], cluster: str, network: str) -> str:
+    """Return the server node address on the owned network, inside its subnet."""
+    output = run(
+        [
+            "docker",
+            "inspect",
+            f"k3d-{cluster}-server-0",
+            "--format",
+            "{{json .NetworkSettings.Networks}}",
+        ]
+    )
+    try:
+        address = ipaddress.ip_address(json.loads(output)[network]["IPAddress"])
+        subnet = ipaddress.ip_network(OWNED_SUBNET)
+        if address not in subnet or str(address) == OWNED_GATEWAY:
+            raise ValueError("node address is outside the owned network")
+    except (TypeError, ValueError, KeyError) as exc:
+        raise ValueError(
+            "CLUSTER_NETWORK: server node address on the owned network is unverified"
+        ) from exc
+    return str(address)
 
 
 def verify_node_network(run: Callable[..., str], cluster: str, network: str) -> None:
@@ -782,11 +828,11 @@ def verified_pause_tar() -> str:
 
 
 def verified_guest_profile(capsule: Path) -> dict[str, Any]:
-    from test_cluster_vm import VmError, guest_disk_proof
+    from test_cluster_vm import VM_SECONDS, VmError, guest_disk_proof
 
     proof = guest_disk_proof(capsule)
     remaining = proof.get("deadline", 0) - time.time()
-    if type(proof.get("deadline")) is not int or not 0 < remaining <= 600:
+    if type(proof.get("deadline")) is not int or not 0 < remaining <= VM_SECONDS:
         raise VmError("VM_PROOF: parent VM deadline is invalid or expired")
     port, nonce = proof.get("dummy_port"), proof.get("dummy_nonce")
     if (
@@ -1234,7 +1280,7 @@ def selected_namespace_probe(
         if internal != nonce or not re.fullmatch(
             r"rc=[1-9][0-9]*(?: body=)?", external
         ):
-            raise ValueError("selected namespace boundary probe failed")
+            raise ValueError(f"internal={internal == nonce} external={external[:40]!r}")
         return {
             "namespace": namespace,
             "internal_allowed": True,
@@ -1242,8 +1288,10 @@ def selected_namespace_probe(
         }
     except Exception as exc:
         failure = exc
+        # Keep the bounded cause so a failed run shows which step failed.
         raise ValueError(
-            "CLUSTER_NETWORK: selected namespace allowed/denied probe failed"
+            "CLUSTER_NETWORK: selected namespace allowed/denied probe failed: "
+            f"{type(exc).__name__}: {str(exc)[:200]}"
         ) from exc
     finally:
         cleanup_error = None

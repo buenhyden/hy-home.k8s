@@ -593,7 +593,7 @@ class VmContractTest(unittest.TestCase):
         grace = int(
             next(item.split("=")[-1] for item in command if "TimeoutStopSec=" in item)
         )
-        self.assertLessEqual(runtime + grace, 600)
+        self.assertLessEqual(runtime + grace, vm.VM_SECONDS)
         self.assertNotIn("0.0.0.0", text)
 
     def test_unit_runtime_is_only_the_remaining_original_deadline(self):
@@ -613,6 +613,44 @@ class VmContractTest(unittest.TestCase):
         self.assertGreater(grace, 0)
         self.assertLessEqual(runtime + grace, 10)
         self.assertNotIn("--property=RuntimeMaxSec=600", command)
+
+    def test_bounded_vm_budget_is_1200_seconds_and_only_for_clusters(self):
+        vm = vm_module()
+        self.assertEqual(vm.VM_SECONDS, 1200)
+        with tempfile.TemporaryDirectory(prefix="p07-vm-budget-") as temporary:
+            paths = vm.paths_for(Path(temporary), "p07vm001")
+            now = 1_800_000_000
+            with mock.patch.object(vm.time, "time", return_value=now + 0.2):
+                command = vm.unit_command(paths, "p07vm001", "a" * 32, now + 1200)
+        self.assertIn("--property=RuntimeMaxSec=1194", command)
+        admission = importlib.import_module("environment_admission")
+        with tempfile.TemporaryDirectory(prefix="p07-vm-admission-") as temporary:
+            root = Path(temporary)
+            subprocess.run(["git", "init", "-q", str(root)], check=True)
+            gate = admission.Admission(root, state_dir=root / "state")
+            budget = {
+                "cpu": 2,
+                "memory_mib": 256,
+                "disk_mib": 64,
+                "seconds": 1200,
+                "instances": 1,
+            }
+            with mock.patch.object(
+                admission, "_available_memory_mib", return_value=65536
+            ):
+                gate.reserve("p07vm001", "cluster", ["selected"], budget, {})
+                with self.assertRaisesRegex(admission.AdmissionError, "per-run"):
+                    gate.reserve(
+                        "p07vm002", "native", [], budget | {"instances": 0}, {}
+                    )
+                with self.assertRaisesRegex(admission.AdmissionError, "per-run"):
+                    gate.reserve(
+                        "p07vm003",
+                        "cluster",
+                        ["selected"],
+                        budget | {"seconds": 1201},
+                        {},
+                    )
 
     def test_runtime_command_has_one_restricted_nic_and_only_loopback_ssh(self):
         vm = vm_module()
@@ -888,7 +926,7 @@ class VmContractTest(unittest.TestCase):
                     "cpu": 2,
                     "memory_mib": 4096,
                     "disk_mib": 4096,
-                    "seconds": 600,
+                    "seconds": vm_module().VM_SECONDS,
                     "instances": 1,
                 },
                 {"unit": vm.unit_name("p07vm001")},
@@ -928,7 +966,7 @@ class VmContractTest(unittest.TestCase):
                     "cpu": 2,
                     "memory_mib": 4096,
                     "disk_mib": 4096,
-                    "seconds": 600,
+                    "seconds": vm_module().VM_SECONDS,
                     "instances": 1,
                 },
                 {"unit": vm.unit_name("p07vm001")},
@@ -970,13 +1008,13 @@ class VmContractTest(unittest.TestCase):
                     "cpu": 2,
                     "memory_mib": 4096,
                     "disk_mib": 4096,
-                    "seconds": 600,
+                    "seconds": vm_module().VM_SECONDS,
                     "instances": 1,
                 },
                 {
                     "unit": vm.unit_name(run_id),
                     "vm_dir": str(directory),
-                    "deadline": int(time.time()) + 600,
+                    "deadline": int(time.time()) + vm_module().VM_SECONDS,
                     "pid": 99999999,
                     "start_ticks": 1,
                 },
@@ -1332,6 +1370,10 @@ class VmContractTest(unittest.TestCase):
             self.assertEqual(owner["restricted_probe"], {"restricted": True})
             self.assertEqual(owner["provision_probe"], {"restricted": False})
             self.assertEqual(owner["guest_enospc"], {"enospc": True, "free_mib": 900})
+            order = ["image", "provision_ssh", "restricted_ssh", "enospc", "guest_up"]
+            self.assertEqual(sorted(owner["phases"]), sorted(order))
+            elapsed = [owner["phases"][name] for name in order]
+            self.assertEqual(elapsed, sorted(elapsed))
             clean = next(
                 i
                 for i, argv in enumerate(guest_commands)

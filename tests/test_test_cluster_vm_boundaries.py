@@ -158,13 +158,13 @@ class VmBoundaryTest(unittest.TestCase):
                         "cpu": 2,
                         "memory_mib": 4096,
                         "disk_mib": 4096,
-                        "seconds": 600,
+                        "seconds": vm_module().VM_SECONDS,
                         "instances": 1,
                     },
                     {
                         "unit": vm.unit_name(run_id),
                         "vm_dir": str(paths.directory),
-                        "deadline": int(time.time()) + 600,
+                        "deadline": int(time.time()) + vm_module().VM_SECONDS,
                         "pid": pid,
                         "start_ticks": ticks,
                     },
@@ -894,7 +894,7 @@ class VmBoundaryTest(unittest.TestCase):
                     "cpu": 2 if case != "underbudget" else 1,
                     "memory_mib": 4096,
                     "disk_mib": 4096,
-                    "seconds": 600,
+                    "seconds": vm_module().VM_SECONDS,
                     "instances": 1,
                 }
                 token = admission.reserve(
@@ -1014,7 +1014,9 @@ class VmBoundaryTest(unittest.TestCase):
                 return "rc=0" if "10.0.2.2" in " ".join(command) else nonce
             return ""
 
-        with self.assertRaisesRegex(ValueError, "CLUSTER_NETWORK"):
+        with self.assertRaisesRegex(
+            ValueError, r"CLUSTER_NETWORK.*internal=True.*external='rc=0'"
+        ):
             environment.selected_namespace_probe(
                 run, "selected", 49152, nonce, "p07vm001"
             )

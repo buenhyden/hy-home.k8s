@@ -259,7 +259,7 @@ def up_host(
     paths = VM.paths_for(root, run_id)
     if paths.directory.parent.exists():
         raise VM.VmError("VM_OWNERSHIP: run directory already exists")
-    deadline = int(time.time()) + 600
+    deadline = int(time.time()) + VM.VM_SECONDS
     admission = admission or Admission(root)
     creator_start = _process_start(os.getpid())
     if creator_start is None:
@@ -272,7 +272,7 @@ def up_host(
             "cpu": 2,
             "memory_mib": 4096,
             "disk_mib": 4096,
-            "seconds": 600,
+            "seconds": VM.VM_SECONDS,
             "instances": 1,
         },
         {

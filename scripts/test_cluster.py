@@ -112,8 +112,15 @@ def _run(
             re.sub(r"\x1b\[[0-9;]*m", "", line)
             for line in (result.stderr or result.stdout).strip().splitlines()
         ] or [""]
-        # k3d's last line is a FATA summary; its cause is the first ERRO line.
-        detail = next((line for line in lines if line.startswith("ERRO")), lines[-1])
+        # k3d's last line is a FATA summary; a k3s fatal log line or the first
+        # ERRO line carries the cause.
+        fatal = next((line for line in lines if "level=fatal" in line), None)
+        message = re.search(r'msg="([^"]*)"', fatal) if fatal else None
+        detail = (
+            f"k3s fatal: {message.group(1) if message else fatal}"
+            if fatal
+            else next((line for line in lines if line.startswith("ERRO")), lines[-1])
+        )
         raise ClusterError(
             f"CLUSTER_STEP_FAILED: {' '.join(command[:3])}: {detail[:200]}"
         )
@@ -226,11 +233,34 @@ create_command = CLUSTER_ENV.create_command
 tool_environment = CLUSTER_ENV.tool_environment
 
 
-def _write_kubeconfig(name: str, path: Path, env: dict[str, str], runner=None) -> None:
+def _write_kubeconfig(
+    name: str,
+    path: Path,
+    env: dict[str, str],
+    runner=None,
+    *,
+    server: str | None = None,
+) -> None:
     text = (runner or _run)(["k3d", "kubeconfig", "get", name], env=env)
+    if server is not None:
+        # Inside the bounded VM no port is published; use the owned node address.
+        text, count = re.subn(
+            r"(?m)^(\s*server:\s*)\S+$", lambda m: m.group(1) + server, text
+        )
+        if count != 1:
+            raise ClusterError("CLUSTER_KUBECONFIG: expected one server entry")
     descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
     with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
         handle.write(text)
+
+
+def _verify_unpublished(name: str, runner=None) -> None:
+    """Inside the bounded VM the server must publish no port at all."""
+
+    output = (runner or _run)(["docker", "port", f"k3d-{name}-server-0"])
+    bindings = [line.strip() for line in output.splitlines() if line.strip()]
+    if bindings:
+        raise ClusterError(f"CLUSTER_EXPOSED: server publishes {bindings}")
 
 
 def _verify_loopback(name: str, runner=None) -> None:
@@ -421,6 +451,11 @@ def up(
         except ValueError as exc:
             raise ClusterError(str(exc)) from exc
         env = tool_environment(state)
+        route_script = None
+        if vm_capsule is not None:
+            route_script = str(CLUSTER_ENV.write_route_script(state))
+            # k3d prints the server's own log when it fails to start.
+            env = env | {"K3D_LOG_NODE_WAIT_LOGS": "server"}
         limited(
             create_command(
                 name,
@@ -429,6 +464,7 @@ def up(
                 network,
                 profile["server_memory"],
                 profile["pause_tar"] if vm_capsule is not None else None,
+                route_script,
             ),
             env=env,
         )
@@ -436,12 +472,22 @@ def up(
             CLUSTER_ENV.enforce_node_cpu(limited, name)
         except ValueError as exc:
             raise ClusterError(str(exc)) from exc
-        _verify_loopback(name, limited)
+        if vm_capsule is None:
+            _verify_loopback(name, limited)
+        else:
+            _verify_unpublished(name, limited)
         try:
             CLUSTER_ENV.verify_node_network(limited, name, network)
         except ValueError as exc:
             raise ClusterError(str(exc)) from exc
-        _write_kubeconfig(name, state / "kubeconfig", env, limited)
+        server = None
+        if vm_capsule is not None:
+            try:
+                address = CLUSTER_ENV.node_address(limited, name, network)
+            except ValueError as exc:
+                raise ClusterError(str(exc)) from exc
+            server = f"https://{address}:6443"
+        _write_kubeconfig(name, state / "kubeconfig", env, limited, server=server)
         limited(
             [
                 "kubectl",
@@ -625,7 +671,12 @@ def expire(
             return {"kept": run_id}
         try:
             return down(root, run_id, admission=admission)
-        except (ClusterError, VM.VmError):
+        except (ClusterError, VM.VmError, OSError):
+            # An owned `down` may finish first and remove the run directory.
+            if _read_state(root, run_id) is None and not admission.active_for_run(
+                run_id
+            ):
+                return {"absent": run_id}
             from test_cluster_vm_lifecycle import recover_vm_intents
 
             if token not in recover_vm_intents(
