@@ -108,9 +108,14 @@ def _run(
             f"CLUSTER_STEP_FAILED: {command[0]} output exceeds the limit"
         )
     if check and result.returncode != 0:
-        detail = (result.stderr or result.stdout).strip().splitlines()[-1:] or [""]
+        lines = [
+            re.sub(r"\x1b\[[0-9;]*m", "", line)
+            for line in (result.stderr or result.stdout).strip().splitlines()
+        ] or [""]
+        # k3d's last line is a FATA summary; its cause is the first ERRO line.
+        detail = next((line for line in lines if line.startswith("ERRO")), lines[-1])
         raise ClusterError(
-            f"CLUSTER_STEP_FAILED: {' '.join(command[:3])}: {detail[0][:200]}"
+            f"CLUSTER_STEP_FAILED: {' '.join(command[:3])}: {detail[:200]}"
         )
     return result.stdout
 

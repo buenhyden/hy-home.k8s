@@ -1005,7 +1005,7 @@ class VmRun:
         )
         self._ssh(ssh_port, ["rm", "-f", "/home/hyk8s/vm-capsule.json"], deadline_epoch)
 
-    def _guest_enospc(self, ssh_port: int, deadline_epoch: int) -> None:
+    def _guest_enospc(self, ssh_port: int, deadline_epoch: int) -> int:
         script = (
             "import errno,os,tempfile; fs=os.statvfs('/'); before=fs.f_bavail*fs.f_frsize; "
             "request=max(4279238656,fs.f_blocks*fs.f_frsize)+1048576; "
@@ -1014,9 +1014,16 @@ class VmRun:
             "\ntry:\n try: os.posix_fallocate(fd,0,request)\n except OSError as e: failed=e.errno==errno.ENOSPC\n"
             "finally: os.close(fd); os.unlink(name)\n"
             "after=os.statvfs('/').f_bavail*os.statvfs('/').f_frsize; "
-            "assert failed and after+1048576>=before and after>268435456"
+            "assert failed and after+1048576>=before and after>268435456; "
+            "print(before//1048576)"
         )
-        self._ssh(ssh_port, ["sudo", "-n", "python3", "-c", script], deadline_epoch)
+        output = self._ssh(
+            ssh_port, ["sudo", "-n", "python3", "-c", script], deadline_epoch
+        )
+        try:
+            return int(output.strip().splitlines()[-1])
+        except (ValueError, IndexError) as exc:
+            raise VmError("VM_PROOF: guest free-space measurement is missing") from exc
 
     def controller(self, deadline_epoch: int) -> None:
         owner = self._owner()
@@ -1076,7 +1083,10 @@ class VmRun:
         self._require_parent_lease()
         self._boot_qemu(ssh_port, provisioning=True, metadata_port=metadata_port)
         self._wait_ssh(ssh_port, deadline_epoch)
-        self._probe_phase(ssh_port, restricted=False, deadline_epoch=deadline_epoch)
+        provision_probe = self._probe_phase(
+            ssh_port, restricted=False, deadline_epoch=deadline_epoch
+        )
+        self._save_owner(self._owner() | {"provision_probe": provision_probe})
         self._record_files()
         self._ssh(ssh_port, ["cloud-init", "status", "--wait"], deadline_epoch)
         input_digest = self._copy_public_tree(ssh_port, deadline_epoch)
@@ -1111,6 +1121,12 @@ class VmRun:
             ["sudo", "-n", "docker", "pull", "ghcr.io/k3d-io/k3d-tools:5.9.0"],
             deadline_epoch,
         )
+        # Package caches are not needed after provisioning; keep guest disk free.
+        self._ssh(
+            ssh_port,
+            ["sudo", "-n", "sh", "-c", "apt-get clean && rm -rf /var/lib/apt/lists/*"],
+            deadline_epoch,
+        )
         self._ssh(
             ssh_port,
             ["sudo", "touch", "/etc/cloud/cloud-init.disabled"],
@@ -1131,11 +1147,17 @@ class VmRun:
             ) from exc
         self.reboot_restricted(ssh_port, deadline_epoch)
         self._wait_ssh(ssh_port, deadline_epoch)
-        self._probe_phase(ssh_port, restricted=True, deadline_epoch=deadline_epoch)
+        restricted_probe = self._probe_phase(
+            ssh_port, restricted=True, deadline_epoch=deadline_epoch
+        )
+        self._save_owner(self._owner() | {"restricted_probe": restricted_probe})
         proof = self._capsule(input_digest, deadline_epoch)
         self._record_files()
         self._send_capsule(ssh_port, deadline_epoch)
-        self._guest_enospc(ssh_port, deadline_epoch)
+        free_mib = self._guest_enospc(ssh_port, deadline_epoch)
+        self._save_owner(
+            self._owner() | {"guest_enospc": {"enospc": True, "free_mib": free_mib}}
+        )
         selected = self._owner().get("apps")
         if not isinstance(selected, list) or not selected:
             raise VmError("VM_INPUT: selected Application closure is unavailable")

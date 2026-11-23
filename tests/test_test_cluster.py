@@ -85,6 +85,23 @@ def git_init(root: Path) -> None:
     )
 
 
+class StepDiagnosticTest(unittest.TestCase):
+    def test_failed_step_reports_k3d_error_line_not_only_fatal_summary(self):
+        stderr = (
+            "\x1b[36mINFO\x1b[0m[0000] Prep: Network\n"
+            "\x1b[31mERRO\x1b[0m[0016] Failed Cluster Start: node failed to start\n"
+            "\x1b[31mFATA\x1b[0m[0017] Cluster creation FAILED, all changes have been rolled back!\n"
+        )
+        failed = subprocess.CompletedProcess(["k3d"], 1, stdout="", stderr=stderr)
+        with mock.patch.object(CLUSTER.subprocess, "run", return_value=failed):
+            with self.assertRaises(CLUSTER.ClusterError) as caught:
+                CLUSTER._run(["k3d", "cluster", "create", "x"])
+        message = str(caught.exception)
+        self.assertIn("ERRO[0016] Failed Cluster Start: node failed to start", message)
+        self.assertNotIn("\x1b", message)
+        self.assertLessEqual(len(message), 260)
+
+
 class TestClusterTest(unittest.TestCase):
     def setUp(self) -> None:
         temporary = tempfile.TemporaryDirectory(prefix="test-cluster-")
@@ -271,6 +288,11 @@ class TestClusterTest(unittest.TestCase):
                             "com.docker.network.bridge.gateway_mode_ipv4": "isolated"
                         },
                         "Labels": {"hy-home.k8s/run": "abc12345"},
+                        "IPAM": {
+                            "Config": [
+                                {"Subnet": "172.30.0.0/24", "Gateway": "172.30.0.1"}
+                            ]
+                        },
                     }
                 )
             if command[:2] == ["docker", "inspect"]:
@@ -879,6 +901,35 @@ class IsolatedNetworkTest(unittest.TestCase):
                         "hyk8s-owned-abc12345",
                         "abc12345",
                     )
+        valid = {
+            "Name": "hyk8s-owned-abc12345",
+            "Driver": "bridge",
+            "Internal": True,
+            "EnableIPv6": False,
+            "Options": {"com.docker.network.bridge.gateway_mode_ipv4": "isolated"},
+            "Labels": {"hy-home.k8s/run": "abc12345"},
+            "IPAM": {"Config": [{"Subnet": "172.30.0.0/24", "Gateway": "172.30.0.1"}]},
+        }
+        environment.verify_network(
+            lambda command: json.dumps(valid), "hyk8s-owned-abc12345", "abc12345"
+        )
+        # Docker versions add empty IPAM fields; only subnet and gateway matter.
+        extra = {"Subnet": "172.30.0.0/24", "Gateway": "172.30.0.1", "IPRange": ""}
+        environment.verify_network(
+            lambda command: json.dumps(valid | {"IPAM": {"Config": [extra]}}),
+            "hyk8s-owned-abc12345",
+            "abc12345",
+        )
+        # k3d resolves its host IP from the network gateway; an isolated
+        # network without an explicit gateway fails cluster creation.
+        self.assertIn("--gateway", command)
+        without_gateway = valid | {"IPAM": {"Config": [{"Subnet": "172.28.0.0/16"}]}}
+        with self.assertRaisesRegex(ValueError, "CLUSTER_NETWORK.*172.28.0.0/16"):
+            environment.verify_network(
+                lambda command: json.dumps(without_gateway),
+                "hyk8s-owned-abc12345",
+                "abc12345",
+            )
         with self.assertRaisesRegex(ValueError, "CLUSTER_NETWORK"):
             environment.verify_node_network(
                 lambda command: json.dumps({"hyk8s-owned-abc12345": {}, "bridge": {}}),
