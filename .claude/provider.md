@@ -135,6 +135,18 @@ invocation. The common procedure retains the selected role and user scope.
   picked up the changed settings and delivered `Stop` and `SubagentStop`, the
   latter with the sub-agent's own transcript path. `PreCompact` delivery stays
   unobserved.
+- Tracked settings also register `.claude/hooks/request-intake.sh` on
+  `UserPromptSubmit` (SPEC-0231). It forwards the payload to
+  `scripts/request_brief.py intake`, which keeps one receipt per session: a
+  digest of the prompt, never its text, a generation, the workspace, its
+  branch and a policy digest. Its `additionalContext` reaches the model, not
+  the user, so the model shows the brief in its reply and records it with
+  `scripts/request_brief.py record`. The pre-tool guard refuses a change it
+  detects (`BRIEF-MISSING`, `BRIEF-NOT-SHOWN`, `BRIEF-STALE`,
+  `BRIEF-WORKSPACE`) until then and sends the recorded brief through the
+  user-only `systemMessage` on the first admitted change. Read-only calls are
+  never gated, and shell writes are gated only where the guard detects them.
+  What the installed client actually showed is recorded in the SPEC-0231 Task.
 - Here the `read-only-evidence` permission class withholds the structured
   write tools while leaving `Bash` available for search. Its shell write
   prohibition and pre-edit observation are advisory, not a source-write

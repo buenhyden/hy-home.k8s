@@ -801,7 +801,22 @@ def main(argv: list[str] | None = None) -> int:
             if cursor.is_symlink():
                 reject("HOOK-PATH-SYMLINK")
 
+    # SPEC-0231: a change the guard sees needs the current request's recorded
+    # brief; the first admitted change shows that brief to the user.
+    brief = None
+    if paths or shell_targets:
+        import request_brief
+
+        try:
+            brief = request_brief.admit(
+                data, arguments.provider, str(Path(resolved_root).resolve())
+            )
+        except request_brief.Refusal as refusal:
+            reject_with_detail(refusal.code, refusal.detail)
+
     messages = build_messages(resolved_root, shell_targets)
+    if brief:
+        messages.insert(0, brief)
     # systemMessage reaches the user only; additionalContext reaches the model.
     try:
         # Claude loads folder AGENTS.md text natively through each folder's

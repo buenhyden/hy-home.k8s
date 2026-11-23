@@ -73,6 +73,18 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hook=\"$(git rev-parse --show-toplevel 2>/dev/null)/.codex/hooks/request-intake.sh\" ; [ -f \"$hook\" ] || exit 0 ; exec bash \"$hook\"",
+            "timeout": 10
+          }
+        ]
+      }
     ]
   }
 }

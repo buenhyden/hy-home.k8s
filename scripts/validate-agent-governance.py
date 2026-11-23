@@ -55,9 +55,20 @@ PROVIDER_HOOK_PATHS = {
 LIFECYCLE_HOOK_EVENTS = frozenset(
     {"SessionStart", "Stop", "PreCompact", "SubagentStop", "SessionEnd"}
 )
+# UserPromptSubmit runs only the request intake adapter, which binds the
+# request for the brief the write guard admits (SPEC-0231).
+INTAKE_HOOK_EVENT = "UserPromptSubmit"
 PROVIDER_HOOK_EVENTS = {
-    "claude": frozenset({"PreToolUse"}) | LIFECYCLE_HOOK_EVENTS,
-    "codex": frozenset({"PreToolUse"}) | LIFECYCLE_HOOK_EVENTS,
+    "claude": frozenset({"PreToolUse", INTAKE_HOOK_EVENT}) | LIFECYCLE_HOOK_EVENTS,
+    "codex": frozenset({"PreToolUse", INTAKE_HOOK_EVENT}) | LIFECYCLE_HOOK_EVENTS,
+}
+INTAKE_HOOK_COMMANDS = {
+    "claude": 'bash "$CLAUDE_PROJECT_DIR/.claude/hooks/request-intake.sh"',
+    "codex": (
+        'hook="$(git rev-parse --show-toplevel 2>/dev/null)'
+        '/.codex/hooks/request-intake.sh" ; [ -f "$hook" ] || exit 0 ;'
+        ' exec bash "$hook"'
+    ),
 }
 # Each lifecycle handler is exactly one of these commands, so nothing can be
 # chained after the adapter.
@@ -1110,6 +1121,18 @@ def validate_provider_hooks(root: Path, provider: str, hooks: Any) -> None:
 
     if not isinstance(hooks, dict) or set(hooks) != PROVIDER_HOOK_EVENTS[provider]:
         fail("AGENT-NATIVE-HOOK", f"{provider}: unregistered hook event set")
+    for group in hooks.get(INTAKE_HOOK_EVENT) or []:
+        handlers = group.get("hooks") if isinstance(group, dict) else None
+        if not isinstance(handlers, list) or any(
+            not isinstance(handler, dict)
+            or handler.get("command") != INTAKE_HOOK_COMMANDS[provider]
+            for handler in handlers
+        ):
+            fail(
+                "AGENT-NATIVE-HOOK",
+                f"{provider}: {INTAKE_HOOK_EVENT} runs something other than "
+                f"{INTAKE_HOOK_COMMANDS[provider]}",
+            )
     for event in LIFECYCLE_HOOK_EVENTS:
         for group in hooks.get(event) or []:
             handlers = group.get("hooks") if isinstance(group, dict) else None

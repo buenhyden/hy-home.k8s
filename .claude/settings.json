@@ -385,6 +385,18 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/request-intake.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
     ]
   }
 }

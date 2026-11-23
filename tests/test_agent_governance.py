@@ -83,6 +83,8 @@ class NativeBoundaryTests(unittest.TestCase):
             ".claude/hooks/session-start.sh",
             ".claude/hooks/session-capture.sh",
             ".codex/hooks/session-capture.sh",
+            ".claude/hooks/request-intake.sh",
+            ".codex/hooks/request-intake.sh",
             ".agents/governance/model-selection.md",
             ".agents/workflows/work-lifecycle.md",
             # The common authority directory is a closed set checked in both
@@ -164,6 +166,22 @@ class NativeBoundaryTests(unittest.TestCase):
                     "SessionEnd",
                 )
             },
+            "UserPromptSubmit": [
+                {
+                    "matcher": "*",
+                    "hooks": [
+                        {
+                            "type": "command",
+                            "command": (
+                                'hook="$(git rev-parse --show-toplevel 2>/dev/null)'
+                                '/.codex/hooks/request-intake.sh" ; [ -f "$hook" ]'
+                                ' || exit 0 ; exec bash "$hook"'
+                            ),
+                            "timeout": 10,
+                        }
+                    ],
+                }
+            ],
         },
     }
 
@@ -1116,6 +1134,17 @@ class NativeBoundaryTests(unittest.TestCase):
                     handler["command"] += extra
                     path.write_text(json.dumps(changed))
                     self.assert_rejected("AGENT-NATIVE-HOOK")
+            # SPEC-0231: the prompt event runs only the request intake adapter.
+            with self.subTest(provider=provider, case="intake missing"):
+                changed = copy.deepcopy(original)
+                del changed["hooks"]["UserPromptSubmit"]
+                path.write_text(json.dumps(changed))
+                self.assert_rejected("AGENT-NATIVE-HOOK")
+            with self.subTest(provider=provider, case="intake runs capture"):
+                changed = copy.deepcopy(original)
+                changed["hooks"]["UserPromptSubmit"] = changed["hooks"]["Stop"]
+                path.write_text(json.dumps(changed))
+                self.assert_rejected("AGENT-NATIVE-HOOK")
             with self.subTest(provider=provider, case="other provider adapter"):
                 other = "codex" if provider == "claude" else "claude"
                 changed = copy.deepcopy(original)
