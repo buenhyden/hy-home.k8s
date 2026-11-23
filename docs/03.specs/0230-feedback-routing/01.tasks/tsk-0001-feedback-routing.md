@@ -2,7 +2,7 @@
 title: "Feedback Routing Repair Task"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-23"
 artifact_id: "SPEC-0230-TSK-0001"
@@ -105,6 +105,7 @@ is open.
 | EVD-005 | [AC-0003](../spec.md#criteria) | WORK-001 | automated | Same host, current tree | Pinned validation Python | `python3 scripts/run-contract-tests.py --root . --suite document`; `qa.py quick` with one blank line added to `0013-selective-execution-environment.md` in a temporary worktree of `main` | 0 | PASS | The document suite alone took 544.3 s locally. `qa.py quick` on that guide change took 618.2 s with the `main` registry (8 gates including `document-contract-tests`) and 131.9 s with the new registry copied in, which also selected the registry's own routing checks because the registry itself differed there. The temporary worktree was restored and removed | true | none |
 | EVD-006 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria) | WORK-001 | automated | Reverted mutations of `scripts/validation/contract-suites/test-cluster.json` and `docs/00.workspace/05.environment/0013-selective-execution-environment.md` | Pinned validation Python; validators the new routes select | `run-contract-tests.py` validation-routing and test-cluster suites; `validate-links-and-owners.py` and `validate-markdown-profiles.py` with `--change-scope` | 0 | PASS | An unknown module fails the test-cluster suite load, which the suite file selects; a module registered twice fails validation-routing. A broken link fails `links-and-owners` (`LINK-BROKEN`); a renamed required heading fails `markdown-profiles` (`BODY-COMMON-ENVELOPE`) and `links-and-owners`. Both files were restored byte for byte | true | none |
 | EVD-007 | [AC-0003](../spec.md#criteria) | WORK-001 | automated | Temporary worktree at commit `c2cd6b3d` with one blank line added to `0013-selective-execution-environment.md` | Pinned validation Python, same host as EVD-005 | `python3 scripts/qa.py quick` | 0 | PASS | 7 gates selected without `document-contract-tests`, all PASS, in 87.9 s, against 618.2 s for the same guide change on the `main` registry in EVD-005. Single local sample. The worktree file was restored and the worktree removed | true | none |
+| EVD-008 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria) | WORK-001 | observation | Pull request #344, head `5cddd71a`, merged as `dd634afb` | GitHub Actions affected route | Hosted pull request checks | 0 | PASS | `ci-summary`, `style-pr` (10 min 55 s, every suite because the runner changed), `label`, `greeting` and GitGuardian passed; merged without bypass. Hosted evidence for this pull request only | true | none |
 
 ##### Resolution Links
 
@@ -117,15 +118,15 @@ runs before the change and are not separate evidence rows.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0002](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0003](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | accepted | EVD-003, EVD-006, EVD-008 | User message 'acceptance of the three criteria … 처리' of 2026-11-23 in this session | user | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | accepted | EVD-002, EVD-003, EVD-006, EVD-008 | User message 'acceptance of the three criteria … 처리' of 2026-11-23 in this session | user | platform | none |
+| [AC-0003](../spec.md#criteria) | accept | accepted | EVD-004, EVD-005, EVD-007 | User message 'acceptance of the three criteria … 처리' of 2026-11-23 in this session | user | platform | none |
 
 ##### Remaining Conditions
 
-Staged QA passed in the commit hook of `c2cd6b3d` and the guide-only timing
-is EVD-007. Hosted pull request checks and the operator's three criterion
-decisions remain.
+None remains for R01: staged QA passed in the commit hooks, hosted checks
+passed (EVD-008) and the user accepted the three criteria on 2026-11-23.
+Ordinary package exit to Archived Lineage is a separate later change.
 
 #### Handoff
 
@@ -135,8 +136,9 @@ The Plan promotes no durable contract.
 
 ##### Next Owner
 
-The repository owner completes delivery; the operator decides the three
-criteria. Hosted timing on later pull requests is a separate observation. The
+Delivery and criterion acceptance are complete. Hosted timing on later pull
+requests is a separate observation; package exit follows the document
+lifecycle policy in a later change. The
 next package input is `prompts/R02-CONTRACT.md`; this Task does not run it.
 
 ## 적용과 확인
