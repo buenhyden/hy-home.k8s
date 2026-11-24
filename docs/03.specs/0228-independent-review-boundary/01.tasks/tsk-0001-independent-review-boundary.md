@@ -2,7 +2,7 @@
 title: "Independent Review and Read-Only Boundary Task"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-20"
 artifact_id: "SPEC-0228-TSK-0001"
@@ -150,6 +150,7 @@ not treated as criterion acceptance.
 | EVD-018 | [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria) | WORK-001 | review | C3 source `331efea93e815e2970d8bc6cf5a52bab6a86a2fd` plus five-document correction overlay: Spec `b5a38fa6`, Plan `3539e336`, Task228 `f04fb594`, Task223 `d84dd19a`, ledger `33fa1061`; current evidence metadata follows the native packet | Same confined Claude CLI 2.1.328 `claude-sonnet-5-5` high route as EVD-016; fresh session `f76c520d-b0a3-4ffd-84c7-9df9dab33be4`, 62.753s, four distinct API response IDs within the configured six-turn bound | Claude focused high-risk source review | 0 | PASS | Focused reviewer found 0 BLOCK, 3 FIX, 5 NOTE and explicitly confirmed all four EVD-017 source/authority issues addressed without weakening P06/D06/D07. PASS here resolves those four prior findings after operator disposition; it does not recast the raw 3 FIX as 0 FIX or claim the reviewer ran QA. The three new receipt findings were EVD-044's misleading final-review label, this Task's required resolution link, and candidate identity for the five overlaid docs; the first two are corrected in current records, while overlay validation is separately required before delivery. Actual dummy Read succeeded, Write was denied by dontAsk, outside Read was denied by restricted CWD; callable MCP empty and no hook event. Actual charge remains `null`; CLI list-price estimate $0.3054277 is not a subscription charge. No model rerun is authorized or needed for receipt-only correction | true | EVD-017 |
 | EVD-019 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria) | WORK-001 | observation | {"actor":"user","approval_ref":"Current human P06-INDEPENDENT-REVIEW.md execution request of 2026-11-20 in this conversation, package workspace_governance_remediation_1_1_0_20261120; implementation/verification/commit/push/PR/merge only","scope":["SPEC-0228","SPEC-0228-PLAN-0001","SPEC-0228-TSK-0001"],"reviewed_spec_sha256":"b5a38fa6cd67dc255615bdad6f33f69b45baf2c0e687dcc4c563b15070a63b60","reviewed_plan_sha256":"3539e336421ec36d51b6f4c9e3d15dbdff9f20c90dac4336e5a5d856e9af3923","request_revision":"77528b46c5282390db4c25778f44fff932f924df4afe8f4162e77e48f37dcc60","validity":"confirmed","revocation":"none"} | Current trusted user P06 execution request, EVD-018 exact-parent review and lifecycle request-revision helper | Scoped execution approval | none | PASS | Root confirmed the user request still covers P06 implementation, validation and ordinary Git delivery; no observed revocation. This receipt binds changed authoritative Spec/Plan bytes after native review. EVD-003/005 remain historical earlier-parent execution receipts; none of these grants Spec/Plan approval, criterion acceptance, native permission or a protected live action | true | none |
 | EVD-020 | [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria) | WORK-001 | automated | Five-document post-review overlay only: Spec/Plan/Task228, Task223 and existing residue ledger at commit `c4a10cad`; C3 implementation source `331efea9` unchanged | Installed normal exact-index staged QA, current Markdown profile/link/lifecycle/ledger consumers and both commit-message checks | `git commit` invoking `python3 scripts/qa.py staged` and message checks | 0 | PASS | The overlay's selected document gates and both message checks PASS on the committed C5 index. This binds the corrected receipt and ledger to current validation, resolving the post-repair review's third evidence-binding FIX. EVD-015's 16 selected affected-lane PASS applies to C3's 24-path source input, not this later five-document overlay; no unchanged implementation test or hosted CI rerun is claimed | true | none |
+| EVD-021 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria) | WORK-001 | automated | P16 re-verification of the promotion owners at `main@a4968ee5` (docs/00.workspace/04.quality/quality.md, .agents/governance/approval-and-safety.md, docs/00.workspace/03.process/sdlc.md, docs/00.workspace/05.environment/0012-independent-review-environment.md) | Pinned validation venv | `scripts/validate-markdown-profiles.py --root . --mode strict` and `scripts/validate-links-and-owners.py --root . --mode strict`, each with `--include-path` for the owners; `scripts/validate-work-residue-ledger.py --root .` | 0 | PASS | Markdown profiles: no violations; links and owners: cross-document valid; residue ledger PASS with 30 entries. The promoted owner content is current and valid; the user accepted every criterion on 2026-11-24 (P16) | true | none |
 
 ##### Resolution Links
 
@@ -165,16 +166,16 @@ Any later required failure needs a matching PASS row and explicit Resolves ID.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0002](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0003](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0004](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0005](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0006](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | accepted | EVD-001, EVD-002, EVD-004, EVD-006, EVD-021 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0228 criteria | user | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | accepted | EVD-001, EVD-002, EVD-004, EVD-007, EVD-014, EVD-021 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0228 criteria | user | platform | none |
+| [AC-0003](../spec.md#criteria) | accept | accepted | EVD-001, EVD-002, EVD-004, EVD-007, EVD-014, EVD-018, EVD-021 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0228 criteria | user | platform | none |
+| [AC-0004](../spec.md#criteria) | accept | accepted | EVD-001, EVD-002, EVD-004, EVD-006, EVD-009, EVD-014, EVD-016, EVD-018, EVD-021 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0228 criteria | user | platform | none |
+| [AC-0005](../spec.md#criteria) | accept | accepted | EVD-001, EVD-002, EVD-004, EVD-007, EVD-008, EVD-009, EVD-012, EVD-013, EVD-014, EVD-015, EVD-018, EVD-020, EVD-021 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0228 criteria | user | platform | none |
+| [AC-0006](../spec.md#criteria) | accept | accepted | EVD-001, EVD-002, EVD-004, EVD-006, EVD-008, EVD-014, EVD-015, EVD-016, EVD-020, EVD-021 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0228 criteria | user | platform | none |
 
 ##### Remaining Conditions
 
-The Results rows own P06 source, selected checks, provider observations and
+The user accepted every criterion on 2026-11-24 (P16), and the Task is completed. The Results rows own P06 source, selected checks, provider observations and
 PR integration. All six operator criterion decisions remain pending until
 their own recorded decisions. The original Desktop→SSH failed route retains
 its separate repair or excluded-route disposition.
@@ -183,11 +184,12 @@ its separate repair or excluded-route disposition.
 
 ##### Promotion Receipt
 
-The Plan names current durable owners. EVD-009 reviewed the Guide content;
-EVD-012/013 established its draft and in-review Git states. GDE-0012 is an
-active 1.0.0 how-to in the full P06 source candidate; its final source
-delivery and Claude result still require their own observed rows. Other
-owner updates and results are recorded by their actual final candidate.
+P06-RISK: [quality policy](../../../00.workspace/04.quality/quality.md);
+P06-AUTH: [agent approval and safety](../../../../.agents/governance/approval-and-safety.md);
+P06-HANDOFF: [SDLC process](../../../00.workspace/03.process/sdlc.md);
+P06-ENV: [review environment](../../../00.workspace/05.environment/0012-independent-review-environment.md).
+Each owner carries the promoted content and passed the strict profile and
+link checks at `main@a4968ee5` (EVD-021).
 
 ##### Next Owner
 

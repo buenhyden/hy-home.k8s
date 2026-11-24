@@ -2,7 +2,7 @@
 title: "Forecast Consumer Link Task"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-24"
 artifact_id: "SPEC-0234-TSK-0001"
@@ -111,12 +111,12 @@ None yet.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | accept | pending | EVD-002, EVD-004 | Awaiting the operator's decision | none | platform | none |
-| [AC-0002](../spec.md#criteria) | accept | pending | EVD-003, EVD-004, EVD-005 | Awaiting the operator's decision | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | accepted | EVD-002, EVD-004 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0234 criteria | user | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | accepted | EVD-003, EVD-004, EVD-005 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0234 criteria | user | platform | none |
 
 ##### Remaining Conditions
 
-Record 20 was finished and scored after pull request #358 merged (EVD-005);
+The user accepted every criterion on 2026-11-24 (P16), and the Task is completed. Record 20 was finished and scored after pull request #358 merged (EVD-005);
 one run in a group of four is no calibration. Hosted checks passed (EVD-004).
 W10-H01 waits for a Codex session after 2026-11-27.
 
