@@ -945,8 +945,6 @@ class VmBoundaryTest(unittest.TestCase):
             ):
                 with self.assertRaisesRegex(vm.VmError, "VM_PROOF"):
                     vm.guest_disk_proof(capsule, sysroot=Path(temporary))
-                with self.assertRaisesRegex(ValueError, "CLUSTER_DISK_LIMIT"):
-                    environment.require_product_disk_cap()
                 with self.assertRaisesRegex(vm.VmError, "VM_PROOF"):
                     environment.verified_guest_profile(capsule)
 
@@ -1110,6 +1108,27 @@ class VmBoundaryTest(unittest.TestCase):
             )
         )
 
+    def test_the_probe_denies_the_named_host_address(self):
+        environment = importlib.import_module("test_cluster_environment")
+        calls = []
+
+        def run(command, input_text=None, **_kwargs):
+            calls.append((command, input_text))
+            if command[:3] == ["kubectl", "get", "pod"]:
+                return "10.42.0.5"
+            if "exec" in command:
+                return (
+                    "rc=1" if "172.30.0.1" in " ".join(command) else "synthetic-nonce"
+                )
+            return ""
+
+        environment.selected_namespace_probe(
+            run, "selected", 49152, "synthetic-nonce", "p07vm001", "172.30.0.1"
+        )
+        applied = next(text for command, text in calls if text)
+        self.assertIn('"cidr": "172.30.0.1/32"', applied)
+        self.assertNotIn("10.0.2.2", applied)
+
     def test_a_probe_pod_that_never_gets_ready_reports_its_state(self):
         environment = importlib.import_module("test_cluster_environment")
 
@@ -1186,8 +1205,12 @@ class VmBoundaryTest(unittest.TestCase):
                 mock.patch.object(
                     cluster, "render", return_value=[{"kind": "Namespace"}]
                 ),
-                mock.patch.object(cluster.CLUSTER_ENV, "require_product_disk_cap"),
                 mock.patch.object(cluster.CLUSTER_ENV, "arm_expiry_timer"),
+                mock.patch.object(
+                    cluster.CLUSTER_ENV,
+                    "host_pause_tar",
+                    return_value="/r/.workspace-test/fail0001/pause.tar",
+                ),
                 mock.patch.object(cluster.CLUSTER_ENV, "verify_network"),
                 mock.patch.object(
                     cluster.CLUSTER_ENV, "create_inflight", return_value=True

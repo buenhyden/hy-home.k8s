@@ -63,10 +63,12 @@ records an original Desktop→SSH failure even if the current CLI route works.
 
 Every work unit inherits the [draft Spec](spec.md#scope) boundaries. The
 resource values below are provisional engineering caps, not a new approval
-gate or an assertion of host capacity: no more than 2 vCPU, 4 GiB memory,
+gate or an assertion of host capacity: no more than 3 vCPU (operator,
+2026-11-24), 4 GiB memory,
 4 GiB writable disk and 600 seconds per small run, subject to actual host
 headroom and the existing tighter limits. Admission refuses any unbounded
-field; a reservation alone is not a hard disk cap. Select fewer than all
+field; a reservation alone is not a disk bound, so the host route adds the
+Spec's watchdog. Select fewer than all
 product Applications, even across simultaneous runs. Provider calls stay
 within the existing accounts, model availability and quota, at most two
 actual parallel workers, one initial and one repaired attempt, sequential
@@ -87,15 +89,15 @@ privileged pod paths; verify each before product workload startup. After
 topology preflight, run one disposable probe pod in the selected product
 namespace against controlled positive and negative endpoints. Leave W09-H02
 failed if either path fails. An apparent disk
-reservation is not a quota; block product startup that requires a hard cap
-until the host/container mechanism proves it. Native quota can be exhausted;
+reservation is not a quota; product startup needs the hard cap or the Spec's
+accounted watchdog bound, whose polling limit stays a recorded residual. Native quota can be exhausted;
 reuse matching P06 evidence and stop only the dependent paid call. These are
 high-impact boundary risks for platform and security review, not invented
 probability scores.
 
 ###### Escalation
 
-If this host lacks a supported scoped network or hard-disk boundary, retain
+If this host lacks a supported scoped network or disk bound, retain
 the selected static and render/API work, name the failed or unavailable
 product-start condition and the environment operator. A host firewall or VM
 change requires its exact target, authority, rollback and evidence; global
@@ -149,7 +151,7 @@ rollback by opening production LAN access.
 ##### Dependency Edges
 
 Current inventory and host limits precede reservation configuration. Atomic
-intent precedes process or cluster spawn. Actual network and hard-disk
+intent precedes process or cluster spawn. Actual network and disk-bound
 enforcement and controlled selected-namespace probe precede product workload startup. Selected live checks follow only
 their required dependency closure. P06 read-only evidence may carry only
 under the same version/configuration/scope; any repaired route gets its own

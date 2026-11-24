@@ -27,6 +27,7 @@ import json
 import math
 import os
 import re
+import secrets
 import shutil
 import signal
 import subprocess
@@ -37,7 +38,7 @@ from pathlib import Path
 from typing import Any, Sequence
 
 import yaml
-from environment_admission import Admission, AdmissionError, _process_start
+from environment_admission import RUN_BUDGET, Admission, AdmissionError, _process_start
 import test_cluster_environment as CLUSTER_ENV
 import test_cluster_vm as VM
 
@@ -263,15 +264,6 @@ def _verify_unpublished(name: str, runner=None) -> None:
         raise ClusterError(f"CLUSTER_EXPOSED: server publishes {bindings}")
 
 
-def _verify_loopback(name: str, runner=None) -> None:
-    """The API port must be published on 127.0.0.1 only."""
-
-    output = (runner or _run)(["docker", "port", f"k3d-{name}-server-0", "6443/tcp"])
-    bindings = [line.strip() for line in output.splitlines() if line.strip()]
-    if not bindings or any(not b.startswith("127.0.0.1:") for b in bindings):
-        raise ClusterError(f"CLUSTER_EXPOSED: API published on {bindings}")
-
-
 def _state_dir(root: Path, run_id: str) -> Path:
     if not isinstance(run_id, str) or not RUN_ID.fullmatch(run_id):
         raise ClusterError("CLUSTER_SCHEMA: a run ID is 8 lowercase letters or digits")
@@ -345,7 +337,7 @@ def up(
             CLUSTER_ENV.verified_guest_profile(vm_capsule)
             if vm_capsule is not None
             else {
-                "cpu": 2,
+                "cpu": RUN_BUDGET["cpu"],
                 "memory_mib": 4096,
                 "disk_mib": 4096,
                 "seconds": 600,
@@ -353,14 +345,16 @@ def up(
                 "server_memory": "4g",
                 "memory_margin_mib": 1024,
                 "disk_margin_mib": 1024,
+                # The probe's denied endpoint: the host behind the bridge.
+                "dummy_port": 49152 + secrets.randbelow(16384),
+                "dummy_nonce": secrets.token_hex(16),
+                "dummy_host": CLUSTER_ENV.OWNED_GATEWAY,
             }
         )
     except ValueError as exc:
         raise ClusterError(str(exc)) from exc
-    try:
-        CLUSTER_ENV.require_product_disk_cap(vm_capsule)
-    except ValueError as exc:
-        raise ClusterError(str(exc)) from exc
+    host_route = vm_capsule is None
+    watchdog: CLUSTER_ENV.DiskWatchdog | None = None
     run_id = run_id or uuid.uuid4().hex[:8]
     state = _state_dir(root, run_id)
     name = PREFIX + run_id
@@ -445,17 +439,25 @@ def up(
                 )
         except ValueError as exc:
             raise ClusterError(str(exc)) from exc
-        limited(CLUSTER_ENV.create_network_command(network, run_id))
+        if host_route:
+            # The isolated node cannot pull; the host supplies its images.
+            try:
+                pause_tar = CLUSTER_ENV.host_pause_tar(limited, state)
+            except ValueError as exc:
+                raise ClusterError(str(exc)) from exc
+        else:
+            pause_tar = profile["pause_tar"]
+        limited(
+            CLUSTER_ENV.create_network_command(network, run_id, isolated=host_route)
+        )
         try:
-            CLUSTER_ENV.verify_network(limited, network, run_id)
+            CLUSTER_ENV.verify_network(limited, network, run_id, isolated=host_route)
         except ValueError as exc:
             raise ClusterError(str(exc)) from exc
-        env = tool_environment(state)
-        route_script = None
-        if vm_capsule is not None:
-            route_script = str(CLUSTER_ENV.write_route_script(state))
-            # k3d prints the server's own log when it fails to start.
-            env = env | {"K3D_LOG_NODE_WAIT_LOGS": "server"}
+        # k3s needs a default route on the internal network; k3d prints the
+        # server's own log when it fails to start.
+        env = tool_environment(state) | {"K3D_LOG_NODE_WAIT_LOGS": "server"}
+        route_script = str(CLUSTER_ENV.write_route_script(state))
         limited(
             create_command(
                 name,
@@ -463,32 +465,40 @@ def up(
                 free_port(),
                 network,
                 profile["server_memory"],
-                profile["pause_tar"] if vm_capsule is not None else None,
+                pause_tar,
                 route_script,
             ),
             env=env,
         )
+        node = f"k3d-{name}-server-0"
+        if host_route:
+            watchdog = CLUSTER_ENV.DiskWatchdog(
+                lambda command: _run(command, timeout=20), node, profile["disk_mib"]
+            )
+            watchdog.start()
+
+        def cluster_run(command, **kwargs):
+            # No host address sits on the isolated bridge, so the host route
+            # runs kubectl inside the node against its own API.
+            if host_route and command[:1] == ["kubectl"]:
+                stdin = ["-i"] if kwargs.get("input_text") is not None else []
+                command = ["docker", "exec", *stdin, node, *command]
+            return limited(command, **kwargs)
+
         try:
             CLUSTER_ENV.enforce_node_cpu(limited, name)
         except ValueError as exc:
             raise ClusterError(str(exc)) from exc
-        if vm_capsule is None:
-            _verify_loopback(name, limited)
-        else:
-            _verify_unpublished(name, limited)
+        _verify_unpublished(name, limited)
         try:
             CLUSTER_ENV.verify_node_network(limited, name, network)
+            address = CLUSTER_ENV.node_address(limited, name, network)
         except ValueError as exc:
             raise ClusterError(str(exc)) from exc
-        server = None
-        if vm_capsule is not None:
-            try:
-                address = CLUSTER_ENV.node_address(limited, name, network)
-            except ValueError as exc:
-                raise ClusterError(str(exc)) from exc
-            server = f"https://{address}:6443"
-        _write_kubeconfig(name, state / "kubeconfig", env, limited, server=server)
-        limited(
+        _write_kubeconfig(
+            name, state / "kubeconfig", env, limited, server=f"https://{address}:6443"
+        )
+        cluster_run(
             [
                 "kubectl",
                 "wait",
@@ -499,43 +509,30 @@ def up(
             ],
             env=env,
         )
-        if vm_capsule is not None:
-            try:
-                record = record | CLUSTER_ENV.apply_selected_guest(
-                    limited, root, apps, ordered, rendered, env, run_id, profile
-                )
-            except ValueError as exc:
-                raise ClusterError(str(exc)) from exc
-        else:
-            for app in ordered:
-                limited(
-                    [
-                        "kubectl",
-                        "apply",
-                        "--dry-run=server",
-                        "-k",
-                        str(root / apps[app]["path"]),
-                    ],
-                    env=env,
-                )
-                limited(
-                    ["kubectl", "apply", "-k", str(root / apps[app]["path"])], env=env
-                )
-                for namespace in sorted(
-                    {
-                        item.get("metadata", {}).get("name")
-                        for item in rendered[app]
-                        if item.get("kind") == "Namespace"
-                    }
-                    - {None}
-                ):
-                    for item in CLUSTER_ENV.namespace_limits(namespace):
-                        limited(
-                            ["kubectl", "apply", "-f", "-"],
-                            env=env,
-                            input_text=json.dumps(item),
-                        )
-    except BaseException:
+        dummy = (
+            CLUSTER_ENV.start_host_dummy(profile["dummy_port"], profile["dummy_nonce"])
+            if host_route
+            else None
+        )
+        try:
+            record = record | CLUSTER_ENV.apply_selected_guest(
+                cluster_run, root, apps, ordered, rendered, env, run_id, profile
+            )
+        except ValueError as exc:
+            raise ClusterError(str(exc)) from exc
+        finally:
+            if dummy is not None:
+                dummy.shutdown()
+                dummy.server_close()
+        if watchdog is not None:
+            watchdog.stop()
+            if watchdog.exceeded:
+                raise ClusterError(f"CLUSTER_DISK_LIMIT: {watchdog.exceeded}")
+    except BaseException as failure:
+        disk = None
+        if watchdog is not None:
+            watchdog.stop()
+            disk = watchdog.exceeded
         deleted = False
         lease = None
         with contextlib.suppress(ClusterError, ValueError, OSError):
@@ -577,6 +574,8 @@ def up(
             if state.is_dir():
                 with contextlib.suppress(OSError, ValueError):
                     _write_state(root, run_id, record | {"status": "failed"})
+        if disk and not str(failure).startswith("CLUSTER_DISK_LIMIT"):
+            raise ClusterError(f"CLUSTER_DISK_LIMIT: {disk}") from failure
         raise
     record["status"] = "up"
     _write_state(root, run_id, record)

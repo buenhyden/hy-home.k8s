@@ -486,8 +486,12 @@ class ClusterLifecycleTest(unittest.TestCase):
             mock.patch.object(
                 self.cluster, "render", return_value=[{"kind": "Namespace"}]
             ),
-            mock.patch.object(self.cluster.CLUSTER_ENV, "require_product_disk_cap"),
             mock.patch.object(self.cluster.CLUSTER_ENV, "arm_expiry_timer"),
+            mock.patch.object(
+                self.cluster.CLUSTER_ENV,
+                "host_pause_tar",
+                return_value="/r/.workspace-test/network1/pause.tar",
+            ),
             mock.patch.object(self.cluster.CLUSTER_ENV, "disarm_expiry_timer"),
             mock.patch.object(self.cluster, "list_clusters", return_value=[]),
             mock.patch.object(self.cluster, "_cleanup_owned", return_value=True),

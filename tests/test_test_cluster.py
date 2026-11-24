@@ -373,12 +373,12 @@ class TestClusterTest(unittest.TestCase):
             if command[:2] == ["docker", "inspect"]:
                 if any("NanoCpus" in item for item in command):
                     return "3000000000"
-                return json.dumps({network: {}})
+                return json.dumps({network: {"IPAddress": "172.30.0.3"}})
             if command[:3] == ["docker", "network", "ls"]:
                 return "\n".join(sorted(networks))
             if command[:3] == ["k3d", "cluster", "create"]:
                 listed.add(command[3])
-            if command[:2] == ["kubectl", "apply"]:
+            if "kubectl" in command and "apply" in command:
                 raise CLUSTER.ClusterError("CLUSTER_STEP_FAILED: apply")
             if command[:3] == ["k3d", "cluster", "delete"]:
                 listed.discard(command[3])
@@ -389,9 +389,14 @@ class TestClusterTest(unittest.TestCase):
         with (
             mock.patch.object(CLUSTER, "_run", side_effect=run),
             mock.patch.object(CLUSTER, "_write_kubeconfig"),
-            mock.patch.object(CLUSTER, "_verify_loopback"),
             mock.patch.object(CLUSTER.CLUSTER_ENV, "arm_expiry_timer"),
-            mock.patch.object(CLUSTER.CLUSTER_ENV, "require_product_disk_cap"),
+            mock.patch.object(
+                CLUSTER.CLUSTER_ENV,
+                "host_pause_tar",
+                return_value="/r/.workspace-test/abc12345/pause.tar",
+            ),
+            mock.patch.object(CLUSTER.CLUSTER_ENV, "start_host_dummy"),
+            mock.patch.object(CLUSTER.CLUSTER_ENV, "node_disk_mib", return_value=1),
             mock.patch.object(
                 CLUSTER, "list_clusters", side_effect=lambda: clusters(*sorted(listed))
             ),
@@ -413,7 +418,9 @@ class TestClusterTest(unittest.TestCase):
         self.assertIn(["k3d", "cluster", "delete", "hyk8s-test-abc12345"], calls)
         self.assertIn(["docker", "network", "rm", network], calls)
         first_apply = next(
-            i for i, command in enumerate(calls) if command[:2] == ["kubectl", "apply"]
+            i
+            for i, command in enumerate(calls)
+            if "kubectl" in command and "apply" in command
         )
         self.assertTrue(
             any(c[:3] == ["docker", "update", "--cpus=3"] for c in calls[:first_apply])
@@ -431,7 +438,6 @@ class TestClusterTest(unittest.TestCase):
         calls = []
         with (
             mock.patch.object(CLUSTER, "list_clusters", return_value=[]),
-            mock.patch.object(CLUSTER.CLUSTER_ENV, "require_product_disk_cap"),
             mock.patch.object(
                 CLUSTER.CLUSTER_ENV,
                 "arm_expiry_timer",
@@ -516,7 +522,6 @@ class TestClusterTest(unittest.TestCase):
         )
         with (
             mock.patch.object(CLUSTER, "_run") as external,
-            mock.patch.object(CLUSTER.CLUSTER_ENV, "require_product_disk_cap"),
         ):
             with self.assertRaisesRegex(Exception, "ENV_LIMIT"):
                 CLUSTER.up(
@@ -528,49 +533,142 @@ class TestClusterTest(unittest.TestCase):
                 )
         external.assert_not_called()
 
-    def test_product_workload_cannot_start_without_a_proven_disk_cap(self) -> None:
-        app = self.root / "gitops/apps/root/product-demo-app.yaml"
-        app.write_text(application("product-demo", {"path": "gitops/product/demo"}))
-        pod = {
-            "apiVersion": "v1",
-            "kind": "Pod",
-            "metadata": {"name": "demo", "namespace": "apps"},
-        }
-        admission = importlib.import_module("environment_admission").Admission(
-            self.root, state_dir=self.root / "admission-state"
-        )
+    def test_host_route_runs_isolated_in_node_with_a_disk_watchdog(self) -> None:
+        """Option C (SPEC-0229): no VM; an isolated internal network, kubectl
+        inside the node and a disk watchdog instead of a hard disk cap."""
+        calls, captured = [], {}
+        network = "hyk8s-owned-abc12345"
+        node = "k3d-hyk8s-test-abc12345-server-0"
 
-        def render(root, path):
-            return [pod] if path == "gitops/product/demo" else RENDERED[path]
-
-        with (
-            mock.patch.object(CLUSTER, "render", side_effect=render),
-            mock.patch.object(CLUSTER, "_run", return_value="") as external,
-        ):
-            for selected in ("product-demo", "platform-network-policies"):
-                with (
-                    self.subTest(selected=selected),
-                    self.assertRaisesRegex(Exception, "CLUSTER_DISK_LIMIT"),
-                ):
-                    CLUSTER.up(
-                        self.root,
-                        [selected],
-                        run_id="abc12345",
-                        authority="fixture:approval",
-                        admission=admission,
-                    )
-        self.assertFalse(
-            any(
-                call.args[0][:3]
-                in (
-                    ["k3d", "cluster", "create"],
-                    ["docker", "network", "create"],
-                    ["kubectl", "apply", "-k"],
+        def run(command, **_kwargs):
+            calls.append(command)
+            if command[:3] == ["docker", "network", "inspect"]:
+                return json.dumps(
+                    {
+                        "Name": network,
+                        "Driver": "bridge",
+                        "Internal": True,
+                        "EnableIPv6": False,
+                        "Options": {
+                            "com.docker.network.bridge.gateway_mode_ipv4": "isolated"
+                        },
+                        "Labels": {"hy-home.k8s/run": "abc12345"},
+                        "IPAM": {
+                            "Config": [
+                                {"Subnet": "172.30.0.0/24", "Gateway": "172.30.0.1"}
+                            ]
+                        },
+                    }
                 )
-                for call in external.call_args_list
+            if command[:2] == ["docker", "inspect"]:
+                if any("NanoCpus" in item for item in command):
+                    return "3000000000"
+                return json.dumps({network: {"IPAddress": "172.30.0.3"}})
+            return ""
+
+        def apply(runner, root, apps, ordered, rendered, env, run_id, profile):
+            runner(["kubectl", "get", "pods"], env=env)
+            captured["profile"] = profile
+            return {"network_probe": {"namespace": "apps"}, "workload_ready": []}
+
+        dummy = mock.Mock()
+        with (
+            mock.patch.object(CLUSTER, "_run", side_effect=run),
+            mock.patch.object(CLUSTER, "_write_kubeconfig"),
+            mock.patch.object(CLUSTER.CLUSTER_ENV, "arm_expiry_timer"),
+            mock.patch.object(
+                CLUSTER.CLUSTER_ENV,
+                "host_pause_tar",
+                return_value="/r/.workspace-test/abc12345/pause.tar",
+            ),
+            mock.patch.object(
+                CLUSTER.CLUSTER_ENV, "start_host_dummy", return_value=dummy
+            ),
+            mock.patch.object(CLUSTER.CLUSTER_ENV, "node_disk_mib", return_value=10),
+            mock.patch.object(
+                CLUSTER.CLUSTER_ENV, "apply_selected_guest", side_effect=apply
+            ),
+            mock.patch.object(CLUSTER, "list_clusters", return_value=[]),
+            mock.patch.object(CLUSTER, "free_port", return_value=40123),
+        ):
+            record = CLUSTER.up(
+                self.root,
+                ["platform-network-policies"],
+                run_id="abc12345",
+                authority="fixture:approval",
+                admission=self.admission,
             )
+        self.assertEqual(record["status"], "up")
+        create_network = next(
+            c for c in calls if c[:3] == ["docker", "network", "create"]
         )
-        self.assertEqual(admission.active_for_run("abc12345"), [])
+        self.assertIn(
+            "com.docker.network.bridge.gateway_mode_ipv4=isolated", create_network
+        )
+        create = next(c for c in calls if c[:3] == ["k3d", "cluster", "create"])
+        self.assertIn(
+            "/r/.workspace-test/abc12345/pause.tar:/var/lib/rancher/k3s/agent/images/pause.tar:ro@server:0",
+            create,
+        )
+        self.assertIn(["docker", "exec", node, "kubectl", "get", "pods"], calls)
+        self.assertFalse(any(c[:1] == ["kubectl"] for c in calls))
+        self.assertEqual(captured["profile"]["dummy_host"], "172.30.0.1")
+        dummy.shutdown.assert_called_once()
+
+    def test_host_archive_carries_the_pause_and_probe_images(self):
+        """The isolated node cannot pull: k3s imports this one run archive."""
+        environment = importlib.import_module("test_cluster_environment")
+        calls = []
+
+        def run(command, **_kwargs):
+            calls.append(command)
+            if command[:2] == ["docker", "save"]:
+                Path(command[command.index("-o") + 1]).write_bytes(b"synthetic")
+            return ""
+
+        state = self.root / ".workspace-test" / "abc12345"
+        state.mkdir(parents=True)
+        path = environment.host_pause_tar(run, state)
+        self.assertEqual(path, str(state / "pause.tar"))
+        save = next(c for c in calls if c[:2] == ["docker", "save"])
+        self.assertIn(environment.PAUSE_IMAGE, save)
+        self.assertIn(environment.PROBE_IMAGE, save)
+        self.assertIn(["docker", "pull", environment.PROBE_IMAGE], calls)
+
+    def test_disk_watchdog_measures_the_node_and_kills_it_over_its_limit(self):
+        environment = importlib.import_module("test_cluster_environment")
+        node, calls = "k3d-hyk8s-test-abc12345-server-0", []
+
+        def run(command, **_kwargs):
+            calls.append(command)
+            if command[:3] == ["docker", "container", "inspect"]:
+                return "1048576\n"
+            if command[:3] == ["docker", "exec", node]:
+                return "1024\t/var/lib/rancher/k3s\n2048\t/var/log\n"
+            return ""
+
+        self.assertEqual(environment.node_disk_mib(run, node), 4)
+        self.assertIn(
+            ["docker", "exec", node, "du", "-skx", *environment.NODE_VOLUMES], calls
+        )
+        within = environment.DiskWatchdog(run, node, limit_mib=4)
+        self.assertTrue(within.check())
+        over = environment.DiskWatchdog(run, node, limit_mib=3)
+        self.assertFalse(over.check())
+        self.assertIn("4 MiB", over.exceeded)
+        self.assertIn(["docker", "kill", node], calls)
+
+        def broken(command, **_kwargs):
+            calls.append(command)
+            if command[:2] == ["docker", "kill"]:
+                return ""
+            raise RuntimeError("synthetic")
+
+        blind = environment.DiskWatchdog(broken, node, limit_mib=4)
+        self.assertTrue(blind.check())
+        self.assertTrue(blind.check())
+        self.assertFalse(blind.check(), "three failed measurements fail closed")
+        self.assertIn("unmeasurable", blind.exceeded)
 
     def test_up_names_its_authority_or_is_refused_before_any_action(self) -> None:
         with mock.patch.object(CLUSTER, "_run") as run:
@@ -660,8 +758,6 @@ class TestClusterTest(unittest.TestCase):
         with (
             mock.patch.object(CLUSTER, "_run", side_effect=run),
             mock.patch.object(CLUSTER, "_write_kubeconfig"),
-            mock.patch.object(CLUSTER, "_verify_loopback"),
-            mock.patch.object(CLUSTER.CLUSTER_ENV, "require_product_disk_cap"),
             mock.patch.object(
                 CLUSTER,
                 "list_clusters",
@@ -689,7 +785,6 @@ class TestClusterTest(unittest.TestCase):
                 CLUSTER, "list_clusters", return_value=clusters("hyk8s-test-abc12345")
             ),
             mock.patch.object(CLUSTER, "labelled_runs", return_value={}),
-            mock.patch.object(CLUSTER.CLUSTER_ENV, "require_product_disk_cap"),
             mock.patch.object(CLUSTER, "_run") as run,
         ):
             with self.assertRaisesRegex(CLUSTER.ClusterError, "CLUSTER_EXISTS"):
@@ -960,6 +1055,10 @@ class IsolatedNetworkTest(unittest.TestCase):
         self.assertNotIn(
             "com.docker.network.bridge.gateway_mode_ipv4=isolated", command
         )
+        isolated = environment.create_network_command(
+            "hyk8s-owned-abc12345", "abc12345", isolated=True
+        )
+        self.assertIn("com.docker.network.bridge.gateway_mode_ipv4=isolated", isolated)
         self.assertIn("--gateway", command)
         valid = {
             "Name": "hyk8s-owned-abc12345",
@@ -995,6 +1094,26 @@ class IsolatedNetworkTest(unittest.TestCase):
                     "hyk8s-owned-abc12345",
                     "abc12345",
                 )
+        with self.assertRaisesRegex(ValueError, "CLUSTER_NETWORK"):
+            environment.verify_network(
+                lambda command: json.dumps(valid),
+                "hyk8s-owned-abc12345",
+                "abc12345",
+                isolated=True,
+            )
+        environment.verify_network(
+            lambda command: json.dumps(
+                valid
+                | {
+                    "Options": {
+                        "com.docker.network.bridge.gateway_mode_ipv4": "isolated"
+                    }
+                }
+            ),
+            "hyk8s-owned-abc12345",
+            "abc12345",
+            isolated=True,
+        )
         with self.assertRaisesRegex(ValueError, "CLUSTER_NETWORK"):
             environment.verify_node_network(
                 lambda command: json.dumps({"hyk8s-owned-abc12345": {}, "bridge": {}}),
