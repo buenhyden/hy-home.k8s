@@ -85,7 +85,7 @@ kept unchanged.
 
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
-| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | PASS | Regressions pass (EVD-003) and the live stores read through the changed code (EVD-004); hosted results remain |
+| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | PASS | Regressions pass (EVD-003) and the live stores read through the changed code (EVD-004); hosted checks passed (EVD-005) |
 
 #### Verification Evidence
 
@@ -97,6 +97,7 @@ kept unchanged.
 | EVD-002 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | automated | New `CommonMemoryMeaningTest` cases and three promotion cases before the code change | Pinned validation venv, `unittest` | `python -m unittest tests.test_workspace_memory.CommonMemoryMeaningTest`; `python -m unittest tests.test_session_analysis` | 1 | FAIL | Failing-first: memory 4 failures and 5 errors, analysis 1 failure and 2 errors; the typed-value case already held and is kept as a preserving regression | false | none |
 | EVD-003 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | automated | Working tree after the change; the earlier conflict-search test rewritten to the D09 contract | Pinned validation venv, `unittest`; Ruff | `python -m unittest tests.test_workspace_memory tests.test_session_analysis tests.test_session_capture`; `ruff check scripts tests` | 0 | PASS | memory 38, analysis 27 and capture 21 tests OK; Ruff clean | true | none |
 | EVD-004 | [AC-0001](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | The local live stores, 2026-11-24T01:53:45Z, after a consistent SQLite backup of the analysis store (integrity `ok`, 9 candidates, 19 runs) | Changed working-tree code; no lease held | `scripts/session_analysis.py status`; `scripts/workspace_memory.py query` with and without `--include-stale --include-conflicted`; `search` | 0 | PASS | The analysis store gained `review_receipt` and `promotion` with integrity `ok` and unchanged counts; the backup was then deleted. The one live memory reads as `active`, retention `until-approved-erase`, no conflict, and its source `scripts/README.md` as `changed`, so the default query and search correctly return nothing. No memory was written or erased | true | none |
+| EVD-005 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Pull request #355, head `3a3d76d5` | GitHub Actions CI run 45309536081; GitGuardian | Hosted pull request checks | 0 | PASS | ci-summary, style-pr (6 min 13 s, including the affected memory, analysis and capture regression gates), label, greeting and GitGuardian passed | true | none |
 
 ##### Resolution Links
 
@@ -115,7 +116,8 @@ shows the passing state.
 
 ##### Remaining Conditions
 
-Staged QA, hosted checks and the operator's criterion decisions remain. A
+Staged QA passed in the commit hooks and hosted checks passed (EVD-005);
+the operator's criterion decisions remain. A
 two-provider write and read through the live store was not repeated: Codex
 is at its account limit until 2026-11-27 (SPEC-0231 EVD-008), and both
 providers use the same CLI, so the module regressions carry the shared
