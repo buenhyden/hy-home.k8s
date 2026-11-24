@@ -1,10 +1,10 @@
 ---
 title: "선택형 제품 검증 환경 가이드"
-version: "0.1.0"
+version: "0.2.0"
 type: "operation/guide"
 status: "draft"
 owner: "platform"
-updated: "2026-11-23"
+updated: "2026-11-24"
 artifact_id: "GDE-0013"
 ---
 
@@ -56,8 +56,23 @@ platform은 이 환경의 준비와 선택형 실행 절차를 소유한다. 실
 ###### Boundaries
 
 현재 `test_cluster.py`는 선택한 로컬 Kustomize Application의 dependency
-closure, 합산 admission과 run 소유 cleanup을 제공한다. `up --vm`은
-같은 선택 집합을 소유된 QEMU 사용자 서비스 안에서 실행하도록 연결한다.
+closure, loopback API와 전용 kubeconfig, run 소유 cleanup을 제공한다.
+[공용 admission](../../../scripts/environment_admission.py)은 같은 계정과
+호스트의 직접 실행과 [dispatcher](../../../scripts/work_parallel.py), 독립
+clone과 linked worktree를 하나의 상태에서 합산해 활성 구성 합집합과
+CPU·메모리·논리 디스크를 원자적으로 예약한다. Git checkout은 편집을
+분리할 뿐 OS sandbox가 아니다. 직접 `up`(host 경로)은
+[환경 adapter](../../../scripts/test_cluster_environment.py)로 소유 내부
+Docker network를 isolated gateway mode와 IPv6 꺼짐으로 만든다. 호스트는
+그 bridge에 주소를 두지 않고, node는 그 network 하나에만 붙으며,
+`kubectl`은 node 안에서 자기 API로 실행된다. node CPU·메모리와 namespace
+quota를 적용하고, 만료 timer를 자원 생성 전에 무장하며, 소유 자원의
+부재를 확인한 뒤에만 예약을 푼다. 디스크는 15초마다 node 사용량을 재는
+watchdog이 예산 초과 또는 측정 실패 세 번에 node를 멈추는 polling 상한이며
+kernel quota가 아니다. `up --vm`은 같은 선택 집합을 소유된 QEMU 사용자
+서비스 안에서 실행하도록 연결한다. 제품 NetworkPolicy는 생산 LAN의 외부
+서비스로 가는 egress를 허용하므로, 이 network 또는 VM 경계가 정책 아래에서
+host와 LAN을 막는다.
 원격 chart·CRD 의존 구성과 App-of-Apps root는 현재 `catalog`에서
 거절된다. 구현과 합성 회귀는 실제 VM 부팅이나 제품 기능 성공이 아니다.
 호스트 외부 방화벽, 전역 Docker
@@ -129,9 +144,9 @@ service, VM unit과 파일만 정리한다. timer 설치·만료·정리는 실�
 | 1 | 현재 Git revision, `catalog`와 아래 Application 표를 대조하고 정확한 선택 이름을 적는다. | root와 미지원 경로가 섞이지 않은 최소 후보가 나온다. | source/버전/namespace 불일치가 있으면 표를 현재 root YAML에 맞춰 갱신한다. |
 | 2 | `plan`으로 선택과 의존 closure를 확인한다. 전체, wildcard, App-of-Apps root 및 분할 선택으로 전체를 우회하는 요청은 거절한다. | 선택된 closure와 거절 사유가 기록된다. | `unsupported`는 이유와 필요한 chart/CRD controller만 별도 준비한다. |
 | 3 | 직접 `up`과 dispatcher가 같은 admission을 쓰는지, 활성 run의 closure 합집합·CPU·메모리·디스크·시간 예약을 호스트 실측 예산과 대조한다. | 한도 초과는 spawn 전에 거절되고 모든 실행이 하나의 상태를 소비한다. | 잠금·lease 소유 또는 경계가 애매하면 기동을 보류하고 lease를 보존한다. |
-| 4 | 실제 host/container 또는 VM 생산 LAN 차단을 확인한다. IPv6, 기본 route, proxy, 소유하지 않은 NIC, mount/socket 노출도 확인한다. | 별도 격리 경계와 시행 가능한 hard disk cap이 확인된다. | 한쪽이라도 없으면 모든 live k3d node 기동을 차단한다. Namespace/NetworkPolicy만 고른 경우도 예외가 아니다. |
+| 4 | 실제 host/container 또는 VM 생산 LAN 차단을 확인한다. IPv6, 기본 route, proxy, 소유하지 않은 NIC, mount/socket 노출도 확인한다. | 별도 격리 경계와 디스크 한도(VM 고정 디스크 또는 host watchdog의 polling 상한)가 확인된다. | 한쪽이라도 없으면 모든 live k3d node 기동을 차단한다. Namespace/NetworkPolicy만 고른 경우도 예외가 아니다. |
 | 5 | 선택한 경로만 render하고 API dry-run 결과를 기록한다. 실제 namespace와 policy를 적용한 뒤에는 임시 통제 probe pod 하나로 금지 경로와 허용 경로를 각각 확인한다. | render, API, 실제 두 경로의 결과가 구분된다. | static 성공으로 LAN 격리를 대체하지 않는다. 생산 endpoint에 요청하지 않는다. |
-| 6 | 실제 격리와 hard cap이 확인된 경우에만 제품 workload를 시작하고 선택한 readiness를 확인한다. run ID·label·namespace와 생성 자원을 기록한다. | 선택한 closure만 기동하고 readiness 근거가 남는다. | 실패·timeout은 실제 `failed`로 기록하고 소유 자원만 정리한다. |
+| 6 | 실제 격리와 디스크 한도가 확인된 경우에만 제품 workload를 시작하고 선택한 readiness를 확인한다. run ID·label·namespace와 생성 자원을 기록한다. | 선택한 closure만 기동하고 readiness 근거가 남는다. | 실패·timeout은 실제 `failed`로 기록하고 소유 자원만 정리한다. |
 | 7 | `down` 또는 `sweep` 전에 run 소유 token과 container/cluster label을 검증한다. | 해당 run의 자원만 삭제되고 lease는 확인 후 해제된다. | 소유가 불분명하면 lease와 자원을 보존해 운영자 조사로 넘긴다. |
 
 선택한 VM 경로의 실제 진입점은 `scripts/test_cluster.py up --vm`이다.
@@ -143,11 +158,10 @@ service, VM unit과 파일만 정리한다. timer 설치·만료·정리는 실�
 충돌 후 `sweep`을 쓰더라도 해당 lease와 unit, 프로세스 시작시각·file
 identity가 맞는 것만 정리한다. 소유가 애매하면 임대를 남긴다.
 
-현재 host의 직접 `up`은 선택 집합에 제품 Pod가 없어도 디스크 강제
-증거가 없으면 `CLUSTER_DISK_LIMIT`로 live k3d node 생성을 거절한다.
-선택한 VM capsule을 확인한 guest 경로에서만 고정 디스크를 근거로
-다음 단계를 진행한다. VM capsule이 있다는 사실도 실제 ENOSPC PASS는
-아니다. 현재 VM 구현의 예산과 검증 순서는 다음과 같다. 이 표는 코드 계약이며
+2026-11-24 운영자는 반복 실패한 VM 경로 대신 host 경로(option C)를
+선택했다. host의 직접 `up`은 isolated network와 디스크 watchdog으로 진행하고,
+watchdog이 node를 멈추면 `CLUSTER_DISK_LIMIT`로 실패한다. VM 경로는 선택
+사항으로 남는다. 현재 VM 구현의 예산과 검증 순서는 다음과 같다. 이 표는 코드 계약이며
 실제 VM 검증 결과가 아니다.
 
 | Boundary | Implemented candidate | Runtime decision |
@@ -183,76 +197,26 @@ root 동기화로 우회하지 않는다.
 각 단계는 `ready`, `failed`, `unsupported`, `missing`, `unobserved`,
 `not-applicable`과 이유를 기록한다. 문서 draft, 정적 render, API dry-run,
 실제 선택형 기동, 생산 LAN의 금지·허용 probe, cleanup 및 사용자 인수는
-서로 별도 결과다. 현재 W09-H02의 제품 namespace 생산 LAN egress 실패는
-통제된 두 경로의 실제 probe가 통과하기 전까지 실패로 유지한다.
-현재 Codex CLI 0.169.0의 작은 실제 sandbox 사전 점검에서는 더미 읽기
-성공, 쓰기 `EROFS`, 외부 더미 파일 `ENOENT`, AF_INET socket `EPERM`을
-확인했다. 이는 OS 경계의 비용 없는 실제 관측이다. 모델이 실제로 검토한
-결과나 Desktop→SSH 실패 수리, VM 격리의 증거는 아니며 P06의
-[GDE-0012](./0012-independent-review-environment.md) 절차와 원 Task 결과를
-그대로 구분해 사용한다.
-이후 동일한 선택형 Codex CLI 경계에서 실제 모델 검토 한 번이 실행됐다.
-모델 도구의 읽기 성공·쓰기/외부 파일/socket 거절은 실제로 확인됐지만,
-소스 판정은 네 건의 HIGH 때문에 `failed`다. 다른 run의 lease를 풀 수
-있는 token 불일치, 디스크 강제 없이 시작되는 직접 k3d, 공개 파일의
-검사-읽기 사이 symlink 경합, 생성 중인 자원의 임대를 만료가 먼저
-풀 수 있는 경합이었다. 후속 소스 후보는 lease 식별자 검증과 dispatcher
-경로, 모든 live node의 디스크 경계, `bounded_io`로 고정된 공개 파일
-읽기, 생성자 확인과 5초 종료 여유를 보완했다. 수리된 후보의 실제
-두 번째 모델 검토도 세 건의 HIGH와 한 건의 MEDIUM을 찾아 `failed`다.
-VM sweep이 진행 중인 생성자를 중지할 수 있고, 직접 k3d `down`이
-진행 중인 생성을 놓칠 수 있으며, VM 임대 해제는 workspace identity를
-검사하지 않고, VM 정리 충돌은 준비 worker lease를 남길 수 있다. 기존
-네 결함의 수정 범위와 새로 남은 수명주기 결함을 분리해 기록하고,
-현재 결함을 수리·재검증하기 전 소스 완료로 처리하지 않는다.
-세 번째 실제 모델 검토도 세 건의 HIGH 때문에 `failed`다. 오래된
-k3d 상태를 임대 해제 전에 삭제하면 실패 뒤 임대가 남고, 수거된 VM
-unit의 `unknown` 상태를 계속 생성 중으로 오판하며, VM 디렉터리 삭제
-중 `owner.json`이 먼저 없어지면 부분 삭제 상태를 복구할 수 없다.
-두 번째 검토의 live VM sweep·k3d create receipt·workspace 검사 원인은
-수리됐으나 이번 세 결함의 소스 수리와 선택된 재검증이 아직 필요하다.
-네 번째 실제 모델 검토에서도 두 건의 HIGH와 두 건의 MEDIUM으로
-소스 판정이 `failed`다. `systemctl is-active`가 실패하면서 `inactive`를
-출력하면 삭제를 잘못 허용할 수 있고, 임대 해제 전에 `owner.json`을
-지워 실패 뒤 재시도할 근거를 잃을 수 있다. native sweep의 cluster
-identity 재확인과 owner 교체 뒤 디렉터리 fsync도 누락됐다. 앞선 세
-검토의 임대·상태 정리 개선은 이 남은 결함의 통과 증거가 아니다.
-다섯 번째 실제 모델 검토는 네 번째의 두 HIGH와 두 MEDIUM 원인이
-수리됐다고 확인했으나, VM 상태 파일을 마지막 정리 전에 현재
-run·token·unit·workspace·binding과 다시 대조하지 않아 변경된 상태를
-덮거나 지울 수 있는 새 MEDIUM 결함으로 `failed`다. 의도가 같은 token인
-경우에도 workspace·binding을 확인해야 한다. 소스 수리와 선택된
-재검증 전에는 이를 완료로 처리하지 않는다.
-여섯 번째 실제 변경 범위 검토는 다섯 번째의 상태 identity 경합이
-수리됐음을 확인했지만, intent 복구가 정리 phase와 파일 제거보다
-부모 임대를 먼저 해제해 중단 뒤 재시도 근거를 잃는 새 MEDIUM 결함으로
-`failed`다. 이 결함의 소스 수리와 선택된 회귀 검증이 필요하다.
-여섯 차례 모두 모델 도구의 읽기 성공과 쓰기·외부 파일·네트워크 거절을
-별도로 확인했다. 여섯 검토용 unit·임대의 정확한 소유 확인 후 정리와
-기록된 proof PID의 소멸도 별도로 통과했다. 이 결과는
-소스 판정이나 VM 실동작의 통과 근거가 아니다. 관측된
-provider 청구액은 `null`이다. 시작 event의 기존 전역 role 경로 누락과
-host skill 경고는 P08 native binding 후속 소유에 넘기며, 이 경고를 P06
-Desktop 실패의 원인으로 단정하지 않는다. 실제 VM·제품 동작은 계속
-미관측이다.
-
-일곱 번째 실제 변경 범위 검토는 여섯 번째의 intent 복구 재시도 결함이
-수리됐음을 확인했고, 변경 경로에서 추가 조치할 소견 없이 통과했다.
-같은 실행의 경계 probe와 정확한 소유 자원 정리도 별도로 통과했다.
-반면 실제 VM 검증 명령은 실행 전 승인 검토에서 계정 사용 한도로
-거절되어 시작되지 않았다. VM 부팅, guest ENOSPC, LAN probe, 선택한
-제품 readiness와 cleanup은 여전히 미관측이다. 32 MiB 설정에서 40 MiB
-쓰기가 성공한 Docker 디스크 상한 실패도 해결되지 않았으므로, 이를
-완료나 runtime pass로 표시하지 않는다. 세부 입력과 결과는
-[선택형 환경 Task](../../03.specs/0229-selective-environment/01.tasks/tsk-0001-selective-environment.md)에
-기록한다.
+서로 별도 결과다. W09-H02의 통제된 두 경로 probe는 host 경로 run
+`p07host2`에서 통과했다. 제품 정책을 적용한 `apps`에서 내부 허용과 소유
+host 거절을, 정책이 없는 namespace에서 `192.168.0.13`·`192.168.0.14` 거절을
+각각 확인했다(SPEC-0229 EVD-088·EVD-089). 선택 가능한 Application에는
+pod가 없으므로 제품 workload readiness는 아직 미관측이다.
+P06 sandbox 사전 점검, P07의 일곱 차례 실제 모델 검토와 그 수리, 열세 번의
+VM 실행 실패와 정리 결과는 [선택형 환경 Task](../../03.specs/0229-selective-environment/01.tasks/tsk-0001-selective-environment.md)에
+원래대로 남아 있다. 현재 판정만 요약하면, VM 경로에서는 부팅, NoCloud
+준비, restricted 재부팅, guest ENOSPC, VM egress 거절, k3s 시작과 guest API
+경로가 관측됐으나 선택 readiness는 반복 실패했다. host 경로는 선택 적용,
+namespace probe와 LAN 거절, 소유 정리가 통과했다. Docker `size=32M` 쓰기
+상한 실패는 그 명령의 실패로 유지한다. 관측된 provider 청구액은 `null`이다.
 
 현재 root Application의 source 개요는 아래와 같다. 이 표의 `main`은
 움직이는 Git revision이며 pin이 아니다. 실제 검증에는 checkout HEAD를
 따로 고정한다. chart 판본은 root YAML의 명시값이다. `R`은 현재 로컬
 render 지원, `U`는 `catalog`가 현재 거절, `X`는 전체 root 거절을 뜻한다.
-모든 행의 API/live/readiness는 이 draft에서 아직 미관측이며, 선택한
-구성에서만 실제 검사한다. secret은 테스트 대체물을 요구하고 cleanup은
+`platform-namespaces`와 `platform-network-policies`는 run `p07host2`에서
+실제로 적용됐고(pod 없음), 나머지 행의 API/live/readiness는 아직
+미관측이며, 선택한 구성에서만 실제 검사한다. secret은 테스트 대체물을 요구하고 cleanup은
 run token·label로 확인한 소유 자원에 한정한다.
 
 | Application | Source and revision | Namespace | Current render and dependency | API/live/readiness | Secret and cleanup |
@@ -273,8 +237,8 @@ run token·label로 확인한 소유 자원에 한정한다.
 | platform-kiali | chart `kiali-operator` 2.10.0 | istio-system | U: remote chart | unobserved | substitute; owned only |
 | platform-kiali-config | local `gitops/platform/kiali`, `main` | istio-system | U: external-secrets.io CRD | unobserved | substitute; owned only |
 | platform-monitoring | local `gitops/platform/monitoring`, `main` | monitoring | U: external-secrets.io CRD | unobserved | substitute; owned only |
-| platform-namespaces | local `gitops/platform/namespaces`, `main` | argocd | R: no local prerequisite | unobserved | substitute; owned only |
-| platform-network-policies | local `gitops/platform/network-policies`, `main` | platform | R: namespaces | unobserved | substitute; owned only |
+| platform-namespaces | local `gitops/platform/namespaces`, `main` | argocd | R: no local prerequisite | applied in `p07host2`; no pod | substitute; owned only |
+| platform-network-policies | local `gitops/platform/network-policies`, `main` | platform | R: namespaces | applied in `p07host2`; LAN probe passed; no pod | substitute; owned only |
 | platform-rollouts | chart `argo-rollouts` 2.40.9 | argo-rollouts | U: remote chart | unobserved | substitute; owned only |
 | platform-traefik | chart `traefik` 42.1.3 | traefik | U: remote chart | unobserved | substitute; owned only |
 
@@ -293,9 +257,9 @@ disk 공간이 충분해 보여도 실제 per-run hard cap이 없을 수 있다.
 처음 붙인 `docker start -a` CLI가 60초에 timeout된 것과 별개로,
 컨테이너 inspect·logs에서 완료와 쓰기량을 확인했다. 소유 label을 확인한
 뒤 해당 컨테이너를 삭제했고, 후속 inspect는 `no such object`였다.
-기존의 다른 격리 VM 또는 Docker driver의 존재와 지원 여부는 아직
-미관측이다. 현재 QEMU/TCG VM 경로는 구현 후보이며 실제 부팅·게스트
-ENOSPC·LAN·선택 k3d 준비도는 아직 관측하지 않았다.
+host 경로는 이 쓰기 상한 대신 node 디스크 watchdog을 쓴다. QEMU/TCG VM
+경로에서는 부팅·게스트 ENOSPC·VM egress 거절이 관측됐으나 선택 k3d
+준비도는 통과하지 못했다.
 NetworkPolicy allow는 합산되므로 추가 deny만으로 기존 production LAN
 allow를 상쇄하지 못한다. 예약과 시뮬레이션만으로 hard cap을 증명하지
 않는다.
@@ -319,7 +283,7 @@ Docker `size=32M` 실패는 그 경로의 현재 실패로 유지한다. VM에�
 
 | Promoted owner | Audience outcome | Operating surface |
 | --- | --- | --- |
-| [SPEC-0223 Task](../../03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md) | W09-H02의 실제 생산 LAN 실패와 W07-H05의 별개 검토자 실패를 유지하면서 환경 수리 근거를 연결한다. | 현재 checkout의 선택형 k3d 검증과 P06 검토 경계 |
+| [SPEC-0223 Task](../../03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md) | W09-H02는 P07 host 경로의 실제 LAN 거절 관측으로 닫혔고, W07-H05의 별개 검토자 실패는 유지한다. | 현재 checkout의 선택형 k3d 검증과 P06 검토 경계 |
 
 ## 적용과 확인
 
