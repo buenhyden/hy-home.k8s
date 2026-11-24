@@ -91,7 +91,7 @@ SPEC-0229 criterion decisions stay with the operator.
 
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
-| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | PASS | Catalog (EVD-002); selector (EVD-003); W09-H02 closure (EVD-004) |
+| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | PASS | Catalog (EVD-002); selector (EVD-003); W09-H02 closure (EVD-004); hosted checks (EVD-005) |
 
 #### Verification Evidence
 
@@ -103,6 +103,7 @@ SPEC-0229 criterion decisions stay with the operator.
 | EVD-002 | [AC-0001](../spec.md#criteria) | WORK-001 | observation | Checkout `94b3ed72`, 20 root Applications | `scripts/test_cluster.py` | `python3 scripts/test_cluster.py --root . catalog` | 0 | PASS | Supported: `platform-namespaces`, `platform-network-policies`, `platform-external-services`, `platform-headlamp-config`, `platform-ingress-routes`; root: `platform-cluster-config`; unsupported: 9 remote charts and 5 Applications needing the `external-secrets.io` or `cert-manager.io` CRD. The supported five hold only Namespace, NetworkPolicy, Service, EndpointSlice, Ingress and IngressClass objects | true | none |
 | EVD-003 | [AC-0003](../spec.md#criteria) | WORK-001 | automated | One path at a time | `scripts/select-affected-surfaces.py --lane affected` | Select for `gitops/README.md`, the AD-0007 path and `gitops/platform/network-policies/kustomization.yaml` | 0 | PASS | README: the four document checks; AD-0007: the document checks and the residue ledger; manifest: `gitops-change-set`, `gitops-structure`, `k8s-manifests`, `platform-assurance`, `policy-gates`, `infrastructure-contracts`, `external-service-contracts`, `secret-handling`, `repository-quality` and `markdown-profiles`. No selection starts a cluster or rollout | true | none |
 | EVD-004 | [AC-0002](../spec.md#criteria) | WORK-001 | observation | SPEC-0229 EVD-085 and EVD-088 to EVD-090; the `up` route code | Source read; no new run | Read the rows and `scripts/test_cluster.py` route selection | 0 | PASS | The host route always builds the isolated network before any apply; LAN and host denial were observed below the applied product policies and without policy, with owned cleanup. W09-H02 closed as SPEC-0223 EVD-046 and its ledger entry made terminal | true | none |
+| EVD-005 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Pull request #362, head `cc1c518b`, documentation and residue files only | GitHub Actions CI run 45340745591; GitGuardian | Hosted pull request checks | 0 | PASS | ci-summary, style-pr (1 min 15 s, document leaves only, against about 9 minutes for the preceding code pull requests), label, greeting and GitGuardian passed; no product render, cluster or rollout leaf ran | true | none |
 
 ##### Resolution Links
 
@@ -114,13 +115,13 @@ None.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | accept | pending | EVD-002 | Awaiting the operator's decision | none | platform | none |
-| [AC-0002](../spec.md#criteria) | accept | pending | EVD-004 | Awaiting the operator's decision | none | platform | none |
-| [AC-0003](../spec.md#criteria) | accept | pending | EVD-003 | Awaiting the operator's decision | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | pending | EVD-002, EVD-005 | Awaiting the operator's decision | none | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | pending | EVD-004, EVD-005 | Awaiting the operator's decision | none | platform | none |
+| [AC-0003](../spec.md#criteria) | accept | pending | EVD-003, EVD-005 | Awaiting the operator's decision | none | platform | none |
 
 ##### Remaining Conditions
 
-Hosted checks are recorded when they run. W06-H02 waits for a manifest or CI
+Hosted checks passed (EVD-005). W06-H02 waits for a manifest or CI
 lock change; product workload readiness in a test cluster stays unobserved.
 
 #### Handoff
