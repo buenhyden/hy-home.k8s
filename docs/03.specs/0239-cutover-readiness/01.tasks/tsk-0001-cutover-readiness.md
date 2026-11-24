@@ -137,6 +137,7 @@ Spec had changed after its receipt.
 | EVD-003 | [AC-0002](../spec.md#criteria) | WORK-001 | automated | The accepted decision rows in SPEC-0227, SPEC-0228, SPEC-0232, SPEC-0234, SPEC-0235, SPEC-0236 and SPEC-0237; SPEC-0227 EVD-013 and EVD-014; SPEC-0228 EVD-021 | Pinned validation venv | `scripts/validate-document-lifecycle.py --mode staged`; `scripts/validate-markdown-profiles.py --root . --mode strict` over the changed Tasks | 0 | PASS | No violations: every accepted criterion cites a relevant required PASS, the six fully accepted Tasks are `completed` with valid promotion receipts, and SPEC-0235 stays `in-progress` for AC-0004 | true | none |
 | EVD-004 | [AC-0003](../spec.md#criteria) | WORK-001 | automated | SPEC-0223 EVD-047 and the narrowed W10-H03 row and entry | Pinned validation venv | `scripts/validate-work-residue-ledger.py --root .` | 0 | PASS | 30 entries; W10-H03 stays open with the resume condition "When an untrusted command worker is dispatched, or a hard disk cap is required" | true | none |
 | EVD-005 | [AC-0003](../spec.md#criteria) | WORK-001 | observation | This Claude Code session on 2026-11-24 | Claude Code CLI with the tracked hooks | Read of the session's own records after `/compact` and after file reads in folders with a `CLAUDE.md` | 0 | PASS | After `/compact`, both `PreCompact` command hooks completed and the `SessionStart` `compact` hook delivered its instruction to re-read folder `AGENTS.md` files. Reading files in `docs/`, `docs/03.specs/`, `docs/02.architecture/`, `docs/00.workspace/`, `docs/99.templates/`, `scripts/` and `tests/` loaded each folder `CLAUDE.md` and its imported `AGENTS.md`. This is the Claude half of AGENT-04; Codex delivery is unobserved, so AGENT-04 stays open | true | none |
+| EVD-006 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Pull request #365, head `ee95b677` | GitHub Actions CI run 45361808473 | Hosted pull request checks | 0 | PASS | CI, Labeler and Greeting runs completed with success on the head | true | none |
 
 ##### Resolution Links
 
@@ -148,16 +149,16 @@ None.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | accept | pending | EVD-002 | Awaiting the operator's decision | none | platform | none |
-| [AC-0002](../spec.md#criteria) | accept | pending | EVD-003 | Awaiting the operator's decision | none | platform | none |
-| [AC-0003](../spec.md#criteria) | accept | pending | EVD-002, EVD-004, EVD-005 | Awaiting the operator's decision | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | pending | EVD-002, EVD-006 | Awaiting the operator's decision | none | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | pending | EVD-003, EVD-006 | Awaiting the operator's decision | none | platform | none |
+| [AC-0003](../spec.md#criteria) | accept | pending | EVD-002, EVD-004, EVD-005, EVD-006 | Awaiting the operator's decision | none | platform | none |
 | [AC-0004](../spec.md#criteria) | accept | pending | none | Awaiting the retired-route rule in the second pull request | none | platform | none |
 
 ##### Remaining Conditions
 
 The retired-route rule and its SPEC-0229 use follow in a second pull
 request; the operator then decides SPEC-0229 AC-0002 to AC-0006. Hosted
-checks are recorded when they run. `cutover_ready` stays false while the
+checks of the first pull request passed (EVD-006). `cutover_ready` stays false while the
 three blockers remain.
 
 #### Handoff
