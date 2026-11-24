@@ -293,11 +293,15 @@
     {
       "id": "W09-H02",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W09",
       "resume_condition": "In P07/P14, before test product pods run in a namespace allowing 192.168.0.13, establish and verify a host firewall or isolated VM egress boundary; the prior live LAN egress failure remains open",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md",
+        "evidence": "EVD-046"
       }
     },
     {
