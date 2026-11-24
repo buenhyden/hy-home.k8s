@@ -571,6 +571,7 @@ decision or evidence of technical implementation.
 | EVD-081 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Runs `p07vm012` and `p07vm013` after each failure | `test_cluster.py down`; user systemd; `status`; `pgrep -a qemu-system` | `python3 scripts/test_cluster.py --root . down <run>` | 0 | PASS | Each exact unit was deleted; no `hyk8s*` unit, `.workspace-test` entry, status row or QEMU process remained | true | none |
 | EVD-082 | [AC-0004](../spec.md#criteria), [AC-0006](../spec.md#criteria) | WORK-001 | automated | Working-tree change after EVD-079: on a failed probe pod wait, the cause carries the pod phase, its unmet conditions and the container waiting reason (bounded to 200 characters inside a 280-character cause) | Pinned validation Python; Ruff | New test first, then `scripts/run-contract-tests.py --root . --suite test-cluster`; `ruff check scripts tests` | 0 | PASS | The new test failed before the change; the suite then passed 134/134 and Ruff passed. Synthetic only; EVD-080 did not reach the probe, so the real pod state stays unobserved | true | none |
 | EVD-083 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Pull request #349, head `9e96657f`, merged as `55686530` | GitHub Actions CI run 45286140447; GitGuardian | Hosted pull request checks | 0 | PASS | ci-summary, style-pr, label, greeting and GitGuardian passed on the final head; merged without bypass | true | none |
+| EVD-084 | [AC-0001](../spec.md#criteria) | WORK-001 | observation | Read-only inventory on 2026-11-24T00:04:23Z, `main@4d63e56c`, no secret value or account identity read | Local CLIs; `~/.codex/config.toml` hook trust keys only | `uname -srm`; `git rev-parse --git-common-dir HEAD`; `docker version`; `k3d version`; `kubectl version --client`; `helm version`; `qemu-system-x86_64 --version`; `claude --version`; `codex --version`; workflow `runs-on` | 0 | PASS | Host hy-home-server, Linux 6.8.0-147 x86_64, Ubuntu 24.04.5, 12 CPUs; Git common directory `/home/hyunyoun/data/hy-home.k8s/.git`; pinned Python 3.12.3, Ruff 0.16.10; Docker Engine 29.9.2, k3d 5.9.0 with k3s v1.35.5-k3s1, kubectl v1.36.4+k3s1, Helm 3.22.0, QEMU 8.2.2; `/dev/kvm` needs the operator's non-persistent ACL (absent again after the runs); hosted CI on `ubuntu-latest`. Providers: Claude Code 2.1.331, project hooks loaded, route = this repository's root executor session (SPEC-0231 EVD-006/007, EVD-079/080 here); Codex CLI 0.171.0, project hooks trusted except the new `user_prompt_submit`, route = `codex exec` in `workspace-write`, native calls stopped by the account usage limit until 2026-11-27 (SPEC-0231 EVD-008) | true | none |
 
 ##### Resolution Links
 
@@ -633,7 +634,7 @@ owner.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | accepted | EVD-084 | User answer of 2026-11-24 in this session accepting AC-0001 after the EVD-084 inventory | user | platform | none |
 | [AC-0002](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
 | [AC-0003](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
 | [AC-0004](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
@@ -655,8 +656,9 @@ after a nine-minute restricted reboot under host load (EVD-080). The probe
 failure now carries the pod's state (EVD-082). Whether to raise the run time
 budget or rerun on a quieter host is the operator's decision; then selected
 readiness, the probe pod and W09-H02 remain.
-All six operator criterion decisions remain pending; no criterion acceptance
-is inferred from implementation, review, tests or merge.
+The user accepted AC-0001 on 2026-11-24 (EVD-084); the other five operator
+criterion decisions remain pending, and no acceptance is inferred from
+implementation, review, tests or merge.
 
 #### Handoff
 
