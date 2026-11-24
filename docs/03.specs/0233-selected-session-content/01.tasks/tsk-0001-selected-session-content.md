@@ -88,7 +88,7 @@ apart from a real failure.
 
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
-| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | PASS | Regressions pass (EVD-003); live scan, residue check, timer registration and unit run pass (EVD-004 to EVD-006); hosted results remain |
+| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | PASS | Regressions pass (EVD-003); live scan, residue check, timer registration and unit run pass (EVD-004 to EVD-006); hosted checks passed (EVD-007) |
 
 #### Verification Evidence
 
@@ -102,6 +102,7 @@ apart from a real failure.
 | EVD-004 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Live capture, 2026-11-24T02:50:10Z, after consistent SQLite backups of the capture (70 sessions, 146,397 records) and analysis stores, both integrity `ok` | Changed working-tree code | `scripts/session_capture.py scan`; counts by role, selection, failure class and gap | 0 | PASS | Integrity `ok`; 154,628 records. Content: 9 selected prompts (largest at the 16 KiB cap), 7 selected and 2 summarized responses, 36 selected failed tool results classed 20 `hook_rejected`, 5 `permission_denied` and 11 `command_failed`, 22 summarized results (each at most 4 KiB), and 135 response and 399 result `summary_cap` gaps from long turns | true | none |
 | EVD-005 | [AC-0001](../spec.md#criteria) | WORK-001 | observation | The 76 stored live texts after EVD-004 | `session_capture._secret_left`, `SELECTED_LIMIT` | Read-only residue check | 0 | PASS | No secret or e-mail pattern remains, none exceeds its cap, and one value carries a redaction placeholder; no text was printed | true | none |
 | EVD-006 | [AC-0003](../spec.md#criteria) | WORK-001 | observation | User systemd, 2026-11-24T02:50:44Z; the legacy `hy-home-k8s-session-analysis` timer had finished every daily run through 2026-11-24 03:00 KST (runs 14 to 19, including the 2026-11-21 recheck date) | systemd user manager; changed working-tree code | `scripts/session_analysis.py install-timer`; `systemctl --user start hy-home-k8s-session-analysis-83ced050.service` | 0 | PASS | `legacy_retired: true`; the timer `hy-home-k8s-session-analysis-83ced050` is listed for 03:00 and the other workspaces' timers are untouched. The unit run ended `Result=success`: run 20 completed under rules edition 2 for all six days at cost 0, added the `repeated-hook-rejection` and `repeated-permission-denial` harness candidates for 2026-11-23, and kept the accepted and the rejected candidates. Both backups were then deleted. The next scheduled firing is not yet observed | true | none |
+| EVD-007 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Pull request #356, head `1225edc3` | GitHub Actions CI run 45316228108; GitGuardian | Hosted pull request checks | 0 | PASS | ci-summary, style-pr (6 min 33 s, including the affected capture, analysis and memory regression gates), label, greeting and GitGuardian passed | true | none |
 
 ##### Resolution Links
 
@@ -120,7 +121,7 @@ shows the passing state.
 
 ##### Remaining Conditions
 
-Hosted checks and the operator's criterion decisions remain. The first
+Hosted checks passed (EVD-007); the operator's criterion decisions remain. The first
 scheduled firing of the new timer (2026-11-25 03:00 KST) is not yet
 observed; EVD-006 shows its registration and one unit run. Expiry boundaries
 are shown by regressions, since no live content is old enough yet. W08-H05
