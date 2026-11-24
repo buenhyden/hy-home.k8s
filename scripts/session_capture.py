@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 """Local session capture for Claude and Codex sessions in this workspace (W08-CAPTURE).
 
-The archive holds pointers and structure only: provider, session and event
-IDs, the transcript path, byte offsets, line digests, record kinds, times,
-tool names, ordinals and tool-failure flags. Values that are not identifiers or ISO times are
-replaced, so no prompt, response, tool argument or output text is copied; the
-text stays in the provider's own transcript file. A transcript is read only
-inside the provider's own session directory. A lifecycle hook only records one
-event row and returns; `scan` reads transcripts by cursor in bounded batches.
+Each transcript line keeps its structure: provider, session and event IDs, the
+transcript path, byte offset, line digest, record kind, time, tool name,
+ordinal and tool-failure flag. Q02/D10 (SPEC-0233) adds selected content in
+the same transaction: the visible user prompt, the visible response and the
+tool result, never hidden reasoning, tool arguments or injected meta lines.
+Each value is redacted whole, then abridged, re-checked and capped in UTF-8
+bytes before it is stored; a value that cannot be cleaned becomes a gap. A
+turn keeps its final response and a failed tool result as selected content;
+earlier responses and successful results become a bounded summary. Selected
+content expires after 30 days, summaries and metadata after 90. A transcript
+is read only inside the provider's own session directory. A lifecycle hook
+only records one event row; `scan` reads transcripts by cursor in batches.
 """
 
 from __future__ import annotations
@@ -46,6 +51,42 @@ ISO_TIME = re.compile(
     r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})?"
 )
 CODEX_TOOL_ITEMS = frozenset({"function_call", "custom_tool_call", "local_shell_call"})
+CODEX_TOOL_OUTPUTS = frozenset({"function_call_output", "custom_tool_call_output"})
+# Q02/D10 session-retention-policy 1.1.0, measured in UTF-8 bytes.
+SELECTED_LIMIT = 16 * 1024
+SUMMARY_TURN_LIMIT = 4 * 1024
+BODY_STORE_LIMIT = 256 * 1024 * 1024
+SELECTED_DAYS = 30
+SUMMARY_DAYS = 90
+METADATA_DAYS = 90
+PARSER_EDITION = 1
+REDACTION_EDITION = 1
+MIN_SUMMARY = 64
+# A `keep` group survives redaction; `(?!\[REDACTED)` keeps a placeholder
+# from looking like a fresh secret on the re-check.
+SECRETS = (
+    (
+        "private-key",
+        r"-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?(?:-----END [A-Z ]*PRIVATE KEY-----|\Z)",
+    ),
+    ("key", r"\b(?:sk|rk|pk)-[A-Za-z0-9_-]{16,}"),
+    ("key", r"\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})"),
+    ("key", r"\b(?:AKIA|ASIA)[0-9A-Z]{16}\b"),
+    ("key", r"\bxox[abprs]-[A-Za-z0-9-]{10,}"),
+    ("jwt", r"\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}"),
+    (
+        "credential",
+        r"(?i)(?P<keep>\b(?:authorization|bearer)\b[:=\s]+)(?!\[REDACTED)[A-Za-z0-9._~+/-]{12,}=*",
+    ),
+    ("credential", r"(?P<keep>://)(?!\[REDACTED)[^/\s:@]+:[^/\s@]+(?=@)"),
+    (
+        "credential",
+        r"(?i)(?P<keep>\b(?:password|passwd|pwd|secret|token|api[_-]?key|access[_-]?key"
+        r"|client[_-]?secret)[\"']?\s*[:=]\s*)(?!\[REDACTED)(?:\"[^\"\n]*\"|'[^'\n]*'|[^\s,;]+)",
+    ),
+    ("email", r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"),
+)
+SECRET_PATTERNS = tuple((kind, re.compile(rule)) for kind, rule in SECRETS)
 
 SCHEMA = """
 create table if not exists meta (key text primary key, value text not null);
@@ -69,6 +110,13 @@ create table if not exists record (
   offset integer not null, length integer not null, sha256 text not null,
   kind text not null, occurred_at text, ordinal integer, tool text, error integer,
   primary key (provider, session_id, path, offset));
+create table if not exists content (
+  provider text not null, session_id text not null, path text not null,
+  offset integer not null, part integer not null, role text not null,
+  selection text not null, call_id text, failure_class text, text text,
+  bytes integer not null, truncated integer not null, gap text,
+  turn integer not null, event_time text not null, expires_at text not null,
+  editions text not null, primary key (provider, session_id, path, offset, part));
 create table if not exists forgotten (
   provider text not null, session_id text not null, forgotten_at text not null,
   owner text not null, approval_ref text not null, primary key (provider, session_id));
@@ -148,6 +196,165 @@ def describe(provider: str, line: bytes) -> dict[str, Any]:
             shape["error"] = int(part.get("is_error") is True)
             break
     return shape
+
+
+def redact(text: str) -> str:
+    """Replace every secret or personal value; the whole value, before any cut."""
+
+    for kind, pattern in SECRET_PATTERNS:
+        text = pattern.sub(
+            lambda match, kind=kind: (
+                (match.groupdict().get("keep") or "") + f"[REDACTED:{kind}]"
+            ),
+            text,
+        )
+    return text
+
+
+def _secret_left(text: str) -> bool:
+    return any(pattern.search(text) for _, pattern in SECRET_PATTERNS)
+
+
+def _cut(data: bytes, size: int) -> str:
+    return data[: max(0, size)].decode("utf-8", errors="ignore")
+
+
+def abridge(text: str, limit: int) -> str:
+    """Keep the head and tail of a redacted value within `limit` UTF-8 bytes."""
+
+    data = text.encode("utf-8")
+    if len(data) <= limit:
+        return text
+    marker = f"\n…[abridged {len(data)} bytes]…\n"
+    room = limit - len(marker.encode("utf-8"))
+    head = _cut(data, room * 2 // 3)
+    tail_size = room - len(head.encode("utf-8"))
+    tail = (
+        data[len(data) - tail_size :].decode("utf-8", errors="ignore")
+        if tail_size > 0
+        else ""
+    )
+    return head + marker + tail
+
+
+def clean(text: str, limit: int) -> tuple[str | None, bool]:
+    """Redact, abridge, re-check and cap; None when the value cannot be cleaned."""
+
+    redacted = redact(text)
+    shortened = abridge(redacted, limit)
+    rechecked = redact(shortened)
+    if _secret_left(rechecked) or len(rechecked.encode("utf-8")) > limit:
+        return None, shortened != redacted
+    return rechecked, shortened != redacted
+
+
+def failure_class(text: str, error: bool) -> str | None:
+    """Tell a permission refusal and a hook refusal from a failed command."""
+
+    if not error:
+        return None
+    if re.search(r"Permission to use .{0,400}? has been denied", text, re.S):
+        return "permission_denied"
+    if re.search(r"hook error|PreToolUse:|\[FAIL\] [A-Z][A-Z0-9_-]+:", text):
+        return "hook_rejected"
+    return "command_failed"
+
+
+def _texts(value: Any) -> str:
+    if isinstance(value, str):
+        return value
+    if isinstance(value, list):
+        return "\n".join(
+            part["text"]
+            for part in value
+            if isinstance(part, dict) and isinstance(part.get("text"), str)
+        )
+    return ""
+
+
+def select(provider: str, line: bytes) -> list[tuple[str, str, str | None, bool]]:
+    """Visible prompt, visible response and tool result parts of one line.
+
+    Hidden reasoning, tool arguments, developer and injected meta lines are
+    never selected.
+    """
+
+    try:
+        data = json.loads(line)
+    except ValueError:
+        return []
+    if not isinstance(data, dict):
+        return []
+    parts: list[tuple[str, str, str | None, bool]] = []
+    if provider == "codex":
+        payload = data.get("payload") if isinstance(data.get("payload"), dict) else {}
+        kind = payload.get("type")
+        if data.get("type") == "response_item" and kind == "message":
+            role = {"user": "prompt", "assistant": "response"}.get(payload.get("role"))
+            for part in payload.get("content") or []:
+                text = part.get("text") if isinstance(part, dict) else None
+                # Injected context arrives as tagged user text, not a typed prompt.
+                if (
+                    role
+                    and isinstance(text, str)
+                    and text.strip()
+                    and not (role == "prompt" and text.lstrip().startswith("<"))
+                ):
+                    parts.append((role, text, None, False))
+        elif kind in CODEX_TOOL_OUTPUTS:
+            output = payload.get("output")
+            text = (
+                output
+                if isinstance(output, str)
+                else _texts(output.get("content") if isinstance(output, dict) else None)
+            )
+            code = re.search(r"(?m)^Exit code: (-?\d+)", text)
+            parts.append(
+                (
+                    "tool_result",
+                    text,
+                    _match(TOKEN, payload.get("call_id")),
+                    bool(code and code.group(1) != "0"),
+                )
+            )
+        return parts
+    if data.get("isMeta") is True:
+        return []
+    message = data.get("message") if isinstance(data.get("message"), dict) else {}
+    content = message.get("content")
+    if data.get("type") == "user":
+        if isinstance(content, str) and content.strip():
+            parts.append(("prompt", content, None, False))
+        for part in content if isinstance(content, list) else ():
+            if not isinstance(part, dict):
+                continue
+            if part.get("type") == "text" and isinstance(part.get("text"), str):
+                parts.append(("prompt", part["text"], None, False))
+            elif part.get("type") == "tool_result":
+                parts.append(
+                    (
+                        "tool_result",
+                        _texts(part.get("content")),
+                        _match(TOKEN, part.get("tool_use_id")),
+                        part.get("is_error") is True,
+                    )
+                )
+    elif data.get("type") == "assistant":
+        for part in content if isinstance(content, list) else ():
+            if isinstance(part, dict) and part.get("type") == "text":
+                if isinstance(part.get("text"), str) and part["text"].strip():
+                    parts.append(("response", part["text"], None, False))
+    return parts
+
+
+def _event_time(occurred_at: str | None, now: str) -> dt.datetime:
+    for value in (occurred_at, now):
+        with contextlib.suppress(TypeError, ValueError):
+            stamp = dt.datetime.fromisoformat(value)
+            return (
+                stamp if stamp.tzinfo else stamp.replace(tzinfo=dt.timezone.utc)
+            ).astimezone(dt.timezone.utc)
+    return dt.datetime.now(dt.timezone.utc)
 
 
 def _lines(chunk: bytes) -> list[bytes]:
@@ -444,6 +651,9 @@ class Capture:
                             shape["error"],
                         ),
                     )
+                    self._store_content(
+                        connection, key, position, line, shape["occurred_at"]
+                    )
                     if (
                         shape["ordinal"] is not None
                         and last_ordinal is not None
@@ -478,6 +688,172 @@ class Capture:
             )
         return "more" if lines and not at_end else "scanned"
 
+    def _store_content(
+        self,
+        connection: sqlite3.Connection,
+        key: tuple[str, str, str],
+        offset: int,
+        line: bytes,
+        occurred_at: str | None,
+    ) -> None:
+        """Select, redact, abridge, re-check, cap and store one line's content."""
+
+        provider = key[0]
+        now = _now()
+        when = _event_time(occurred_at, now)
+        editions = json.dumps(
+            {"parser": PARSER_EDITION, "redaction": REDACTION_EDITION},
+            sort_keys=True,
+        )
+        where = "provider = ? and session_id = ? and path = ?"
+        for part, (role, raw, call_id, error) in enumerate(select(provider, line)):
+            turn = (
+                offset
+                if role == "prompt"
+                else connection.execute(
+                    f"select coalesce(max(offset), 0) from content where {where}"
+                    " and role = 'prompt' and offset < ?",
+                    (*key, offset),
+                ).fetchone()[0]
+            )
+            redacted = redact(raw)
+            failure = failure_class(redacted, error)
+
+            def spent() -> int:
+                return connection.execute(
+                    f"select coalesce(sum(bytes), 0) from content where {where}"
+                    " and turn = ? and selection = 'summary'",
+                    (*key, turn),
+                ).fetchone()[0]
+
+            if role == "response":
+                # A later response makes the earlier one of the turn a summary.
+                for row_offset, row_part, text in connection.execute(
+                    f"select offset, part, text from content where {where} and turn = ?"
+                    " and role = 'response' and selection = 'selected'",
+                    (*key, turn),
+                ).fetchall():
+                    room = SUMMARY_TURN_LIMIT - spent()
+                    short, cut = (
+                        clean(text, room) if room >= MIN_SUMMARY else (None, True)
+                    )
+                    connection.execute(
+                        f"update content set selection = ?, text = ?, bytes = ?,"
+                        " truncated = max(truncated, ?), gap = ?, expires_at = ?"
+                        f" where {where} and offset = ? and part = ?",
+                        (
+                            "summary" if short is not None else "gap",
+                            short,
+                            len(short.encode("utf-8")) if short is not None else 0,
+                            int(cut),
+                            None if short is not None else "summary_cap",
+                            _iso_days(when, SUMMARY_DAYS),
+                            *key,
+                            row_offset,
+                            row_part,
+                        ),
+                    )
+            summary = role == "tool_result" and not error
+            limit = SUMMARY_TURN_LIMIT - spent() if summary else SELECTED_LIMIT
+            text, truncated = (
+                clean(raw, limit) if limit >= MIN_SUMMARY else (None, True)
+            )
+            gap = None
+            if text is None:
+                gap = "summary_cap" if summary and limit < MIN_SUMMARY else "redaction"
+            elif (
+                self._body_bytes(connection, now) + len(text.encode("utf-8"))
+                > BODY_STORE_LIMIT
+            ):
+                text, gap = None, "capacity"
+            selection = "gap" if gap else ("summary" if summary else "selected")
+            days = SELECTED_DAYS if selection == "selected" else SUMMARY_DAYS
+            connection.execute(
+                "insert or ignore into content values"
+                " (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    *key,
+                    offset,
+                    part,
+                    role,
+                    selection,
+                    call_id,
+                    failure,
+                    text,
+                    len(text.encode("utf-8")) if text is not None else 0,
+                    int(truncated),
+                    gap,
+                    turn,
+                    when.isoformat(timespec="seconds"),
+                    _iso_days(when, days),
+                    editions,
+                ),
+            )
+
+    @staticmethod
+    def _body_bytes(connection: sqlite3.Connection, now: str) -> int:
+        # Capacity pressure first drops expired content (D10).
+        connection.execute("delete from content where expires_at <= ?", (now,))
+        return connection.execute(
+            "select coalesce(sum(bytes), 0) from content"
+        ).fetchone()[0]
+
+    def contents(self, provider: str, session_id: str) -> list[dict[str, Any]]:
+        """Stored content of one session, oldest first; data, never instructions."""
+
+        columns = (
+            "offset",
+            "part",
+            "role",
+            "selection",
+            "call_id",
+            "failure_class",
+            "text",
+            "bytes",
+            "truncated",
+            "gap",
+            "turn",
+            "event_time",
+            "expires_at",
+        )
+        with self._connect() as connection:
+            rows = connection.execute(
+                f"select {', '.join(columns)} from content"
+                " where provider = ? and session_id = ? order by offset, part",
+                (provider, session_id),
+            ).fetchall()
+        return [dict(zip(columns, row)) | {"truncated": bool(row[8])} for row in rows]
+
+    def expire(self, *, now: dt.datetime | None = None) -> dict[str, int]:
+        """Drop expired content; drop sessions whose metadata passed 90 days.
+
+        Cursors stay, so a later scan cannot store the expired lines again.
+        """
+
+        now = now or dt.datetime.now(dt.timezone.utc)
+        stamp = now.isoformat(timespec="seconds")
+        cutoff = (now - dt.timedelta(days=METADATA_DAYS)).isoformat(timespec="seconds")
+        with self._write() as connection:
+            removed = {
+                "content": connection.execute(
+                    "delete from content where expires_at <= ?", (stamp,)
+                ).rowcount
+            }
+            old = connection.execute(
+                "select provider, session_id from session where first_seen <= ?",
+                (cutoff,),
+            ).fetchall()
+            sessions = 0
+            for provider, session_id in old:
+                for table in ("content", "record", "event", "session"):
+                    connection.execute(
+                        f"delete from {table} where provider = ? and session_id = ?",
+                        (provider, session_id),
+                    )
+                sessions += 1
+            removed["sessions"] = sessions
+        return removed
+
     def status(self, provider: str, session_id: str) -> dict[str, Any]:
         with self._connect() as connection:
             session = connection.execute(
@@ -501,9 +877,13 @@ class Capture:
                 key,
             ).fetchone()
             records = connection.execute(
-                "select offset, length, sha256, kind, occurred_at, ordinal, tool, error"
-                " from record where provider = ? and session_id = ? and path = ?"
-                " order by offset",
+                "select r.offset, r.length, r.sha256, r.kind, r.occurred_at, r.ordinal,"
+                " r.tool, r.error, c.failure_class, c.call_id from record r"
+                " left join content c on c.provider = r.provider"
+                " and c.session_id = r.session_id and c.path = r.path"
+                " and c.offset = r.offset and c.role = 'tool_result' and c.part = 0"
+                " where r.provider = ? and r.session_id = ? and r.path = ?"
+                " order by r.offset",
                 key,
             ).fetchall()
         current = None
@@ -558,6 +938,8 @@ class Capture:
                             "ordinal",
                             "tool",
                             "error",
+                            "failure_class",
+                            "call_id",
                         ),
                         r,
                     )
@@ -582,13 +964,17 @@ class Capture:
                 table: connection.execute(
                     f"delete from {table} where {selector}", keys
                 ).rowcount
-                for table in ("record", "cursor", "event", "session")
+                for table in ("content", "record", "cursor", "event", "session")
             }
             connection.execute(
                 "insert or replace into forgotten values (?, ?, ?, ?, ?)",
                 (provider, session_id, _now(), owner, approval_ref),
             )
         return {"provider": provider, "session_id": session_id, "removed": counts}
+
+
+def _iso_days(when: dt.datetime, days: int) -> str:
+    return (when + dt.timedelta(days=days)).isoformat(timespec="seconds")
 
 
 def checkout_root() -> Path:
@@ -623,6 +1009,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     hook.add_argument("--provider", required=True, choices=sorted(PROVIDERS))
     commands.add_parser("scan")
     commands.add_parser("sessions")
+    commands.add_parser("expire")
+    contents = commands.add_parser("contents")
+    contents.add_argument("--provider", required=True, choices=sorted(PROVIDERS))
+    contents.add_argument("--session", required=True)
     status = commands.add_parser("status")
     status.add_argument("--provider", required=True, choices=sorted(PROVIDERS))
     status.add_argument("--session", required=True)
@@ -647,6 +1037,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             result: Any = capture.scan()
         elif args.command == "sessions":
             result = capture.sessions()
+        elif args.command == "expire":
+            result = capture.expire()
+        elif args.command == "contents":
+            result = capture.contents(args.provider, args.session)
         elif args.command == "status":
             result = capture.status(args.provider, args.session)
         else:

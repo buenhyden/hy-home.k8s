@@ -479,6 +479,107 @@ class SessionAnalysisTest(unittest.TestCase):
         (candidate,) = self.candidates()
         self.assertIsNone(candidate["promoted_to"])
 
+    def refusals(self, session_id: str, day: int, text: str, count: int):
+        path = self.home / "projects" / "repo" / f"{session_id}.jsonl"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        line = {
+            "type": "user",
+            "message": {
+                "content": [
+                    {
+                        "type": "tool_result",
+                        "tool_use_id": "t",
+                        "is_error": True,
+                        "content": text,
+                    }
+                ]
+            },
+        }
+        path.write_text(
+            "".join(json.dumps(line) + "\n" for _ in range(count)), encoding="utf-8"
+        )
+        stamp = at(day, 12).astimezone(dt.timezone.utc).isoformat(timespec="seconds")
+        with mock.patch.object(CAPTURE, "_now", return_value=stamp):
+            for event in ("SessionStart", "Stop", "SessionEnd"):
+                self.capture.hook(
+                    "claude",
+                    {
+                        "hook_event_name": event,
+                        "session_id": session_id,
+                        "transcript_path": str(path),
+                        "cwd": str(self.root),
+                    },
+                )
+
+    def test_permission_and_hook_refusals_become_harness_candidates(self) -> None:
+        self.refusals(
+            "s-p", 17, "Permission to use Bash with command x has been denied.", 3
+        )
+        self.refusals("s-h", 17, "PreToolUse:Edit hook error: [FAIL] BRIEF-MISSING", 3)
+        self.run_at(at(18))
+        found = {(c["pattern"], c["subject"]) for c in self.candidates()}
+        self.assertIn(("repeated-permission-denial", "harness"), found)
+        self.assertIn(("repeated-hook-rejection", "harness"), found)
+        for candidate in self.candidates():
+            self.assertNotIn("has been denied", candidate["problem"])
+
+    def test_unpromoted_candidates_expire(self) -> None:
+        self.session("s-1", 17, failures=3)
+        self.run_at(at(18))
+        (candidate,) = self.candidates()
+        self.analysis.review(
+            candidate["candidate_id"], decision="rejected", owner="r", now=at(18, 5)
+        )
+        self.run_at(at(18, 6) + dt.timedelta(days=29))
+        self.assertEqual(len(self.candidates()), 1)
+        self.run_at(at(18, 6) + dt.timedelta(days=31))
+        self.assertEqual(self.candidates(), [])
+
+    def test_unit_name_carries_the_workspace_identity(self) -> None:
+        workspace = MEMORY.Store.open(self.root).workspace_id
+        name = ANALYSIS.unit_name(workspace)
+        self.assertEqual(name, f"hy-home-k8s-session-analysis-{workspace[:8]}")
+        self.assertNotEqual(name, ANALYSIS.unit_name("00000000-other"))
+
+    def test_install_moves_only_the_legacy_unit_this_checkout_owns(self) -> None:
+        home = self.base / "home"
+        units = home / ".config" / "systemd" / "user"
+        units.mkdir(parents=True)
+        _, service = ANALYSIS.unit_text(self.root)
+        (units / "hy-home-k8s-session-analysis.service").write_text(service)
+        (units / "hy-home-k8s-session-analysis.timer").write_text("[Timer]\n")
+        calls = []
+        with (
+            mock.patch.object(ANALYSIS.Path, "home", return_value=home),
+            mock.patch.object(
+                ANALYSIS.subprocess, "run", side_effect=lambda c, **k: calls.append(c)
+            ),
+        ):
+            result = ANALYSIS.install_timer(self.root, "abcdef12-0000")
+        self.assertEqual(result["timer"], "hy-home-k8s-session-analysis-abcdef12.timer")
+        self.assertFalse((units / "hy-home-k8s-session-analysis.service").exists())
+        self.assertIn(
+            [
+                "systemctl",
+                "--user",
+                "disable",
+                "--now",
+                "hy-home-k8s-session-analysis.timer",
+            ],
+            calls,
+        )
+        (units / "hy-home-k8s-session-analysis.service").write_text(
+            service.replace(str(self.root), "/elsewhere")
+        )
+        with (
+            mock.patch.object(ANALYSIS.Path, "home", return_value=home),
+            mock.patch.object(
+                ANALYSIS.subprocess, "run", side_effect=lambda c, **k: None
+            ),
+        ):
+            ANALYSIS.install_timer(self.root, "abcdef12-0000")
+        self.assertTrue((units / "hy-home-k8s-session-analysis.service").exists())
+
     def test_timer_units_schedule_daily_with_catch_up(self) -> None:
         timer, service = ANALYSIS.unit_text(self.root)
         self.assertIn("OnCalendar=*-*-* 03:00:00 Asia/Seoul", timer)

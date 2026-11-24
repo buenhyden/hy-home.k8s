@@ -35,7 +35,7 @@ import session_capture as capture
 import workspace_memory as memory
 
 SCHEMA_VERSION = 1
-RULES_EDITION = 1
+RULES_EDITION = 2
 STATE_NAME = "analysis.sqlite3"
 ZONE = ZoneInfo("Asia/Seoul")
 LEASE_TTL = dt.timedelta(minutes=15)
@@ -44,7 +44,16 @@ BACKOFF_SECONDS = (5, 15)
 FAILURE_THRESHOLD = 3
 COMPACTION_THRESHOLD = 2
 SOURCE_REF_LIMIT = 20
-UNIT_NAME = "hy-home-k8s-session-analysis"
+UNIT_PREFIX = "hy-home-k8s-session-analysis"
+# D10: an unpromoted candidate expires 90 days after it was created or 30
+# days after its decision, whichever is first.
+CANDIDATE_DAYS = 90
+DECIDED_DAYS = 30
+# Failure classes from the capture, each a harness improvement pattern.
+CLASSIFIED = {
+    "repeated-permission-denial": "permission_denied",
+    "repeated-hook-rejection": "hook_rejected",
+}
 
 SCHEMA = """
 create table if not exists meta (key text primary key, value text not null);
@@ -97,6 +106,20 @@ def _reviewed_digest(row: sqlite3.Row) -> str:
 
 
 RULES = {
+    "repeated-permission-denial": {
+        "problem": "A permission rule refused tool calls {n} times in one day.",
+        "condition": "At least {threshold} permission refusals on {window}.",
+        "proposal": "Check whether the refused calls were needed; propose a reviewed permission or workflow change, or record the avoided pattern as reviewed memory.",
+        "risk": "A refusal is often the intended safety boundary; counts do not show that the rule is wrong.",
+        "acceptance_test": "A comparable later day shows fewer than {threshold} permission refusals.",
+    },
+    "repeated-hook-rejection": {
+        "problem": "A pre-action hook refused tool calls {n} times in one day.",
+        "condition": "At least {threshold} hook refusals on {window}.",
+        "proposal": "Find which hook rule refused them and whether the agent's workflow or the hook's detection should change.",
+        "risk": "A hook refusal is often the intended boundary or a detection false positive; inspect the refused calls before changing either.",
+        "acceptance_test": "A comparable later day shows fewer than {threshold} hook refusals.",
+    },
     "repeated-tool-failure": {
         "problem": "Tool results failed {n} times in one day.",
         "condition": "At least {threshold} failed tool results on {window}.",
@@ -315,6 +338,8 @@ class Analysis:
     ) -> None:
         archive = capture.Capture.open(self.root)
         archive.scan()
+        archive.expire(now=now)
+        self._expire_candidates(token, now)
         sessions = self._sessions(archive)
         last = now.astimezone(ZONE).date() - dt.timedelta(days=1)
         with self._connect() as connection:
@@ -406,6 +431,31 @@ class Analysis:
             day += dt.timedelta(days=1)
         return
 
+    def _expire_candidates(self, token: int, now: dt.datetime) -> None:
+        """Drop unpromoted candidates past their age; a pending promotion stays."""
+
+        created = (
+            now.astimezone(ZONE).date() - dt.timedelta(days=CANDIDATE_DAYS)
+        ).isoformat()
+        decided = _iso(now - dt.timedelta(days=DECIDED_DAYS))
+        with self._write() as connection:
+            self.check_token(token, connection)
+            expired = [
+                row[0]
+                for row in connection.execute(
+                    "select candidate_id from candidate where promoted_to is null"
+                    " and (window <= ? or (decision != 'proposed' and reviewed_at <= ?))"
+                    " and candidate_id not in"
+                    " (select candidate_id from promotion where state = 'pending')",
+                    (created, decided),
+                ).fetchall()
+            ]
+            for table in ("recheck", "review_receipt", "promotion", "candidate"):
+                connection.executemany(
+                    f"delete from {table} where candidate_id = ?",
+                    [(identifier,) for identifier in expired],
+                )
+
     @staticmethod
     def _sessions(archive: Any) -> list[dict[str, Any]]:
         """Each captured session with its first-event day and structural counts."""
@@ -437,7 +487,16 @@ class Analysis:
         """Every pattern's matching refs for one day, matched or not."""
         # A failed result is not tied to its tool call here, so failures are counted
         # for the day as a whole rather than attributed to one tool.
-        return {
+        classified = {
+            pattern: [
+                f"{session['provider']}:{session['session_id']}:{record['offset']}"
+                for session in members
+                for record in session["status"]["records"]
+                if record.get("failure_class") == failure
+            ]
+            for pattern, failure in CLASSIFIED.items()
+        }
+        return classified | {
             "repeated-tool-failure": [
                 f"{session['provider']}:{session['session_id']}:{record['offset']}"
                 for session in members
@@ -466,8 +525,14 @@ class Analysis:
     ) -> list[dict[str, Any]]:
         found = []
         for pattern, refs in self._measure(members).items():
-            subject = "tools" if pattern == "repeated-tool-failure" else "sessions"
-            limit = FAILURE_THRESHOLD if subject == "tools" else 1
+            subject = (
+                "tools"
+                if pattern == "repeated-tool-failure"
+                else "harness"
+                if pattern in CLASSIFIED
+                else "sessions"
+            )
+            limit = FAILURE_THRESHOLD if subject in ("tools", "harness") else 1
             if len(refs) >= limit:
                 found.append(self._candidate(pattern, window, subject, refs))
         return found
@@ -524,7 +589,7 @@ class Analysis:
             "subject": subject,
             "window": window,
             "threshold": FAILURE_THRESHOLD
-            if pattern == "repeated-tool-failure"
+            if pattern == "repeated-tool-failure" or pattern in CLASSIFIED
             else COMPACTION_THRESHOLD,
         }
         text = {key: value.format(**values) for key, value in RULES[pattern].items()}
@@ -760,6 +825,12 @@ class Analysis:
         }
 
 
+def unit_name(workspace_id: str) -> str:
+    """One timer per independent clone: the workspace ID is in the name (D10)."""
+
+    return f"{UNIT_PREFIX}-{workspace_id[:8]}"
+
+
 def unit_text(root: Path) -> tuple[str, str]:
     """Timer and service text; paths are quoted and `%` is escaped for systemd."""
 
@@ -796,18 +867,37 @@ Nice=10
     return timer, service
 
 
-def install_timer(root: Path) -> dict[str, Any]:
+def install_timer(root: Path, workspace_id: str) -> dict[str, Any]:
+    """Install this clone's timer; retire the unnamed legacy unit only if owned.
+
+    The legacy unit is this checkout's when its service runs this checkout's
+    script; another clone's unit is left alone.
+    """
+
     directory = Path.home() / ".config" / "systemd" / "user"
     directory.mkdir(parents=True, exist_ok=True)
+    name = unit_name(workspace_id)
     timer, service = unit_text(root)
-    (directory / f"{UNIT_NAME}.timer").write_text(timer, encoding="utf-8")
-    (directory / f"{UNIT_NAME}.service").write_text(service, encoding="utf-8")
-    for command in (
-        ["systemctl", "--user", "daemon-reload"],
-        ["systemctl", "--user", "enable", "--now", f"{UNIT_NAME}.timer"],
-    ):
+
+    def run(command: list[str]) -> None:
         subprocess.run(command, check=True, capture_output=True, text=True, timeout=30)
-    return {"timer": f"{UNIT_NAME}.timer", "directory": str(directory)}
+
+    legacy = directory / f"{UNIT_PREFIX}.service"
+    retired = False
+    if legacy.is_file() and legacy.read_text(encoding="utf-8") == service:
+        run(["systemctl", "--user", "disable", "--now", f"{UNIT_PREFIX}.timer"])
+        legacy.unlink()
+        (directory / f"{UNIT_PREFIX}.timer").unlink(missing_ok=True)
+        retired = True
+    (directory / f"{name}.timer").write_text(timer, encoding="utf-8")
+    (directory / f"{name}.service").write_text(service, encoding="utf-8")
+    run(["systemctl", "--user", "daemon-reload"])
+    run(["systemctl", "--user", "enable", "--now", f"{name}.timer"])
+    return {
+        "timer": f"{name}.timer",
+        "directory": str(directory),
+        "legacy_retired": retired,
+    }
 
 
 CANCEL = threading.Event()
@@ -849,7 +939,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             print("\n".join(unit_text(memory.Store.open(args.root).root)))
             return 0
         if args.command == "install-timer":
-            result: Any = install_timer(memory.Store.open(args.root).root)
+            store = memory.Store.open(args.root)
+            result: Any = install_timer(store.root, store.workspace_id)
         else:
             analysis = Analysis.open(args.root)
             if args.command == "run":

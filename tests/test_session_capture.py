@@ -156,7 +156,8 @@ class SessionCaptureTest(unittest.TestCase):
         for text in (PRIVATE_TEXT.encode(), b"hunter2"):
             self.assertNotIn(text, self.stored_bytes())
 
-    def test_scan_records_structure_not_text(self) -> None:
+    def test_scan_records_structure_and_the_selected_prompt(self) -> None:
+        # Q02 (SPEC-0233): the visible prompt is selected content; structure is unchanged.
         self.hook("SessionStart", source="startup")
         self.append(
             {"type": "user", "message": {"content": PRIVATE_TEXT}},
@@ -171,9 +172,15 @@ class SessionCaptureTest(unittest.TestCase):
             [(r["kind"], r["tool"]) for r in records],
             [("user", None), ("assistant", "Bash")],
         )
-        self.assertNotIn(PRIVATE_TEXT.encode(), self.stored_bytes())
+        self.assertEqual(
+            [
+                (c["role"], c["selection"], c["text"])
+                for c in self.capture.contents("claude", "s-1")
+            ],
+            [("prompt", "selected", PRIVATE_TEXT)],
+        )
 
-    def test_tool_failure_is_recorded_as_a_flag_not_text(self) -> None:
+    def test_tool_failure_is_recorded_as_a_flag_and_selected_evidence(self) -> None:
         self.hook("SessionStart", source="startup")
         self.append(
             {
@@ -213,7 +220,11 @@ class SessionCaptureTest(unittest.TestCase):
         claude = [r["error"] for r in self.capture.status("claude", "s-1")["records"]]
         codex = [r["error"] for r in self.capture.status("codex", "c-1")["records"]]
         self.assertEqual((claude, codex), ([1, 0, None], [1, 0]))
-        self.assertNotIn(PRIVATE_TEXT.encode(), self.stored_bytes())
+        failed = self.capture.contents("claude", "s-1")[0]
+        self.assertEqual(
+            (failed["failure_class"], failed["selection"], failed["text"]),
+            ("command_failed", "selected", PRIVATE_TEXT),
+        )
 
     def test_partial_tail_waits_and_rescan_never_duplicates(self) -> None:
         self.hook("SessionStart", source="startup")
@@ -410,6 +421,170 @@ class SessionCaptureTest(unittest.TestCase):
         )
         self.assertEqual((result.returncode, result.stdout), (0, ""))
         self.assertEqual([s["session_id"] for s in self.capture.sessions()], ["s-9"])
+
+
+class SelectedContentTest(unittest.TestCase):
+    """Q02/D10 selected content (SPEC-0233): redacted, abridged, bounded, expiring."""
+
+    setUp = SessionCaptureTest.setUp
+    claude_file = SessionCaptureTest.claude_file
+    hook = SessionCaptureTest.hook
+    append = SessionCaptureTest.append
+    stored_bytes = SessionCaptureTest.stored_bytes
+
+    def contents(self):
+        return self.capture.contents("claude", "s-1")
+
+    @staticmethod
+    def prompt(text, when="2026-11-18T09:00:00Z"):
+        return {"type": "user", "timestamp": when, "message": {"content": text}}
+
+    @staticmethod
+    def answer(text, when="2026-11-18T09:00:01Z"):
+        return {
+            "type": "assistant",
+            "timestamp": when,
+            "message": {"content": [{"type": "text", "text": text}]},
+        }
+
+    @staticmethod
+    def result(text, call="toolu_1", error=False, when="2026-11-18T09:00:02Z"):
+        return {
+            "type": "user",
+            "timestamp": when,
+            "message": {
+                "content": [
+                    {
+                        "type": "tool_result",
+                        "tool_use_id": call,
+                        "is_error": error,
+                        "content": text,
+                    }
+                ]
+            },
+        }
+
+    def test_redaction_runs_on_the_whole_value_before_it_is_cut(self) -> None:
+        secret = "sk-ant-" + "Q" * 40  # pragma: allowlist secret
+        self.hook("SessionStart", source="startup")
+        self.append(self.prompt("x" * 16370 + " " + secret + " mail a@b.example"))
+        self.capture.scan()
+        (row,) = self.contents()
+        self.assertEqual((row["role"], row["selection"]), ("prompt", "selected"))
+        self.assertLessEqual(len(row["text"].encode()), CAPTURE.SELECTED_LIMIT)
+        self.assertTrue(row["truncated"])
+        self.assertNotIn(b"sk-ant-", self.stored_bytes())
+        self.assertNotIn(b"a@b.example", self.stored_bytes())
+
+    def test_a_turn_keeps_its_final_response_and_abridges_earlier_ones(self) -> None:
+        self.hook("SessionStart", source="startup")
+        self.append(
+            self.prompt("fix the link"),
+            self.answer("draft " * 2000),
+            self.answer("final answer"),
+        )
+        self.capture.scan()
+        rows = {r["offset"]: r for r in self.contents()}
+        first, second = sorted(o for o, r in rows.items() if r["role"] == "response")
+        self.assertEqual(rows[first]["selection"], "summary")
+        self.assertLessEqual(
+            len(rows[first]["text"].encode()), CAPTURE.SUMMARY_TURN_LIMIT
+        )
+        self.assertEqual(
+            (rows[second]["selection"], rows[second]["text"]),
+            ("selected", "final answer"),
+        )
+
+    def test_tool_results_carry_call_ids_and_failure_classes(self) -> None:
+        self.hook("SessionStart", source="startup")
+        self.append(
+            self.prompt("run it"),
+            self.result(
+                "Permission to use Bash with command ls has been denied.", "c1", True
+            ),
+            self.result(
+                "PreToolUse:Edit hook error: [FAIL] BRIEF-MISSING: x", "c2", True
+            ),
+            self.result("Exit code 1\nboom", "c3", True),
+            self.result("ok output", "c4", False),
+        )
+        self.capture.scan()
+        results = [r for r in self.contents() if r["role"] == "tool_result"]
+        self.assertEqual(
+            [(r["call_id"], r["failure_class"], r["selection"]) for r in results],
+            [
+                ("c1", "permission_denied", "selected"),
+                ("c2", "hook_rejected", "selected"),
+                ("c3", "command_failed", "selected"),
+                ("c4", None, "summary"),
+            ],
+        )
+        records = self.capture.status("claude", "s-1")["records"]
+        self.assertIn("permission_denied", [r["failure_class"] for r in records])
+
+    def test_hidden_reasoning_and_tool_arguments_are_never_stored(self) -> None:
+        self.hook("SessionStart", source="startup")
+        self.append(
+            {
+                "type": "assistant",
+                "message": {
+                    "content": [
+                        {"type": "thinking", "thinking": "hidden-thought-text"},
+                        {
+                            "type": "tool_use",
+                            "name": "Bash",
+                            "input": {"command": "argument-text"},
+                        },
+                    ]
+                },
+            },
+            {
+                "type": "user",
+                "isMeta": True,
+                "message": {"content": "injected-meta-text"},
+            },
+        )
+        self.capture.scan()
+        self.assertEqual(self.contents(), [])
+        for text in (b"hidden-thought-text", b"argument-text", b"injected-meta-text"):
+            self.assertNotIn(text, self.stored_bytes())
+
+    def test_redelivery_stores_each_line_once(self) -> None:
+        self.hook("SessionStart", source="startup")
+        self.append(self.prompt("same"), self.prompt("same"))
+        for _ in range(2):
+            self.capture.scan()
+        self.assertEqual(len(self.contents()), 2)
+
+    def test_content_expires_at_30_days_and_metadata_at_90(self) -> None:
+        self.hook("SessionStart", source="startup")
+        self.append(
+            self.prompt("old prompt", "2026-08-01T00:00:00Z"),
+            self.result("ok output", "c9", False, "2026-08-01T00:00:01Z"),
+        )
+        self.capture.scan()
+        self.capture.expire(
+            now=CAPTURE.dt.datetime(2026, 9, 5, tzinfo=CAPTURE.dt.timezone.utc)
+        )
+        self.assertEqual([r["selection"] for r in self.contents()], ["summary"])
+        later = CAPTURE.dt.datetime.now(CAPTURE.dt.timezone.utc) + CAPTURE.dt.timedelta(
+            days=91
+        )
+        self.capture.expire(now=later)
+        self.assertEqual(self.capture.sessions(), [])
+        self.capture.scan()
+        self.assertNotIn(b"old prompt", self.stored_bytes())
+
+    def test_a_full_body_store_records_a_gap_not_the_text(self) -> None:
+        self.hook("SessionStart", source="startup")
+        self.append(self.prompt("first"), self.prompt("second"))
+        with mock.patch.object(CAPTURE, "BODY_STORE_LIMIT", 5):
+            self.capture.scan()
+        rows = self.contents()
+        self.assertEqual(
+            [(r["selection"], r["gap"]) for r in rows][-1], ("gap", "capacity")
+        )
+        self.assertNotIn(b"second", self.stored_bytes())
 
 
 if __name__ == "__main__":
