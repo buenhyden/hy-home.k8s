@@ -103,6 +103,7 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ├── 0231-native-request-brief/
 ├── 0232-shared-memory-meaning/
 ├── 0233-selected-session-content/
+├── 0234-forecast-consumer-link/
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── README.md
@@ -123,6 +124,7 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 | [SPEC-0231 Native Request Brief](./0231-native-request-brief/) | P08 provider 요청 접수를 현재 요청·workspace·정책에 결합하고, 사용자에게 보인 브리핑을 기록한 뒤에만 첫 변경을 허용하는 변경 package다. |
 | [SPEC-0232 Shared Memory Meaning](./0232-shared-memory-meaning/) | P09 공유 메모리에 공통 의미(범위·상태·출처 상태·보존)와 충돌 항목 기본 제외, 수치 거절, 검토 내용에 결합된 승격 outbox를 기존 저장소 위에 연결하는 변경 package다. |
 | [SPEC-0233 Selected Session Content](./0233-selected-session-content/) | P10 세션 수집에 가린 선별 본문(요청·응답·도구 결과)과 30/90일 만료·용량 상한·실패 분류를 더하고, 분석 timer를 workspace별 이름으로 등록하는 변경 package다. |
+| [SPEC-0234 Forecast Consumer Link](./0234-forecast-consumer-link/) | P11 작업 예측 도구를 유지한 채 P30/P50/P80을 완료 확률로, 요청 브리핑·작업 단위를 예측 키로, 최종 전환을 새 기준선(N=0)으로 SDLC-R038에 밝히고 실제 작업 한 건을 예측·실측하는 변경 package다. |
 | [work-residue-ledger.json](./work-residue-ledger.json) | 열린 인계·충돌·채택·조사 잔여 항목을 포인터로만 담는 work residue ledger다. 실행 상태, 증거, 수용은 담지 않고 Task가 소유한다. 종결된 항목은 그 Task가 속한 package의 종료 commit까지 삭제한다. |
 | [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시다. |
 | [CLAUDE.md](./CLAUDE.md) | Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다. |
