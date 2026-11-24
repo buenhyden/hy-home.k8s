@@ -107,6 +107,7 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ├── 0235-contained-provider-workers/
 ├── 0236-linked-run-observation/
 ├── 0237-product-test-boundary/
+├── 0238-task-artifact-cleanup/
 ├── 0239-cutover-readiness/
 ├── AGENTS.md
 ├── CLAUDE.md
@@ -132,6 +133,7 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 | [SPEC-0235 Contained Provider Workers](./0235-contained-provider-workers/) | P12 병렬 dispatcher에 Claude·Codex provider unit을 더하고, 현재 P08 브리핑을 확인한 뒤 systemd user scope와 bwrap 경계 안에서 실행해 `setsid` 후손까지 회수하고 clone 밖 쓰기를 막으며, 실제 Claude worker 2개를 겹쳐 실행·통합하는 변경 package다. |
 | [SPEC-0236 Linked Run Observation](./0236-linked-run-observation/) | P13에서 예측 기록·병렬 실행 보고서·세션 분석 후보를 새 저장소 없이 Task key로 읽기 전용 연결하고, 후보 효과를 0이 아닌 상태와 이유로 표시하며, CLI 추정 비용과 실제 청구를 나누고 도래한 W10-H04 보류를 닫는 변경 package다. |
 | [SPEC-0237 Product Test Boundary](./0237-product-test-boundary/) | P14에서 제품 아키텍처(AD-0007)에는 제품 정책과 test cluster 격리 경계, 선택 가능한 5/20 Application만 남기고 실행기 세부를 환경 가이드(GDE-0013)의 현재 사실로 옮기며, P07의 실제 LAN 거절 관측으로 W09-H02를 닫고 문서 변경이 rollout을 요구하지 않음을 확인하는 변경 package다. |
+| [SPEC-0238 Task Artifact Cleanup](./0238-task-artifact-cleanup/) | P15에서 끝난 일회성 legacy timer 정리 코드와 그 시험을 현재 설치 계약으로 바꾸고, 작업 종료 시 임시물과 영속물을 나누는 정리 규칙을 QUAL-R025와 작업 수명주기에 두며, 이 작업의 임시물과 승인된 1.1.0 입력 패키지를 지우는 변경 package다. |
 | [SPEC-0239 Cutover Readiness](./0239-cutover-readiness/) | P16에서 P16까지의 재개 항목을 설계·코드·회귀·실제 환경·사용자 인수로 나눈 준비표와 판정(cutover_ready: false)을 남기고, 사용자 인수를 각 Task에 기록하며, W10-H03을 좁히고 P07 VM 경로 폐기 규칙을 더하는 변경 package다. |
 | [work-residue-ledger.json](./work-residue-ledger.json) | 열린 인계·충돌·채택·조사 잔여 항목을 포인터로만 담는 work residue ledger다. 실행 상태, 증거, 수용은 담지 않고 Task가 소유한다. 종결된 항목은 그 Task가 속한 package의 종료 commit까지 삭제한다. |
 | [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시다. |
