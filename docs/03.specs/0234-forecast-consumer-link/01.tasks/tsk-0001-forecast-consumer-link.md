@@ -87,7 +87,7 @@ up until 2026-11-27, so no Codex round trip was attempted.
 
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
-| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria) | DEFER | Regressions pass (EVD-002); record 20 fixed and started (EVD-003); hosted checks pass (EVD-004); its finish follows the merge |
+| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria) | PASS | Regressions pass (EVD-002); record 20 fixed and started (EVD-003); hosted checks pass (EVD-004); record 20 finished and scored (EVD-005) |
 
 #### Verification Evidence
 
@@ -99,6 +99,7 @@ up until 2026-11-27, so no Codex round trip was attempted.
 | EVD-002 | [AC-0001](../spec.md#criteria) | WORK-001 | automated | Unchanged `scripts/work_forecast.py` at `bdb2d39b` | Pinned validation venv, `unittest` | `python -m unittest tests.test_work_forecast` | 0 | PASS | 14 tests OK: quantile order and NaN refusal, censoring, earlier-only sample, coverage and pinball, immutability, clock order | true | none |
 | EVD-003 | [AC-0002](../spec.md#criteria) | WORK-001 | observation | Live `.workspace-memory/forecast.sqlite3`, 19 records before; the brief of request `006d2ca4bea0dc52` recorded first | `scripts/work_forecast.py` | `forecast` with task reference `SPEC-0234 WORK-001 request 006d2ca4bea0dc52`, `governance-prompt`, `elapsed`, `minutes`, P30 40, P50 60, P80 100; then `start 20` | 0 | PASS | Record 20, digest `e8c05b1685c4ad963cf3bf456ecf5915b2325b04b8fdd3cac1b706219e8f3600`, sample size 3, `uncalibrated`; started 2026-11-24T03:34:35.991889Z before the first repository change; end definition is the merge of the P11 pull request | true | none |
 | EVD-004 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria) | WORK-001 | observation | Pull request #358, head `9bdf126b` | GitHub Actions CI run 45321783910; GitGuardian | Hosted pull request checks | 0 | PASS | ci-summary, style-pr (5 min 15 s), label, greeting and GitGuardian passed | true | none |
+| EVD-005 | [AC-0002](../spec.md#criteria) | WORK-001 | observation | Record 20 after pull request #358 merged as `0e491835` | `scripts/work_forecast.py` | `finish 20 completed`; `score` | 0 | PASS | Finished 2026-11-24T04:02:05.165471Z, completed, elapsed actual 27.486226 minutes from the tool clock, below its P30 of 40. The `governance-prompt`/elapsed/minutes group now has N=4, nothing censored, open or unstarted, coverage P30 0.75, P50 0.75, P80 1.0 and pinball loss P30 11.26, P50 17.16, P80 15.85; the score stays descriptive only and uncalibrated | true | none |
 
 ##### Resolution Links
 
@@ -111,12 +112,12 @@ None yet.
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | [AC-0001](../spec.md#criteria) | accept | pending | EVD-002, EVD-004 | Awaiting the operator's decision | none | platform | none |
-| [AC-0002](../spec.md#criteria) | accept | pending | EVD-003 | Awaiting the finish and score of record 20 and the operator's decision | none | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | pending | EVD-003, EVD-004, EVD-005 | Awaiting the operator's decision | none | platform | none |
 
 ##### Remaining Conditions
 
-Record 20 is finished and scored after the P11 pull request merges, and that
-result is recorded here in a later change. Hosted checks passed (EVD-004).
+Record 20 was finished and scored after pull request #358 merged (EVD-005);
+one run in a group of four is no calibration. Hosted checks passed (EVD-004).
 W10-H01 waits for a Codex session after 2026-11-27.
 
 #### Handoff
