@@ -189,10 +189,9 @@ On 2026-11-20 the user selected P04-TEMPLATES only from the same 1.1.0
 package and authorized implementation, verification and Git delivery. The
 delivered P03 input is PR 336, CI run 44610512060 and merged `0164ad34`;
 the checked P04 worktree was clean. The Stage 99 contract change is scoped in
-[SPEC-0226](../../0226-common-document-contract/spec.md) and its
-[Plan](../../0226-common-document-contract/plan.md). Its
-[Task](../../0226-common-document-contract/01.tasks/tsk-0001-common-document-contract.md)
-owns P04 implementation, validation and later acceptance evidence. This
+SPEC-0226, its Plan and Task, which owned P04 implementation, validation and
+acceptance evidence; the package exited on 2026-11-24 and
+the [REQ-0003 Archived Lineage](../../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage) summarizes it. This
 handoff does not reopen the accepted residue-transfer criteria or alter any
 prior Results, decision or residue row. P05 is the next input after P04;
 it is not started by this receipt.
@@ -868,7 +867,7 @@ generated navigation, reusable QA cache and persistent memory through their
 existing retention boundaries.
 
 P04's current work and evidence live in
-[SPEC-0226 Task](../../0226-common-document-contract/01.tasks/tsk-0001-common-document-contract.md).
+the SPEC-0226 Task, now summarized in the [REQ-0003 Archived Lineage](../../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage).
 After that task's implementation and validation, the next input is
 `_workspace/workspace_governance_remediation_1_1_0_20261120/prompts/P05-DOCS-SDLC.md`;
 its prerequisites are the delivered P00–P03 results and P04's verified

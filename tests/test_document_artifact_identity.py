@@ -364,7 +364,12 @@ class LineageRetiredIdentityTest(unittest.TestCase):
         )
 
     def test_first_cell_shapes_reserve_whole_tokens(self) -> None:
-        for heading in ("### Archived Lineage", "## Archived Lineage"):
+        # The common envelope puts a Requirement's lineage at level 5 (REQ-0003).
+        for heading in (
+            "### Archived Lineage",
+            "## Archived Lineage",
+            "##### Archived Lineage",
+        ):
             with self.subTest(heading=heading):
                 self.assertEqual(
                     self.retired(

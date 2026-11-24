@@ -1327,11 +1327,12 @@ LOCAL_CONTRACT_EVIDENCE_GAP = "current same-package Plan and Spec authority"
 
 _PACKAGE_DIR = re.compile(r"[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*")
 _TERMINAL_TASK_STATES = frozenset({"completed", "cancelled"})
-_LINEAGE_HEADING = re.compile(r"^(#{2,3}) Archived Lineage[ \t]*$", re.MULTILINE)
+# Level 5 is where the common envelope places a Requirement's lineage.
+_LINEAGE_HEADING = re.compile(r"^(#{2,5}) Archived Lineage[ \t]*$", re.MULTILINE)
 
 
 def _archived_lineage_text(text: str) -> str:
-    """Return the body of each level-2 or level-3 `Archived Lineage` section."""
+    """Return the body of each level-2 to level-5 `Archived Lineage` section."""
 
     sections = []
     for match in _LINEAGE_HEADING.finditer(text):
