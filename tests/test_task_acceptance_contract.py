@@ -61,7 +61,11 @@ class TaskHistoryRetentionTests(unittest.TestCase):
         )
 
     def issues(
-        self, *, evidence_changes: dict[str, str] | None = None, drop: bool = False
+        self,
+        *,
+        evidence_changes: dict[str, str] | None = None,
+        drop: bool = False,
+        base_changes: dict[str, str] | None = None,
     ) -> set[str]:
         path = self.path
         base_work = {
@@ -83,7 +87,7 @@ class TaskHistoryRetentionTests(unittest.TestCase):
             "Location": "tests/fixture.py",
             "Required": "yes",
             "Resolves": "none",
-        }
+        } | (base_changes or {})
         # Fixture rows renamed to the core names the rules read.
         changed = core_row("evidence", base_check | (evidence_changes or {}))
         base_work = core_row("traceability", base_work)
@@ -127,6 +131,25 @@ class TaskHistoryRetentionTests(unittest.TestCase):
                     "TASK-EVIDENCE-RETENTION", self.issues(evidence_changes=change)
                 )
         self.assertEqual(self.issues(), set())
+
+    def test_only_a_local_checkout_path_may_be_redacted_from_a_recorded_row(self):
+        recorded = {"Location": "Git directory `/home/user/data/hy-home.k8s/.git`"}
+        self.assertEqual(
+            self.issues(
+                base_changes=recorded,
+                evidence_changes={"Location": "Git directory `<checkout>/.git`"},
+            ),
+            set(),
+        )
+        for changed in (
+            {"Location": "Git directory `.git`"},
+            {"Location": "Git directory `<checkout>/.git`", "Result": "PASS"},
+        ):
+            with self.subTest(changed=changed):
+                self.assertIn(
+                    "TASK-EVIDENCE-RETENTION",
+                    self.issues(base_changes=recorded, evidence_changes=changed),
+                )
 
     def test_a_changed_fragment_in_a_recorded_evidence_row_is_refused(self) -> None:
         # SPEC-0200 retired its one-use fragment route: the comparison is a plain

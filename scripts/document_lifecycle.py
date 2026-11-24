@@ -712,6 +712,19 @@ def _task_item_edge_diagnostics(
     return tuple(issues)
 
 
+# Same pattern as the repository quality gate's local checkout path rule.
+_LOCAL_CHECKOUT_PATH = re.compile(
+    r"(?<![\w:/])/(?:[^\s`'\"()]+/)?hy-home\.k8s(?![\w.-])"
+)
+
+
+def _redacted(old: str, new: str) -> bool:
+    """A recorded cell may only swap each local checkout path for `<checkout>`."""
+    return bool(_LOCAL_CHECKOUT_PATH.search(old)) and (
+        _LOCAL_CHECKOUT_PATH.sub("<checkout>", old) == new
+    )
+
+
 def _task_evidence_retention_diagnostics(
     path: PurePosixPath,
     context: LifecycleEvidenceContext,
@@ -771,6 +784,7 @@ def _task_evidence_retention_diagnostics(
             reason = f"{identifier} lacks the column {missing[0]}"
         elif any(
             old.get(key, "").strip() != new.get(key, "").strip()
+            and not _redacted(old.get(key, "").strip(), new.get(key, "").strip())
             for key in (
                 "Work Unit",
                 "Method",

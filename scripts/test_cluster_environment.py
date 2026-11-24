@@ -1,14 +1,16 @@
 """Owned Docker network and selected-cluster environment checks.
 
-The existing k3d adapter has no way to pass a per-node writable-layer disk
-quota. Product workloads therefore fail closed until that physical boundary
-has a supported implementation; accounting reservations are not that quota.
+The k3d adapter has no per-node writable-layer disk quota. On the host route
+(SPEC-0229 option C) admission accounting plus a polling disk watchdog bound
+the run instead: the watchdog kills the node when its measured use passes the
+reserved budget or cannot be measured. That is a bound, not a hard cap.
 """
 
 from __future__ import annotations
 
 import contextlib
 import fcntl
+import http.server
 import ipaddress
 import json
 import os
@@ -18,6 +20,7 @@ import shutil
 import socket
 import stat
 import sys
+import threading
 import time
 import uuid
 from collections.abc import Callable, Sequence
@@ -38,6 +41,7 @@ WORKLOAD_KINDS = frozenset(
 )
 K3S_IMAGE = "rancher/k3s:v1.35.0-k3s1"
 PAUSE_IMAGE = "rancher/mirrored-pause:3.6"
+PROBE_IMAGE = "busybox:1.37"
 PAUSE_TAR = Path("/home/hyk8s/pause.tar")
 
 
@@ -671,8 +675,12 @@ def create_command(
         "--disable=metrics-server@server:0",
     ]
     if pause_tar is not None:
-        if pause_tar != str(PAUSE_TAR):
-            raise ValueError("VM_INPUT: pause archive path is unverified")
+        # The guest's fixed archive, or the one this run saved for itself.
+        if pause_tar != str(PAUSE_TAR) and not (
+            Path(pause_tar).is_absolute()
+            and pause_tar.endswith(f"/.workspace-test/{run_id}/pause.tar")
+        ):
+            raise ValueError("CLUSTER_INPUT: pause archive path is unverified")
         command += [
             "--volume",
             f"{pause_tar}:/var/lib/rancher/k3s/agent/images/pause.tar:ro@server:0",
@@ -692,13 +700,23 @@ def tool_environment(state: Path, base: dict[str, str] | None = None) -> dict[st
     return environment | {"KUBECONFIG": str(state / "kubeconfig")}
 
 
-def create_network_command(name: str, run_id: str) -> list[str]:
+ISOLATED_OPTION = "com.docker.network.bridge.gateway_mode_ipv4"
+
+
+def create_network_command(
+    name: str, run_id: str, *, isolated: bool = False
+) -> list[str]:
+    # On the host route the bridge must hold no host address: an owned test
+    # showed a plain --internal network still reaches host services through
+    # its gateway address (SPEC-0229 EVD-085).
+    option = ["-o", f"{ISOLATED_OPTION}=isolated"] if isolated else []
     return [
         "docker",
         "network",
         "create",
         "--driver",
         "bridge",
+        *option,
         "--internal",
         "--subnet",
         OWNED_SUBNET,
@@ -725,7 +743,9 @@ def network_names(run: Callable[..., str], run_id: str) -> set[str]:
     return set((output or "").splitlines())
 
 
-def verify_network(run: Callable[..., str], name: str, run_id: str) -> None:
+def verify_network(
+    run: Callable[..., str], name: str, run_id: str, *, isolated: bool = False
+) -> None:
     output = run(["docker", "network", "inspect", name, "--format", "{{json .}}"])
     ipam = None
     try:
@@ -741,6 +761,10 @@ def verify_network(run: Callable[..., str], name: str, run_id: str) -> None:
             or len(ipam) != 1
             or ipam[0].get("Subnet") != OWNED_SUBNET
             or ipam[0].get("Gateway") != OWNED_GATEWAY
+            or (
+                isolated
+                and (data.get("Options") or {}).get(ISOLATED_OPTION) != "isolated"
+            )
         ):
             raise ValueError("network isolation or ownership differs")
     except (TypeError, ValueError, AttributeError) as exc:
@@ -857,12 +881,124 @@ def verified_guest_profile(capsule: Path) -> dict[str, Any]:
     }
 
 
-def require_product_disk_cap(capsule: Path | None = None) -> None:
-    if capsule is None:
-        raise ValueError(
-            "CLUSTER_DISK_LIMIT: k3d node writable-layer quota is unavailable"
-        )
-    verified_guest_profile(capsule)
+def host_pause_tar(run: Callable[..., str], state: Path) -> str:
+    """Save the pause and probe images into the run's own archive.
+
+    The isolated node cannot pull, and k3s imports every archive in its
+    images directory at start. `k3d image import` left the probe image absent
+    in an actual host run (SPEC-0229 EVD-086), so the archive carries it too.
+    """
+    path = state / "pause.tar"
+    for image in (PAUSE_IMAGE, PROBE_IMAGE):
+        run(["docker", "pull", image])
+    run(["docker", "save", "-o", str(path), PAUSE_IMAGE, PROBE_IMAGE])
+    try:
+        meta = path.lstat()
+        if not stat.S_ISREG(meta.st_mode) or not 0 < meta.st_size <= 64 * 1024**2:
+            raise ValueError("pause archive identity or size differs")
+    except (OSError, ValueError) as exc:
+        raise ValueError("CLUSTER_INPUT: run pause archive is unavailable") from exc
+    return str(path)
+
+
+def start_host_dummy(port: int, nonce: str) -> http.server.ThreadingHTTPServer:
+    """Serve the probe's denied endpoint on the host.
+
+    It binds every host address on purpose: a pod that reaches the host by any
+    address gets the nonce, and the probe then fails.
+    """
+    body = nonce.encode()
+
+    class Handler(http.server.BaseHTTPRequestHandler):
+        def do_GET(self) -> None:  # noqa: N802 - http.server API
+            self.send_response(200)
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def log_message(self, *_args: Any) -> None:
+            return
+
+    server = http.server.ThreadingHTTPServer(("0.0.0.0", port), Handler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    return server
+
+
+# The k3s image keeps its data in these anonymous volumes, outside SizeRw.
+NODE_VOLUMES = ("/var/lib/rancher/k3s", "/var/lib/kubelet", "/var/lib/cni", "/var/log")
+
+
+def node_disk_mib(run: Callable[..., str], node: str) -> int:
+    """Writable layer plus the node's data volumes, in MiB (rounded up)."""
+    layer = int(
+        run(
+            [
+                "docker",
+                "container",
+                "inspect",
+                "--size",
+                node,
+                "--format",
+                "{{.SizeRw}}",
+            ]
+        ).strip()
+    )
+    used = run(["docker", "exec", node, "du", "-skx", *NODE_VOLUMES])
+    kib = sum(int(line.split()[0]) for line in used.splitlines() if line.strip())
+    return -(-(layer + kib * 1024) // (1024 * 1024))
+
+
+class DiskWatchdog:
+    """Kill the node when its disk use passes the reserved budget.
+
+    ponytail: polling bound, not a quota; writes between two polls can
+    overshoot by one interval. A kernel quota needs a root-owned filesystem.
+    """
+
+    def __init__(
+        self,
+        run: Callable[..., str],
+        node: str,
+        limit_mib: int,
+        interval: float = 15.0,
+    ) -> None:
+        self.run, self.node, self.limit, self.interval = run, node, limit_mib, interval
+        self.exceeded: str | None = None
+        self._failures = 0
+        self._stop = threading.Event()
+        self._thread: threading.Thread | None = None
+
+    def check(self) -> bool:
+        try:
+            used = node_disk_mib(self.run, self.node)
+        except Exception:  # noqa: BLE001 - three misses in a row fail closed
+            self._failures += 1
+            if self._failures < 3:
+                return True
+            reason = "node disk use is unmeasurable"
+        else:
+            self._failures = 0
+            if used <= self.limit:
+                return True
+            reason = f"node uses {used} MiB, over its {self.limit} MiB budget"
+        self.exceeded = reason
+        with contextlib.suppress(Exception):
+            self.run(["docker", "kill", self.node])
+        return False
+
+    def start(self) -> None:
+        def loop() -> None:
+            while not self._stop.wait(self.interval):
+                if not self.check():
+                    return
+
+        self._thread = threading.Thread(target=loop, daemon=True)
+        self._thread.start()
+
+    def stop(self) -> None:
+        self._stop.set()
+        if self._thread is not None:
+            self._thread.join(timeout=30)
 
 
 def namespace_limits(namespace: str) -> list[dict[str, Any]]:
@@ -958,7 +1094,12 @@ def apply_selected_guest(
         return run(command, env=env, input_text=input_text)
 
     probe = selected_namespace_probe(
-        probe_run, namespace, profile["dummy_port"], profile["dummy_nonce"], run_id
+        probe_run,
+        namespace,
+        profile["dummy_port"],
+        profile["dummy_nonce"],
+        run_id,
+        profile.get("dummy_host", "10.0.2.2"),
     )
     ready = []
     for item in products:
@@ -1091,7 +1232,12 @@ def probe_boundary(
 
 
 def selected_namespace_probe(
-    run: Callable[..., str], namespace: str, dummy_port: int, nonce: str, run_id: str
+    run: Callable[..., str],
+    namespace: str,
+    dummy_port: int,
+    nonce: str,
+    run_id: str,
+    dummy_host: str = "10.0.2.2",
 ) -> dict[str, Any]:
     if (
         not re.fullmatch(r"[a-z0-9-]{1,63}", namespace)
@@ -1099,6 +1245,7 @@ def selected_namespace_probe(
         or not re.fullmatch(r"[A-Za-z0-9-]{1,64}", nonce)
         or type(dummy_port) is not int
         or not 1024 <= dummy_port <= 65535
+        or dummy_host not in ("10.0.2.2", OWNED_GATEWAY)
     ):
         raise ValueError("CLUSTER_NETWORK: invalid owned probe input")
     server, client = f"hyk8s-probe-s-{run_id}", f"hyk8s-probe-c-{run_id}"
@@ -1165,7 +1312,7 @@ def selected_namespace_probe(
                         "ports": [{"protocol": "TCP", "port": 8080}],
                     },
                     {
-                        "to": [{"ipBlock": {"cidr": "10.0.2.2/32"}}],
+                        "to": [{"ipBlock": {"cidr": f"{dummy_host}/32"}}],
                         "ports": [{"protocol": "TCP", "port": dummy_port}],
                     },
                 ],
@@ -1297,7 +1444,7 @@ def selected_namespace_probe(
                 "--",
                 "sh",
                 "-c",
-                f"body=$(wget -T 3 -qO- http://10.0.2.2:{dummy_port}/ 2>/dev/null); "
+                f"body=$(wget -T 3 -qO- http://{dummy_host}:{dummy_port}/ 2>/dev/null); "
                 'rc=$?; printf \'rc=%s body=%s\' "$rc" "$body"',
             ]
         ).strip()

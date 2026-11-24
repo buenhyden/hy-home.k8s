@@ -116,9 +116,13 @@ process start identity and actual liveness before reclaiming only its run's
 resources. Ambiguous ownership retains the lease for operator inspection;
 `/proc/*/environ` and secret values are never scanned. A timer or reusable
 PID alone never frees a lease.
-Timeout and cancellation propagate to children. A missing enforceable disk
-boundary blocks operations that require a hard cap rather than presenting a
-reservation estimate as enforcement.
+Timeout and cancellation propagate to children. On the host route the
+operator chose on 2026-11-24 an accounted disk bound instead of a hard cap:
+admission reserves the run's disk, and a watchdog measures the node's
+writable layer and data volumes, kills the node when use passes the
+reservation or cannot be measured three times in a row, and fails the run
+with `CLUSTER_DISK_LIMIT`. It is a polling bound, not a kernel quota, and is
+never presented as one; the bounded VM route remains the hard-cap option.
 
 The existing one-server/no-load-balancer k3d setup retains loopback API and
 dedicated kubeconfig without changing the default context. Components start
@@ -130,7 +134,9 @@ component; a full root sync is not a fallback. Test namespace quota and
 limits, host/container caps and runtime egress are distinct controls.
 
 Production LAN isolation is enforced outside additive product NetworkPolicy,
-through a scoped host/container boundary or isolated VM. The isolation also
+through a scoped host/container boundary or isolated VM. On the host route
+the owned network is internal with isolated gateway mode, so the host holds
+no address on the bridge and `kubectl` runs inside the node. The isolation also
 covers IPv6 or disables it, and verifies the owned interface and network,
 default route, proxy configuration, and absence of host mounts, Docker socket
 and privileged product pods before startup. The k3d node's required privilege
@@ -175,7 +181,7 @@ allowed source write is `failed`, never relabelled `unobserved`.
 | --- | --- |
 | AC-0001 | Current host, Git binding, toolchain, container/cluster/CI runner and supported Codex/Claude account, binary, version, options and trust state are recorded without secret values; finite native calls and prior valid observations are mapped to one route per provider. |
 | AC-0002 | Direct and dispatcher starts atomically share inventory and aggregate component, CPU, memory, disk and time admission; split selections and concurrent over-budget requests fail before spawn, while pre-spawn intent permits recovery after an interrupted start. |
-| AC-0003 | Selected k3d Applications run with only their dependency closure, bounded resources, dedicated kubeconfig, explicit readiness and owned cleanup; unsupported charts/CRDs or unavailable hard caps fail closed at the affected depth. |
+| AC-0003 | Selected k3d Applications run with only their dependency closure, bounded resources, dedicated kubeconfig, explicit readiness and owned cleanup; unsupported charts/CRDs fail closed at the affected depth, and disk use stays within the reserved budget through a hard cap or an accounted watchdog bound that aborts the run. |
 | AC-0004 | The production LAN deny is enforced at a host/container or VM boundary; one disposable probe pod in the selected product namespace confirms controlled denied and allowed paths before any product workload pod runs. Prior W09-H02 failure remains open until both actual paths pass. |
 | AC-0005 | P06's matching native reviewer evidence is reused, any still-required permission probe runs once after environment readiness, and original Desktop→SSH failure, static configuration, provider runtime and actual source-write outcomes stay distinct. |
 | AC-0006 | Focused races, cancellation/orphan and component regressions, selected local and hosted checks, cleanup, outstanding limits and next P08/P12 consumers are recorded with implementation, verification and user acceptance as separate states. |

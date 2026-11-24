@@ -297,15 +297,35 @@ class VmContractTest(unittest.TestCase):
         self.assertEqual(
             volume, archive + ":/var/lib/rancher/k3s/agent/images/pause.tar:ro@server:0"
         )
-        with self.assertRaisesRegex(ValueError, "VM_INPUT"):
+        own = "/repo/.workspace-test/p07vm001/pause.tar"
+        self.assertIn(
+            own + ":/var/lib/rancher/k3s/agent/images/pause.tar:ro@server:0",
             cluster.create_command(
                 "hyk8s-test-p07vm001",
                 "p07vm001",
                 40222,
                 "hyk8s-net-p07vm001",
                 "1536m",
-                pause_tar="/tmp/untrusted.tar",
-            )
+                pause_tar=own,
+            ),
+        )
+        for untrusted in (
+            "/tmp/untrusted.tar",
+            "/tmp/pause.tar",
+            "/repo/.workspace-test/othrrun1/pause.tar",
+        ):
+            with (
+                self.subTest(untrusted=untrusted),
+                self.assertRaisesRegex(ValueError, "CLUSTER_INPUT"),
+            ):
+                cluster.create_command(
+                    "hyk8s-test-p07vm001",
+                    "p07vm001",
+                    40222,
+                    "hyk8s-net-p07vm001",
+                    "1536m",
+                    pause_tar=untrusted,
+                )
 
     def test_selected_guest_applies_product_only_after_controlled_namespace_probe(self):
         environment = importlib.import_module("test_cluster_environment")
