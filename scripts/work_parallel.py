@@ -85,6 +85,12 @@ MODEL = re.compile(r"[a-z0-9][a-z0-9.-]{0,63}")
 PROMPT_LIMIT = 16 * 1024
 MAX_BUDGET_USD = 10.0
 SCOPE_TIMEOUT = 30
+# A CLI's cost figure is its own estimate; the account's charge is never seen.
+CLAUDE_COST_NOTE = (
+    "cost_estimate_usd is the CLI's reported estimate; the account's actual "
+    "charge is not observed"
+)
+CODEX_COST_NOTE = "the CLI reports no cost; the account's actual charge is not observed"
 SCOPE_ENV = ("PATH", "HOME", "XDG_RUNTIME_DIR", "DBUS_SESSION_BUS_ADDRESS")
 PLAN_KEYS = {"task_ref", "base", "max_workers", "integration_check", "units"}
 FAILED = {"failed", "refused", "expired", "blocked", "cancelled"}
@@ -310,7 +316,9 @@ def parse_result(provider: str, raw: bytes) -> dict[str, Any]:
     """Session, cost, turns and usage from the CLI's JSON; nothing is executed."""
     result: dict[str, Any] = {
         "session": None,
-        "cost_usd": None,
+        "cost_estimate_usd": None,
+        "charge_usd": None,
+        "cost_note": CLAUDE_COST_NOTE if provider == "claude" else CODEX_COST_NOTE,
         "turns": None,
         "usage": None,
         "error": None,
@@ -329,7 +337,7 @@ def parse_result(provider: str, raw: bytes) -> dict[str, Any]:
             return {**result, "error": "PARALLEL_RESULT: no result object"}
         result.update(
             session=final.get("session_id"),
-            cost_usd=final.get("total_cost_usd"),
+            cost_estimate_usd=final.get("total_cost_usd"),
             turns=final.get("num_turns"),
             usage=final.get("usage"),
         )
@@ -872,7 +880,9 @@ class _Run:
                 "provider": self.units[uid]["provider"],
                 "scope": None,
                 "session": None,
-                "cost_usd": None,
+                "cost_estimate_usd": None,
+                "charge_usd": None,
+                "cost_note": None,
                 "turns": None,
                 "usage": None,
             }
@@ -1186,6 +1196,7 @@ class _Run:
             else:
                 rec.update(state="expired" if code is None else "failed", reason=reason)
         finally:
+            work["out"].unlink(missing_ok=True)  # parsed or failed, never kept
             try:
                 self.release(work["reservation"], work["scope"])
             except (ADMISSION.AdmissionError, OSError) as exc:
@@ -1200,6 +1211,9 @@ class _Run:
         if work["scope"] is not None:
             with work["out"].open("rb") as handle:
                 parsed = parse_result(unit["provider"], handle.read(OUTPUT_LIMIT))
+            # The parsed fields stay in the report; the raw output, which holds
+            # the provider's response text, does not outlive collection.
+            work["out"].unlink(missing_ok=True)
             error = parsed.pop("error")
             rec.update(parsed)
             if error:
@@ -1423,6 +1437,7 @@ class _Run:
         finally:
             for uid in list(self.running):
                 work = self.stop(uid)
+                work["out"].unlink(missing_ok=True)
                 try:
                     self.release(work["reservation"], work["scope"])
                 except (ADMISSION.AdmissionError, OSError) as exc:

@@ -167,6 +167,32 @@ def _day(stamp: str) -> dt.date:
     return dt.datetime.fromisoformat(stamp).astimezone(ZONE).date()
 
 
+def _effect(decision: str, rechecks: list[dict[str, Any]]) -> dict[str, Any]:
+    """The observed effect of a candidate, never a zero count in place of none.
+
+    This is the last link of source, hypothesis, review, Task and check; it is
+    not the user's acceptance of anything. A recurrence is never hidden by a
+    later met day, and a candidate without a comparable later day stays
+    unobserved with its reason.
+    """
+    if decision != "accepted":
+        reason = (
+            "the candidate was rejected"
+            if decision == "rejected"
+            else "the candidate is not reviewed"
+        )
+        return {"state": "not-tracked", "reason": reason}
+    outcomes = {check["outcome"] for check in rechecks}
+    for state in ("recurred", "met"):
+        if state in outcomes:
+            return {"state": state, "reason": None}
+    if outcomes:
+        reason = "later days had fewer sessions than the candidate's evidence"
+    else:
+        reason = "no later day with sessions is analyzed"
+    return {"state": "unobserved", "reason": reason}
+
+
 class Analysis:
     def __init__(self, path: Path, root: Path):
         self.path = path
@@ -620,19 +646,12 @@ class Analysis:
         result = []
         for row in rows:
             rechecks = checks.get(row["candidate_id"], [])
-            outcomes = {check["outcome"] for check in rechecks}
             result.append(
                 dict(row)
                 | {
                     "source_refs": json.loads(row["source_refs"]),
                     "rechecks": rechecks,
-                    # A recurrence is never hidden by a later met day; unverified
-                    # until a later comparable day is observed.
-                    "acceptance": "recurred"
-                    if "recurred" in outcomes
-                    else "met"
-                    if "met" in outcomes
-                    else "unverified",
+                    "effect": _effect(row["decision"], rechecks),
                 }
             )
         return result

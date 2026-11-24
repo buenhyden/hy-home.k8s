@@ -1347,7 +1347,9 @@ class ProviderPlanTest(Fixture):
             PARALLEL.parse_result("claude", claude.encode()),
             {
                 "session": "s",
-                "cost_usd": 0.02,
+                "cost_estimate_usd": 0.02,
+                "charge_usd": None,
+                "cost_note": PARALLEL.CLAUDE_COST_NOTE,
                 "turns": 3,
                 "usage": {"input_tokens": 1},
                 "error": None,
@@ -1364,7 +1366,9 @@ class ProviderPlanTest(Fixture):
             PARALLEL.parse_result("codex", events),
             {
                 "session": "t",
-                "cost_usd": None,
+                "cost_estimate_usd": None,
+                "charge_usd": None,
+                "cost_note": PARALLEL.CODEX_COST_NOTE,
                 "turns": 1,
                 "usage": {"output_tokens": 4},
                 "error": None,
@@ -1471,6 +1475,10 @@ class ContainmentTest(Fixture):
                 record = report["units"]["a"]
                 self.assertEqual(report["state"], "completed", report)
                 self.assertEqual(record["session"], session)
+                self.assertIsNone(record["charge_usd"])
+                self.assertTrue(record["cost_note"])
+                run_dir = self.runtime / report["run"]
+                self.assertEqual(list(run_dir.glob("*.out")), [], "raw output kept")
                 self.assertTrue(record["scope"].startswith("hyk8s-par-"))
                 self.assertFalse(self.escape.exists(), "a write outside the clone")
                 self.assertFalse(_alive(self.marker), "a setsid child outlived it")
@@ -1485,6 +1493,7 @@ class ContainmentTest(Fixture):
     def test_a_timed_out_worker_loses_its_whole_scope(self):
         report = self.run_native(self.native(prompt="sleep=60", timeout=3))
         self.assertEqual(report["units"]["a"]["state"], "expired", report)
+        self.assertEqual(list((self.runtime / report["run"]).glob("*.out")), [])
         self.assertFalse(_alive(self.marker), "a setsid child outlived the timeout")
         self.assertNoResidue(report)
 
