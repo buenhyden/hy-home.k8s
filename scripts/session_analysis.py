@@ -70,7 +70,31 @@ create table if not exists recheck (
   candidate_id integer not null, window text not null, outcome text not null,
   frequency integer not null, sessions integer not null, observed_at text not null,
   primary key (candidate_id, window));
+create table if not exists review_receipt (
+  candidate_id integer primary key, digest text not null, decision text not null,
+  reviewer text not null, reviewed_at text not null);
+create table if not exists promotion (
+  candidate_id integer primary key, reviewed_digest text not null,
+  idempotency_key text not null, owner text not null, state text not null,
+  memory_id text, created_at text not null, finished_at text);
 """
+# The reviewed content of a candidate: what a memory promotion writes.
+REVIEWED_FIELDS = (
+    "window",
+    "pattern",
+    "subject",
+    "problem",
+    "proposal",
+    "acceptance_test",
+)
+
+
+def _reviewed_digest(row: sqlite3.Row) -> str:
+    content = {field: row[field] for field in REVIEWED_FIELDS}
+    return hashlib.sha256(
+        json.dumps(content, sort_keys=True, ensure_ascii=False).encode()
+    ).hexdigest()
+
 
 RULES = {
     "repeated-tool-failure": {
@@ -570,71 +594,170 @@ class Analysis:
     ) -> dict[str, Any]:
         if decision not in ("accepted", "rejected"):
             raise AnalysisError("ANALYSIS_SCHEMA: decision is accepted or rejected")
+        stamp = _iso(now or dt.datetime.now(dt.timezone.utc))
         with self._write() as connection:
+            connection.row_factory = sqlite3.Row
             row = connection.execute(
-                "select promoted_to from candidate where candidate_id = ?",
-                (candidate_id,),
+                "select * from candidate where candidate_id = ?", (candidate_id,)
             ).fetchone()
-            if row is not None and row[0] is not None:
+            if row is None:
+                raise AnalysisError("ANALYSIS_NOT_FOUND: unknown candidate")
+            if row["promoted_to"] is not None:
                 raise AnalysisError("ANALYSIS_PROMOTED: a promoted candidate is final")
-            changed = connection.execute(
+            if connection.execute(
+                "select 1 from promotion where candidate_id = ? and state = 'pending'",
+                (candidate_id,),
+            ).fetchone():
+                raise AnalysisError(
+                    "ANALYSIS_PROMOTING: finish the pending promotion first"
+                )
+            connection.execute(
                 "update candidate set decision = ?, reviewer = ?, reviewed_at = ?"
                 " where candidate_id = ?",
-                (
-                    decision,
-                    owner,
-                    _iso(now or dt.datetime.now(dt.timezone.utc)),
-                    candidate_id,
-                ),
-            ).rowcount
-        if not changed:
-            raise AnalysisError("ANALYSIS_NOT_FOUND: unknown candidate")
+                (decision, owner, stamp, candidate_id),
+            )
+            # The review covers only the content it saw (D09).
+            connection.execute(
+                "insert into review_receipt values (?, ?, ?, ?, ?)"
+                " on conflict (candidate_id) do update set digest = excluded.digest,"
+                " decision = excluded.decision, reviewer = excluded.reviewer,"
+                " reviewed_at = excluded.reviewed_at",
+                (candidate_id, _reviewed_digest(row), decision, owner, stamp),
+            )
         return {"candidate_id": candidate_id, "decision": decision}
 
     def promote(
         self, candidate_id: int, *, to: str, owner: str, ref: str | None = None
     ) -> dict[str, Any]:
-        """An accepted candidate becomes a memory candidate or a Task reference."""
+        """An accepted candidate becomes a memory candidate or a Task reference.
 
-        with self._connect() as connection:
+        A memory promotion is an outbox (D09): one transaction checks the
+        reviewed content and records the intent with a stable idempotency key;
+        the memory write runs without the analysis lock; a second transaction
+        records the memory ID. A retry after a crash replays the same write, a
+        changed candidate cancels the intent, and an erased memory ends it.
+        """
+
+        if to not in ("memory", "task") or (
+            to == "task" and not (isinstance(ref, str) and ref.strip())
+        ):
+            raise AnalysisError(
+                "ANALYSIS_SCHEMA: promote to memory, or to task with a ref"
+            )
+        now = _iso(dt.datetime.now(dt.timezone.utc))
+        stale = False
+        with self._write() as connection:
             connection.row_factory = sqlite3.Row
             row = connection.execute(
                 "select * from candidate where candidate_id = ?", (candidate_id,)
             ).fetchone()
-        if row is None:
-            raise AnalysisError("ANALYSIS_NOT_FOUND: unknown candidate")
-        if row["decision"] != "accepted":
-            raise AnalysisError("ANALYSIS_NOT_ACCEPTED: review the candidate first")
-        if row["promoted_to"] is not None:
-            raise AnalysisError("ANALYSIS_PROMOTED: the candidate is already promoted")
-        if to == "memory":
+            if row is None:
+                raise AnalysisError("ANALYSIS_NOT_FOUND: unknown candidate")
+            if row["decision"] != "accepted":
+                raise AnalysisError("ANALYSIS_NOT_ACCEPTED: review the candidate first")
+            if row["promoted_to"] is not None:
+                raise AnalysisError(
+                    "ANALYSIS_PROMOTED: the candidate is already promoted"
+                )
+            receipt = connection.execute(
+                "select digest from review_receipt where candidate_id = ?"
+                " and decision = 'accepted'",
+                (candidate_id,),
+            ).fetchone()
+            intent = connection.execute(
+                "select * from promotion where candidate_id = ?", (candidate_id,)
+            ).fetchone()
+            digest = _reviewed_digest(row)
+            if intent is not None and intent["state"] == "erased":
+                raise AnalysisError(
+                    "ANALYSIS_PROMOTION_ERASED: its memory was erased on approval"
+                )
+            if receipt is None or receipt[0] != digest:
+                stale = True
+                connection.execute(
+                    "update promotion set state = 'cancelled', finished_at = ?"
+                    " where candidate_id = ? and state = 'pending'",
+                    (now, candidate_id),
+                )
+            elif to == "task":
+                connection.execute(
+                    "update candidate set promoted_to = 'task', promoted_ref = ?"
+                    " where candidate_id = ?",
+                    (ref, candidate_id),
+                )
+                return {
+                    "candidate_id": candidate_id,
+                    "promoted_to": "task",
+                    "promoted_ref": ref,
+                }
+            elif intent is None or intent["state"] != "pending":
+                key = f"session-analysis-{candidate_id}-{digest[:16]}"
+                connection.execute(
+                    "insert into promotion values (?, ?, ?, ?, 'pending', null, ?, null)"
+                    " on conflict (candidate_id) do update set"
+                    " reviewed_digest = excluded.reviewed_digest,"
+                    " idempotency_key = excluded.idempotency_key, owner = excluded.owner,"
+                    " state = 'pending', memory_id = null,"
+                    " created_at = excluded.created_at, finished_at = null",
+                    (candidate_id, digest, key, owner, now),
+                )
+                intent = connection.execute(
+                    "select * from promotion where candidate_id = ?", (candidate_id,)
+                ).fetchone()
+            body = {
+                "context": row["problem"],
+                "narrative": f"{row['proposal']} Acceptance: {row['acceptance_test']}",
+            }
+        if stale:
+            raise AnalysisError(
+                "ANALYSIS_REVIEW_STALE: the candidate changed after its review"
+            )
+        try:
             written = memory.Store.open(self.root).write(
                 tier="short-term",
-                owner=owner,
-                body={
-                    "context": row["problem"],
-                    "narrative": f"{row['proposal']} Acceptance: {row['acceptance_test']}",
-                },
-                idempotency_key=f"session-analysis-{candidate_id}",
+                owner=intent["owner"],
+                body=body,
+                idempotency_key=intent["idempotency_key"],
             )
-            target = written["memory_id"]
-        elif to == "task" and isinstance(ref, str) and ref.strip():
-            target = ref
-        else:
+        except memory.MemoryError_ as exc:
+            if not str(exc).startswith("MEMORY_ERASED"):
+                raise
+            with self._write() as connection:
+                connection.execute(
+                    "update promotion set state = 'erased', finished_at = ?"
+                    " where candidate_id = ? and state = 'pending'",
+                    (now, candidate_id),
+                )
             raise AnalysisError(
-                "ANALYSIS_SCHEMA: promote to memory, or to task with a ref"
-            )
+                "ANALYSIS_PROMOTION_ERASED: its memory was erased on approval"
+            ) from exc
+        return self._finish_promotion(
+            candidate_id, intent["idempotency_key"], written["memory_id"]
+        )
+
+    def _finish_promotion(
+        self, candidate_id: int, key: str, memory_id: str
+    ) -> dict[str, Any]:
         with self._write() as connection:
+            if not connection.execute(
+                "update promotion set state = 'done', memory_id = ?, finished_at = ?"
+                " where candidate_id = ? and idempotency_key = ? and state = 'pending'",
+                (memory_id, _iso(dt.datetime.now(dt.timezone.utc)), candidate_id, key),
+            ).rowcount:
+                raise AnalysisError(
+                    "ANALYSIS_PROMOTED: the promotion intent is no longer pending"
+                )
             connection.execute(
-                "update candidate set promoted_to = ?, promoted_ref = ? where candidate_id = ?",
-                (to, target, candidate_id),
+                "update candidate set promoted_to = 'memory', promoted_ref = ?"
+                " where candidate_id = ?",
+                (memory_id, candidate_id),
             )
-        result = {
+        return {
             "candidate_id": candidate_id,
-            "promoted_to": to,
-            "promoted_ref": target,
+            "promoted_to": "memory",
+            "promoted_ref": memory_id,
+            "memory_id": memory_id,
         }
-        return result | ({"memory_id": target} if to == "memory" else {})
 
 
 def unit_text(root: Path) -> tuple[str, str]:

@@ -421,6 +421,64 @@ class SessionAnalysisTest(unittest.TestCase):
         self.assertEqual(memory["eligibility"], "candidate")
         self.assertNotIn(PRIVATE_TEXT, json.dumps(memory))
 
+    def accepted(self):
+        self.session("s-1", 17, failures=3)
+        self.run_at(at(18))
+        (candidate,) = self.candidates()
+        identifier = candidate["candidate_id"]
+        self.analysis.review(identifier, decision="accepted", owner="reviewer")
+        return identifier
+
+    def memories(self):
+        with sqlite3.connect(MEMORY.Store.open(self.root).path) as connection:
+            return connection.execute("select count(*) from memory").fetchone()[0]
+
+    def test_promotion_needs_the_content_that_was_reviewed(self) -> None:
+        identifier = self.accepted()
+        self.session("s-2", 17, failures=2)  # the same day now counts five
+        self.run_at(at(18, 6))
+        with self.assertRaisesRegex(ANALYSIS.AnalysisError, "ANALYSIS_REVIEW_STALE"):
+            self.analysis.promote(identifier, to="memory", owner="platform")
+        self.assertEqual(self.memories(), 0)
+
+    def test_an_interrupted_promotion_finishes_once(self) -> None:
+        identifier = self.accepted()
+        real = ANALYSIS.Analysis._finish_promotion
+        with mock.patch.object(
+            ANALYSIS.Analysis, "_finish_promotion", side_effect=OSError("crash")
+        ):
+            with self.assertRaises(OSError):
+                self.analysis.promote(identifier, to="memory", owner="platform")
+        self.assertEqual(self.memories(), 1)
+        with self.assertRaisesRegex(ANALYSIS.AnalysisError, "ANALYSIS_PROMOTING"):
+            self.analysis.review(identifier, decision="rejected", owner="reviewer")
+        self.assertIs(ANALYSIS.Analysis._finish_promotion, real)
+        first = self.analysis.promote(identifier, to="memory", owner="platform")
+        self.assertEqual(self.memories(), 1)
+        with self.assertRaisesRegex(ANALYSIS.AnalysisError, "ANALYSIS_PROMOTED"):
+            self.analysis.promote(identifier, to="memory", owner="platform")
+        self.assertTrue(first["memory_id"].startswith("mem-"))
+
+    def test_an_erased_memory_is_not_promoted_again(self) -> None:
+        identifier = self.accepted()
+        with mock.patch.object(
+            ANALYSIS.Analysis, "_finish_promotion", side_effect=OSError("crash")
+        ):
+            with self.assertRaises(OSError):
+                self.analysis.promote(identifier, to="memory", owner="platform")
+        store = MEMORY.Store.open(self.root)
+        with sqlite3.connect(store.path) as connection:
+            (memory_id,) = connection.execute("select memory_id from memory").fetchone()
+        store.erase(memory_id, owner="platform", approval_ref="user:test")
+        for _ in range(2):
+            with self.assertRaisesRegex(
+                ANALYSIS.AnalysisError, "ANALYSIS_PROMOTION_ERASED"
+            ):
+                self.analysis.promote(identifier, to="memory", owner="platform")
+        self.assertEqual(self.memories(), 0)
+        (candidate,) = self.candidates()
+        self.assertIsNone(candidate["promoted_to"])
+
     def test_timer_units_schedule_daily_with_catch_up(self) -> None:
         timer, service = ANALYSIS.unit_text(self.root)
         self.assertIn("OnCalendar=*-*-* 03:00:00 Asia/Seoul", timer)
