@@ -81,8 +81,9 @@ rather than relying on the missing prompt.
 A wait for hosted checks has a deadline and reads facts. Wait on the exact
 head's workflow runs: a loop that counts the runs not yet completed with
 `gh run list --commit <sha> --json status -q '[.[]|select(.status!="completed")]|length'`,
-requires the expected workflow (`CI`) to be listed, and stops at zero or at
-its deadline; a text match on the table can end the loop early. It does not
+requires the expected workflow (`CI`) to be listed in the same `gh` call,
+and stops at zero or at its deadline; a text match on the table or two
+separate calls can end the loop early while runs are still being registered. It does not
 wait on `gh pr checks --watch`,
 which returns only when every check run reports `completed`. A check run that
 already has a conclusion and a completion time is finished even if it still

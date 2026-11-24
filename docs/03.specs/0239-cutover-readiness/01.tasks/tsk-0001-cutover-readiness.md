@@ -143,6 +143,7 @@ Spec had changed after its receipt.
 | EVD-007 | [AC-0004](../spec.md#criteria) | WORK-001 | automated | New retired-route and review-supersession cases in `tests/test_task_acceptance_boundaries.py`, before the rule | Pinned validation venv, `unittest` | `python -m unittest tests.test_task_acceptance_boundaries` | 1 | FAIL | Failing-first: the retirement case and then the supersession case failed; the refusal cases already held | false | none |
 | EVD-008 | [AC-0004](../spec.md#criteria) | WORK-001 | automated | `scripts/document_contracts.py` with the replacement rule; DOCLIFE-R003 text | Pinned validation venv, `unittest`; Ruff | `python -m unittest tests.test_task_acceptance_boundaries`; `ruff check`; `ruff format --check` | 0 | PASS | 21 tests OK: a retirement or supersession closes a failure only with its marker, an earlier required PASS replacement covering the criteria and, for a supersession, reviews on both sides; a receipt, retirement or supersession is no replacement; Ruff clean | true | none |
 | EVD-009 | [AC-0004](../spec.md#criteria) | WORK-001 | automated | SPEC-0229 Task with EVD-092 to EVD-097 and its accepted criteria | Pinned validation venv | `scripts/validate-markdown-profiles.py --root . --mode strict` over the SPEC-0229 Task; `scripts/validate-document-lifecycle.py --mode staged` | 0 | PASS | No violations; every required failure of SPEC-0229 is closed (16 VM-route rows and the Docker cap row by retirement, six review rows by supersession through EVD-049), and the Task is `completed` with AC-0001 to AC-0006 accepted | true | none |
+| EVD-010 | [AC-0004](../spec.md#criteria) | WORK-001 | observation | Pull request #366, head `bc558fd5` | GitHub Actions CI run 45368520124 | Hosted pull request checks | 0 | PASS | CI, Labeler and Greeting runs completed with success on the head | true | none |
 
 ##### Resolution Links
 
@@ -157,7 +158,7 @@ None.
 | [AC-0001](../spec.md#criteria) | accept | pending | EVD-002, EVD-006 | Awaiting the operator's decision | none | platform | none |
 | [AC-0002](../spec.md#criteria) | accept | pending | EVD-003, EVD-006 | Awaiting the operator's decision | none | platform | none |
 | [AC-0003](../spec.md#criteria) | accept | pending | EVD-002, EVD-004, EVD-005, EVD-006 | Awaiting the operator's decision | none | platform | none |
-| [AC-0004](../spec.md#criteria) | accept | pending | EVD-008, EVD-009 | Awaiting the operator's decision | none | platform | none |
+| [AC-0004](../spec.md#criteria) | accept | pending | EVD-008, EVD-009, EVD-010 | Awaiting the operator's decision | none | platform | none |
 
 ##### Remaining Conditions
 
