@@ -106,7 +106,12 @@ roster or tool inventory.
    since a read-only mount still allows a socket connection. Host reads and
    the network stay open because the provider needs its API, so abstract
    sockets and local TCP services stay reachable, and disk use is checked
-   when the result is collected, not enforced as a quota.
+   when the result is collected, not enforced as a quota. The run's
+   `report.json` keeps each unit's state, times, session, turns, usage and
+   the CLI's cost estimate, with the actual charge null; the provider's raw
+   output is deleted once parsed. Keep the report as the run's local fact
+   source, which `scripts/work_observe.py report --key` joins with the
+   forecast and analysis records of the same Task.
 6. Require returning workers to report the
    [quality handoff fields](../../docs/00.workspace/04.quality/quality.md#handoff-evidence-contract).
    Review actual changes and commands; a worker's assertion alone is not

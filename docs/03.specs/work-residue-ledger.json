@@ -347,11 +347,15 @@
     {
       "id": "W10-H04",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W10",
       "resume_condition": "After the 2026-11-21 03:00 KST run, read `session_analysis.py candidates` for candidate 1",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md",
+        "evidence": "EVD-045"
       }
     }
   ]
