@@ -2,7 +2,7 @@
 title: "Task Artifact Cleanup Task"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-24"
 artifact_id: "SPEC-0238-TSK-0001"
@@ -98,7 +98,7 @@ recorded when observed.
 
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
-| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | DEFER | Regressions pass (EVD-003); scratch emptied and persistent material kept (EVD-004); the 1.1.0 package deletion awaits the operator's command |
+| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | PASS | Regressions pass (EVD-003); scratch emptied and persistent material kept (EVD-004); hosted checks pass (EVD-005); the 1.1.0 package deletion observed (EVD-006) |
 
 #### Verification Evidence
 
@@ -111,6 +111,7 @@ recorded when observed.
 | EVD-003 | [AC-0001](../spec.md#criteria) | WORK-001 | automated | Working tree after the branch removal | Pinned validation venv, `unittest`; Ruff | `python -m unittest tests.test_session_analysis tests.test_work_observe`; `ruff check`; `ruff format --check` | 0 | PASS | analysis 31 and join 4 tests OK; no `legacy` reference remains in the module; Ruff clean | true | none |
 | EVD-004 | [AC-0003](../spec.md#criteria) | WORK-001 | observation | Local host, 2026-11-24 | `systemctl --user list-unit-files`, `git grep`, `ls` | Unit listing; tracked search for package paths; scratch listing before and after plain `rm` and `rmdir` | 0 | PASS | No unnamed legacy unit exists; the two named timers remain; no tracked link, command or check reads a package; the scratch area went from 3.5 MiB to empty; `.workspace-memory/`, `.workspace-test/parallel/locks`, `sessions/` and the 1.2.0 package are unchanged | true | none |
 | EVD-005 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Pull request #368, head `6428acd6`, the two P15 commits cherry-picked onto `main@071bca6b` after pull request #364 could not merge | GitHub Actions CI run 45374569897 | Hosted pull request checks | 0 | PASS | CI, Labeler and Greeting runs completed with success; the hosted checks cover the changed analysis module and its regressions and the quality and lifecycle rule texts | true | none |
+| EVD-006 | [AC-0003](../spec.md#criteria) | WORK-001 | observation | Local host after the operator ran `rm -rf` on `_workspace/workspace_governance_remediation_1_1_0_20261120` on 2026-11-24 | `ls`, `test -e`, `du`, `git status` | List `_workspace/`; test the package path; size the 1.2.0 package; check the worktree | 0 | PASS | The 1.1.0 package path no longer exists; `_workspace/` holds `diagnostics/`, `repo-support/`, the 1.2.0 package (3.5 MiB) and its README; the worktree was clean | true | none |
 
 ##### Resolution Links
 
@@ -125,13 +126,13 @@ shows the passing state.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | [AC-0001](../spec.md#criteria) | accept | accepted | EVD-003, EVD-005 | User message of 2026-11-24 in this session accepting SPEC-0238 AC-0001 to AC-0003 | user | platform | none |
 | [AC-0002](../spec.md#criteria) | accept | accepted | EVD-005 | User message of 2026-11-24 in this session accepting SPEC-0238 AC-0001 to AC-0003 | user | platform | none |
-| [AC-0003](../spec.md#criteria) | accept | pending | EVD-004, EVD-005 | The user accepted it on 2026-11-24; it is recorded as accepted once the approved 1.1.0 package deletion is run and observed | none | platform | none |
+| [AC-0003](../spec.md#criteria) | accept | accepted | EVD-004, EVD-005, EVD-006 | User message of 2026-11-24 in this session accepting SPEC-0238 AC-0001 to AC-0003, recorded after the package deletion was observed | user | platform | none |
 
 ##### Remaining Conditions
 
-The user accepted AC-0001 to AC-0003 on 2026-11-24; AC-0001 and AC-0002 are
-recorded as accepted. AC-0003 is recorded once the operator's command deletes
-the 1.1.0 package and the deletion is observed here. Hosted checks passed on
+The user accepted AC-0001 to AC-0003 on 2026-11-24. The operator's command
+deleted the 1.1.0 package and the deletion was observed (EVD-006), so AC-0003
+is recorded and the Task is completed. Hosted checks passed on
 pull request #368 (EVD-005), which replaced #364.
 
 #### Handoff
