@@ -498,6 +498,48 @@ def _task_evidence_ids(cell: str) -> tuple[str, ...] | None:
 
 
 SCOPED_EXECUTION_APPROVAL_COMMAND = "Scoped execution approval"
+RETIRED_ROUTE_COMMAND = "Route retirement:"
+SUPERSEDED_REVIEW_COMMAND = "Review supersession:"
+REPLACEMENT_COMMANDS = (RETIRED_ROUTE_COMMAND, SUPERSEDED_REVIEW_COMMAND)
+
+
+def _replaces_retired_route(
+    check: Mapping[str, str],
+    previous: Mapping[str, str],
+    earlier: Mapping[str, tuple[int, Mapping[str, str]]],
+    criteria: Sequence[str],
+) -> bool:
+    """A failure of another command closes only through a named replacement.
+
+    A route retirement starts its Command with `Route retirement:`; a review
+    supersession starts it with `Review supersession:` and closes only a review
+    with later reviews. Either names, in its Location, earlier required PASS
+    rows that together cover the failed row's criteria. A receipt, a
+    retirement or a supersession is no replacement.
+    """
+    command = check["Command"].strip()
+    if not command.startswith(REPLACEMENT_COMMANDS):
+        return False
+    review = command.startswith(SUPERSEDED_REVIEW_COMMAND)
+    if review and previous.get("Method", "").strip() != "review":
+        return False
+    cited = re.findall(r"EVD-\d{3}\b", check.get("Location", ""))
+    covered: set[str] = set()
+    for identifier in cited:
+        if identifier not in earlier:
+            return False
+        row = earlier[identifier][1]
+        cited_command = row["Command"].strip()
+        if (
+            row["Result"].strip() != "PASS"
+            or row["Required"].strip() != "true"
+            or cited_command == SCOPED_EXECUTION_APPROVAL_COMMAND
+            or cited_command.startswith(REPLACEMENT_COMMANDS)
+            or (review and row.get("Method", "").strip() != "review")
+        ):
+            return False
+        covered.update(task_criterion_ids(row["Criteria"]) or ())
+    return bool(cited) and set(criteria) <= covered
 
 
 def task_contract_issues(
@@ -566,7 +608,13 @@ def task_contract_issues(
                 or previous[1]["Result"].strip() not in UNRESOLVED_EVIDENCE_RESULTS
                 or any(
                     check[key].strip() != previous[1][key].strip()
-                    for key in ("Criteria", "Work Unit", "Command")
+                    for key in ("Criteria", "Work Unit")
+                )
+                or (
+                    check["Command"].strip() != previous[1]["Command"].strip()
+                    and not _replaces_retired_route(
+                        check, previous[1], checks, criteria or ()
+                    )
                 )
             ):
                 issues.append(
