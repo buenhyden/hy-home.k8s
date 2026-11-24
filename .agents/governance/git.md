@@ -79,9 +79,11 @@ requested operation forbidden by policy but not denied stops and asks the user
 rather than relying on the missing prompt.
 
 A wait for hosted checks has a deadline and reads facts. Wait on the exact
-head's workflow runs, for example a loop over
-`gh run list --commit <sha> --json status,conclusion` that stops when every
-run is `completed` or its deadline passes, not on `gh pr checks --watch`,
+head's workflow runs: a loop that counts the runs not yet completed with
+`gh run list --commit <sha> --json status -q '[.[]|select(.status!="completed")]|length'`,
+requires the expected workflow (`CI`) to be listed, and stops at zero or at
+its deadline; a text match on the table can end the loop early. It does not
+wait on `gh pr checks --watch`,
 which returns only when every check run reports `completed`. A check run that
 already has a conclusion and a completion time is finished even if it still
 reports `in_progress`; on 2026-11-24 such a `ci-summary` entry on pull
