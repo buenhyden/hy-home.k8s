@@ -87,7 +87,7 @@ up until 2026-11-27, so no Codex round trip was attempted.
 
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
-| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria) | DEFER | Regressions pass (EVD-002); record 20 fixed and started (EVD-003); its finish follows the merge |
+| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria) | DEFER | Regressions pass (EVD-002); record 20 fixed and started (EVD-003); hosted checks pass (EVD-004); its finish follows the merge |
 
 #### Verification Evidence
 
@@ -98,6 +98,7 @@ up until 2026-11-27, so no Codex round trip was attempted.
 | EVD-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria) | WORK-001 | observation | {"actor":"user","approval_ref":"Current human P11-FORECAST.md request of 2026-11-24 in this conversation for package workspace_governance_remediation_1_2_0_20261123, bounded implementation, verification and commit/push/PR/merge","scope":["SPEC-0234","SPEC-0234-PLAN-0001","SPEC-0234-TSK-0001"],"reviewed_spec_sha256":"ba15dd58a123f1379b22bb309bcb55388777def1c85bf3d322ce772f78ea6fe4","reviewed_plan_sha256":"1b8c4fbae2d9995ce4f77b84a68c2291b95137ed4474258e4f5c740fc2660235","request_revision":"fc2424a4e3f10220c6488ed450a8994bcfd2fa4e1e75aff789f2fceaffaff677","validity":"confirmed","revocation":"none"} | Current trusted human request; request revision is the validator-defined digest of this Task's scope and work items; exact draft parent hashes | Scoped execution approval | none | PASS | Records the current P11 execution scope only; no formal Spec or Plan approval or criterion acceptance follows | true | none |
 | EVD-002 | [AC-0001](../spec.md#criteria) | WORK-001 | automated | Unchanged `scripts/work_forecast.py` at `bdb2d39b` | Pinned validation venv, `unittest` | `python -m unittest tests.test_work_forecast` | 0 | PASS | 14 tests OK: quantile order and NaN refusal, censoring, earlier-only sample, coverage and pinball, immutability, clock order | true | none |
 | EVD-003 | [AC-0002](../spec.md#criteria) | WORK-001 | observation | Live `.workspace-memory/forecast.sqlite3`, 19 records before; the brief of request `006d2ca4bea0dc52` recorded first | `scripts/work_forecast.py` | `forecast` with task reference `SPEC-0234 WORK-001 request 006d2ca4bea0dc52`, `governance-prompt`, `elapsed`, `minutes`, P30 40, P50 60, P80 100; then `start 20` | 0 | PASS | Record 20, digest `e8c05b1685c4ad963cf3bf456ecf5915b2325b04b8fdd3cac1b706219e8f3600`, sample size 3, `uncalibrated`; started 2026-11-24T03:34:35.991889Z before the first repository change; end definition is the merge of the P11 pull request | true | none |
+| EVD-004 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria) | WORK-001 | observation | Pull request #358, head `9bdf126b` | GitHub Actions CI run 45321783910; GitGuardian | Hosted pull request checks | 0 | PASS | ci-summary, style-pr (5 min 15 s), label, greeting and GitGuardian passed | true | none |
 
 ##### Resolution Links
 
@@ -109,14 +110,14 @@ None yet.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | accept | pending | EVD-002 | Awaiting the operator's decision | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | pending | EVD-002, EVD-004 | Awaiting the operator's decision | none | platform | none |
 | [AC-0002](../spec.md#criteria) | accept | pending | EVD-003 | Awaiting the finish and score of record 20 and the operator's decision | none | platform | none |
 
 ##### Remaining Conditions
 
 Record 20 is finished and scored after the P11 pull request merges, and that
-result is recorded here in a later change. Hosted checks are recorded when
-they run. W10-H01 waits for a Codex session after 2026-11-27.
+result is recorded here in a later change. Hosted checks passed (EVD-004).
+W10-H01 waits for a Codex session after 2026-11-27.
 
 #### Handoff
 
