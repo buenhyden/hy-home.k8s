@@ -1,10 +1,10 @@
 ---
 title: "Agent Delivery Policy"
-version: "3.0.0"
+version: "3.1.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-20"
+updated: "2026-11-24"
 ---
 
 # Agent Delivery Policy
@@ -77,6 +77,21 @@ and a workflow's enabled state stays under rule 9 of
 [`.github/AGENTS.md`](../../.github/AGENTS.md). An agent that finds a
 requested operation forbidden by policy but not denied stops and asks the user
 rather than relying on the missing prompt.
+
+A wait for hosted checks has a deadline and reads facts. Wait on the exact
+head's workflow runs: a loop that counts the runs not yet completed with
+`gh run list --commit <sha> --json status -q '[.[]|select(.status!="completed")]|length'`,
+requires the expected workflow (`CI`) to be listed, and stops at zero or at
+its deadline; a text match on the table can end the loop early. It does not
+wait on `gh pr checks --watch`,
+which returns only when every check run reports `completed`. A check run that
+already has a conclusion and a completion time is finished even if it still
+reports `in_progress`; on 2026-11-24 such a `ci-summary` entry on pull
+request 362 kept a watch open while an agent idled for an hour on a
+background wait.
+When a wait reaches its deadline or is moved to the background, read the run
+state once and then act on it or report it; never park on a wait that has no
+deadline.
 
 ##### Exceptions
 
