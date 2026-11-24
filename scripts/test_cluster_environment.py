@@ -1222,18 +1222,42 @@ def selected_namespace_probe(
         run(["k3d", "image", "import", "busybox:1.37", "-c", f"hyk8s-test-{run_id}"])
         run(["kubectl", "apply", "-f", "-"], input_text=json.dumps(manifests))
         for name in (server, client):
-            run(
-                [
-                    "kubectl",
-                    "wait",
-                    "pod",
-                    name,
-                    "-n",
-                    namespace,
-                    "--for=condition=Ready",
-                    "--timeout=60s",
-                ]
-            )
+            try:
+                run(
+                    [
+                        "kubectl",
+                        "wait",
+                        "pod",
+                        name,
+                        "-n",
+                        namespace,
+                        "--for=condition=Ready",
+                        "--timeout=60s",
+                    ]
+                )
+            except Exception as exc:
+                # A timeout alone hides why: add the phase, the unmet
+                # condition and the container's waiting reason, bounded.
+                try:
+                    state = run(
+                        [
+                            "kubectl",
+                            "get",
+                            "pod",
+                            name,
+                            "-n",
+                            namespace,
+                            "-o",
+                            "jsonpath={.status.phase}"
+                            ' {range .status.conditions[?(@.status=="False")]}'
+                            "{.reason}:{.message} {end}"
+                            "{range .status.containerStatuses[*]}"
+                            "{.state.waiting.reason}:{.state.waiting.message}{end}",
+                        ]
+                    )
+                except Exception:  # noqa: BLE001 - the original failure stays
+                    state = "state unavailable"
+                raise RuntimeError(f"{str(exc)[:40]}; {name}: {state[:200]}") from exc
         ip = run(
             [
                 "kubectl",
@@ -1291,7 +1315,7 @@ def selected_namespace_probe(
         # Keep the bounded cause so a failed run shows which step failed.
         raise ValueError(
             "CLUSTER_NETWORK: selected namespace allowed/denied probe failed: "
-            f"{type(exc).__name__}: {str(exc)[:200]}"
+            f"{type(exc).__name__}: {str(exc)[:280]}"
         ) from exc
     finally:
         cleanup_error = None
