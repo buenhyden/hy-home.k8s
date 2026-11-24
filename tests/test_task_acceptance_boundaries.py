@@ -232,6 +232,85 @@ class TaskAcceptanceBoundaries(unittest.TestCase):
                 self.assertIn("TASK-EVIDENCE-RESOLUTION", actual)
                 self.assertIn("TASK-EVIDENCE-UNRESOLVED", actual)
 
+    RETIRE = "Route retirement: the operator retired the VM route on 2026-11-24"
+
+    def retirement(self, resolves: str, location: str, **changes: str):
+        row = check("EVD-009", "PASS", name=self.RETIRE, resolves=resolves)
+        return row | {"Location": location} | changes
+
+    def test_retired_route_failure_is_closed_by_the_replacing_pass(self) -> None:
+        rows = [
+            check("EVD-001", "FAIL", name="VM route run"),
+            check("EVD-002", "PASS", name="Host route run"),
+            self.retirement("EVD-001", "Replacing route: EVD-002"),
+        ]
+        self.assertEqual(rules([work()], rows, [decision()]), set())
+
+    def test_retirement_needs_its_marker_and_an_earlier_replacing_pass(self) -> None:
+        failed = check("EVD-001", "FAIL", name="VM route run")
+        host = check("EVD-002", "PASS", name="Host route run")
+        other = check("EVD-003", "PASS", criterion=SECOND, name="Other criterion")
+        optional = check("EVD-004", "PASS", required="no", name="Optional run")
+        bare = self.retirement("none", "none") | {"Evidence ID": "EVD-008"}
+        cases = {
+            "no marker": [
+                host,
+                self.retirement("EVD-001", "EVD-002") | {"Command": "Retire VM"},
+            ],
+            "no replacement": [host, self.retirement("EVD-001", "none")],
+            "failed replacement": [
+                check("EVD-002", "FAIL", name="Host route run"),
+                self.retirement("EVD-001", "EVD-002"),
+            ],
+            "later replacement": [
+                self.retirement("EVD-001", "EVD-010"),
+                check("EVD-010", "PASS", name="Host route run"),
+            ],
+            "other criterion": [other, self.retirement("EVD-001", "EVD-003")],
+            "optional replacement": [optional, self.retirement("EVD-001", "EVD-004")],
+            "retirement as replacement": [bare, self.retirement("EVD-001", "EVD-008")],
+        }
+        for name, rows in cases.items():
+            with self.subTest(case=name):
+                actual = rules(
+                    [work(criterion=f"{FIRST}, {SECOND}")],
+                    [failed, *rows, check("EVD-011", "PASS", criterion=SECOND)],
+                    [decision(), decision(criterion=SECOND, cited="EVD-011")],
+                )
+                self.assertIn("TASK-EVIDENCE-UNRESOLVED", actual, name)
+
+    SUPERSEDE = "Review supersession: a later review confirmed the repairs"
+
+    def test_review_failure_is_closed_by_a_later_passing_review(self) -> None:
+        review = {"Method": "review"}
+        first = check("EVD-001", "FAIL", name="First review") | review
+        later = check("EVD-002", "PASS", name="Later review") | review
+        closing = (
+            check("EVD-003", "PASS", name=self.SUPERSEDE, resolves="EVD-001")
+            | review
+            | {"Location": "Superseding review: EVD-002"}
+        )
+        self.assertEqual(rules([work()], [first, later, closing], [decision()]), set())
+        for name, rows in {
+            "cited row is no review": [
+                first,
+                later | {"Method": "automated"},
+                closing,
+            ],
+            "failed row is no review": [
+                first | {"Method": "automated"},
+                later,
+                closing,
+            ],
+            "no marker": [first, later, closing | {"Command": "Later review again"}],
+        }.items():
+            with self.subTest(case=name):
+                self.assertIn(
+                    "TASK-EVIDENCE-UNRESOLVED",
+                    rules([work()], rows, [decision()]),
+                    name,
+                )
+
     def test_decision_cannot_reuse_another_criterions_evidence(self) -> None:
         works = [
             work(identifier="WORK-001") | {"Status": "completed"},

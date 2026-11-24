@@ -2,7 +2,7 @@
 title: "Selective Validation Environment and Aggregate Resource Boundary Task"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-23"
 artifact_id: "SPEC-0229-TSK-0001"
@@ -480,7 +480,7 @@ decision or evidence of technical implementation.
 
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
-| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria) | FAIL | Eleven actual VM runs; the latest reached k3s start, the API path, node Ready, the selected apply and the namespace probe, but on 2 CPUs the final step does not complete reliably (EVD-074, EVD-075). The VM disk cap (EVD-065) and restricted VM egress denial (EVD-066) hold and all owned cleanups passed. Selected readiness, the namespace probe and W09-H02 remain open; six operator criterion decisions remain pending |
+| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria) | PASS | Host route: owned isolated network (EVD-085), selected apply, namespace probe and LAN denial (EVD-088, EVD-089), owned cleanup (EVD-090) and focused regressions (EVD-087); the VM route, the Docker cap route and earlier review findings are closed by EVD-092 to EVD-096 |
 
 #### Verification Evidence
 
@@ -579,6 +579,12 @@ decision or evidence of technical implementation.
 | EVD-089 | [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | WORK-001 | observation | Same live cluster `p07host2` before teardown: the watchdog's measurement, then a busybox pod in a fresh namespace with no NetworkPolicy against a host nonce endpoint | Docker Engine 29.9.2; k3s v1.35.0-k3s1 | `node_disk_mib`; `kubectl exec … wget` to the owned bridge gateway, 192.168.0.13 and 192.168.0.14 | 0 | PASS | The node measured 20 MiB of its 4096 MiB budget. With no policy, the pod got `No route to host` for all three host addresses and the endpoint received no request, so the boundary itself denies the LAN path. The namespace was deleted | true | none |
 | EVD-090 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Run `p07host2` after EVD-089 | `test_cluster.py down`; `status`; `k3d cluster list`; `docker network ls`; `docker ps -a --filter label`; user systemd | `python3 scripts/test_cluster.py --root . down p07host2` | 0 | PASS | Cluster deleted; no owned cluster, network, container, unit, status row or `.workspace-test` entry remained | true | none |
 | EVD-091 | [AC-0001](../spec.md#criteria) | WORK-001 | automated | EVD-084 carried a local checkout path, which the repository quality gate refuses, while the retention rule refused any edit of a recorded row. The user chose on 2026-11-24 a narrow exception: a recorded cell may only replace each local checkout path with `<checkout>` | Pinned validation Python; Ruff | New test first, then `python -m unittest tests.test_task_acceptance_contract`; `scripts/validate-document-lifecycle.py --mode staged`; `scripts/validation/repository/quality.py --root .` | 0 | PASS | The new test failed before the change and passed after it, with every other factual change still refused; EVD-084's Git directory now reads `<checkout>/.git`, and both gates pass | true | none |
+| EVD-092 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | WORK-001 | review | EVD-053, EVD-057, EVD-061, EVD-064, EVD-067, EVD-068, EVD-069, EVD-072, EVD-073, EVD-074, EVD-075, EVD-079, EVD-080: thirteen `up --vm` runs `p07vm001` to `p07vm013`; the operator's P16 answer of 2026-11-24 retiring the VM route after choosing the host route (option C) | Operator decision; DOCLIFE-R003 retired-route rule | Route retirement: the operator retired the P07 VM route on 2026-11-24; the host route replaces it | none | PASS | Replacing route: EVD-088. The VM route code stays an optional path that is not accepted; these failures stay recorded as they happened | true | EVD-053, EVD-057, EVD-061, EVD-064, EVD-067, EVD-068, EVD-069, EVD-072, EVD-073, EVD-074, EVD-075, EVD-079, EVD-080 |
+| EVD-093 | [AC-0002](../spec.md#criteria) | WORK-001 | review | EVD-056, EVD-060: two `/dev/kvm` access checks for the VM route; the operator's P16 answer of 2026-11-24 retiring the VM route after choosing the host route (option C) | Operator decision; DOCLIFE-R003 retired-route rule | Route retirement: the operator retired the P07 VM route on 2026-11-24; the host route replaces it | none | PASS | Replacing route: EVD-088. The VM route code stays an optional path that is not accepted; these failures stay recorded as they happened | true | EVD-056, EVD-060 |
+| EVD-094 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria) | WORK-001 | review | EVD-052: the rejected first VM run attempt; the operator's P16 answer of 2026-11-24 retiring the VM route after choosing the host route (option C) | Operator decision; DOCLIFE-R003 retired-route rule | Route retirement: the operator retired the P07 VM route on 2026-11-24; the host route replaces it | none | PASS | Replacing route: EVD-087, EVD-088 and EVD-013. The VM route code stays an optional path that is not accepted; these failures stay recorded as they happened | true | EVD-052 |
+| EVD-095 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | review | EVD-007: the Docker writable-layer disk cap (`size=32M` let 40 MiB be written); the operator's P16 answer of 2026-11-24 retiring that route after option C replaced it with the node disk watchdog | Operator decision; DOCLIFE-R003 retired-route rule | Route retirement: the operator retired the Docker writable-layer cap route on 2026-11-24; the host route's node disk watchdog replaces it | none | PASS | Replacing route: EVD-088 and EVD-089. The watchdog is a polling bound, not a kernel quota; the cap failure stays recorded as it happened | true | EVD-007 |
+| EVD-096 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria) | WORK-001 | review | EVD-016, EVD-021, EVD-025, EVD-032, EVD-039, EVD-044: six source-review rounds whose findings were repaired; the operator's P16 answer of 2026-11-24 | Operator decision; DOCLIFE-R003 review supersession | Review supersession: the later review EVD-049 confirmed the last repair with no actionable finding | none | PASS | Superseding review: EVD-049. Each earlier finding stays recorded with its repair rows | true | EVD-016, EVD-021, EVD-025, EVD-032, EVD-039, EVD-044 |
+| EVD-097 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria) | WORK-001 | observation | {"actor":"user","approval_ref":"Current human P16-ACCEPT.md request of 2026-11-24 in this conversation for package workspace_governance_remediation_1_2_0_20261123, with the user's answers retiring the P07 VM and Docker cap routes, superseding the review findings and accepting AC-0002 to AC-0006; recording, verification and commit/push/PR/merge only","scope":["SPEC-0229","SPEC-0229-PLAN-0001","SPEC-0229-TSK-0001"],"reviewed_spec_sha256":"de5733e9645a6d47f32200a389b11a971092c87688ebf4c8921899d1e3a64803","reviewed_plan_sha256":"9f9a9d400e1fccefdb0fc31552decdddfd954676ce92d85e30ef4589403fdaed","request_revision":"36c76398b51f06e282ed6f8bcd42c990bed87778b584031ba1661b8ed2055c87","validity":"confirmed","revocation":"none"} | Current trusted human request; request revision is the validator-defined digest of this Task's scope and work items; exact current parent hashes | Scoped execution approval | none | PASS | Records the current P16 closure scope only | true | none |
 
 ##### Resolution Links
 
@@ -642,15 +648,15 @@ owner.
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | [AC-0001](../spec.md#criteria) | accept | accepted | EVD-084 | User answer of 2026-11-24 in this session accepting AC-0001 after the EVD-084 inventory | user | platform | none |
-| [AC-0002](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0003](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0004](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0005](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0006](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | accepted | EVD-087, EVD-088, EVD-090 | User answer of 2026-11-24 in this session (P16) accepting AC-0002 to AC-0006 on the host-route evidence after the VM route and Docker cap route were retired and the review findings superseded | user | platform | none |
+| [AC-0003](../spec.md#criteria) | accept | accepted | EVD-087, EVD-088, EVD-089, EVD-090 | User answer of 2026-11-24 in this session (P16) accepting AC-0002 to AC-0006 on the host-route evidence after the VM route and Docker cap route were retired and the review findings superseded | user | platform | none |
+| [AC-0004](../spec.md#criteria) | accept | accepted | EVD-085, EVD-087, EVD-088, EVD-089 | User answer of 2026-11-24 in this session (P16) accepting AC-0002 to AC-0006 on the host-route evidence after the VM route and Docker cap route were retired and the review findings superseded | user | platform | none |
+| [AC-0005](../spec.md#criteria) | accept | accepted | EVD-013, EVD-049 | User answer of 2026-11-24 in this session (P16) accepting AC-0002 to AC-0006 on the host-route evidence after the VM route and Docker cap route were retired and the review findings superseded | user | platform | none |
+| [AC-0006](../spec.md#criteria) | accept | accepted | EVD-087, EVD-049 | User answer of 2026-11-24 in this session (P16) accepting AC-0002 to AC-0006 on the host-route evidence after the VM route and Docker cap route were retired and the review findings superseded | user | platform | none |
 
 ##### Remaining Conditions
 
-Draft review, current scoped R008 receipt, source implementation, focused
+The user accepted AC-0002 to AC-0006 on 2026-11-24 (P16) after the VM route and the Docker cap route were retired (EVD-092 to EVD-095) and the earlier review findings superseded (EVD-096); the Task is completed. Draft review, current scoped R008 receipt, source implementation, focused
 repository checks and both source-review blockers now have matching evidence.
 Thirteen actual VM runs failed; all owned cleanups passed. Confirmed: VM boot,
 NoCloud provisioning, restricted reboot, guest ENOSPC on the fixed VM disk
@@ -674,8 +680,9 @@ implementation, review, tests or merge.
 
 ##### Promotion Receipt
 
-The Plan's AD-0007 product-boundary promotion is intended, not yet reflected
-or verified. Environment guide publication follows its own lifecycle.
+P07-PRODUCT-BOUNDARY: [AD-0007](../../../02.architecture/01.descriptions/0007-current-local-gitops-platform.md)
+states the product-facing test boundary and the observed host-route LAN denial
+(SPEC-0237); the runner's mechanics live in the environment guide.
 
 ##### Next Owner
 

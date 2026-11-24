@@ -72,9 +72,10 @@ Readiness inventory through P16, in this workspace's resume order. Each item
 gives design, code, regression, live and user acceptance, then its state.
 
 - SPEC-0229 (P07 resume and exit): design, host-route code and regressions
-  done; live host route PASS and VM route failures; AC-0001 accepted,
-  AC-0002 to AC-0006 pending. State: blocked until the VM route is retired
-  (AC-0004 of this Task) and the operator decides AC-0002 to AC-0006.
+  done; live host route PASS. In the second pull request the VM route and
+  the Docker writable-layer cap route were retired and six earlier review
+  findings superseded (SPEC-0229 EVD-092 to EVD-096), and the operator
+  accepted AC-0002 to AC-0006: complete.
 - R01 (SPEC-0230) and R02 (SPEC-0226, exited): complete and accepted.
 - P05 (SPEC-0227) and P06 (SPEC-0228): complete; accepted on 2026-11-24 with
   a current re-verification of their promotion owners. W07-H05, the excluded
@@ -109,11 +110,12 @@ branches (`main` and 23 merged `claude/*` work branches) and 10 tags (9
 SPEC-0238 and this one;
 the set-aside `forecast.prerelease.sqlite3` store and the current forecast
 store to set aside for an N=0 baseline; the 1.2.0 package to remove last.
-Verdict: `cutover_ready: false`.
+Verdict: `cutover_ready: false`; after the second pull request two blockers
+remain.
 
 ##### Blockers and Decisions
 
-Blocking P17: the SPEC-0229 retirement and decisions; the Codex native
+Blocking P17, after SPEC-0229 closed in the second pull request: the Codex native
 observations (SPEC-0231 AC-0003, SPEC-0235 AC-0004, W10-H01, W10-H02,
 W08-H03 and AGENT-04's Codex half), external until 2026-11-27 12:53 and the
 operator's `/hooks` trust; and P15's completion. No unchanged check was
@@ -124,7 +126,7 @@ Spec had changed after its receipt.
 
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
-| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | DEFER | Inventory (EVD-002); acceptances recorded (EVD-003); W10-H03 narrowed (EVD-004); AGENT-04 Claude half (EVD-005); the retired-route rule follows in a second pull request |
+| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | PASS | Inventory (EVD-002); acceptances recorded (EVD-003); W10-H03 narrowed (EVD-004); AGENT-04 Claude half (EVD-005); retired-route and review-supersession rule and SPEC-0229 closure (EVD-008, EVD-009) |
 
 #### Verification Evidence
 
@@ -138,6 +140,9 @@ Spec had changed after its receipt.
 | EVD-004 | [AC-0003](../spec.md#criteria) | WORK-001 | automated | SPEC-0223 EVD-047 and the narrowed W10-H03 row and entry | Pinned validation venv | `scripts/validate-work-residue-ledger.py --root .` | 0 | PASS | 30 entries; W10-H03 stays open with the resume condition "When an untrusted command worker is dispatched, or a hard disk cap is required" | true | none |
 | EVD-005 | [AC-0003](../spec.md#criteria) | WORK-001 | observation | This Claude Code session on 2026-11-24 | Claude Code CLI with the tracked hooks | Read of the session's own records after `/compact` and after file reads in folders with a `CLAUDE.md` | 0 | PASS | After `/compact`, both `PreCompact` command hooks completed and the `SessionStart` `compact` hook delivered its instruction to re-read folder `AGENTS.md` files. Reading files in `docs/`, `docs/03.specs/`, `docs/02.architecture/`, `docs/00.workspace/`, `docs/99.templates/`, `scripts/` and `tests/` loaded each folder `CLAUDE.md` and its imported `AGENTS.md`. This is the Claude half of AGENT-04; Codex delivery is unobserved, so AGENT-04 stays open | true | none |
 | EVD-006 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Pull request #365, head `ee95b677` | GitHub Actions CI run 45361808473 | Hosted pull request checks | 0 | PASS | CI, Labeler and Greeting runs completed with success on the head | true | none |
+| EVD-007 | [AC-0004](../spec.md#criteria) | WORK-001 | automated | New retired-route and review-supersession cases in `tests/test_task_acceptance_boundaries.py`, before the rule | Pinned validation venv, `unittest` | `python -m unittest tests.test_task_acceptance_boundaries` | 1 | FAIL | Failing-first: the retirement case and then the supersession case failed; the refusal cases already held | false | none |
+| EVD-008 | [AC-0004](../spec.md#criteria) | WORK-001 | automated | `scripts/document_contracts.py` with the replacement rule; DOCLIFE-R003 text | Pinned validation venv, `unittest`; Ruff | `python -m unittest tests.test_task_acceptance_boundaries`; `ruff check`; `ruff format --check` | 0 | PASS | 21 tests OK: a retirement or supersession closes a failure only with its marker, an earlier required PASS replacement covering the criteria and, for a supersession, reviews on both sides; a receipt, retirement or supersession is no replacement; Ruff clean | true | none |
+| EVD-009 | [AC-0004](../spec.md#criteria) | WORK-001 | automated | SPEC-0229 Task with EVD-092 to EVD-097 and its accepted criteria | Pinned validation venv | `scripts/validate-markdown-profiles.py --root . --mode strict` over the SPEC-0229 Task; `scripts/validate-document-lifecycle.py --mode staged` | 0 | PASS | No violations; every required failure of SPEC-0229 is closed (16 VM-route rows and the Docker cap row by retirement, six review rows by supersession through EVD-049), and the Task is `completed` with AC-0001 to AC-0006 accepted | true | none |
 
 ##### Resolution Links
 
@@ -152,12 +157,12 @@ None.
 | [AC-0001](../spec.md#criteria) | accept | pending | EVD-002, EVD-006 | Awaiting the operator's decision | none | platform | none |
 | [AC-0002](../spec.md#criteria) | accept | pending | EVD-003, EVD-006 | Awaiting the operator's decision | none | platform | none |
 | [AC-0003](../spec.md#criteria) | accept | pending | EVD-002, EVD-004, EVD-005, EVD-006 | Awaiting the operator's decision | none | platform | none |
-| [AC-0004](../spec.md#criteria) | accept | pending | none | Awaiting the retired-route rule in the second pull request | none | platform | none |
+| [AC-0004](../spec.md#criteria) | accept | pending | EVD-008, EVD-009 | Awaiting the operator's decision | none | platform | none |
 
 ##### Remaining Conditions
 
-The retired-route rule and its SPEC-0229 use follow in a second pull
-request; the operator then decides SPEC-0229 AC-0002 to AC-0006. Hosted
+The second pull request added the retired-route and review-supersession
+rule and closed SPEC-0229 with the operator's acceptance. Hosted
 checks of the first pull request passed (EVD-006). `cutover_ready` stays false while the
 three blockers remain.
 
