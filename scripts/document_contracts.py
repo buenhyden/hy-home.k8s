@@ -1567,11 +1567,11 @@ class RelationshipContract:
 
 @dataclass(frozen=True)
 class CommonDocumentBinding:
-    """Reviewed local candidate pointer and explicit profile/semantic mappings."""
+    """Local contract pointer, its adoption record and profile/semantic mappings."""
 
     contract_id: str
     version: str
-    stage: Literal["candidate"]
+    stage: Literal["candidate", "adopted"]
     source: str
     content_digest: str
     workspace_subject: str
@@ -1580,6 +1580,9 @@ class CommonDocumentBinding:
     excluded_profiles: tuple[str, ...]
     unused_kinds: tuple[str, ...]
     relation_kinds: tuple[str, ...]
+    approved_by: str | None = None
+    approved_at: str | None = None
+    effective_from: str | None = None
 
 
 @dataclass(frozen=True)
@@ -2450,11 +2453,25 @@ def _common_document_binding_diagnostics(
         faults.append("content digest mismatch")
     if binding["workspace_subject"] != "hy-home.k8s":
         faults.append("workspace subject differs from local identity")
-    if (
-        contract.get("state") != "proposed-for-local-adoption"
-        or binding["stage"] != "candidate"
+    # A candidate stays unapproved; an adoption names who approved it and when
+    # (the user adopted 1.1.0 on 2026-11-24, SPEC-0226).
+    approval = ("approved_by", "approved_at", "effective_from")
+    if not (
+        (
+            contract.get("state") == "proposed-for-local-adoption"
+            and binding["stage"] == "candidate"
+            and not any(key in binding for key in approval)
+        )
+        or (
+            contract.get("state") == "adopted"
+            and binding["stage"] == "adopted"
+            and all(
+                isinstance(binding.get(key), str) and binding[key].strip()
+                for key in approval
+            )
+        )
     ):
-        faults.append("candidate binding cannot claim approved or adopted")
+        faults.append("binding stage, contract state and approval record differ")
     if mapped & excluded or mapped | excluded != source_profiles:
         faults.append("source profiles need exactly one mapped or excluded kind")
     if excluded != {"common/program-non-target"}:

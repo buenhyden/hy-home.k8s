@@ -24,7 +24,7 @@
       "const": "22.2.0"
     },
     "common_document_contract": {
-      "description": "Local candidate binding to the separate WORKSPACE-DOCUMENT-CORE contract; it records no approval or user acceptance.",
+      "description": "Local binding to the separate WORKSPACE-DOCUMENT-CORE contract. A candidate records no approval; an adopted edition names who approved it and when, and records no criterion acceptance.",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -43,7 +43,10 @@
       "properties": {
         "contract_id": {"const": "WORKSPACE-DOCUMENT-CORE"},
         "version": {"$ref": "#/$defs/numeric_version"},
-        "stage": {"const": "candidate"},
+        "stage": {"enum": ["candidate", "adopted"]},
+        "approved_by": {"type": "string", "pattern": "\\S"},
+        "approved_at": {"type": "string", "pattern": "^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$"},
+        "effective_from": {"type": "string", "pattern": "^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$"},
         "source": {"const": "docs/99.templates/01.contracts/common-document-contract.json"},
         "content_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
         "workspace_subject": {"const": "hy-home.k8s"},

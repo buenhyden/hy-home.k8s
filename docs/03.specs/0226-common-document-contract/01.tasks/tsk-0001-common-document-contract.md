@@ -1,10 +1,10 @@
 ---
 title: "Common Document Contract Task"
-version: "0.2.1"
+version: "0.2.2"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
-updated: "2026-11-20"
+updated: "2026-11-24"
 artifact_id: "SPEC-0226-TSK-0001"
 parent_ids: ["SPEC-0226-PLAN-0001"]
 ---
@@ -170,6 +170,8 @@ exact scope and continue independent work.
 | EVD-036 | [AC-0006](../spec.md#criteria), [AC-0007](../spec.md#criteria) | WORK-001 | observation | Pull request #338, final head `87228b5f`, merged as `1e71cef5` | GitHub Actions CI run 44659695681; GitGuardian | Hosted pull request checks | 0 | PASS | The final-head CI and Labeler runs succeeded and the pull request merged; this reports the result EVD-029 could not observe at receipt capture | true | none |
 | EVD-037 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0007](../spec.md#criteria) | WORK-001 | observation | Pull request #347 (R02), final head `51d305d4`, merged as `210587c2` | GitHub Actions CI run 45216796699; GitGuardian | Hosted pull request checks | 0 | PASS | CI, Labeler and Greeting succeeded on the final head and the pull request merged | true | none |
 | EVD-038 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria), [AC-0007](../spec.md#criteria) | WORK-001 | automated | Current `main` at `256d2b22` (after P08), 2026-11-23T22:48:36Z to 22:58:49Z | Pinned validation venv | `scripts/validate-document-contract-registry.py --root . --mode strict`; `python -m unittest tests.test_common_document_contract tests.test_document_generator`; `scripts/run-contract-tests.py --root . --suite document` | 0 | PASS | Re-check before the operator's decision: registry 350 paths, contract and generator tests 57/57, document suite 1231/1231 (4 skipped). The 1.1.0 edition stays a local candidate | true | none |
+| EVD-039 | [AC-0003](../spec.md#criteria) | WORK-001 | automated | The user's 2026-11-24 decision to adopt edition 1.1.0: contract `state` `adopted`; registry binding `stage` `adopted` with `approved_by`, `approved_at` and `effective_from` 2026-11-24 and the new content digest; schema and typed binding accept `adopted` only with that record | Pinned validation Python; Ruff | New tests first, then `python -m unittest tests.test_common_document_contract tests.test_shared_contract_binding tests.test_semver_versions`; `scripts/validate-document-contract-registry.py --root . --mode strict`; `scripts/run-contract-tests.py --root . --suite document` | 0 | PASS | The adopted pin and the missing-record and stage-mismatch refusals failed before the change (2 failures, 3 errors) and passed after it (92 tests); the registry check passed 350 paths; the document suite result is recorded in the delivery pull request. Adoption records no criterion acceptance | true | none |
+| EVD-040 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria), [AC-0006](../spec.md#criteria), [AC-0007](../spec.md#criteria) | WORK-001 | review | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-24 request to perform the SPEC-0226 package exit; Git-history-only method | Manual package-exit decision freeze | Manual package-exit decision freeze | none | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit | true | none |
 
 ##### Resolution Links
 
@@ -211,34 +213,35 @@ commit or hosted result.
 
 ##### Remaining Conditions
 
-None remains for the criteria: PR 338 and PR 347 passed their hosted checks
-and merged (EVD-036, EVD-037), the current `main` re-check passed (EVD-038)
-and the user accepted AC-0001 to AC-0007 on 2026-11-24. Whether the local
-1.1.0 candidate becomes the adopted edition stays a separate operator
-decision; no criterion depends on it. The Task stays in progress until the
-package exit records the Plan's promotion receipt and Archived Lineage in a
-separate later change.
+None remains: criteria are accepted (EVD-036 to EVD-038), the user adopted
+the 1.1.0 edition on 2026-11-24 (EVD-039) and the package-exit decision is
+frozen (EVD-040).
 
 #### Handoff
 
 ##### Promotion Receipt
 
-The [Plan](../plan.md#durable-owners) lists intended owners. The current P04
-candidate places the common meaning in the Stage 99
+The [Plan](../plan.md#durable-owners) promotions are in place.
+P04-DOCUMENT-FORM: the [document authoring policy](../../../00.workspace/03.process/document-authoring.md)
+delegates the common meaning and form to the Stage 99
 [contract](../../../99.templates/01.contracts/common-document-contract.json)
-and its [registry](../../../99.templates/registry.json), with authoring and
-quality instructions in their existing policy documents. The 216-path local
-quick candidate and later focused repair have passing checks. PR 337 delivered
-the anchor-rule foundation; EVD-028 records the subsequent source commit and
-successful staged hooks. PR 338 hosts that source, with checks and merge to be
-read at its latest head. This receipt's own hooks run after this record.
-Contract adoption and user criterion acceptance remain separate and pending.
+and [registry](../../../99.templates/registry.json), now the adopted 1.1.0
+edition (EVD-039). P04-DOCUMENT-QUALITY: the
+[quality policy](../../../00.workspace/04.quality/quality.md) and the
+validation registry select the checks that covered the changed consumers
+(EVD-036 to EVD-038).
+
+Frozen package disposition decision:
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The SPEC-0223 Task and the SPEC-0227 Spec link to this package; the exit change points them at the REQ-0003 Archived Lineage, which keeps the summary. The registry binding names SPEC-0226 in its scope identifiers and keeps it as a retired identity. No work residue ledger entry names this package.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The disposition authority is the user's 2026-11-24 request to perform the SPEC-0226 package exit. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob identity and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ##### Next Owner
 
-Delivery and criterion acceptance are complete. The operator decides the
-adoption state of the local 1.1.0 candidate; the platform owner performs the
-package exit in a later change.
+Delivery, criterion acceptance and the 1.1.0 adoption are complete. The
+platform owner performs the package exit recorded above.
 
 ## 적용과 확인
 
