@@ -92,8 +92,18 @@ roster or tool inventory.
    unit's owned paths and named shared resources with fencing generations,
    runs each attempt in its own clone, refuses a result outside the owned
    paths or from an expired attempt, and reruns the integration check on the
-   combined candidate. A clone separates files only; it is not a sandbox, and
-   a worker's own PASS never replaces the integration check.
+   combined candidate. For command workers a clone separates files only: they
+   still run with the caller's own permissions, outside any sandbox. A
+   worker's own PASS never replaces the integration check.
+   A plan unit may instead name provider `claude` or `codex` with a prompt, a
+   model and, for `claude`, a `budget_usd` cap. It starts only when
+   `run --request <id>` names a P08 request whose brief is recorded and
+   current. Each provider worker runs in its own systemd user scope that caps
+   memory, CPU, tasks and run time, and stopping the scope ends every
+   descendant. Inside it, bwrap mounts the host read-only except the clone and
+   a private `/tmp`, and starts from an empty environment. Host reads and the
+   network stay open because the provider needs its API, and disk use is
+   checked when the result is collected, not enforced as a quota.
 6. Require returning workers to report the
    [quality handoff fields](../../docs/00.workspace/04.quality/quality.md#handoff-evidence-contract).
    Review actual changes and commands; a worker's assertion alone is not

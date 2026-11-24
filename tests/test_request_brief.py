@@ -154,6 +154,33 @@ class RequestBriefTest(unittest.TestCase):
             self.root_text,
         )
 
+    def test_dispatch_needs_the_current_recorded_brief(self):
+        receipt = self.intake()
+        request = receipt["request_id"]
+        self.refused("BRIEF-NOT-SHOWN", brief_module.current, request, self.root_text)
+        brief_module.record(request, BRIEF, self.root_text)
+        self.assertEqual(
+            brief_module.current(request, self.root_text)["request_id"], request
+        )
+        brief_module.admit({"session_id": "s1"}, "claude", self.root_text)
+        _git(self.root, "switch", "-qc", "work")
+        self.assertEqual(
+            brief_module.current(request, self.root_text)["state"],
+            "admitted",
+            "an admitted request may move to its work branch",
+        )
+        (self.root / "AGENTS.md").write_text("changed policy\n")
+        self.refused("BRIEF-STALE", brief_module.current, request, self.root_text)
+        (self.root / "AGENTS.md").write_text("policy\n")
+        self.intake("next request")
+        self.refused("BRIEF-STALE", brief_module.current, request, self.root_text)
+        self.refused(
+            "BRIEF-STALE",
+            brief_module.current,
+            request,
+            str(self.other.resolve()),
+        )
+
     def test_another_workspace_or_turn_is_refused(self):
         receipt = self.intake(turn="t1")
         brief_module.record(receipt["request_id"], BRIEF, self.root_text)

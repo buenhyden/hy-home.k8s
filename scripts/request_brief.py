@@ -261,6 +261,35 @@ def record(request_id: str, brief: object, root: str) -> dict:
     return receipt
 
 
+def current(request_id: str, root: str) -> dict:
+    """The request's receipt, if its brief is recorded and still current.
+
+    A dispatcher calls this before it starts a provider worker. A later
+    request in the same session supersedes the receipt, and a policy change
+    makes it stale; an admitted request may have moved to its work branch.
+    """
+    directory = state_dir(root)
+    with _locked(directory):
+        for path in sorted(directory.glob("*.json")):
+            receipt = _load(path)
+            if receipt and receipt.get("request_id") == request_id:
+                break
+        else:
+            raise Refusal("BRIEF-STALE", "the request is unknown or superseded")
+    _same_workspace(receipt, root)
+    if receipt.get("state") == "admitted":
+        if receipt.get("policy_digest") != policy_digest(receipt["root"]):
+            raise Refusal("BRIEF-STALE", "the policy changed since the request")
+    elif receipt.get("state") == "recorded":
+        _unchanged(receipt)
+    else:
+        raise Refusal(
+            "BRIEF-NOT-SHOWN",
+            f"show the user a brief and record it for request {request_id} first",
+        )
+    return receipt
+
+
 def display(receipt: dict) -> str:
     brief = receipt["brief"]
     lines = [
