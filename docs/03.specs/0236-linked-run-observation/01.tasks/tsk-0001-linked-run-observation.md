@@ -2,7 +2,7 @@
 title: "Linked Run Observation Task"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-24"
 artifact_id: "SPEC-0236-TSK-0001"
@@ -121,14 +121,14 @@ shows the passing state.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | accept | pending | EVD-003, EVD-004, EVD-006 | Awaiting the operator's decision | none | platform | none |
-| [AC-0002](../spec.md#criteria) | accept | pending | EVD-003, EVD-004, EVD-006 | Awaiting the operator's decision | none | platform | none |
-| [AC-0003](../spec.md#criteria) | accept | pending | EVD-003, EVD-006 | Awaiting the operator's decision | none | platform | none |
-| [AC-0004](../spec.md#criteria) | accept | pending | EVD-005, EVD-006 | Awaiting the operator's decision | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | accepted | EVD-003, EVD-004, EVD-006 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0236 criteria | user | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | accepted | EVD-003, EVD-004, EVD-006 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0236 criteria | user | platform | none |
+| [AC-0003](../spec.md#criteria) | accept | accepted | EVD-003, EVD-006 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0236 criteria | user | platform | none |
+| [AC-0004](../spec.md#criteria) | accept | accepted | EVD-005, EVD-006 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0236 criteria | user | platform | none |
 
 ##### Remaining Conditions
 
-Hosted checks passed (EVD-006). The open holds named under Blockers and
+The user accepted every criterion on 2026-11-24 (P16), and the Task is completed. Hosted checks passed (EVD-006). The open holds named under Blockers and
 Decisions stay with their owners.
 
 #### Handoff

@@ -2,7 +2,7 @@
 title: "Current Documentation and SDLC Reconciliation Task"
 version: "0.1.1"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-20"
 artifact_id: "SPEC-0227-TSK-0001"
@@ -159,6 +159,8 @@ checks supply those verdicts.
 | EVD-010 | [AC-0002](../spec.md#criteria), [AC-0005](../spec.md#criteria) | WORK-001 | automated | Repaired 54-path staged/working-tree P05 candidate on trusted HEAD `a749924c`, before this Task receipt and final residue/runbook edits | Pinned Python 3.12.3, selected quick QA with source-snapshot guard | `/home/hyunyoun/.venvs/hyhome-validation/bin/python scripts/qa.py quick` | 0 | PASS | All 16 selected purpose leaves PASS, no FAIL; source guard compared HEAD/ref/merge head, raw index, refs and file bytes before/after with no changed component. Exact root log `quick2.log` and before/after inputs in task-owned temporary preflight. Same command, work unit and criteria as EVD-008; local selected QA only, not the later staged/hosted result | true | EVD-008 |
 | EVD-011 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria) | WORK-001 | automated | Exact 56-path final P05 source index committed as `43d5ee6f`, including RUN-0011 follow-up and SPEC-0223 Task/ledger; excludes this later Task-only receipt | Installed staged and message hooks with pinned validation environment | `git commit` invoking `python3 scripts/qa.py staged`, Commitizen and generated-message checks | 0 | PASS | Selected staged QA and both commit-message checks PASS with no hook bypass. Clean worktree observed after the source commit. This checks the 56-path index only; it is not hosted PR execution, native operation or user criterion acceptance | false | none |
 | EVD-012 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | WORK-001 | review | Final P05 source diff, including reviewed public-digest metadata and RUN-0011 follow-up | Independent code and security review; actual owner and consumer reads | Scoped source, authority, secret and evidence review | none | PASS | Reviewers reported no remaining BLOCK/FIX on the P05 source correction; public digest metadata was limited to reviewed false positives. Their finding is review evidence, not a security or native-runtime guarantee. This Task-only receipt follows the reviewed source index | false | none |
+| EVD-013 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria) | WORK-001 | automated | P16 re-verification of the promotion owners at `main@a4968ee5` (docs/00.workspace/03.process/sdlc.md, docs/01.requirements/0003-workspace-agent-governance-platform.md, docs/05.operations/02.policies/0004-rollouts-notifications-headlamp-policy.md, docs/00.workspace/06.maintenance/0011-reference-maintenance-runbook.md, docs/00.workspace/03.process/document-authoring.md) | Pinned validation venv | `scripts/validate-markdown-profiles.py --root . --mode strict` and `scripts/validate-links-and-owners.py --root . --mode strict`, each with `--include-path` for the owners; `scripts/validate-work-residue-ledger.py --root .` | 0 | PASS | Markdown profiles: no violations; links and owners: cross-document valid; residue ledger PASS with 30 entries. The promoted owner content is current and valid; the user accepted every criterion on 2026-11-24 (P16) | true | none |
+| EVD-014 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria), [AC-0005](../spec.md#criteria) | WORK-001 | observation | {"actor":"user","approval_ref":"Current human P16-ACCEPT.md request of 2026-11-24 in this conversation for package workspace_governance_remediation_1_2_0_20261123, with the user's answer accepting the SPEC-0227 criteria; acceptance recording, re-verification and commit/push/PR/merge only","scope":["SPEC-0227","SPEC-0227-PLAN-0001","SPEC-0227-TSK-0001"],"reviewed_spec_sha256":"331591e817ff691c796f20b206900ab31a8478c84201def5c72a3ce6e7f763f7","reviewed_plan_sha256":"752651b6933ec77907a80e765c2f8523c5c409bd8ecd22c048ab7c8d8525244f","request_revision":"d6ec4c4b1f27731d8fbb30a89bbf83c5aa5ac528acb931bf279c38047327aa9b","validity":"confirmed","revocation":"none"} | Current trusted human request; request revision is the validator-defined digest of this Task's scope and work items; exact current parent hashes | Scoped execution approval | none | PASS | Records the current P16 acceptance-recording scope only | true | none |
 
 ##### Resolution Links
 
@@ -173,15 +175,15 @@ matching PASS row on the same command, work unit and criteria.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0002](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0003](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0004](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0005](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | accepted | EVD-001, EVD-002, EVD-004, EVD-006, EVD-012, EVD-013 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0227 criteria | user | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | accepted | EVD-002, EVD-004, EVD-006, EVD-010, EVD-011, EVD-012, EVD-013 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0227 criteria | user | platform | none |
+| [AC-0003](../spec.md#criteria) | accept | accepted | EVD-002, EVD-004, EVD-006, EVD-011, EVD-012, EVD-013 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0227 criteria | user | platform | none |
+| [AC-0004](../spec.md#criteria) | accept | accepted | EVD-002, EVD-004, EVD-006, EVD-011, EVD-012, EVD-013 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0227 criteria | user | platform | none |
+| [AC-0005](../spec.md#criteria) | accept | accepted | EVD-002, EVD-004, EVD-006, EVD-009, EVD-010, EVD-011, EVD-013 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0227 criteria | user | platform | none |
 
 ##### Remaining Conditions
 
-P05 source implementation and selected local checks passed on the exact
+The user accepted every criterion on 2026-11-24 (P16), and the Task is completed. P05 source implementation and selected local checks passed on the exact
 56-path committed index. At this pre-push snapshot, final Task-only checks
 and hosted observations belong to the final PR artifact and handoff; five
 user criterion decisions remain pending. P04 adoption and P06–P17
@@ -191,8 +193,13 @@ runtime/cutover work do not close through this Task.
 
 ##### Promotion Receipt
 
-The Plan names intended durable owners. A receiving owner counts as promoted
-only after its actual content and selected validation are observed.
+P05-SDLC: [SDLC flow](../../../00.workspace/03.process/sdlc.md#rules); P05-REQUIREMENT:
+[REQ-0003](../../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements);
+P05-OPERATIONS: [rollout operations policy](../../../05.operations/02.policies/0004-rollouts-notifications-headlamp-policy.md);
+P05-REFERENCE: [reference maintenance runbook](../../../00.workspace/06.maintenance/0011-reference-maintenance-runbook.md);
+P05-FORM: [document authoring](../../../00.workspace/03.process/document-authoring.md#registry-forms).
+Each owner carries the promoted content and passed the strict profile and
+link checks at `main@a4968ee5` (EVD-013).
 
 ##### Next Owner
 

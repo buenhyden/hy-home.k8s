@@ -2,7 +2,7 @@
 title: "Shared Memory Meaning Task"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-24"
 artifact_id: "SPEC-0232-TSK-0001"
@@ -110,13 +110,13 @@ shows the passing state.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0002](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0003](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | accepted | EVD-003, EVD-004, EVD-005 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0232 criteria | user | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | accepted | EVD-003, EVD-005 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0232 criteria | user | platform | none |
+| [AC-0003](../spec.md#criteria) | accept | accepted | EVD-003, EVD-004, EVD-005 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0232 criteria | user | platform | none |
 
 ##### Remaining Conditions
 
-Staged QA passed in the commit hooks and hosted checks passed (EVD-005);
+The user accepted every criterion on 2026-11-24 (P16), and the Task is completed. Staged QA passed in the commit hooks and hosted checks passed (EVD-005);
 the operator's criterion decisions remain. A
 two-provider write and read through the live store was not repeated: Codex
 is at its account limit until 2026-11-27 (SPEC-0231 EVD-008), and both

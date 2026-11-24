@@ -2,7 +2,7 @@
 title: "Product Test Boundary Task"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-24"
 artifact_id: "SPEC-0237-TSK-0001"
@@ -115,13 +115,13 @@ None.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | accept | pending | EVD-002, EVD-005 | Awaiting the operator's decision | none | platform | none |
-| [AC-0002](../spec.md#criteria) | accept | pending | EVD-004, EVD-005 | Awaiting the operator's decision | none | platform | none |
-| [AC-0003](../spec.md#criteria) | accept | pending | EVD-003, EVD-005 | Awaiting the operator's decision | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | accepted | EVD-002, EVD-005 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0237 criteria | user | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | accepted | EVD-004, EVD-005 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0237 criteria | user | platform | none |
+| [AC-0003](../spec.md#criteria) | accept | accepted | EVD-003, EVD-005 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0237 criteria | user | platform | none |
 
 ##### Remaining Conditions
 
-Hosted checks passed (EVD-005). W06-H02 waits for a manifest or CI
+The user accepted every criterion on 2026-11-24 (P16), and the Task is completed. Hosted checks passed (EVD-005). W06-H02 waits for a manifest or CI
 lock change; product workload readiness in a test cluster stays unobserved.
 
 #### Handoff

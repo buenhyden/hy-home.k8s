@@ -141,14 +141,14 @@ shows the passing state. EVD-007 resolves the required failure EVD-006.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | accept | pending | EVD-003, EVD-004, EVD-009 | Awaiting the operator's decision | none | platform | none |
-| [AC-0002](../spec.md#criteria) | accept | pending | EVD-003, EVD-005, EVD-006, EVD-007, EVD-008, EVD-009 | Awaiting the operator's decision | none | platform | none |
-| [AC-0003](../spec.md#criteria) | accept | pending | EVD-005, EVD-008, EVD-009 | Awaiting the operator's decision | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | accepted | EVD-003, EVD-004, EVD-009 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0235 criteria | user | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | accepted | EVD-003, EVD-005, EVD-006, EVD-007, EVD-008, EVD-009 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0235 criteria | user | platform | none |
+| [AC-0003](../spec.md#criteria) | accept | accepted | EVD-005, EVD-008, EVD-009 | User answer of 2026-11-24 in this session (P16) accepting the SPEC-0235 criteria | user | platform | none |
 | [AC-0004](../spec.md#criteria) | accept | pending | none | Awaiting a Codex run after 2026-11-27 12:53 | none | platform | none |
 
 ##### Remaining Conditions
 
-AC-0004 needs one Codex worker through the same dispatcher after the usage
+The user accepted AC-0001 to AC-0003 on 2026-11-24 (P16). AC-0004 needs one Codex worker through the same dispatcher after the usage
 limit resets on 2026-11-27 12:53 (W10-H02). Hosted checks passed (EVD-009);
 the containment cases skip on a host without a user systemd manager or
 bwrap. W10-H03 stays open for command workers and a hard disk

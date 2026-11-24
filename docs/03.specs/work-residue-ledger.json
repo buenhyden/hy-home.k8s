@@ -343,7 +343,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W10",
-      "resume_condition": "Before an untrusted or provider worker is dispatched",
+      "resume_condition": "When an untrusted command worker is dispatched, or a hard disk cap is required",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
