@@ -101,9 +101,12 @@ roster or tool inventory.
    current. Each provider worker runs in its own systemd user scope that caps
    memory, CPU, tasks and run time, and stopping the scope ends every
    descendant. Inside it, bwrap mounts the host read-only except the clone and
-   a private `/tmp`, and starts from an empty environment. Host reads and the
-   network stay open because the provider needs its API, and disk use is
-   checked when the result is collected, not enforced as a quota.
+   a private `/tmp`, and starts from an empty environment in its own PID and
+   IPC namespaces, with `/run` and every other listening path socket hidden,
+   since a read-only mount still allows a socket connection. Host reads and
+   the network stay open because the provider needs its API, so abstract
+   sockets and local TCP services stay reachable, and disk use is checked
+   when the result is collected, not enforced as a quota.
 6. Require returning workers to report the
    [quality handoff fields](../../docs/00.workspace/04.quality/quality.md#handoff-evidence-contract).
    Review actual changes and commands; a worker's assertion alone is not

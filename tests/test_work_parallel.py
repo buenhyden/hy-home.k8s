@@ -1212,7 +1212,10 @@ class GitTrustTest(Fixture):
 FAKE_PROVIDER = """#!/usr/bin/env python3
 import json, os, pathlib, subprocess, sys, time
 lines = dict(l.split("=", 1) for l in sys.stdin.read().split() if "=" in l)
-pathlib.Path("docs/a.md").write_text("\\n".join(sorted(os.environ)) + "\\n")
+seen = [f"bus={os.path.exists(f'/run/user/{os.getuid()}/bus')}",
+        f"docker={os.path.exists('/run/docker.sock')}",
+        f"parent={os.path.exists('/proc/' + lines['parent'])}"]
+pathlib.Path("docs/a.md").write_text("\\n".join(sorted(os.environ) + seen) + "\\n")
 try:
     pathlib.Path(lines["escape"]).write_text("escaped")
 except OSError:
@@ -1383,6 +1386,34 @@ class ProviderPlanTest(Fixture):
             "budget exceeded", PARALLEL.parse_result("claude", failed.encode())["error"]
         )
 
+    def test_listening_path_sockets_are_masked(self):
+        table = (
+            "Num       RefCount Protocol Flags    Type St Inode Path\n"
+            "0000: 00000002 00000000 00010000 0001 01 11 /home/u/.agent/gateway.sock\n"
+            "0000: 00000002 00000000 00010000 0001 01 12 /run/user/1000/bus\n"
+            "0000: 00000002 00000000 00010000 0001 01 13 @abstract\n"
+            "0000: 00000003 00000000 00000000 0001 03 14 /home/u/connected.sock\n"
+            "0000: 00000002 00000000 00010000 0001 01 15 /work/clone/own.sock\n"
+        )
+        self.assertEqual(
+            PARALLEL.listening_sockets(table, Path("/work/clone")),
+            ["/home/u/.agent/gateway.sock"],
+        )
+        argv = PARALLEL.contain(
+            ["cli"],
+            scope="s",
+            clone=Path("/work/clone"),
+            binary="/bin/cli",
+            memory_mb=64,
+            timeout=5,
+            env={},
+            sockets=["/home/u/.agent/gateway.sock"],
+        )
+        joined = " ".join(argv)
+        for flag in ("--unshare-pid", "--unshare-ipc", "--new-session", "--tmpfs /run"):
+            self.assertIn(flag, joined)
+        self.assertIn("--ro-bind /dev/null /home/u/.agent/gateway.sock", joined)
+
     def test_a_provider_unit_needs_a_current_request(self):
         unit = self.native()
         report = self.run_plan(self.plan(unit))
@@ -1416,7 +1447,10 @@ class ContainmentTest(Fixture):
             "owned_paths": ["docs/a.md"],
             "provider": provider,
             "model": "haiku",
-            "prompt": f"escape={self.escape} spawn={self.marker} {prompt}",
+            "prompt": (
+                f"escape={self.escape} spawn={self.marker} "
+                f"parent={os.getpid()} {prompt}"
+            ),
             **({"budget_usd": 0.5} if provider == "claude" else {}),
             "timeout": timeout,
         }
@@ -1444,6 +1478,8 @@ class ContainmentTest(Fixture):
                 self.assertIn("HYK8S_PARALLEL_UNIT", patch)
                 self.assertNotIn("HYK8S_FAKE_SECRET", patch)
                 self.assertNotIn("DBUS_SESSION_BUS_ADDRESS", patch)
+                for hidden in ("bus=False", "docker=False", "parent=False"):
+                    self.assertIn(hidden, patch, "a host socket or process is visible")
                 self.assertNoResidue(report)
 
     def test_a_timed_out_worker_loses_its_whole_scope(self):

@@ -26,9 +26,11 @@ A provider unit (`claude` or `codex`) starts only while its P08 request brief
 is current, through the installed CLI's own options with the prompt on stdin.
 It runs in a systemd user scope, which caps memory, one CPU, tasks and run time
 and whose stop ends every descendant, a `setsid` one too, inside a bwrap mount
-namespace that keeps writes in its clone and starts from an empty environment.
-Host reads and the network stay open, because the provider needs its API; disk
-use is checked when the result is collected, not enforced as a quota.
+namespace that keeps writes in its clone, starts from an empty environment in
+its own PID, IPC and UTS namespaces, and hides /run and every other listening
+path socket. Host reads and the network stay open, because the provider needs
+its API, so abstract sockets and local TCP services stay reachable; disk use is
+checked when the result is collected, not enforced as a quota.
 """
 
 from __future__ import annotations
@@ -394,14 +396,20 @@ def contain(
     memory_mb: int,
     timeout: float,
     env: dict[str, str],
+    sockets: list[str] | None = None,
 ) -> list[str]:
     """Wrap a provider worker in its own cgroup and a read-only mount namespace.
 
     The systemd user scope is the process boundary: stopping it ends every
     descendant, a `setsid` one too, and it caps memory, one CPU, tasks and run
-    time. bwrap mounts the host read-only except the clone and a private /tmp
-    and starts from an empty environment. The network stays shared, because
-    the provider needs its API, and the host stays readable.
+    time. bwrap mounts the host read-only except the clone and a private /tmp,
+    starts from an empty environment in its own PID, IPC and UTS namespaces and
+    session, and hides /run (the user bus, systemd and container sockets) and
+    every other listening path socket, because a read-only mount still lets a
+    process connect to a socket that can start code outside. Only the resolver
+    under /run is mounted back. The network stays shared, because the provider
+    needs its API, so abstract sockets and local TCP services stay reachable,
+    and the host stays readable.
     """
     wrapper = [
         "systemd-run",
@@ -428,8 +436,22 @@ def contain(
         "/dev",
         "--proc",
         "/proc",
+        "--unshare-pid",
+        "--unshare-ipc",
+        "--unshare-uts",
+        "--unshare-cgroup-try",
+        "--new-session",
         "--tmpfs",
         "/tmp",
+        "--tmpfs",
+        "/run",
+        "--ro-bind-try",
+        "/run/systemd/resolve",
+        "/run/systemd/resolve",
+    ]
+    for path in sockets or ():
+        wrapper += ["--ro-bind", "/dev/null", path]
+    wrapper += [
         "--ro-bind",
         binary,
         binary,
@@ -444,6 +466,44 @@ def contain(
     for key, value in sorted(env.items()):
         wrapper += ["--setenv", key, value]
     return wrapper + argv
+
+
+def listening_sockets(table: str, clone: Path) -> list[str]:
+    """Listening path sockets from `/proc/net/unix` that the mounts still show.
+
+    Sockets under /run, /var/run and /tmp are hidden by their own mounts and
+    the clone's are the worker's; an abstract socket has no path to mask.
+    """
+    found = []
+    for line in table.splitlines()[1:]:
+        fields = line.split(None, 7)
+        if len(fields) < 8 or not int(fields[3], 16) & 0x10000:  # __SO_ACCEPTCON
+            continue
+        path = fields[7]
+        if not path.startswith("/") or path.startswith(("/run/", "/var/run/", "/tmp/")):
+            continue
+        if path == str(clone) or path.startswith(str(clone) + "/"):
+            continue
+        found.append(path)
+    return sorted(set(found))
+
+
+def _host_sockets(clone: Path) -> list[str]:
+    try:
+        with open("/proc/net/unix", encoding="utf-8", errors="replace") as handle:
+            table = handle.read(OUTPUT_LIMIT)
+    except OSError:
+        return []
+    # ponytail: a socket created after this read stays reachable; a network
+    # namespace with an API proxy would close abstract and late sockets too.
+    found = []
+    for path in listening_sockets(table, clone):
+        try:
+            if stat.S_ISSOCK(os.lstat(path).st_mode):
+                found.append(path)
+        except OSError:
+            continue  # gone, or behind a directory this user cannot read
+    return found
 
 
 def _systemctl(*args: str) -> subprocess.CompletedProcess:
@@ -1006,6 +1066,7 @@ class _Run:
                     binary=binary,
                     memory_mb=unit["memory_mb"],
                     timeout=unit["timeout"],
+                    sockets=_host_sockets(clone),
                     env={
                         "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
                         "HOME": str(Path.home()),
