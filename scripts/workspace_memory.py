@@ -50,6 +50,16 @@ REQUIRED_BODY = {
 # Task execution state has one owner; memory must not copy it.
 FORBIDDEN_BODY = frozenset({"status", "result", "acceptance", "approval", "evidence"})
 ELIGIBILITY = ("candidate", "current", "needs-review", "superseded", "withdrawn")
+# D09 common state for each local eligibility; open conflicts override it.
+COMMON_STATE = {
+    "candidate": "candidate",
+    "current": "active",
+    "needs-review": "candidate",
+    "superseded": "retracted",
+    "withdrawn": "retracted",
+}
+# Age, session end and compaction never delete a memory (CTX-R012).
+RETENTION = "until-approved-erase"
 SENSITIVITY = ("public", "internal")
 IDENTIFIER = re.compile(r"[a-z][a-z0-9-]{0,63}")
 
@@ -90,7 +100,18 @@ def _now() -> str:
 
 
 def _canonical(value: Any) -> str:
-    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    # Typed: true, 1 and 1.0 and null and a missing key stay distinct; a
+    # non-finite number has no canonical form and is refused (D09).
+    try:
+        return json.dumps(
+            value,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+            allow_nan=False,
+        )
+    except ValueError as exc:
+        raise MemoryError_("MEMORY_SCHEMA: a number is not finite") from exc
 
 
 def _squash(text: str) -> str:
@@ -590,7 +611,16 @@ class Store:
             "backup": backup,
         }
 
-    def _record(self, row: sqlite3.Row | tuple) -> dict[str, Any]:
+    def _source_status(self, ref: dict[str, str]) -> str:
+        # `content_expired` is part of the common vocabulary; a repository
+        # file source cannot expire, so nothing here produces it yet.
+        try:
+            digest = self._source_digest(ref["path"])
+        except MemoryError_:
+            return "unavailable"
+        return "current" if digest == ref["sha256"] else "changed"
+
+    def _record(self, row: sqlite3.Row | tuple, conflicts: int = 0) -> dict[str, Any]:
         (
             memory_id,
             tier,
@@ -601,16 +631,37 @@ class Store:
             revision,
             refs,
             body,
+            observed_at,
         ) = row
         refs = json.loads(refs)
-        stale = []
-        for ref in refs:
-            try:
-                changed = self._source_digest(ref["path"]) != ref["sha256"]
-            except MemoryError_:
-                changed = True
-            if changed:
-                stale.append(ref["path"])
+        statuses = [self._source_status(ref) for ref in refs]
+        stale = [
+            ref["path"] for ref, status in zip(refs, statuses) if status != "current"
+        ]
+        common = {
+            "id": memory_id,
+            "scope": {
+                "workspace_id": self.workspace_id,
+                "tier": tier,
+                "domain_id": domain_id,
+            },
+            "kind": tier,
+            "state": "conflicted" if conflicts else COMMON_STATE[eligibility],
+            "revision": revision,
+            # A source digest is taken when its revision is written.
+            "sources": [
+                {
+                    "path": ref["path"],
+                    "sha256": ref["sha256"],
+                    "observed_at": observed_at,
+                    "status": status,
+                }
+                for ref, status in zip(refs, statuses)
+            ],
+            "sensitivity": sensitivity,
+            "retention": RETENTION,
+            "owner": owner,
+        }
         return {
             "memory_id": memory_id,
             "tier": tier,
@@ -623,10 +674,14 @@ class Store:
             "stale_sources": stale,
             "body": json.loads(body),
             "workspace_id": self.workspace_id,
+            "open_conflicts": conflicts,
+            "common": common,
         }
 
     _COLUMNS = """select m.memory_id, m.tier, m.domain_id, m.owner, m.eligibility, m.sensitivity,
-        r.revision, r.source_refs, r.body"""
+        r.revision, r.source_refs, r.body, r.created_at,
+        (select count(*) from conflict c where c.memory_id = m.memory_id
+         and c.current_revision = m.current_revision)"""
     _CURRENT = (
         _COLUMNS
         + """ from memory m join revision r
@@ -640,12 +695,16 @@ class Store:
             ).fetchone()
             if row is None:
                 self._live(connection, memory_id, "1")
-        return self._record(row)
+        return self._record(row[:10], row[10])
 
     def query(
-        self, *, tier: str | None = None, include_stale: bool = False
+        self,
+        *,
+        tier: str | None = None,
+        include_stale: bool = False,
+        include_conflicted: bool = False,
     ) -> list[dict[str, Any]]:
-        """Default reuse view: current eligibility and unchanged sources only."""
+        """Default reuse view: current, unconflicted, with unchanged sources."""
 
         with self._connect() as connection:
             rows = connection.execute(
@@ -653,13 +712,21 @@ class Store:
                 " and (? is null or m.tier = ?) order by m.memory_id",
                 (tier, tier),
             ).fetchall()
-        records = [self._record(row) for row in rows]
-        return (
-            records if include_stale else [r for r in records if not r["stale_sources"]]
-        )
+        records = [self._record(row[:10], row[10]) for row in rows]
+        return [
+            r
+            for r in records
+            if (include_stale or not r["stale_sources"])
+            and (include_conflicted or not r["open_conflicts"])
+        ]
 
     def search(
-        self, text: str, *, tier: str | None = None, include_stale: bool = False
+        self,
+        text: str,
+        *,
+        tier: str | None = None,
+        include_stale: bool = False,
+        include_conflicted: bool = False,
     ) -> dict[str, Any]:
         """Lexical recall over the default view; returned bodies are data, not instructions.
 
@@ -675,10 +742,7 @@ class Store:
             raise MemoryError_("MEMORY_SCHEMA: search needs at least one term")
         with self._connect() as connection:
             rows = connection.execute(
-                self._COLUMNS + ", (select count(*) from conflict c where"
-                " c.memory_id = m.memory_id and c.current_revision = m.current_revision)"
-                " from memory m join revision r on r.memory_id = m.memory_id"
-                " and r.revision = m.current_revision where m.eligibility = 'current'"
+                self._CURRENT + " where m.eligibility = 'current'"
                 " and (? is null or m.tier = ?) order by m.memory_id",
                 (tier, tier),
             ).fetchall()
@@ -689,8 +753,10 @@ class Store:
             haystack = _squash(" ".join([memory_id, *paths, *map(str, values)]))
             if not all(term in haystack for term in terms):
                 continue
-            record = self._record(row[:9])
+            record = self._record(row[:10], row[10])
             if record["stale_sources"] and not include_stale:
+                continue
+            if record["open_conflicts"] and not include_conflicted:
                 continue
             reason = (
                 "exact-id"
@@ -699,9 +765,7 @@ class Store:
                 if any(term in _squash(" ".join(paths)) for term in terms)
                 else "text"
             )
-            results.append(
-                record | {"selection_reason": reason, "open_conflicts": row[9]}
-            )
+            results.append(record | {"selection_reason": reason})
         order = {"exact-id": 0, "path": 1, "text": 2}
         results.sort(
             key=lambda item: (order[item["selection_reason"]], item["memory_id"])
@@ -887,10 +951,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     query = commands.add_parser("query")
     query.add_argument("--tier")
     query.add_argument("--include-stale", action="store_true")
+    query.add_argument("--include-conflicted", action="store_true")
     search = commands.add_parser("search")
     search.add_argument("text")
     search.add_argument("--tier")
     search.add_argument("--include-stale", action="store_true")
+    search.add_argument("--include-conflicted", action="store_true")
     eligibility = commands.add_parser("eligibility")
     eligibility.add_argument("memory_id")
     eligibility.add_argument("value")
@@ -920,10 +986,17 @@ def main(argv: Sequence[str] | None = None) -> int:
                 result = store.history(args.memory_id)
             elif args.command == "search":
                 result = store.search(
-                    args.text, tier=args.tier, include_stale=args.include_stale
+                    args.text,
+                    tier=args.tier,
+                    include_stale=args.include_stale,
+                    include_conflicted=args.include_conflicted,
                 )
             elif args.command == "query":
-                result = store.query(tier=args.tier, include_stale=args.include_stale)
+                result = store.query(
+                    tier=args.tier,
+                    include_stale=args.include_stale,
+                    include_conflicted=args.include_conflicted,
+                )
             elif args.command == "eligibility":
                 result = store.set_eligibility(
                     args.memory_id,

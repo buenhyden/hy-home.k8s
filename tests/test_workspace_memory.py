@@ -619,11 +619,13 @@ class WorkspaceMemoryTest(unittest.TestCase):
         self.assertEqual(self.found(marker, include_stale=True), [(visible, "text")])
 
     def test_search_marks_an_unresolved_conflict(self) -> None:
+        # D09 (SPEC-0232): a conflicted memory is not evidence by default.
         item = self.current({"narrative": "port 5433"})
         self.write(
             memory_id=item, expected_revision=0, body=SHORT | {"narrative": "port 5432"}
         )
-        result = self.store.search("port")["results"][0]
+        self.assertTrue(self.store.search("port")["abstain"])
+        result = self.store.search("port", include_conflicted=True)["results"][0]
         self.assertEqual(result["open_conflicts"], 1)
 
     def test_cli_round_trip(self) -> None:
@@ -680,6 +682,72 @@ class WorkspaceMemoryTest(unittest.TestCase):
         )
         self.assertEqual(missing.returncode, 2)
         self.assertIn("MEMORY_NOT_FOUND", missing.stderr)
+
+
+class CommonMemoryMeaningTest(unittest.TestCase):
+    """D09 common meaning on the existing store (SPEC-0232)."""
+
+    setUp = WorkspaceMemoryTest.setUp
+    write = WorkspaceMemoryTest.write
+
+    def current(self, **changes):
+        written = self.write(**changes)
+        self.store.set_eligibility(
+            written["memory_id"],
+            "current",
+            expected_revision=written["revision"],
+            expected_eligibility="candidate",
+            owner="reviewer",
+        )
+        return written["memory_id"]
+
+    def test_non_finite_numbers_are_refused(self) -> None:
+        for value in (float("nan"), float("inf"), float("-inf")):
+            with self.subTest(value=value):
+                with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_SCHEMA"):
+                    self.write(body=SHORT | {"weight": value})
+
+    def test_typed_values_keep_requests_distinct(self) -> None:
+        self.write(body=SHORT | {"flag": True}, idempotency_key="typed-1")
+        for changed in ({"flag": 1}, {"flag": None}, {}):
+            with self.subTest(changed=changed):
+                with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_CONFLICT"):
+                    self.write(body=SHORT | changed, idempotency_key="typed-1")
+
+    def test_common_view_maps_scope_state_sources_and_retention(self) -> None:
+        memory_id = self.current(source_refs=["policy.md"])
+        common = self.store.get(memory_id)["common"]
+        self.assertEqual(common["id"], memory_id)
+        self.assertEqual(
+            common["scope"],
+            {
+                "workspace_id": self.store.workspace_id,
+                "tier": "short-term",
+                "domain_id": None,
+            },
+        )
+        self.assertEqual((common["state"], common["revision"]), ("active", 1))
+        self.assertEqual(common["retention"], "until-approved-erase")
+        (source,) = common["sources"]
+        self.assertEqual((source["path"], source["status"]), ("policy.md", "current"))
+        self.assertTrue(source["observed_at"])
+        (self.root / "policy.md").write_text("v2\n", encoding="utf-8")
+        (source,) = self.store.get(memory_id)["common"]["sources"]
+        self.assertEqual(source["status"], "changed")
+        (self.root / "policy.md").unlink()
+        (source,) = self.store.get(memory_id)["common"]["sources"]
+        self.assertEqual(source["status"], "unavailable")
+
+    def test_a_conflicted_memory_leaves_the_default_views(self) -> None:
+        memory_id = self.current()
+        conflict = self.write(memory_id=memory_id, expected_revision=0)
+        self.assertEqual(conflict["outcome"], "conflict")
+        self.assertEqual(self.store.query(), [])
+        self.assertTrue(self.store.search("context")["abstain"])
+        (kept,) = self.store.query(include_conflicted=True)
+        self.assertEqual(kept["common"]["state"], "conflicted")
+        (found,) = self.store.search("context", include_conflicted=True)["results"]
+        self.assertEqual(found["open_conflicts"], 1)
 
 
 if __name__ == "__main__":
