@@ -250,14 +250,34 @@ class CommonDocumentProjectionTests(unittest.TestCase):
                     with self.assertRaises(CommonDocumentError):
                         COMMON.section_rules()
 
-    def test_local_contract_pins_edition_1_1_0_as_a_candidate(self) -> None:
+    def test_local_contract_pins_edition_1_1_0_as_adopted(self) -> None:
+        # The user adopted 1.1.0 on 2026-11-24 (SPEC-0226).
         contract = COMMON._core_contract()
-        self.assertEqual(contract["version"], "1.1.0")
-        self.assertEqual(contract["state"], "proposed-for-local-adoption")
+        self.assertEqual((contract["version"], contract["state"]), ("1.1.0", "adopted"))
         binding = json.loads((ROOT / "docs/99.templates/registry.json").read_text())[
             "common_document_contract"
         ]
-        self.assertEqual((binding["version"], binding["stage"]), ("1.1.0", "candidate"))
+        self.assertEqual((binding["version"], binding["stage"]), ("1.1.0", "adopted"))
+        self.assertEqual(binding["approved_at"], "2026-11-24")
+
+    def test_adopted_binding_needs_its_approval_record_and_matching_state(self):
+        original = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
+        for name, change in (
+            ("no approver", {"approved_by": None}),
+            ("no date", {"approved_at": None}),
+            ("no effective date", {"effective_from": None}),
+            ("candidate stage", {"stage": "candidate"}),
+        ):
+            with self.subTest(name):
+                raw = json.loads(json.dumps(original))
+                binding = raw["common_document_contract"]
+                for key, value in change.items():
+                    if value is None:
+                        binding.pop(key)
+                    else:
+                        binding[key] = value
+                with self.assertRaises(DocumentContractError):
+                    validate_registry(ROOT, raw)
 
     def test_registry_binding_rejects_unknown_kind_and_digest_drift(self) -> None:
         original = json.loads((ROOT / "docs/99.templates/registry.json").read_text())

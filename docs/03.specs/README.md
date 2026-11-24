@@ -96,7 +96,6 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ├── 0223-work-residue-handoff/
 ├── 0224-workspace-path-cutover/
 ├── 0225-q07-history-bound-checks/
-├── 0226-common-document-contract/
 ├── 0227-docs-sdlc-reconciliation/
 ├── 0228-independent-review-boundary/
 ├── 0229-selective-environment/
@@ -115,7 +114,6 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 | [SPEC-0223 Work Residue Handoff](./0223-work-residue-handoff/) | SPEC-0161, SPEC-0221, SPEC-0222의 열린 잔여를 넘겨받아 live residue 표를 두고, 세 package를 종료시키는 변경 package다. |
 | [SPEC-0224 Workspace Path Cutover](./0224-workspace-path-cutover/) | W 계층 문서를 `docs/00.workspace/`로 옮기고 SAFE·GIT 규칙을 W/A로 나누며 `docs/` 분류 폴더를 번호화하는 변경 package다. |
 | [SPEC-0225 Q07 History-Bound Check Conversion](./0225-q07-history-bound-checks/) | Q07-H01이 지목한 이력·번호 의존 검사를 바꾸거나 없애고, 전환 시점에 처리할 데이터를 잔여에 기록하는 변경 package다. |
-| [SPEC-0226 Common Document Contract](./0226-common-document-contract/) | P04 공통 외피·유형별 내용·metadata·관계 의미를 Stage 99와 실제 생산자·검증기에 연결하는 변경 package다. |
 | [SPEC-0227 Current Documentation and SDLC Reconciliation](./0227-docs-sdlc-reconciliation/) | P05 현행 문서 소유자·SDLC 권위·운영 잔여를 정합화하는 변경 package다. |
 | [SPEC-0228 Independent Review and Read-Only Boundary](./0228-independent-review-boundary/) | P06 위험별 독립 검토, 결과 증거 재사용 및 실제 읽기 전용 실행 경계를 보완하는 변경 package다. |
 | [SPEC-0229 Selective Validation Environment](./0229-selective-environment/) | P07 선택형 k3d 환경, 여러 실행의 합산 자원 제한과 생산 LAN 격리 경계를 다루는 변경 package다. |

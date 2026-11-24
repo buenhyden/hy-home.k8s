@@ -158,7 +158,7 @@ earlier evidence and scoped owner.
 [quality](../../00.workspace/04.quality/quality.md) and the
 [SPEC-0223 Task](../0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md)
 own current rules and item states. The 1.1.0 package's D05 and sources are
-candidate evidence; the [P04 Task](../0226-common-document-contract/01.tasks/tsk-0001-common-document-contract.md)
+candidate evidence; the P04 Task (now in the [REQ-0003 Archived Lineage](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage))
 and [PR 338 checks](https://github.com/buenhyden/hy-home.k8s/pull/338/checks)
 record predecessor integration without asserting common-edition adoption.
 
@@ -168,8 +168,8 @@ The accepted [SPEC-0223](../0223-work-residue-handoff/spec.md),
 [SPEC-0224](../0224-workspace-path-cutover/spec.md) and
 [SPEC-0225](../0225-q07-history-bound-checks/spec.md) retain their original
 accepted scope until P17 disposition. Their old Plans are historical input,
-not P05 execution authority. The [P04 Spec](../0226-common-document-contract/spec.md)
-and Plan remain draft with criterion acceptance pending.
+not P05 execution authority. The P04 Spec and Plan exited on 2026-11-24
+with their criteria accepted; the [REQ-0003 Archived Lineage](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage) keeps their summary.
 
 ##### Lifecycle Traceability
 
