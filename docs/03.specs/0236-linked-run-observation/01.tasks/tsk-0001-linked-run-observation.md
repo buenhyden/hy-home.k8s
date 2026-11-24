@@ -95,7 +95,7 @@ analysis fact for later review, not a failure hidden as unobserved.
 
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
-| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | PASS | Regressions pass (EVD-003); live join (EVD-004); W10-H04 closed (EVD-005) |
+| WORK-001 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | PASS | Regressions pass (EVD-003); live join (EVD-004); W10-H04 closed (EVD-005); hosted checks pass (EVD-006) |
 
 #### Verification Evidence
 
@@ -108,6 +108,7 @@ analysis fact for later review, not a failure hidden as unobserved.
 | EVD-003 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | automated | Working tree after the change | Pinned validation venv, `unittest`; Ruff; affected-surface contract | `python -m unittest tests.test_session_analysis tests.test_work_parallel tests.test_work_observe`; `ruff check`; `scripts/validate-affected-surfaces.py --root .` | 0 | PASS | analysis 31, dispatcher 49 and join 4 tests OK, including null reasons, no store creation, key boundary `SPEC-0235` against `SPEC-02350`, effect states and reasons, and no `.out` after success or timeout; Ruff clean; surface contract PASS with the new gate in both local profiles | true | none |
 | EVD-004 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria) | WORK-001 | observation | Live `.workspace-memory` stores and `.workspace-test/parallel`, 2026-11-24 | Changed working-tree code | `scripts/work_observe.py report --key SPEC-0234`, `--key SPEC-0235`, `--key SPEC-0161` | 0 | PASS | SPEC-0234: forecast 20 completed in 27.486226 elapsed minutes against P30 40, P50 60, P80 100, other sources null with reasons. SPEC-0235: all three sources null with reasons (its run reports were deleted in P12). SPEC-0161: 17 completed forecasts and candidate 1 with effect `recurred`; no parallel record. No store was created | true | none |
 | EVD-005 | [AC-0004](../spec.md#criteria) | WORK-001 | observation | Live `.workspace-memory/analysis.sqlite3`; runs 16 to 20 | `scripts/session_analysis.py` | `session_analysis.py candidates` for candidate 1 | 0 | PASS | Rechecks 2026-11-20 `met` (0 failures, 2 sessions) and 2026-11-23 `recurred` (106 failures, 3 sessions); W10-H04 closed as SPEC-0223 EVD-045 and the ledger entry made terminal | true | none |
+| EVD-006 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria), [AC-0004](../spec.md#criteria) | WORK-001 | observation | Pull request #361, head `92593519` | GitHub Actions CI run 45336381341; GitGuardian | Hosted pull request checks | 0 | PASS | ci-summary, style-pr (9 min 11 s, including the affected regressions), label, greeting and GitGuardian passed | true | none |
 
 ##### Resolution Links
 
@@ -120,15 +121,15 @@ shows the passing state.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | accept | pending | EVD-003, EVD-004 | Awaiting the operator's decision | none | platform | none |
-| [AC-0002](../spec.md#criteria) | accept | pending | EVD-003, EVD-004 | Awaiting the operator's decision | none | platform | none |
-| [AC-0003](../spec.md#criteria) | accept | pending | EVD-003 | Awaiting the operator's decision | none | platform | none |
-| [AC-0004](../spec.md#criteria) | accept | pending | EVD-005 | Awaiting the operator's decision | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | pending | EVD-003, EVD-004, EVD-006 | Awaiting the operator's decision | none | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | pending | EVD-003, EVD-004, EVD-006 | Awaiting the operator's decision | none | platform | none |
+| [AC-0003](../spec.md#criteria) | accept | pending | EVD-003, EVD-006 | Awaiting the operator's decision | none | platform | none |
+| [AC-0004](../spec.md#criteria) | accept | pending | EVD-005, EVD-006 | Awaiting the operator's decision | none | platform | none |
 
 ##### Remaining Conditions
 
-Hosted checks are recorded when they run. The open holds named under
-Blockers and Decisions stay with their owners.
+Hosted checks passed (EVD-006). The open holds named under Blockers and
+Decisions stay with their owners.
 
 #### Handoff
 
