@@ -237,6 +237,20 @@ profile, relationship, link and state checks; executable behavior changes get
 focused negative and boundary regressions. A one-time Spec or Task migration
 test is not a permanent gate after its outcome is retained.
 
+At the end of a task, sort what it made by its real consumers. A probe, dump,
+trace, experiment output, copied fixture, one-off script or test, and a
+finished item under `_workspace/` is temporary: carry its needed conclusion
+into the current owner, then delete it. An operating command, a current
+regression, the shared workspace stores, a scheduler unit, a run report and
+another active task's material are persistent, even when untracked. Delete
+only what the task made, inside the checkout or its own scratch area, never
+through a symbolic link or mount and never with a host-wide prune. Material
+kept to recover a failure stays access-limited, and the Task names its owner,
+resume point and the condition for deleting it. A user's input package under
+`_workspace/` stays until the last prompt that reads it is finished and its
+deletion is approved; durable conclusions it carried live in their current
+owners first.
+
 Optimize in this order: remove duplicate leaves, separate content validation
 from implementation regression, share parsing and Git reads inside one run,
 select by changed impact, then reuse only a narrowly proven result. Measure

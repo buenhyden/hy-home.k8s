@@ -558,13 +558,13 @@ class SessionAnalysisTest(unittest.TestCase):
         self.assertEqual(name, f"hy-home-k8s-session-analysis-{workspace[:8]}")
         self.assertNotEqual(name, ANALYSIS.unit_name("00000000-other"))
 
-    def test_install_moves_only_the_legacy_unit_this_checkout_owns(self) -> None:
+    def test_install_writes_and_enables_only_this_clones_named_timer(self) -> None:
         home = self.base / "home"
         units = home / ".config" / "systemd" / "user"
         units.mkdir(parents=True)
-        _, service = ANALYSIS.unit_text(self.root)
+        timer, service = ANALYSIS.unit_text(self.root)
+        # Any other unit, even an unnamed one running this checkout, is not ours.
         (units / "hy-home-k8s-session-analysis.service").write_text(service)
-        (units / "hy-home-k8s-session-analysis.timer").write_text("[Timer]\n")
         calls = []
         with (
             mock.patch.object(ANALYSIS.Path, "home", return_value=home),
@@ -573,29 +573,18 @@ class SessionAnalysisTest(unittest.TestCase):
             ),
         ):
             result = ANALYSIS.install_timer(self.root, "abcdef12-0000")
-        self.assertEqual(result["timer"], "hy-home-k8s-session-analysis-abcdef12.timer")
-        self.assertFalse((units / "hy-home-k8s-session-analysis.service").exists())
-        self.assertIn(
-            [
-                "systemctl",
-                "--user",
-                "disable",
-                "--now",
-                "hy-home-k8s-session-analysis.timer",
-            ],
-            calls,
-        )
-        (units / "hy-home-k8s-session-analysis.service").write_text(
-            service.replace(str(self.root), "/elsewhere")
-        )
-        with (
-            mock.patch.object(ANALYSIS.Path, "home", return_value=home),
-            mock.patch.object(
-                ANALYSIS.subprocess, "run", side_effect=lambda c, **k: None
-            ),
-        ):
-            ANALYSIS.install_timer(self.root, "abcdef12-0000")
+        name = "hy-home-k8s-session-analysis-abcdef12"
+        self.assertEqual(result, {"timer": f"{name}.timer", "directory": str(units)})
+        self.assertEqual((units / f"{name}.timer").read_text(), timer)
+        self.assertEqual((units / f"{name}.service").read_text(), service)
         self.assertTrue((units / "hy-home-k8s-session-analysis.service").exists())
+        self.assertEqual(
+            calls,
+            [
+                ["systemctl", "--user", "daemon-reload"],
+                ["systemctl", "--user", "enable", "--now", f"{name}.timer"],
+            ],
+        )
 
     def test_timer_units_schedule_daily_with_catch_up(self) -> None:
         timer, service = ANALYSIS.unit_text(self.root)
