@@ -1205,5 +1205,289 @@ class GitTrustTest(Fixture):
         self.assertEqual(report["state"], "failed")
 
 
+# A stand-in for the provider CLI: it never reaches a provider. It reads its
+# prompt from stdin, writes the cleared environment's names to docs/a.md, tries
+# a write outside its clone, can leave a `setsid` child, and prints the result
+# shape of the real CLI.
+FAKE_PROVIDER = """#!/usr/bin/env python3
+import json, os, pathlib, subprocess, sys, time
+lines = dict(l.split("=", 1) for l in sys.stdin.read().split() if "=" in l)
+seen = [f"bus={os.path.exists(f'/run/user/{os.getuid()}/bus')}",
+        f"docker={os.path.exists('/run/docker.sock')}",
+        f"parent={os.path.exists('/proc/' + lines['parent'])}"]
+pathlib.Path("docs/a.md").write_text("\\n".join(sorted(os.environ) + seen) + "\\n")
+try:
+    pathlib.Path(lines["escape"]).write_text("escaped")
+except OSError:
+    pass
+if "spawn" in lines:
+    subprocess.Popen(
+        ["setsid", sys.executable, "-c", "import time; time.sleep(300)", lines["spawn"]],
+        stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+    )
+time.sleep(float(lines.get("sleep", "0")))
+if sys.argv[1] == "exec":
+    print(json.dumps({"type": "thread.started", "thread_id": "t-1"}))
+    print(json.dumps({"type": "turn.completed", "usage": {"input_tokens": 7}}))
+else:
+    print(json.dumps({"type": "result", "subtype": "success", "is_error": False,
+        "result": "done", "session_id": "s-1", "total_cost_usd": 0.01,
+        "num_turns": 2, "usage": {"input_tokens": 5}}))
+"""
+
+
+def _alive(marker: str) -> bool:
+    for cmdline in Path("/proc").glob("[0-9]*/cmdline"):
+        try:
+            if marker.encode() in cmdline.read_bytes():
+                return True
+        except OSError:
+            continue
+    return False
+
+
+class ProviderPlanTest(Fixture):
+    def native(self, **extra):
+        unit = {
+            "id": "a",
+            "action": "write-worker",
+            "owned_paths": ["docs/a.md"],
+            "provider": "claude",
+            "model": "haiku",
+            "prompt": "Edit docs/a.md.",
+            "budget_usd": 0.5,
+            "timeout": 30,
+        }
+        unit.update(extra)
+        return {k: v for k, v in unit.items() if v is not None}
+
+    def test_provider_units_are_validated(self):
+        bad = [
+            self.native(provider="gemini"),
+            self.native(prompt=None),
+            self.native(prompt=" "),
+            self.native(model="Haiku; rm"),
+            self.native(budget_usd=0),
+            self.native(budget_usd=float("inf")),
+            self.native(budget_usd=None),
+            self.native(command=["true"]),
+            self.native(provider="codex", budget_usd=0.5),
+            self.native(provider="command", command=["true"]),
+        ]
+        for unit in bad:
+            with self.subTest(unit=unit):
+                self.assertRefused("PARALLEL_PLAN", PARALLEL.load_plan, self.plan(unit))
+        checked = PARALLEL.load_plan(
+            self.plan(
+                self.native(),
+                self.native(
+                    id="b", owned_paths=["docs/b.md"], provider="codex", budget_usd=None
+                ),
+            )
+        )
+        self.assertEqual(
+            sorted(u["provider"] for u in checked["units"]), ["claude", "codex"]
+        )
+        plain = PARALLEL.load_plan(self.plan(self.unit("c", ["true"], ["src.txt"])))
+        self.assertEqual(plain["units"][0]["provider"], "command")
+
+    def test_provider_argv_maps_the_installed_cli_options(self):
+        clone = Path("/work/clone")
+        self.assertEqual(
+            PARALLEL.provider_argv(self.native(), clone, "/bin/claude"),
+            [
+                "/bin/claude",
+                "-p",
+                "--output-format",
+                "json",
+                "--model",
+                "haiku",
+                "--safe-mode",
+                "--strict-mcp-config",
+                "--tools",
+                "Read,Edit,Write",
+                "--permission-mode",
+                "acceptEdits",
+                "--no-session-persistence",
+                "--max-budget-usd",
+                "0.5",
+            ],
+        )
+        codex = self.native(provider="codex", model="gpt-6.1-sol", budget_usd=None)
+        self.assertEqual(
+            PARALLEL.provider_argv(codex, clone, "/bin/codex"),
+            [
+                "/bin/codex",
+                "exec",
+                "--json",
+                "--ephemeral",
+                "--skip-git-repo-check",
+                "--sandbox",
+                "workspace-write",
+                "--model",
+                "gpt-6.1-sol",
+                "--cd",
+                "/work/clone",
+                "-",
+            ],
+        )
+
+    def test_provider_results_are_parsed(self):
+        claude = json.dumps(
+            {
+                "type": "result",
+                "is_error": False,
+                "session_id": "s",
+                "total_cost_usd": 0.02,
+                "num_turns": 3,
+                "usage": {"input_tokens": 1},
+            }
+        )
+        self.assertEqual(
+            PARALLEL.parse_result("claude", claude.encode()),
+            {
+                "session": "s",
+                "cost_usd": 0.02,
+                "turns": 3,
+                "usage": {"input_tokens": 1},
+                "error": None,
+            },
+        )
+        events = b"\n".join(
+            json.dumps(e).encode()
+            for e in [
+                {"type": "thread.started", "thread_id": "t"},
+                {"type": "turn.completed", "usage": {"output_tokens": 4}},
+            ]
+        )
+        self.assertEqual(
+            PARALLEL.parse_result("codex", events),
+            {
+                "session": "t",
+                "cost_usd": None,
+                "turns": 1,
+                "usage": {"output_tokens": 4},
+                "error": None,
+            },
+        )
+        self.assertEqual(
+            PARALLEL.parse_result("claude", b"not json")["error"],
+            "PARALLEL_RESULT: no result object",
+        )
+        failed = json.dumps(
+            {
+                "type": "result",
+                "is_error": True,
+                "session_id": "s",
+                "result": "budget exceeded",
+            }
+        )
+        self.assertIn(
+            "budget exceeded", PARALLEL.parse_result("claude", failed.encode())["error"]
+        )
+
+    def test_listening_path_sockets_are_masked(self):
+        table = (
+            "Num       RefCount Protocol Flags    Type St Inode Path\n"
+            "0000: 00000002 00000000 00010000 0001 01 11 /home/u/.agent/gateway.sock\n"
+            "0000: 00000002 00000000 00010000 0001 01 12 /run/user/1000/bus\n"
+            "0000: 00000002 00000000 00010000 0001 01 13 @abstract\n"
+            "0000: 00000003 00000000 00000000 0001 03 14 /home/u/connected.sock\n"
+            "0000: 00000002 00000000 00010000 0001 01 15 /work/clone/own.sock\n"
+        )
+        self.assertEqual(
+            PARALLEL.listening_sockets(table, Path("/work/clone")),
+            ["/home/u/.agent/gateway.sock"],
+        )
+        argv = PARALLEL.contain(
+            ["cli"],
+            scope="s",
+            clone=Path("/work/clone"),
+            binary="/bin/cli",
+            memory_mb=64,
+            timeout=5,
+            env={},
+            sockets=["/home/u/.agent/gateway.sock"],
+        )
+        joined = " ".join(argv)
+        for flag in ("--unshare-pid", "--unshare-ipc", "--new-session", "--tmpfs /run"):
+            self.assertIn(flag, joined)
+        self.assertIn("--ro-bind /dev/null /home/u/.agent/gateway.sock", joined)
+
+    def test_a_provider_unit_needs_a_current_request(self):
+        unit = self.native()
+        report = self.run_plan(self.plan(unit))
+        self.assertEqual(report["units"]["a"]["state"], "refused")
+        self.assertIn("PARALLEL_BRIEF", report["units"]["a"]["reason"])
+
+        def stale():
+            raise PARALLEL.ParallelError("PARALLEL_BRIEF: BRIEF-STALE: superseded")
+
+        report = self.run_plan(self.plan(unit), request_check=stale)
+        self.assertEqual(report["units"]["a"]["state"], "refused")
+        self.assertIn("BRIEF-STALE", report["units"]["a"]["reason"])
+
+
+@unittest.skipUnless(PARALLEL.sandbox_available(), "needs systemd --user and bwrap")
+class ContainmentTest(Fixture):
+    def setUp(self) -> None:
+        super().setUp()
+        self.fake = self.root.parent / "bin" / "fake-provider"
+        self.fake.parent.mkdir()
+        self.fake.write_text(FAKE_PROVIDER)
+        self.fake.chmod(0o755)
+        self.escape = self.root.parent / "escaped.txt"
+        self.marker = f"hyk8s-fake-{os.getpid()}-{time.monotonic_ns()}"
+        self.addCleanup(lambda: subprocess.run(["pkill", "-f", self.marker]))
+
+    def native(self, provider="claude", prompt="", timeout=30):
+        return {
+            "id": "a",
+            "action": "write-worker",
+            "owned_paths": ["docs/a.md"],
+            "provider": provider,
+            "model": "haiku",
+            "prompt": (
+                f"escape={self.escape} spawn={self.marker} "
+                f"parent={os.getpid()} {prompt}"
+            ),
+            **({"budget_usd": 0.5} if provider == "claude" else {}),
+            "timeout": timeout,
+        }
+
+    def run_native(self, unit):
+        fixture = {"HYK8S_FAKE_SECRET": "leak"}  # pragma: allowlist secret
+        with mock.patch.dict(os.environ, fixture):
+            return self.run_plan(
+                self.plan(unit),
+                request_check=lambda: None,
+                binaries={"claude": str(self.fake), "codex": str(self.fake)},
+            )
+
+    def test_a_contained_worker_writes_only_its_clone_and_is_reclaimed(self):
+        for provider, session in (("claude", "s-1"), ("codex", "t-1")):
+            with self.subTest(provider=provider):
+                report = self.run_native(self.native(provider))
+                record = report["units"]["a"]
+                self.assertEqual(report["state"], "completed", report)
+                self.assertEqual(record["session"], session)
+                self.assertTrue(record["scope"].startswith("hyk8s-par-"))
+                self.assertFalse(self.escape.exists(), "a write outside the clone")
+                self.assertFalse(_alive(self.marker), "a setsid child outlived it")
+                patch = Path(report["candidate"]).read_text()
+                self.assertIn("HYK8S_PARALLEL_UNIT", patch)
+                self.assertNotIn("HYK8S_FAKE_SECRET", patch)
+                self.assertNotIn("DBUS_SESSION_BUS_ADDRESS", patch)
+                for hidden in ("bus=False", "docker=False", "parent=False"):
+                    self.assertIn(hidden, patch, "a host socket or process is visible")
+                self.assertNoResidue(report)
+
+    def test_a_timed_out_worker_loses_its_whole_scope(self):
+        report = self.run_native(self.native(prompt="sleep=60", timeout=3))
+        self.assertEqual(report["units"]["a"]["state"], "expired", report)
+        self.assertFalse(_alive(self.marker), "a setsid child outlived the timeout")
+        self.assertNoResidue(report)
+
+
 if __name__ == "__main__":
     unittest.main()

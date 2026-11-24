@@ -19,8 +19,18 @@ its clone. The integrator applies the promoted patches to a fresh clone in
 dependency order and runs the integration check there; a worker PASS never
 stands in for it. The source checkout is never written: the result is
 `candidate.patch` in the run directory. `sweep` reclaims the workers and clones
-of a dispatcher that died. A clone is file separation, not a sandbox: a worker
-runs with the caller's own permissions and can write outside its clone.
+of a dispatcher that died. A clone is file separation, not a sandbox: a command
+worker runs with the caller's own permissions and can write outside its clone.
+
+A provider unit (`claude` or `codex`) starts only while its P08 request brief
+is current, through the installed CLI's own options with the prompt on stdin.
+It runs in a systemd user scope, which caps memory, one CPU, tasks and run time
+and whose stop ends every descendant, a `setsid` one too, inside a bwrap mount
+namespace that keeps writes in its clone, starts from an empty environment in
+its own PID, IPC and UTS namespaces, and hides /run and every other listening
+path socket. Host reads and the network stay open, because the provider needs
+its API, so abstract sockets and local TCP services stay reachable; disk use is
+checked when the result is collected, not enforced as a quota.
 """
 
 from __future__ import annotations
@@ -65,7 +75,17 @@ UNIT_KEYS = {
     "timeout",
     "retries",
     "memory_mb",
+    "provider",
+    "prompt",
+    "model",
+    "budget_usd",
 }
+PROVIDERS = ("command", "claude", "codex")
+MODEL = re.compile(r"[a-z0-9][a-z0-9.-]{0,63}")
+PROMPT_LIMIT = 16 * 1024
+MAX_BUDGET_USD = 10.0
+SCOPE_TIMEOUT = 30
+SCOPE_ENV = ("PATH", "HOME", "XDG_RUNTIME_DIR", "DBUS_SESSION_BUS_ADDRESS")
 PLAN_KEYS = {"task_ref", "base", "max_workers", "integration_check", "units"}
 FAILED = {"failed", "refused", "expired", "blocked", "cancelled"}
 MAX_TIMEOUT = 24 * 3600
@@ -182,7 +202,7 @@ def load_plan(
         for name in _strings(unit["resources"], "resources"):
             if not RESOURCE.fullmatch(name) or name.startswith("path:"):
                 raise _fail("PARALLEL_PLAN", f"resource {name!r} is not kind:name")
-        _strings(unit.get("command"), "command", empty=False)
+        _provider_fields(unit)
         timeout, retries, memory = unit["timeout"], unit["retries"], unit["memory_mb"]
         if (
             type(timeout) not in (int, float)
@@ -212,6 +232,299 @@ def load_plan(
         raise _fail("PARALLEL_DEPENDENCY", f"cycle {exc.args[1]}") from None
     by_id = {u["id"]: u for u in units}
     return {**data, "units": [by_id[uid] for uid in order]}
+
+
+def _provider_fields(unit: dict[str, Any]) -> None:
+    """A command unit names its argv; a provider unit names prompt, model, budget."""
+    provider = unit.setdefault("provider", "command")
+    if provider not in PROVIDERS:
+        raise _fail("PARALLEL_PLAN", f"{unit['id']} names unknown provider")
+    if provider == "command":
+        if {"prompt", "model", "budget_usd"} & set(unit):
+            raise _fail("PARALLEL_PLAN", f"{unit['id']} is a command unit")
+        _strings(unit.get("command"), "command", empty=False)
+        return
+    prompt, model = unit.get("prompt"), unit.get("model")
+    if (
+        "command" in unit
+        or not isinstance(prompt, str)
+        or not prompt.strip()
+        or len(prompt.encode()) > PROMPT_LIMIT
+        or not isinstance(model, str)
+        or not MODEL.fullmatch(model)
+    ):
+        raise _fail(
+            "PARALLEL_PLAN", f"{unit['id']} needs a bounded prompt and a model name"
+        )
+    budget = unit.get("budget_usd")
+    # Claude's print mode takes a spending cap; Codex exec has none, so its
+    # only bound is the unit timeout.
+    if provider == "codex":
+        if budget is not None:
+            raise _fail("PARALLEL_PLAN", f"{unit['id']}: codex takes no budget_usd")
+    elif (
+        type(budget) not in (int, float)
+        or not math.isfinite(budget)
+        or not 0 < budget <= MAX_BUDGET_USD
+    ):
+        raise _fail("PARALLEL_PLAN", f"{unit['id']} needs a finite budget_usd")
+
+
+def provider_argv(unit: dict[str, Any], clone: Path, binary: str) -> list[str]:
+    """The installed CLI's own options; the prompt goes on stdin."""
+    if unit["provider"] == "claude":
+        return [
+            binary,
+            "-p",
+            "--output-format",
+            "json",
+            "--model",
+            unit["model"],
+            "--safe-mode",
+            "--strict-mcp-config",
+            "--tools",
+            "Read,Edit,Write",
+            "--permission-mode",
+            "acceptEdits",
+            "--no-session-persistence",
+            "--max-budget-usd",
+            str(unit["budget_usd"]),
+        ]
+    return [
+        binary,
+        "exec",
+        "--json",
+        "--ephemeral",
+        "--skip-git-repo-check",
+        "--sandbox",
+        "workspace-write",
+        "--model",
+        unit["model"],
+        "--cd",
+        str(clone),
+        "-",
+    ]
+
+
+def parse_result(provider: str, raw: bytes) -> dict[str, Any]:
+    """Session, cost, turns and usage from the CLI's JSON; nothing is executed."""
+    result: dict[str, Any] = {
+        "session": None,
+        "cost_usd": None,
+        "turns": None,
+        "usage": None,
+        "error": None,
+    }
+    events = []
+    for line in raw.decode(errors="replace").splitlines():
+        try:
+            event = json.loads(line)
+        except ValueError:
+            continue
+        if isinstance(event, dict):
+            events.append(event)
+    if provider == "claude":
+        final = next((e for e in reversed(events) if e.get("type") == "result"), None)
+        if final is None:
+            return {**result, "error": "PARALLEL_RESULT: no result object"}
+        result.update(
+            session=final.get("session_id"),
+            cost_usd=final.get("total_cost_usd"),
+            turns=final.get("num_turns"),
+            usage=final.get("usage"),
+        )
+        if final.get("is_error"):
+            result["error"] = f"PARALLEL_RESULT: {str(final.get('result'))[:400]}"
+        return result
+    turns = [e for e in events if e.get("type") == "turn.completed"]
+    session = next((e.get("thread_id") for e in events if e.get("thread_id")), None)
+    if session is None:
+        return {**result, "error": "PARALLEL_RESULT: no thread identity"}
+    failed = next(
+        (e for e in events if e.get("type") in ("turn.failed", "error")), None
+    )
+    result.update(
+        session=session,
+        turns=len(turns),
+        usage=turns[-1].get("usage") if turns else None,
+    )
+    if failed is not None:
+        result["error"] = f"PARALLEL_RESULT: {json.dumps(failed)[:400]}"
+    return result
+
+
+def sandbox_available() -> bool:
+    """Whether a systemd user scope and bwrap can start here."""
+    if not (shutil.which("systemd-run") and shutil.which("bwrap")):
+        return False
+    try:
+        return (
+            subprocess.run(
+                [
+                    "systemd-run",
+                    "--user",
+                    "--scope",
+                    "--quiet",
+                    "--",
+                    "bwrap",
+                    "--ro-bind",
+                    "/",
+                    "/",
+                    "--dev",
+                    "/dev",
+                    "--proc",
+                    "/proc",
+                    "true",
+                ],
+                stdin=subprocess.DEVNULL,
+                capture_output=True,
+                timeout=SCOPE_TIMEOUT,
+                check=False,
+            ).returncode
+            == 0
+        )
+    except (OSError, subprocess.SubprocessError):
+        return False
+
+
+def contain(
+    argv: list[str],
+    *,
+    scope: str,
+    clone: Path,
+    binary: str,
+    memory_mb: int,
+    timeout: float,
+    env: dict[str, str],
+    sockets: list[str] | None = None,
+) -> list[str]:
+    """Wrap a provider worker in its own cgroup and a read-only mount namespace.
+
+    The systemd user scope is the process boundary: stopping it ends every
+    descendant, a `setsid` one too, and it caps memory, one CPU, tasks and run
+    time. bwrap mounts the host read-only except the clone and a private /tmp,
+    starts from an empty environment in its own PID, IPC and UTS namespaces and
+    session, and hides /run (the user bus, systemd and container sockets) and
+    every other listening path socket, because a read-only mount still lets a
+    process connect to a socket that can start code outside. Only the resolver
+    under /run is mounted back. The network stays shared, because the provider
+    needs its API, so abstract sockets and local TCP services stay reachable,
+    and the host stays readable.
+    """
+    wrapper = [
+        "systemd-run",
+        "--user",
+        "--scope",
+        "--quiet",
+        f"--unit={scope}",
+        "-p",
+        f"MemoryMax={memory_mb}M",
+        "-p",
+        "MemorySwapMax=0",
+        "-p",
+        "CPUQuota=100%",
+        "-p",
+        "TasksMax=512",
+        "-p",
+        f"RuntimeMaxSec={math.ceil(timeout) + SCOPE_TIMEOUT}",
+        "--",
+        "bwrap",
+        "--ro-bind",
+        "/",
+        "/",
+        "--dev",
+        "/dev",
+        "--proc",
+        "/proc",
+        "--unshare-pid",
+        "--unshare-ipc",
+        "--unshare-uts",
+        "--unshare-cgroup-try",
+        "--new-session",
+        "--tmpfs",
+        "/tmp",
+        "--tmpfs",
+        "/run",
+        "--ro-bind-try",
+        "/run/systemd/resolve",
+        "/run/systemd/resolve",
+    ]
+    for path in sockets or ():
+        wrapper += ["--ro-bind", "/dev/null", path]
+    wrapper += [
+        "--ro-bind",
+        binary,
+        binary,
+        "--bind",
+        str(clone),
+        str(clone),
+        "--chdir",
+        str(clone),
+        "--die-with-parent",
+        "--clearenv",
+    ]
+    for key, value in sorted(env.items()):
+        wrapper += ["--setenv", key, value]
+    return wrapper + argv
+
+
+def listening_sockets(table: str, clone: Path) -> list[str]:
+    """Listening path sockets from `/proc/net/unix` that the mounts still show.
+
+    Sockets under /run, /var/run and /tmp are hidden by their own mounts and
+    the clone's are the worker's; an abstract socket has no path to mask.
+    """
+    found = []
+    for line in table.splitlines()[1:]:
+        fields = line.split(None, 7)
+        if len(fields) < 8 or not int(fields[3], 16) & 0x10000:  # __SO_ACCEPTCON
+            continue
+        path = fields[7]
+        if not path.startswith("/") or path.startswith(("/run/", "/var/run/", "/tmp/")):
+            continue
+        if path == str(clone) or path.startswith(str(clone) + "/"):
+            continue
+        found.append(path)
+    return sorted(set(found))
+
+
+def _host_sockets(clone: Path) -> list[str]:
+    try:
+        with open("/proc/net/unix", encoding="utf-8", errors="replace") as handle:
+            table = handle.read(OUTPUT_LIMIT)
+    except OSError:
+        return []
+    # ponytail: a socket created after this read stays reachable; a network
+    # namespace with an API proxy would close abstract and late sockets too.
+    found = []
+    for path in listening_sockets(table, clone):
+        try:
+            if stat.S_ISSOCK(os.lstat(path).st_mode):
+                found.append(path)
+        except OSError:
+            continue  # gone, or behind a directory this user cannot read
+    return found
+
+
+def _systemctl(*args: str) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        ["systemctl", "--user", *args],
+        stdin=subprocess.DEVNULL,
+        capture_output=True,
+        text=True,
+        timeout=SCOPE_TIMEOUT,
+        check=False,
+    )
+
+
+def stop_scope(scope: str) -> bool:
+    """Stop the scope and every process in it; True once it is gone."""
+    try:
+        _systemctl("stop", "--quiet", f"{scope}.scope")
+        state = _systemctl("is-active", f"{scope}.scope").stdout.strip()
+    except (OSError, subprocess.SubprocessError):
+        return False
+    return state in ("inactive", "failed", "unknown", "")
 
 
 def _closure(unit: dict[str, Any], closure) -> list[str]:
@@ -467,6 +780,17 @@ def _kill_group(pid: int, proc: subprocess.Popen | None = None) -> None:
             time.sleep(0.02)
 
 
+def _tree_mib(path: Path) -> int:
+    total = 0
+    for directory, _, files in os.walk(path):
+        for name in files:
+            try:
+                total += os.lstat(os.path.join(directory, name)).st_size
+            except OSError:
+                continue
+    return total // (1024 * 1024)
+
+
 def _remove(run_dir: Path, path: Path) -> None:
     if path.parent == run_dir and path.name.startswith("clone-"):
         shutil.rmtree(path, ignore_errors=True)
@@ -499,9 +823,21 @@ def brief_preflight(root: Path, brief: Path, current: Path):
 
 class _Run:
     def __init__(
-        self, root, plan, runtime, preflight, cancel, brief_revision, poll, admission
+        self,
+        root,
+        plan,
+        runtime,
+        preflight,
+        cancel,
+        brief_revision,
+        poll,
+        admission,
+        request_check=None,
+        binaries=None,
     ):
         self.root = Path(root).resolve()
+        self.request_check = request_check
+        self.binaries = binaries or {}
         self.admission = admission or ADMISSION.Admission(self.root)
         if self.admission.root != self.root:
             raise _fail(
@@ -533,6 +869,12 @@ class _Run:
                 "changed": [],
                 "ignored": [],
                 "expired": [],
+                "provider": self.units[uid]["provider"],
+                "scope": None,
+                "session": None,
+                "cost_usd": None,
+                "turns": None,
+                "usage": None,
             }
             for uid in self.order
         }
@@ -554,7 +896,12 @@ class _Run:
             "run": self.id,
             "dispatcher": os.getpid(),
             "workers": [
-                {"unit": uid, "pid": w["proc"].pid, "clone": str(w["clone"])}
+                {
+                    "unit": uid,
+                    "pid": w["proc"].pid,
+                    "clone": str(w["clone"]),
+                    "scope": w["scope"],
+                }
                 for uid, w in self.running.items()
             ]
             + (
@@ -577,11 +924,15 @@ class _Run:
             **extra,
         }
 
-    def release(self, token: str) -> None:
+    def release(self, token: str, scope: str | None = None) -> None:
+        def absent(row):
+            found = _owned_process_absent(self.admission, row, self.id)
+            if found and scope is not None and not stop_scope(scope):
+                return False  # a descendant outside the group still runs
+            return found
+
         try:
-            self.admission.release(
-                token, lambda row: _owned_process_absent(self.admission, row, self.id)
-            )
+            self.admission.release(token, absent)
         except (ADMISSION.AdmissionError, OSError) as exc:
             self.unreleased = True
             self.release_error = str(exc)
@@ -598,6 +949,23 @@ class _Run:
         if len(receipt) > 128 or (pid, pgid, uid) != (proc.pid, proc.pid, os.geteuid()):
             raise _fail("ENV_STATE", "child process receipt does not match the spawn")
         self.admission.mark_started(token, proc.pid, start)
+
+    def provider_ready(self, unit) -> str | None:
+        """For a provider unit, the current brief and the resolved CLI binary."""
+        if unit["provider"] == "command":
+            return None
+        if self.request_check is None:
+            raise _fail("PARALLEL_BRIEF", "a provider worker needs a current request")
+        try:
+            self.request_check()
+        except ParallelError:
+            raise
+        except Exception as exc:  # the brief module's own refusal
+            raise _fail("PARALLEL_BRIEF", str(exc)) from None
+        found = self.binaries.get(unit["provider"]) or shutil.which(unit["provider"])
+        if not found:
+            raise _fail("PARALLEL_EXEC", f"{unit['provider']} is not installed")
+        return os.path.realpath(found)
 
     def conflicts(self, unit) -> bool:
         if len(self.running) >= self.plan["max_workers"]:
@@ -652,6 +1020,7 @@ class _Run:
             return
         try:
             self.preflight(unit)
+            binary = self.provider_ready(unit)
         except ParallelError as exc:
             self.leases.release(tokens)
             rec.update(state="refused", reason=str(exc))
@@ -684,17 +1053,55 @@ class _Run:
                 HYK8S_ENV_TOKEN=reservation,
             )
             meta = _git_meta(clone)  # the baseline, before the worker can run
-            with (self.dir / f"{uid}-{rec['attempts']}.log").open("wb") as log:
-                proc = subprocess.Popen(
-                    unit["command"],
-                    cwd=clone,
-                    env=env,
-                    stdin=subprocess.DEVNULL,
-                    stdout=log,
-                    stderr=subprocess.STDOUT,
-                    start_new_session=True,
-                    preexec_fn=lambda: _prepare_child(self.admission, reservation),
+            stem = self.dir / f"{uid}-{rec['attempts']}"
+            scope = None
+            argv, stdin = unit.get("command"), None
+            if binary is not None:
+                scope = f"hyk8s-par-{self.id}-{uid}-{rec['attempts']}"
+                stem.with_suffix(".prompt").write_text(unit["prompt"])
+                argv = contain(
+                    provider_argv(unit, clone, binary),
+                    scope=scope,
+                    clone=clone,
+                    binary=binary,
+                    memory_mb=unit["memory_mb"],
+                    timeout=unit["timeout"],
+                    sockets=_host_sockets(clone),
+                    env={
+                        "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
+                        "HOME": str(Path.home()),
+                        "LANG": "C.UTF-8",
+                        "TMPDIR": "/tmp",
+                        **{
+                            k: v
+                            for k, v in env.items()
+                            if k.startswith("HYK8S_PARALLEL_") or k == "HYK8S_ENV_TOKEN"
+                        },
+                    },
                 )
+                # Only what systemd-run needs to reach the user manager.
+                env = {k: v for k, v in env.items() if k in SCOPE_ENV}
+                stdin = stem.with_suffix(".prompt").open("rb")
+            try:
+                with (
+                    stem.with_suffix(".log").open("wb") as log,
+                    stem.with_suffix(".out").open("wb") as out,
+                ):
+                    proc = subprocess.Popen(
+                        argv,
+                        cwd=clone,
+                        env=env,
+                        stdin=stdin or subprocess.DEVNULL,
+                        stdout=log if binary is None else out,
+                        stderr=subprocess.STDOUT if binary is None else log,
+                        start_new_session=True,
+                        preexec_fn=lambda: _prepare_child(self.admission, reservation),
+                    )
+            finally:
+                if stdin is not None:
+                    stdin.close()
+                stem.with_suffix(".prompt").unlink(missing_ok=True)
+            rec["scope"] = scope
             self.mark_started(reservation, proc)
         except (
             ParallelError,
@@ -712,7 +1119,7 @@ class _Run:
             released = reservation is None
             if reservation is not None:
                 try:
-                    self.release(reservation)
+                    self.release(reservation, rec["scope"])
                     released = True
                 except (ADMISSION.AdmissionError, OSError):
                     pass
@@ -741,6 +1148,8 @@ class _Run:
             "meta": meta,
             "tokens": tokens,
             "reservation": reservation,
+            "scope": scope,
+            "out": stem.with_suffix(".out"),
             "begin": time.monotonic(),
             "deadline": time.monotonic() + unit["timeout"],
         }
@@ -749,6 +1158,8 @@ class _Run:
     def stop(self, uid: str) -> dict[str, Any]:
         work = self.running.pop(uid)
         _kill_group(work["proc"].pid, work["proc"])
+        if work["scope"] is not None:
+            stop_scope(work["scope"])
         try:
             work["proc"].wait(timeout=GRACE)
         except subprocess.TimeoutExpired:
@@ -776,7 +1187,7 @@ class _Run:
                 rec.update(state="expired" if code is None else "failed", reason=reason)
         finally:
             try:
-                self.release(work["reservation"])
+                self.release(work["reservation"], work["scope"])
             except (ADMISSION.AdmissionError, OSError) as exc:
                 rec.update(state="failed", reason=str(exc))
             else:
@@ -786,6 +1197,21 @@ class _Run:
     def promote(self, uid: str, work: dict[str, Any]) -> None:
         unit, rec = self.units[uid], self.rec[uid]
         clone = work["clone"]
+        if work["scope"] is not None:
+            with work["out"].open("rb") as handle:
+                parsed = parse_result(unit["provider"], handle.read(OUTPUT_LIMIT))
+            error = parsed.pop("error")
+            rec.update(parsed)
+            if error:
+                rec.update(state="failed", reason=error)
+                return
+        used = _tree_mib(clone)
+        if used > WORKER_DISK_MIB:  # monitored at collection, not a hard quota
+            rec.update(
+                state="refused",
+                reason=f"PARALLEL_DISK: clone uses {used} MiB of {WORKER_DISK_MIB}",
+            )
+            return
         if _git_meta(clone) != work["meta"]:
             rec.update(
                 state="refused", reason="PARALLEL_GITCONFIG: worker changed .git"
@@ -998,7 +1424,7 @@ class _Run:
             for uid in list(self.running):
                 work = self.stop(uid)
                 try:
-                    self.release(work["reservation"])
+                    self.release(work["reservation"], work["scope"])
                 except (ADMISSION.AdmissionError, OSError) as exc:
                     self.rec[uid].update(state="failed", reason=str(exc))
                 else:
@@ -1064,6 +1490,8 @@ def run(
     brief_revision: str = "",
     poll: float = 0.02,
     admission=None,
+    request_check: Callable[[], None] | None = None,
+    binaries: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     root = Path(root).resolve()
     if closure is None:
@@ -1073,7 +1501,16 @@ def run(
 
     checked = load_plan(plan, closure=closure)
     return _Run(
-        root, checked, runtime, preflight, cancel, brief_revision, poll, admission
+        root,
+        checked,
+        runtime,
+        preflight,
+        cancel,
+        brief_revision,
+        poll,
+        admission,
+        request_check,
+        binaries,
     ).execute()
 
 
@@ -1167,6 +1604,10 @@ def sweep(runtime: Path, *, root: Path | None = None, admission=None) -> list[st
                     for row in rows
                 ):
                     continue
+                for worker in state.get("workers", []):
+                    scope = worker.get("scope")
+                    if scope and scope.startswith(f"hyk8s-par-{run_dir.name}-"):
+                        stop_scope(scope)
                 for row in rows:
                     admission.release(
                         row["token"],
@@ -1182,6 +1623,20 @@ def sweep(runtime: Path, *, root: Path | None = None, admission=None) -> list[st
     return cleaned
 
 
+def _request_check(root: Path, request: str | None):
+    if not request:
+        return None
+    module = _load("_work_parallel_request", "request_brief.py")
+
+    def check() -> None:
+        try:
+            module.current(request, str(Path(root).resolve()))
+        except module.Refusal as exc:
+            raise _fail("PARALLEL_BRIEF", str(exc)) from None
+
+    return check
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="command", required=True)
@@ -1191,6 +1646,9 @@ def main(argv: list[str] | None = None) -> int:
     runner.add_argument("--plan", type=Path, required=True)
     runner.add_argument("--brief", type=Path, required=True)
     runner.add_argument("--current-request", type=Path, required=True)
+    runner.add_argument(
+        "--request", help="the P08 request whose recorded brief provider workers need"
+    )
     sweeper = sub.add_parser("sweep", help="reclaim runs whose dispatcher died")
     sweeper.add_argument("--root", type=Path, default=Path.cwd())
     sweeper.add_argument("--runtime", type=Path)
@@ -1215,6 +1673,7 @@ def main(argv: list[str] | None = None) -> int:
             preflight=preflight,
             cancel=cancel,
             brief_revision=preflight.revision,
+            request_check=_request_check(args.root, args.request),
         )
     except (ParallelError, OSError, ValueError, subprocess.SubprocessError) as exc:
         print(f"FAIL {exc}", file=sys.stderr)
