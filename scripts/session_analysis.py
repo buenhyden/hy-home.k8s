@@ -887,11 +887,7 @@ Nice=10
 
 
 def install_timer(root: Path, workspace_id: str) -> dict[str, Any]:
-    """Install this clone's timer; retire the unnamed legacy unit only if owned.
-
-    The legacy unit is this checkout's when its service runs this checkout's
-    script; another clone's unit is left alone.
-    """
+    """Install this clone's named timer; every other unit is left alone."""
 
     directory = Path.home() / ".config" / "systemd" / "user"
     directory.mkdir(parents=True, exist_ok=True)
@@ -901,22 +897,11 @@ def install_timer(root: Path, workspace_id: str) -> dict[str, Any]:
     def run(command: list[str]) -> None:
         subprocess.run(command, check=True, capture_output=True, text=True, timeout=30)
 
-    legacy = directory / f"{UNIT_PREFIX}.service"
-    retired = False
-    if legacy.is_file() and legacy.read_text(encoding="utf-8") == service:
-        run(["systemctl", "--user", "disable", "--now", f"{UNIT_PREFIX}.timer"])
-        legacy.unlink()
-        (directory / f"{UNIT_PREFIX}.timer").unlink(missing_ok=True)
-        retired = True
     (directory / f"{name}.timer").write_text(timer, encoding="utf-8")
     (directory / f"{name}.service").write_text(service, encoding="utf-8")
     run(["systemctl", "--user", "daemon-reload"])
     run(["systemctl", "--user", "enable", "--now", f"{name}.timer"])
-    return {
-        "timer": f"{name}.timer",
-        "directory": str(directory),
-        "legacy_retired": retired,
-    }
+    return {"timer": f"{name}.timer", "directory": str(directory)}
 
 
 CANCEL = threading.Event()

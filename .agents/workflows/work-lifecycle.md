@@ -141,7 +141,10 @@ end the loop.
    selected QA and pre-commit lint/format over their actual snapshots. PR branch
    metadata and the selected hosted `style-pr` leaves have distinct SHA/run
    evidence. Push and merge do not replay an identical leaf.
-3. Review final diff scope and remove task-owned scratch/debug residue.
+3. Review final diff scope and remove task-owned scratch/debug residue as
+   [QUAL-R025](../../docs/00.workspace/04.quality/quality.md#qa-admission-and-retirement)
+   sorts temporary from persistent material; record any kept recovery
+   material's owner, resume point and deletion condition in the Task.
 4. Record the canonical handoff fields in the active Task; include failures,
    skipped optional tools, unavailable runtime checks, review disposition,
    rollback, residual risk, and next owner. Write residue as a `Residue Handoff`
