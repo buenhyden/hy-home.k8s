@@ -2,7 +2,7 @@
 title: "Cutover Readiness Task"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-24"
 artifact_id: "SPEC-0239-TSK-0001"
@@ -155,14 +155,14 @@ None.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | accept | pending | EVD-002, EVD-006 | Awaiting the operator's decision | none | platform | none |
-| [AC-0002](../spec.md#criteria) | accept | pending | EVD-003, EVD-006 | Awaiting the operator's decision | none | platform | none |
-| [AC-0003](../spec.md#criteria) | accept | pending | EVD-002, EVD-004, EVD-005, EVD-006 | Awaiting the operator's decision | none | platform | none |
-| [AC-0004](../spec.md#criteria) | accept | pending | EVD-008, EVD-009, EVD-010 | Awaiting the operator's decision | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | accepted | EVD-002, EVD-006 | User message of 2026-11-24 in this session accepting SPEC-0239 AC-0001 to AC-0004 | user | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | accepted | EVD-003, EVD-006 | User message of 2026-11-24 in this session accepting SPEC-0239 AC-0001 to AC-0004 | user | platform | none |
+| [AC-0003](../spec.md#criteria) | accept | accepted | EVD-002, EVD-004, EVD-005, EVD-006 | User message of 2026-11-24 in this session accepting SPEC-0239 AC-0001 to AC-0004 | user | platform | none |
+| [AC-0004](../spec.md#criteria) | accept | accepted | EVD-008, EVD-009, EVD-010 | User message of 2026-11-24 in this session accepting SPEC-0239 AC-0001 to AC-0004 | user | platform | none |
 
 ##### Remaining Conditions
 
-The second pull request added the retired-route and review-supersession
+The user accepted AC-0001 to AC-0004 on 2026-11-24, and the Task is completed; the readiness verdict it records stays `cutover_ready: false` until the two remaining blockers clear. The second pull request added the retired-route and review-supersession
 rule and closed SPEC-0229 with the operator's acceptance. Hosted
 checks of the first pull request passed (EVD-006). `cutover_ready` stays false while the
 three blockers remain.
@@ -172,7 +172,7 @@ three blockers remain.
 ##### Promotion Receipt
 
 P16-RETIRED-ROUTE: the [document lifecycle policy](../../../00.workspace/03.process/document-lifecycle.md)
-states the retired-route rule once the second pull request lands.
+states the retired-route and review-supersession rule in DOCLIFE-R003.
 
 ##### Next Owner
 
