@@ -110,6 +110,7 @@ recorded when observed.
 | EVD-002 | [AC-0001](../spec.md#criteria) | WORK-001 | automated | The install test rewritten to the current contract, before the code change | Pinned validation venv, `unittest` | `python -m unittest tests.test_session_analysis` | 1 | FAIL | Failing-first: the new install test failed because the legacy branch still disabled and deleted the unnamed unit | false | none |
 | EVD-003 | [AC-0001](../spec.md#criteria) | WORK-001 | automated | Working tree after the branch removal | Pinned validation venv, `unittest`; Ruff | `python -m unittest tests.test_session_analysis tests.test_work_observe`; `ruff check`; `ruff format --check` | 0 | PASS | analysis 31 and join 4 tests OK; no `legacy` reference remains in the module; Ruff clean | true | none |
 | EVD-004 | [AC-0003](../spec.md#criteria) | WORK-001 | observation | Local host, 2026-11-24 | `systemctl --user list-unit-files`, `git grep`, `ls` | Unit listing; tracked search for package paths; scratch listing before and after plain `rm` and `rmdir` | 0 | PASS | No unnamed legacy unit exists; the two named timers remain; no tracked link, command or check reads a package; the scratch area went from 3.5 MiB to empty; `.workspace-memory/`, `.workspace-test/parallel/locks`, `sessions/` and the 1.2.0 package are unchanged | true | none |
+| EVD-005 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Pull request #368, head `6428acd6`, the two P15 commits cherry-picked onto `main@071bca6b` after pull request #364 could not merge | GitHub Actions CI run 45374569897 | Hosted pull request checks | 0 | PASS | CI, Labeler and Greeting runs completed with success; the hosted checks cover the changed analysis module and its regressions and the quality and lifecycle rule texts | true | none |
 
 ##### Resolution Links
 
@@ -122,14 +123,16 @@ shows the passing state.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | accept | pending | EVD-003 | Awaiting the operator's decision | none | platform | none |
-| [AC-0002](../spec.md#criteria) | accept | pending | EVD-001 | Awaiting the operator's decision | none | platform | none |
-| [AC-0003](../spec.md#criteria) | accept | pending | EVD-004 | Awaiting the operator's package deletion and decision | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | accepted | EVD-003, EVD-005 | User message of 2026-11-24 in this session accepting SPEC-0238 AC-0001 to AC-0003 | user | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | accepted | EVD-005 | User message of 2026-11-24 in this session accepting SPEC-0238 AC-0001 to AC-0003 | user | platform | none |
+| [AC-0003](../spec.md#criteria) | accept | pending | EVD-004, EVD-005 | The user accepted it on 2026-11-24; it is recorded as accepted once the approved 1.1.0 package deletion is run and observed | none | platform | none |
 
 ##### Remaining Conditions
 
-The 1.1.0 package is deleted by the operator's command and then observed and
-recorded here. Hosted checks are recorded when they run.
+The user accepted AC-0001 to AC-0003 on 2026-11-24; AC-0001 and AC-0002 are
+recorded as accepted. AC-0003 is recorded once the operator's command deletes
+the 1.1.0 package and the deletion is observed here. Hosted checks passed on
+pull request #368 (EVD-005), which replaced #364.
 
 #### Handoff
 
