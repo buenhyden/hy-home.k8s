@@ -128,6 +128,7 @@ dispatch and local TCP services stay reachable while the network is shared.
 | EVD-006 | [AC-0002](../spec.md#criteria) | WORK-001 | automated | Automated security review of commit `bec01440`; new assertions in the containment cases | Pinned validation venv, `unittest` | `python -m unittest tests.test_work_parallel.ProviderPlanTest tests.test_work_parallel.ContainmentTest` | 1 | FAIL | Inside the boundary `/run/user/<uid>/bus`, `/run/docker.sock` and the dispatcher's process were visible for both providers, and the socket mask helper was missing (2 failures, 1 error); EVD-003 and EVD-005 therefore did not show that writes stay in the clone | true | none |
 | EVD-007 | [AC-0002](../spec.md#criteria) | WORK-001 | automated | Working tree after `--unshare-pid`, `--unshare-ipc`, `--unshare-uts`, `--unshare-cgroup-try`, `--new-session`, a tmpfs over `/run` and the listening-socket masks | Pinned validation venv, `unittest`; Ruff | `python -m unittest tests.test_work_parallel.ProviderPlanTest tests.test_work_parallel.ContainmentTest` | 0 | PASS | Focused 7 tests OK, and the full `tests.test_work_parallel tests.test_request_brief` run 57 tests OK: bus, Docker socket and dispatcher process invisible to both stand-in providers, socket table parsed and masked, earlier containment and reclaim cases unchanged; Ruff clean | true | EVD-006 |
 | EVD-008 | [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Run `8c308111`, 2026-11-24T04:59:13Z to 05:00:04Z, the same plan and base `f6520ba0`, request `27e33e6c9554390d`, execution brief re-based on `bec01440` after the first attempt `7764a67b` was refused `PARALLEL_BRIEF: workspace or Git baseline changed` | `claude` 2.1.331, model `sonnet`, budget 1.0 USD each; hardened boundary | `scripts/work_parallel.py run --request 27e33e6c9554390d` | 0 | PASS | `completed`; router active 0.453–13.369 s, session `a68a5d6d-996a-4c88-b75b-8c28ab79604c`, 0.0739 USD; workflow active 1.027–15.232 s, session `5335be0d-4ad6-4082-a184-c393d98896c6`, 0.0344 USD; overlap 12.34 s; each changed only its owned file; integration check PASS; no scope left. Its patch was not applied: the run-1 text was already applied, and the integration owner added the namespace and socket clause to both consumers by hand | true | none |
+| EVD-009 | [AC-0001](../spec.md#criteria), [AC-0002](../spec.md#criteria), [AC-0003](../spec.md#criteria) | WORK-001 | observation | Pull request #360, head `959de61c` | GitHub Actions CI run 45331212068; GitGuardian | Hosted pull request checks | 0 | PASS | ci-summary, style-pr (8 min 57 s, including `work-parallel-regressions` and `tooling-tests`), label and GitGuardian passed; the bounded output does not show whether the containment cases ran or skipped on the hosted runner, so EVD-007 stays the containment evidence | true | none |
 
 ##### Resolution Links
 
@@ -140,17 +141,17 @@ shows the passing state. EVD-007 resolves the required failure EVD-006.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | accept | pending | EVD-003, EVD-004 | Awaiting the operator's decision | none | platform | none |
-| [AC-0002](../spec.md#criteria) | accept | pending | EVD-003, EVD-005, EVD-006, EVD-007, EVD-008 | Awaiting the operator's decision | none | platform | none |
-| [AC-0003](../spec.md#criteria) | accept | pending | EVD-005, EVD-008 | Awaiting the operator's decision | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | pending | EVD-003, EVD-004, EVD-009 | Awaiting the operator's decision | none | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | pending | EVD-003, EVD-005, EVD-006, EVD-007, EVD-008, EVD-009 | Awaiting the operator's decision | none | platform | none |
+| [AC-0003](../spec.md#criteria) | accept | pending | EVD-005, EVD-008, EVD-009 | Awaiting the operator's decision | none | platform | none |
 | [AC-0004](../spec.md#criteria) | accept | pending | none | Awaiting a Codex run after 2026-11-27 12:53 | none | platform | none |
 
 ##### Remaining Conditions
 
 AC-0004 needs one Codex worker through the same dispatcher after the usage
-limit resets on 2026-11-27 12:53 (W10-H02). Hosted checks are recorded when
-they run; the containment cases skip on a host without a user systemd
-manager or bwrap. W10-H03 stays open for command workers and a hard disk
+limit resets on 2026-11-27 12:53 (W10-H02). Hosted checks passed (EVD-009);
+the containment cases skip on a host without a user systemd manager or
+bwrap. W10-H03 stays open for command workers and a hard disk
 quota.
 
 #### Handoff
