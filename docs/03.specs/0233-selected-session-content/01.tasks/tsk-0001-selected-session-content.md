@@ -2,7 +2,7 @@
 title: "Selected Session Content Task"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-24"
 artifact_id: "SPEC-0233-TSK-0001"
@@ -115,13 +115,14 @@ shows the passing state.
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [AC-0001](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0002](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [AC-0003](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
+| [AC-0001](../spec.md#criteria) | accept | accepted | EVD-003, EVD-004, EVD-005, EVD-007 | User answer of 2026-11-24 in this session accepting the SPEC-0233 criteria | user | platform | none |
+| [AC-0002](../spec.md#criteria) | accept | accepted | EVD-003, EVD-004, EVD-007 | User answer of 2026-11-24 in this session accepting the SPEC-0233 criteria | user | platform | none |
+| [AC-0003](../spec.md#criteria) | accept | accepted | EVD-003, EVD-004, EVD-006, EVD-007 | User answer of 2026-11-24 in this session accepting the SPEC-0233 criteria on the timer registration and one systemd unit run | user | platform | none |
 
 ##### Remaining Conditions
 
-Hosted checks passed (EVD-007); the operator's criterion decisions remain. The first
+Hosted checks passed (EVD-007) and the user accepted AC-0001 to AC-0003 on
+2026-11-24. Ordinary package exit is a separate later change. The first
 scheduled firing of the new timer (2026-11-25 03:00 KST) is not yet
 observed; EVD-006 shows its registration and one unit run. Expiry boundaries
 are shown by regressions, since no live content is old enough yet. W08-H05
